@@ -1,0 +1,851 @@
+[{
+  "weight": 2.0,
+  "edges": [{
+    "id": 252880,
+    "sourceNodeId": 1800,
+    "targetNodeId": 3,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 238679,
+    "sourceNodeId": 3,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 3,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "217",
+      "idType": "ENTREZ",
+      "name": "217",
+      "pathways": ["hsa00010", "hsa00040", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 2.0,
+  "edges": [{
+    "id": 252885,
+    "sourceNodeId": 1800,
+    "targetNodeId": 4,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 238762,
+    "sourceNodeId": 4,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 4,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "219",
+      "idType": "ENTREZ",
+      "name": "219",
+      "pathways": ["hsa00010", "hsa00040", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 2.0,
+  "edges": [{
+    "id": 252891,
+    "sourceNodeId": 1800,
+    "targetNodeId": 1751,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 238953,
+    "sourceNodeId": 1751,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 1751,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00431",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00431",
+      "pathways": ["hsa00310", "hsa00330"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 2.0,
+  "edges": [{
+    "id": 252982,
+    "sourceNodeId": 1800,
+    "targetNodeId": 5,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 244872,
+    "sourceNodeId": 5,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 5,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "223",
+      "idType": "ENTREZ",
+      "name": "223",
+      "pathways": ["hsa00010", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 2.0,
+  "edges": [{
+    "id": 252981,
+    "sourceNodeId": 1800,
+    "targetNodeId": 6,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 244789,
+    "sourceNodeId": 6,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 6,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "224",
+      "idType": "ENTREZ",
+      "name": "224",
+      "pathways": ["hsa00010", "hsa00040", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 2.0,
+  "edges": [{
+    "id": 252975,
+    "sourceNodeId": 1800,
+    "targetNodeId": 7,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 245360,
+    "sourceNodeId": 7,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 7,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "501",
+      "idType": "ENTREZ",
+      "name": "501",
+      "pathways": ["hsa00010", "hsa00053", "hsa00071", "hsa00260", "hsa00280", "hsa00300", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620", "hsa01230"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 252981,
+    "sourceNodeId": 1800,
+    "targetNodeId": 6,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 234142,
+    "sourceNodeId": 6,
+    "targetNodeId": 566,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00280", "hsa00310"]},
+    "type": "Edge"
+  }, {
+    "id": 242831,
+    "sourceNodeId": 566,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 6,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "224",
+      "idType": "ENTREZ",
+      "name": "224",
+      "pathways": ["hsa00010", "hsa00040", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 566,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00164",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00164",
+      "pathways": ["hsa00072", "hsa00280", "hsa00310", "hsa00350", "hsa00640", "hsa00650"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 252975,
+    "sourceNodeId": 1800,
+    "targetNodeId": 7,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 245352,
+    "sourceNodeId": 7,
+    "targetNodeId": 1717,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }, {
+    "id": 241887,
+    "sourceNodeId": 1717,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 7,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "501",
+      "idType": "ENTREZ",
+      "name": "501",
+      "pathways": ["hsa00010", "hsa00053", "hsa00071", "hsa00260", "hsa00280", "hsa00300", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620", "hsa01230"]
+    }
+  }, {
+    "id": 1717,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "51111", "idType": "ENTREZ", "name": "51111", "pathways": ["hsa00310"]}
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 252982,
+    "sourceNodeId": 1800,
+    "targetNodeId": 5,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 234204,
+    "sourceNodeId": 5,
+    "targetNodeId": 566,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00280", "hsa00310"]},
+    "type": "Edge"
+  }, {
+    "id": 242831,
+    "sourceNodeId": 566,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 5,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "223",
+      "idType": "ENTREZ",
+      "name": "223",
+      "pathways": ["hsa00010", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 566,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00164",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00164",
+      "pathways": ["hsa00072", "hsa00280", "hsa00310", "hsa00350", "hsa00640", "hsa00650"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 252880,
+    "sourceNodeId": 1800,
+    "targetNodeId": 3,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 229692,
+    "sourceNodeId": 3,
+    "targetNodeId": 566,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00280", "hsa00310"]},
+    "type": "Edge"
+  }, {
+    "id": 242831,
+    "sourceNodeId": 566,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 3,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "217",
+      "idType": "ENTREZ",
+      "name": "217",
+      "pathways": ["hsa00010", "hsa00040", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 566,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00164",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00164",
+      "pathways": ["hsa00072", "hsa00280", "hsa00310", "hsa00350", "hsa00640", "hsa00650"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 252975,
+    "sourceNodeId": 1800,
+    "targetNodeId": 7,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 245351,
+    "sourceNodeId": 7,
+    "targetNodeId": 1743,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }, {
+    "id": 241787,
+    "sourceNodeId": 1743,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 7,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "501",
+      "idType": "ENTREZ",
+      "name": "501",
+      "pathways": ["hsa00010", "hsa00053", "hsa00071", "hsa00260", "hsa00280", "hsa00300", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620", "hsa01230"]
+    }
+  }, {
+    "id": 1743,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {"id": "C06181", "idType": "KEGG_COMPOUND", "name": "C06181", "pathways": ["hsa00310"]}
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 252982,
+    "sourceNodeId": 1800,
+    "targetNodeId": 5,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 47276,
+    "sourceNodeId": 5,
+    "targetNodeId": 550,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00071", "hsa00310", "hsa00380"]},
+    "type": "Edge"
+  }, {
+    "id": 247778,
+    "sourceNodeId": 550,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 5,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "223",
+      "idType": "ENTREZ",
+      "name": "223",
+      "pathways": ["hsa00010", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 550,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00527",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00527",
+      "pathways": ["hsa00071", "hsa00310", "hsa00380"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 252891,
+    "sourceNodeId": 1800,
+    "targetNodeId": 1751,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 238950,
+    "sourceNodeId": 1751,
+    "targetNodeId": 1716,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }, {
+    "id": 242632,
+    "sourceNodeId": 1716,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 1751,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00431",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00431",
+      "pathways": ["hsa00310", "hsa00330"]
+    }
+  }, {
+    "id": 1716,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "4297", "idType": "ENTREZ", "name": "4297", "pathways": ["hsa00310", "hsa05202"]}
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 252880,
+    "sourceNodeId": 1800,
+    "targetNodeId": 3,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 46589,
+    "sourceNodeId": 3,
+    "targetNodeId": 550,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00071", "hsa00310", "hsa00380"]},
+    "type": "Edge"
+  }, {
+    "id": 247778,
+    "sourceNodeId": 550,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 3,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "217",
+      "idType": "ENTREZ",
+      "name": "217",
+      "pathways": ["hsa00010", "hsa00040", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 550,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00527",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00527",
+      "pathways": ["hsa00071", "hsa00310", "hsa00380"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 252975,
+    "sourceNodeId": 1800,
+    "targetNodeId": 7,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 245350,
+    "sourceNodeId": 7,
+    "targetNodeId": 1726,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }, {
+    "id": 241684,
+    "sourceNodeId": 1726,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 7,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "501",
+      "idType": "ENTREZ",
+      "name": "501",
+      "pathways": ["hsa00010", "hsa00053", "hsa00071", "hsa00260", "hsa00280", "hsa00300", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620", "hsa01230"]
+    }
+  }, {
+    "id": 1726,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "79723", "idType": "ENTREZ", "name": "79723", "pathways": ["hsa00310"]}
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 252885,
+    "sourceNodeId": 1800,
+    "targetNodeId": 4,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 230006,
+    "sourceNodeId": 4,
+    "targetNodeId": 566,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00280", "hsa00310"]},
+    "type": "Edge"
+  }, {
+    "id": 242831,
+    "sourceNodeId": 566,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 4,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "219",
+      "idType": "ENTREZ",
+      "name": "219",
+      "pathways": ["hsa00010", "hsa00040", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 566,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00164",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00164",
+      "pathways": ["hsa00072", "hsa00280", "hsa00310", "hsa00350", "hsa00640", "hsa00650"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 253028,
+    "sourceNodeId": 1800,
+    "targetNodeId": 1251,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 637439,
+    "sourceNodeId": 1251,
+    "targetNodeId": 458,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa01200"]},
+    "type": "Edge"
+  }, {
+    "id": 240643,
+    "sourceNodeId": 458,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 1251,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00048",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00048",
+      "pathways": ["hsa00230", "hsa00232", "hsa00260", "hsa00330", "hsa00630", "hsa01200"]
+    }
+  }, {
+    "id": 458,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "3030",
+      "idType": "ENTREZ",
+      "name": "3030",
+      "pathways": ["hsa00062", "hsa00071", "hsa00280", "hsa00310", "hsa00380", "hsa00410", "hsa00640", "hsa00650", "hsa01040", "hsa01200", "hsa01212"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 252885,
+    "sourceNodeId": 1800,
+    "targetNodeId": 4,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 46790,
+    "sourceNodeId": 4,
+    "targetNodeId": 550,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00071", "hsa00310", "hsa00380"]},
+    "type": "Edge"
+  }, {
+    "id": 247778,
+    "sourceNodeId": 550,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 4,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "219",
+      "idType": "ENTREZ",
+      "name": "219",
+      "pathways": ["hsa00010", "hsa00040", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 550,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00527",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00527",
+      "pathways": ["hsa00071", "hsa00310", "hsa00380"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 253027,
+    "sourceNodeId": 1800,
+    "targetNodeId": 1453,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 270330,
+    "sourceNodeId": 1453,
+    "targetNodeId": 4,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330", "hsa00340", "hsa00410"]},
+    "type": "Edge"
+  }, {
+    "id": 238762,
+    "sourceNodeId": 4,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 1453,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00049",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00049",
+      "pathways": ["hsa00250", "hsa00260", "hsa00270", "hsa00300", "hsa00330", "hsa00340", "hsa00410", "hsa00460", "hsa00760", "hsa00770", "hsa00970", "hsa01200", "hsa01210", "hsa01230", "hsa04080", "hsa04974", "hsa05230"]
+    }
+  }, {
+    "id": 4,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "219",
+      "idType": "ENTREZ",
+      "name": "219",
+      "pathways": ["hsa00010", "hsa00040", "hsa00053", "hsa00071", "hsa00280", "hsa00310", "hsa00330", "hsa00340", "hsa00380", "hsa00410", "hsa00561", "hsa00620"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}, {
+  "weight": 3.0,
+  "edges": [{
+    "id": 253028,
+    "sourceNodeId": 1800,
+    "targetNodeId": 1251,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00330"]},
+    "type": "Edge"
+  }, {
+    "id": 462610,
+    "sourceNodeId": 1251,
+    "targetNodeId": 521,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00630", "hsa01200"]},
+    "type": "Edge"
+  }, {
+    "id": 244705,
+    "sourceNodeId": 521,
+    "targetNodeId": 1713,
+    "properties": {"_isSetEdge": true, "pathways": ["hsa00310"]},
+    "type": "Edge"
+  }],
+  "nodes": [{
+    "id": 1800,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "1152", "idType": "ENTREZ", "name": "1152", "pathways": ["hsa00330"]}
+  }, {
+    "id": 1251,
+    "labels": ["_Network_Node", "Compound"],
+    "properties": {
+      "id": "C00048",
+      "idType": "KEGG_COMPOUND",
+      "name": "C00048",
+      "pathways": ["hsa00230", "hsa00232", "hsa00260", "hsa00330", "hsa00630", "hsa01200"]
+    }
+  }, {
+    "id": 521,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {
+      "id": "38",
+      "idType": "ENTREZ",
+      "name": "38",
+      "pathways": ["hsa00071", "hsa00072", "hsa00280", "hsa00310", "hsa00380", "hsa00620", "hsa00630", "hsa00640", "hsa00650", "hsa00900", "hsa01200", "hsa01212"]
+    }
+  }, {
+    "id": 1713,
+    "labels": ["_Network_Node", "Gene"],
+    "properties": {"id": "23067", "idType": "ENTREZ", "name": "23067", "pathways": ["hsa00310"]}
+  }]
+}]

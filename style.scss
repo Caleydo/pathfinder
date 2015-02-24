@@ -1,0 +1,131 @@
+body {
+  margin: 0px;
+}
+
+g.node {
+  rect {
+    fill: rgb(200, 200, 200);
+    stroke: rgb(30, 30, 30);
+  }
+
+  text {
+    text-anchor: middle;
+    font-family: sans-serif;
+    cursor: default;
+    font-size: 11px;
+    fill: rgb(30, 30, 30);
+  }
+
+}
+
+g.node.hover {
+  rect {
+    fill: rgb(200, 0, 0);
+    stroke: rgb(30, 30, 30);
+  }
+}
+
+
+g.node.fixed {
+  rect {
+    fill: rgb(200, 100, 50);
+    stroke: rgb(30, 10, 2);
+  }
+}
+
+g.setNode {
+  text {
+    text-anchor: middle;
+    font-family: sans-serif;
+    cursor: default;
+    font-size: 11px;
+    fill: rgb(30, 30, 30);
+  }
+
+  ellipse {
+    fill: rgb(200, 200, 200);
+    stroke: rgb(30, 30, 30);
+  }
+}
+
+g.edge {
+  line {
+    stroke: rgb(80,80,80);
+    stroke-width: 2px;
+  }
+}
+
+g.set {
+  text {
+    text-anchor: left;
+    font-family: sans-serif;
+    cursor: default;
+    font-size: 10px;
+    fill: rgb(30, 30, 30);
+  }
+
+  line {
+    stroke: rgb(150,150,150);
+    stroke-width: 2px;
+  }
+}
+
+rect.filler {
+  fill: rgba(0, 0, 0, 0)
+
+}
+
+.collapseIcon {
+  font-family: FontAwesome;
+  font-size: 16px;
+  cursor: pointer;
+  text-anchor: middle;
+}
+
+#arrowRight {
+  stroke: rgb(80,80,80);
+  fill: rgb(80,80,80);
+}
+
+#listView {
+  padding: 5px;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  float: left;
+  width: 50vw;
+  height: 100vh;
+
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.outer {
+
+  -webkit-flex: 1;
+  flex: 1;
+
+//  width: 45vw;
+  height: 100%;
+  overflow: auto;
+}
+//.inner {
+//  width: 50vw;
+//  height:100vh;
+//}
+#pathlist, #setlist {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#pathgraph {
+  float: right;
+  width: 40vw;
+  height: auto;
+  overflow: auto;
+//  display: block;
+//  width: 100%;
+//  height: 100%;
+}

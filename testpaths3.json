@@ -1,0 +1,6997 @@
+[
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823240,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8349,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2503039,
+        "sourceNodeId": 8349,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8349,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5010",
+          "idType": "ENTREZ",
+          "name": "5010",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2276138,
+        "sourceNodeId": 29,
+        "targetNodeId": 5675,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04932"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2499898,
+        "sourceNodeId": 5675,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 5675,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "10062",
+          "idType": "ENTREZ",
+          "name": "10062",
+          "pathways": [
+            "hsa03320",
+            "hsa04932",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823331,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8409,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2509049,
+        "sourceNodeId": 8409,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8409,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1364",
+          "idType": "ENTREZ",
+          "name": "1364",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2218060,
+        "sourceNodeId": 29,
+        "targetNodeId": 2947,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04910"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2501243,
+        "sourceNodeId": 2947,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 2947,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C05981",
+          "idType": "KEGG_COMPOUND",
+          "name": "C05981",
+          "pathways": [
+            "hsa00562",
+            "hsa04012",
+            "hsa04014",
+            "hsa04062",
+            "hsa04068",
+            "hsa04070",
+            "hsa04144",
+            "hsa04150",
+            "hsa04151",
+            "hsa04152",
+            "hsa04370",
+            "hsa04510",
+            "hsa04530",
+            "hsa04611",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04666",
+            "hsa04722",
+            "hsa04810",
+            "hsa04910",
+            "hsa04914",
+            "hsa04917",
+            "hsa04919",
+            "hsa04960",
+            "hsa04973",
+            "hsa05142",
+            "hsa05145",
+            "hsa05160",
+            "hsa05162",
+            "hsa05164",
+            "hsa05166",
+            "hsa05169",
+            "hsa05200",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05220",
+            "hsa05221",
+            "hsa05222",
+            "hsa05223",
+            "hsa05231"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823327,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8413,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2508647,
+        "sourceNodeId": 8413,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8413,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "149461",
+          "idType": "ENTREZ",
+          "name": "149461",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47281,
+        "sourceNodeId": 5,
+        "targetNodeId": 527,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1687091,
+        "sourceNodeId": 527,
+        "targetNodeId": 5329,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2589048,
+        "sourceNodeId": 5329,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 527,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "284541",
+          "idType": "ENTREZ",
+          "name": "284541",
+          "pathways": [
+            "hsa00071",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 5329,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5500",
+          "idType": "ENTREZ",
+          "name": "5500",
+          "pathways": [
+            "hsa03015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04114",
+            "hsa04261",
+            "hsa04270",
+            "hsa04390",
+            "hsa04510",
+            "hsa04611",
+            "hsa04720",
+            "hsa04728",
+            "hsa04750",
+            "hsa04810",
+            "hsa04910",
+            "hsa04921",
+            "hsa05031",
+            "hsa05034",
+            "hsa05168",
+            "hsa05205"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2218051,
+        "sourceNodeId": 29,
+        "targetNodeId": 5823,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04910",
+            "hsa04930",
+            "hsa04932"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2500690,
+        "sourceNodeId": 5823,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 5823,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3551",
+          "idType": "ENTREZ",
+          "name": "3551",
+          "pathways": [
+            "hsa04010",
+            "hsa04014",
+            "hsa04062",
+            "hsa04064",
+            "hsa04068",
+            "hsa04150",
+            "hsa04151",
+            "hsa04210",
+            "hsa04380",
+            "hsa04620",
+            "hsa04621",
+            "hsa04622",
+            "hsa04623",
+            "hsa04660",
+            "hsa04662",
+            "hsa04668",
+            "hsa04722",
+            "hsa04910",
+            "hsa04920",
+            "hsa04930",
+            "hsa04932",
+            "hsa05120",
+            "hsa05131",
+            "hsa05142",
+            "hsa05145",
+            "hsa05160",
+            "hsa05161",
+            "hsa05164",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05200",
+            "hsa05206",
+            "hsa05212",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05222"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47279,
+        "sourceNodeId": 5,
+        "targetNodeId": 400,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2259696,
+        "sourceNodeId": 400,
+        "targetNodeId": 6754,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04920"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2606336,
+        "sourceNodeId": 6754,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 400,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "2180",
+          "idType": "ENTREZ",
+          "name": "2180",
+          "pathways": [
+            "hsa00061",
+            "hsa00071",
+            "hsa01212",
+            "hsa03320",
+            "hsa04146",
+            "hsa04920"
+          ]
+        }
+      },
+      {
+        "id": 6754,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "4793",
+          "idType": "ENTREZ",
+          "name": "4793",
+          "pathways": [
+            "hsa04062",
+            "hsa04621",
+            "hsa04622",
+            "hsa04623",
+            "hsa04660",
+            "hsa04662",
+            "hsa04722",
+            "hsa04920",
+            "hsa05131",
+            "hsa05140",
+            "hsa05145",
+            "hsa05162",
+            "hsa05164",
+            "hsa05168",
+            "hsa05169"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47281,
+        "sourceNodeId": 5,
+        "targetNodeId": 527,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1687092,
+        "sourceNodeId": 527,
+        "targetNodeId": 5330,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2589204,
+        "sourceNodeId": 5330,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 527,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "284541",
+          "idType": "ENTREZ",
+          "name": "284541",
+          "pathways": [
+            "hsa00071",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 5330,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5501",
+          "idType": "ENTREZ",
+          "name": "5501",
+          "pathways": [
+            "hsa03015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04114",
+            "hsa04261",
+            "hsa04270",
+            "hsa04390",
+            "hsa04510",
+            "hsa04611",
+            "hsa04720",
+            "hsa04728",
+            "hsa04750",
+            "hsa04810",
+            "hsa04910",
+            "hsa04921",
+            "hsa05031",
+            "hsa05034",
+            "hsa05168",
+            "hsa05205"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2218049,
+        "sourceNodeId": 29,
+        "targetNodeId": 5330,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04910"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2589204,
+        "sourceNodeId": 5330,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 5330,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5501",
+          "idType": "ENTREZ",
+          "name": "5501",
+          "pathways": [
+            "hsa03015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04114",
+            "hsa04261",
+            "hsa04270",
+            "hsa04390",
+            "hsa04510",
+            "hsa04611",
+            "hsa04720",
+            "hsa04728",
+            "hsa04750",
+            "hsa04810",
+            "hsa04910",
+            "hsa04921",
+            "hsa05031",
+            "hsa05034",
+            "hsa05168",
+            "hsa05205"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47278,
+        "sourceNodeId": 5,
+        "targetNodeId": 526,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1686808,
+        "sourceNodeId": 526,
+        "targetNodeId": 5328,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2594044,
+        "sourceNodeId": 5328,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 526,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1579",
+          "idType": "ENTREZ",
+          "name": "1579",
+          "pathways": [
+            "hsa00071",
+            "hsa00590",
+            "hsa00830",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 5328,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5499",
+          "idType": "ENTREZ",
+          "name": "5499",
+          "pathways": [
+            "hsa03015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04114",
+            "hsa04261",
+            "hsa04270",
+            "hsa04390",
+            "hsa04510",
+            "hsa04611",
+            "hsa04720",
+            "hsa04728",
+            "hsa04750",
+            "hsa04810",
+            "hsa04910",
+            "hsa04921",
+            "hsa05031",
+            "hsa05034",
+            "hsa05168",
+            "hsa05205"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823303,
+        "sourceNodeId": 1719,
+        "targetNodeId": 4981,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2602990,
+        "sourceNodeId": 4981,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 4981,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1457",
+          "idType": "ENTREZ",
+          "name": "1457",
+          "pathways": [
+            "hsa03008",
+            "hsa04064",
+            "hsa04310",
+            "hsa04520",
+            "hsa04530",
+            "hsa05162",
+            "hsa05168",
+            "hsa05169"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47278,
+        "sourceNodeId": 5,
+        "targetNodeId": 526,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1686848,
+        "sourceNodeId": 526,
+        "targetNodeId": 5832,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2506128,
+        "sourceNodeId": 5832,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 526,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1579",
+          "idType": "ENTREZ",
+          "name": "1579",
+          "pathways": [
+            "hsa00071",
+            "hsa00590",
+            "hsa00830",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 5832,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5894",
+          "idType": "ENTREZ",
+          "name": "5894",
+          "pathways": [
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04062",
+            "hsa04068",
+            "hsa04151",
+            "hsa04270",
+            "hsa04370",
+            "hsa04510",
+            "hsa04540",
+            "hsa04550",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04666",
+            "hsa04720",
+            "hsa04722",
+            "hsa04726",
+            "hsa04730",
+            "hsa04810",
+            "hsa04910",
+            "hsa04912",
+            "hsa04914",
+            "hsa04915",
+            "hsa04916",
+            "hsa04917",
+            "hsa04919",
+            "hsa04921",
+            "hsa05034",
+            "hsa05152",
+            "hsa05160",
+            "hsa05161",
+            "hsa05164",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05210",
+            "hsa05211",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05219",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823302,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8417,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2506947,
+        "sourceNodeId": 8417,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8417,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "49861",
+          "idType": "ENTREZ",
+          "name": "49861",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47278,
+        "sourceNodeId": 5,
+        "targetNodeId": 526,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1686794,
+        "sourceNodeId": 526,
+        "targetNodeId": 5826,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2502451,
+        "sourceNodeId": 5826,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 526,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1579",
+          "idType": "ENTREZ",
+          "name": "1579",
+          "pathways": [
+            "hsa00071",
+            "hsa00590",
+            "hsa00830",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 5826,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5594",
+          "idType": "ENTREZ",
+          "name": "5594",
+          "pathways": [
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04062",
+            "hsa04066",
+            "hsa04068",
+            "hsa04114",
+            "hsa04150",
+            "hsa04151",
+            "hsa04261",
+            "hsa04270",
+            "hsa04320",
+            "hsa04350",
+            "hsa04360",
+            "hsa04370",
+            "hsa04380",
+            "hsa04510",
+            "hsa04520",
+            "hsa04540",
+            "hsa04550",
+            "hsa04611",
+            "hsa04620",
+            "hsa04621",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04666",
+            "hsa04668",
+            "hsa04713",
+            "hsa04720",
+            "hsa04722",
+            "hsa04723",
+            "hsa04724",
+            "hsa04725",
+            "hsa04726",
+            "hsa04730",
+            "hsa04810",
+            "hsa04910",
+            "hsa04912",
+            "hsa04914",
+            "hsa04915",
+            "hsa04916",
+            "hsa04917",
+            "hsa04919",
+            "hsa04921",
+            "hsa04930",
+            "hsa04960",
+            "hsa05010",
+            "hsa05020",
+            "hsa05034",
+            "hsa05131",
+            "hsa05132",
+            "hsa05133",
+            "hsa05140",
+            "hsa05142",
+            "hsa05145",
+            "hsa05152",
+            "hsa05160",
+            "hsa05161",
+            "hsa05164",
+            "hsa05200",
+            "hsa05203",
+            "hsa05205",
+            "hsa05206",
+            "hsa05210",
+            "hsa05211",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05216",
+            "hsa05218",
+            "hsa05219",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823204,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8420,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2500557,
+        "sourceNodeId": 8420,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8420,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "644672",
+          "idType": "ENTREZ",
+          "name": "644672",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47278,
+        "sourceNodeId": 5,
+        "targetNodeId": 526,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1686789,
+        "sourceNodeId": 526,
+        "targetNodeId": 5827,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2502407,
+        "sourceNodeId": 5827,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 526,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1579",
+          "idType": "ENTREZ",
+          "name": "1579",
+          "pathways": [
+            "hsa00071",
+            "hsa00590",
+            "hsa00830",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 5827,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5595",
+          "idType": "ENTREZ",
+          "name": "5595",
+          "pathways": [
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04062",
+            "hsa04066",
+            "hsa04068",
+            "hsa04114",
+            "hsa04150",
+            "hsa04151",
+            "hsa04261",
+            "hsa04270",
+            "hsa04320",
+            "hsa04350",
+            "hsa04360",
+            "hsa04370",
+            "hsa04380",
+            "hsa04510",
+            "hsa04520",
+            "hsa04540",
+            "hsa04550",
+            "hsa04611",
+            "hsa04620",
+            "hsa04621",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04666",
+            "hsa04668",
+            "hsa04713",
+            "hsa04720",
+            "hsa04722",
+            "hsa04723",
+            "hsa04724",
+            "hsa04725",
+            "hsa04726",
+            "hsa04730",
+            "hsa04810",
+            "hsa04910",
+            "hsa04912",
+            "hsa04914",
+            "hsa04915",
+            "hsa04916",
+            "hsa04917",
+            "hsa04919",
+            "hsa04921",
+            "hsa04930",
+            "hsa04960",
+            "hsa05010",
+            "hsa05020",
+            "hsa05034",
+            "hsa05131",
+            "hsa05132",
+            "hsa05133",
+            "hsa05140",
+            "hsa05142",
+            "hsa05145",
+            "hsa05152",
+            "hsa05160",
+            "hsa05161",
+            "hsa05164",
+            "hsa05200",
+            "hsa05203",
+            "hsa05205",
+            "hsa05210",
+            "hsa05211",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05216",
+            "hsa05218",
+            "hsa05219",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823201,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8422,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2500319,
+        "sourceNodeId": 8422,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8422,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "9071",
+          "idType": "ENTREZ",
+          "name": "9071",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47278,
+        "sourceNodeId": 5,
+        "targetNodeId": 526,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1686786,
+        "sourceNodeId": 526,
+        "targetNodeId": 5833,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2508471,
+        "sourceNodeId": 5833,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 526,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1579",
+          "idType": "ENTREZ",
+          "name": "1579",
+          "pathways": [
+            "hsa00071",
+            "hsa00590",
+            "hsa00830",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 5833,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "673",
+          "idType": "ENTREZ",
+          "name": "673",
+          "pathways": [
+            "hsa04010",
+            "hsa04012",
+            "hsa04015",
+            "hsa04024",
+            "hsa04062",
+            "hsa04068",
+            "hsa04150",
+            "hsa04270",
+            "hsa04510",
+            "hsa04650",
+            "hsa04720",
+            "hsa04722",
+            "hsa04726",
+            "hsa04730",
+            "hsa04810",
+            "hsa04910",
+            "hsa04914",
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05210",
+            "hsa05211",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05216",
+            "hsa05218",
+            "hsa05219",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823200,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8423,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2500645,
+        "sourceNodeId": 8423,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8423,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "9073",
+          "idType": "ENTREZ",
+          "name": "9073",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47279,
+        "sourceNodeId": 5,
+        "targetNodeId": 400,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2259725,
+        "sourceNodeId": 400,
+        "targetNodeId": 5978,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04920"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2509192,
+        "sourceNodeId": 5978,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 400,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "2180",
+          "idType": "ENTREZ",
+          "name": "2180",
+          "pathways": [
+            "hsa00061",
+            "hsa00071",
+            "hsa01212",
+            "hsa03320",
+            "hsa04146",
+            "hsa04920"
+          ]
+        }
+      },
+      {
+        "id": 5978,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "7186",
+          "idType": "ENTREZ",
+          "name": "7186",
+          "pathways": [
+            "hsa04010",
+            "hsa04064",
+            "hsa04141",
+            "hsa04210",
+            "hsa04380",
+            "hsa04622",
+            "hsa04668",
+            "hsa04920",
+            "hsa04932",
+            "hsa05160",
+            "hsa05168",
+            "hsa05169",
+            "hsa05200",
+            "hsa05203",
+            "hsa05222"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47281,
+        "sourceNodeId": 5,
+        "targetNodeId": 527,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1687148,
+        "sourceNodeId": 527,
+        "targetNodeId": 6042,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2504025,
+        "sourceNodeId": 6042,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 527,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "284541",
+          "idType": "ENTREZ",
+          "name": "284541",
+          "pathways": [
+            "hsa00071",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 6042,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00076",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00076",
+          "pathways": [
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020",
+            "hsa04022",
+            "hsa04024",
+            "hsa04062",
+            "hsa04064",
+            "hsa04066",
+            "hsa04070",
+            "hsa04114",
+            "hsa04141",
+            "hsa04152",
+            "hsa04260",
+            "hsa04261",
+            "hsa04270",
+            "hsa04310",
+            "hsa04360",
+            "hsa04370",
+            "hsa04380",
+            "hsa04540",
+            "hsa04611",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04666",
+            "hsa04670",
+            "hsa04710",
+            "hsa04713",
+            "hsa04720",
+            "hsa04721",
+            "hsa04722",
+            "hsa04723",
+            "hsa04724",
+            "hsa04725",
+            "hsa04726",
+            "hsa04727",
+            "hsa04728",
+            "hsa04730",
+            "hsa04740",
+            "hsa04742",
+            "hsa04744",
+            "hsa04750",
+            "hsa04911",
+            "hsa04912",
+            "hsa04915",
+            "hsa04916",
+            "hsa04918",
+            "hsa04919",
+            "hsa04921",
+            "hsa04930",
+            "hsa04961",
+            "hsa04970",
+            "hsa04971",
+            "hsa04972",
+            "hsa04973",
+            "hsa04974",
+            "hsa04978",
+            "hsa05010",
+            "hsa05014",
+            "hsa05016",
+            "hsa05031",
+            "hsa05032",
+            "hsa05033",
+            "hsa05034",
+            "hsa05133",
+            "hsa05140",
+            "hsa05142",
+            "hsa05143",
+            "hsa05145",
+            "hsa05146",
+            "hsa05152",
+            "hsa05160",
+            "hsa05166",
+            "hsa05169",
+            "hsa05200",
+            "hsa05214",
+            "hsa05223",
+            "hsa05410",
+            "hsa05412",
+            "hsa05414"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47278,
+        "sourceNodeId": 5,
+        "targetNodeId": 526,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1686775,
+        "sourceNodeId": 526,
+        "targetNodeId": 5330,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2589204,
+        "sourceNodeId": 5330,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 526,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1579",
+          "idType": "ENTREZ",
+          "name": "1579",
+          "pathways": [
+            "hsa00071",
+            "hsa00590",
+            "hsa00830",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 5330,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5501",
+          "idType": "ENTREZ",
+          "name": "5501",
+          "pathways": [
+            "hsa03015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04114",
+            "hsa04261",
+            "hsa04270",
+            "hsa04390",
+            "hsa04510",
+            "hsa04611",
+            "hsa04720",
+            "hsa04728",
+            "hsa04750",
+            "hsa04810",
+            "hsa04910",
+            "hsa04921",
+            "hsa05031",
+            "hsa05034",
+            "hsa05168",
+            "hsa05205"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823199,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8425,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2500469,
+        "sourceNodeId": 8425,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8425,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "9075",
+          "idType": "ENTREZ",
+          "name": "9075",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47279,
+        "sourceNodeId": 5,
+        "targetNodeId": 400,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2259722,
+        "sourceNodeId": 400,
+        "targetNodeId": 5820,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04920"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2505055,
+        "sourceNodeId": 5820,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 400,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "2180",
+          "idType": "ENTREZ",
+          "name": "2180",
+          "pathways": [
+            "hsa00061",
+            "hsa00071",
+            "hsa01212",
+            "hsa03320",
+            "hsa04146",
+            "hsa04920"
+          ]
+        }
+      },
+      {
+        "id": 5820,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5970",
+          "idType": "ENTREZ",
+          "name": "5970",
+          "pathways": [
+            "hsa04010",
+            "hsa04014",
+            "hsa04024",
+            "hsa04062",
+            "hsa04064",
+            "hsa04066",
+            "hsa04151",
+            "hsa04210",
+            "hsa04380",
+            "hsa04620",
+            "hsa04621",
+            "hsa04622",
+            "hsa04623",
+            "hsa04660",
+            "hsa04662",
+            "hsa04668",
+            "hsa04722",
+            "hsa04917",
+            "hsa04920",
+            "hsa04932",
+            "hsa05030",
+            "hsa05120",
+            "hsa05131",
+            "hsa05132",
+            "hsa05133",
+            "hsa05134",
+            "hsa05140",
+            "hsa05142",
+            "hsa05145",
+            "hsa05146",
+            "hsa05152",
+            "hsa05160",
+            "hsa05161",
+            "hsa05162",
+            "hsa05164",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05200",
+            "hsa05202",
+            "hsa05203",
+            "hsa05212",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05222",
+            "hsa05321"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47281,
+        "sourceNodeId": 5,
+        "targetNodeId": 527,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1687143,
+        "sourceNodeId": 527,
+        "targetNodeId": 6091,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2503687,
+        "sourceNodeId": 6091,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 527,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "284541",
+          "idType": "ENTREZ",
+          "name": "284541",
+          "pathways": [
+            "hsa00071",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 6091,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "369",
+          "idType": "ENTREZ",
+          "name": "369",
+          "pathways": [
+            "hsa04012",
+            "hsa04068",
+            "hsa04270",
+            "hsa04650",
+            "hsa04720",
+            "hsa04726",
+            "hsa04730",
+            "hsa04810",
+            "hsa04910",
+            "hsa04914",
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05210",
+            "hsa05211",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05219",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2218048,
+        "sourceNodeId": 29,
+        "targetNodeId": 5329,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04910"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2589048,
+        "sourceNodeId": 5329,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 5329,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5500",
+          "idType": "ENTREZ",
+          "name": "5500",
+          "pathways": [
+            "hsa03015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04114",
+            "hsa04261",
+            "hsa04270",
+            "hsa04390",
+            "hsa04510",
+            "hsa04611",
+            "hsa04720",
+            "hsa04728",
+            "hsa04750",
+            "hsa04810",
+            "hsa04910",
+            "hsa04921",
+            "hsa05031",
+            "hsa05034",
+            "hsa05168",
+            "hsa05205"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47278,
+        "sourceNodeId": 5,
+        "targetNodeId": 526,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1686774,
+        "sourceNodeId": 526,
+        "targetNodeId": 5329,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2589048,
+        "sourceNodeId": 5329,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 526,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1579",
+          "idType": "ENTREZ",
+          "name": "1579",
+          "pathways": [
+            "hsa00071",
+            "hsa00590",
+            "hsa00830",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 5329,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5500",
+          "idType": "ENTREZ",
+          "name": "5500",
+          "pathways": [
+            "hsa03015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04114",
+            "hsa04261",
+            "hsa04270",
+            "hsa04390",
+            "hsa04510",
+            "hsa04611",
+            "hsa04720",
+            "hsa04728",
+            "hsa04750",
+            "hsa04810",
+            "hsa04910",
+            "hsa04921",
+            "hsa05031",
+            "hsa05034",
+            "hsa05168",
+            "hsa05205"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2276238,
+        "sourceNodeId": 29,
+        "targetNodeId": 5820,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04932"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2505055,
+        "sourceNodeId": 5820,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 5820,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5970",
+          "idType": "ENTREZ",
+          "name": "5970",
+          "pathways": [
+            "hsa04010",
+            "hsa04014",
+            "hsa04024",
+            "hsa04062",
+            "hsa04064",
+            "hsa04066",
+            "hsa04151",
+            "hsa04210",
+            "hsa04380",
+            "hsa04620",
+            "hsa04621",
+            "hsa04622",
+            "hsa04623",
+            "hsa04660",
+            "hsa04662",
+            "hsa04668",
+            "hsa04722",
+            "hsa04917",
+            "hsa04920",
+            "hsa04932",
+            "hsa05030",
+            "hsa05120",
+            "hsa05131",
+            "hsa05132",
+            "hsa05133",
+            "hsa05134",
+            "hsa05140",
+            "hsa05142",
+            "hsa05145",
+            "hsa05146",
+            "hsa05152",
+            "hsa05160",
+            "hsa05161",
+            "hsa05162",
+            "hsa05164",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05200",
+            "hsa05202",
+            "hsa05203",
+            "hsa05212",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05222",
+            "hsa05321"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47278,
+        "sourceNodeId": 5,
+        "targetNodeId": 526,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1686824,
+        "sourceNodeId": 526,
+        "targetNodeId": 6042,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2504025,
+        "sourceNodeId": 6042,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 526,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1579",
+          "idType": "ENTREZ",
+          "name": "1579",
+          "pathways": [
+            "hsa00071",
+            "hsa00590",
+            "hsa00830",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 6042,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00076",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00076",
+          "pathways": [
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020",
+            "hsa04022",
+            "hsa04024",
+            "hsa04062",
+            "hsa04064",
+            "hsa04066",
+            "hsa04070",
+            "hsa04114",
+            "hsa04141",
+            "hsa04152",
+            "hsa04260",
+            "hsa04261",
+            "hsa04270",
+            "hsa04310",
+            "hsa04360",
+            "hsa04370",
+            "hsa04380",
+            "hsa04540",
+            "hsa04611",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04666",
+            "hsa04670",
+            "hsa04710",
+            "hsa04713",
+            "hsa04720",
+            "hsa04721",
+            "hsa04722",
+            "hsa04723",
+            "hsa04724",
+            "hsa04725",
+            "hsa04726",
+            "hsa04727",
+            "hsa04728",
+            "hsa04730",
+            "hsa04740",
+            "hsa04742",
+            "hsa04744",
+            "hsa04750",
+            "hsa04911",
+            "hsa04912",
+            "hsa04915",
+            "hsa04916",
+            "hsa04918",
+            "hsa04919",
+            "hsa04921",
+            "hsa04930",
+            "hsa04961",
+            "hsa04970",
+            "hsa04971",
+            "hsa04972",
+            "hsa04973",
+            "hsa04974",
+            "hsa04978",
+            "hsa05010",
+            "hsa05014",
+            "hsa05016",
+            "hsa05031",
+            "hsa05032",
+            "hsa05033",
+            "hsa05034",
+            "hsa05133",
+            "hsa05140",
+            "hsa05142",
+            "hsa05143",
+            "hsa05145",
+            "hsa05146",
+            "hsa05152",
+            "hsa05160",
+            "hsa05166",
+            "hsa05169",
+            "hsa05200",
+            "hsa05214",
+            "hsa05223",
+            "hsa05410",
+            "hsa05412",
+            "hsa05414"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2270920,
+        "sourceNodeId": 29,
+        "targetNodeId": 5992,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04930",
+            "hsa04932"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2502096,
+        "sourceNodeId": 5992,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 5992,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "7124",
+          "idType": "ENTREZ",
+          "name": "7124",
+          "pathways": [
+            "hsa04010",
+            "hsa04060",
+            "hsa04064",
+            "hsa04150",
+            "hsa04210",
+            "hsa04350",
+            "hsa04380",
+            "hsa04612",
+            "hsa04620",
+            "hsa04621",
+            "hsa04622",
+            "hsa04640",
+            "hsa04650",
+            "hsa04660",
+            "hsa04664",
+            "hsa04668",
+            "hsa04920",
+            "hsa04930",
+            "hsa04932",
+            "hsa04940",
+            "hsa05010",
+            "hsa05014",
+            "hsa05133",
+            "hsa05134",
+            "hsa05140",
+            "hsa05142",
+            "hsa05143",
+            "hsa05144",
+            "hsa05145",
+            "hsa05146",
+            "hsa05152",
+            "hsa05160",
+            "hsa05161",
+            "hsa05164",
+            "hsa05166",
+            "hsa05168",
+            "hsa05205",
+            "hsa05310",
+            "hsa05321",
+            "hsa05322",
+            "hsa05323",
+            "hsa05330",
+            "hsa05332",
+            "hsa05410",
+            "hsa05414"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47278,
+        "sourceNodeId": 5,
+        "targetNodeId": 526,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1686819,
+        "sourceNodeId": 526,
+        "targetNodeId": 6091,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04270"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2503687,
+        "sourceNodeId": 6091,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 526,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1579",
+          "idType": "ENTREZ",
+          "name": "1579",
+          "pathways": [
+            "hsa00071",
+            "hsa00590",
+            "hsa00830",
+            "hsa04270"
+          ]
+        }
+      },
+      {
+        "id": 6091,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "369",
+          "idType": "ENTREZ",
+          "name": "369",
+          "pathways": [
+            "hsa04012",
+            "hsa04068",
+            "hsa04270",
+            "hsa04650",
+            "hsa04720",
+            "hsa04726",
+            "hsa04730",
+            "hsa04810",
+            "hsa04910",
+            "hsa04914",
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05210",
+            "hsa05211",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05219",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2218038,
+        "sourceNodeId": 29,
+        "targetNodeId": 5670,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04910"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2500834,
+        "sourceNodeId": 5670,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 5670,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5170",
+          "idType": "ENTREZ",
+          "name": "5170",
+          "pathways": [
+            "hsa03320",
+            "hsa04068",
+            "hsa04150",
+            "hsa04151",
+            "hsa04152",
+            "hsa04510",
+            "hsa04660",
+            "hsa04664",
+            "hsa04722",
+            "hsa04910",
+            "hsa04919",
+            "hsa04960",
+            "hsa05145",
+            "hsa05160",
+            "hsa05205",
+            "hsa05213",
+            "hsa05215",
+            "hsa05223",
+            "hsa05231"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823198,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8424,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2499990,
+        "sourceNodeId": 8424,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8424,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "9074",
+          "idType": "ENTREZ",
+          "name": "9074",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2270915,
+        "sourceNodeId": 29,
+        "targetNodeId": 6042,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04930"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2504025,
+        "sourceNodeId": 6042,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 6042,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00076",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00076",
+          "pathways": [
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020",
+            "hsa04022",
+            "hsa04024",
+            "hsa04062",
+            "hsa04064",
+            "hsa04066",
+            "hsa04070",
+            "hsa04114",
+            "hsa04141",
+            "hsa04152",
+            "hsa04260",
+            "hsa04261",
+            "hsa04270",
+            "hsa04310",
+            "hsa04360",
+            "hsa04370",
+            "hsa04380",
+            "hsa04540",
+            "hsa04611",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04666",
+            "hsa04670",
+            "hsa04710",
+            "hsa04713",
+            "hsa04720",
+            "hsa04721",
+            "hsa04722",
+            "hsa04723",
+            "hsa04724",
+            "hsa04725",
+            "hsa04726",
+            "hsa04727",
+            "hsa04728",
+            "hsa04730",
+            "hsa04740",
+            "hsa04742",
+            "hsa04744",
+            "hsa04750",
+            "hsa04911",
+            "hsa04912",
+            "hsa04915",
+            "hsa04916",
+            "hsa04918",
+            "hsa04919",
+            "hsa04921",
+            "hsa04930",
+            "hsa04961",
+            "hsa04970",
+            "hsa04971",
+            "hsa04972",
+            "hsa04973",
+            "hsa04974",
+            "hsa04978",
+            "hsa05010",
+            "hsa05014",
+            "hsa05016",
+            "hsa05031",
+            "hsa05032",
+            "hsa05033",
+            "hsa05034",
+            "hsa05133",
+            "hsa05140",
+            "hsa05142",
+            "hsa05143",
+            "hsa05145",
+            "hsa05146",
+            "hsa05152",
+            "hsa05160",
+            "hsa05166",
+            "hsa05169",
+            "hsa05200",
+            "hsa05214",
+            "hsa05223",
+            "hsa05410",
+            "hsa05412",
+            "hsa05414"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823197,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8426,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2499791,
+        "sourceNodeId": 8426,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8426,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "9076",
+          "idType": "ENTREZ",
+          "name": "9076",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05130",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2276233,
+        "sourceNodeId": 29,
+        "targetNodeId": 5818,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04932"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2508516,
+        "sourceNodeId": 5818,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 5818,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "4790",
+          "idType": "ENTREZ",
+          "name": "4790",
+          "pathways": [
+            "hsa04010",
+            "hsa04014",
+            "hsa04024",
+            "hsa04062",
+            "hsa04064",
+            "hsa04066",
+            "hsa04151",
+            "hsa04210",
+            "hsa04380",
+            "hsa04620",
+            "hsa04621",
+            "hsa04622",
+            "hsa04623",
+            "hsa04660",
+            "hsa04662",
+            "hsa04668",
+            "hsa04722",
+            "hsa04917",
+            "hsa04920",
+            "hsa04932",
+            "hsa05030",
+            "hsa05120",
+            "hsa05131",
+            "hsa05132",
+            "hsa05133",
+            "hsa05134",
+            "hsa05140",
+            "hsa05142",
+            "hsa05145",
+            "hsa05146",
+            "hsa05152",
+            "hsa05160",
+            "hsa05161",
+            "hsa05162",
+            "hsa05164",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05200",
+            "hsa05202",
+            "hsa05203",
+            "hsa05206",
+            "hsa05212",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05222",
+            "hsa05321"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823300,
+        "sourceNodeId": 1719,
+        "targetNodeId": 5312,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2507495,
+        "sourceNodeId": 5312,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 5312,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5521",
+          "idType": "ENTREZ",
+          "name": "5521",
+          "pathways": [
+            "hsa03015",
+            "hsa04151",
+            "hsa04152",
+            "hsa04261",
+            "hsa04390",
+            "hsa04530",
+            "hsa04728",
+            "hsa05142",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2276252,
+        "sourceNodeId": 29,
+        "targetNodeId": 5978,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04932"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2509192,
+        "sourceNodeId": 5978,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 5978,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "7186",
+          "idType": "ENTREZ",
+          "name": "7186",
+          "pathways": [
+            "hsa04010",
+            "hsa04064",
+            "hsa04141",
+            "hsa04210",
+            "hsa04380",
+            "hsa04622",
+            "hsa04668",
+            "hsa04920",
+            "hsa04932",
+            "hsa05160",
+            "hsa05168",
+            "hsa05169",
+            "hsa05200",
+            "hsa05203",
+            "hsa05222"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823297,
+        "sourceNodeId": 1719,
+        "targetNodeId": 5311,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2507451,
+        "sourceNodeId": 5311,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 5311,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5520",
+          "idType": "ENTREZ",
+          "name": "5520",
+          "pathways": [
+            "hsa03015",
+            "hsa04151",
+            "hsa04152",
+            "hsa04261",
+            "hsa04390",
+            "hsa04530",
+            "hsa04728",
+            "hsa05142",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2276190,
+        "sourceNodeId": 29,
+        "targetNodeId": 7200,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04932"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2597115,
+        "sourceNodeId": 7200,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 7200,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "841",
+          "idType": "ENTREZ",
+          "name": "841",
+          "pathways": [
+            "hsa04115",
+            "hsa04210",
+            "hsa04620",
+            "hsa04621",
+            "hsa04622",
+            "hsa04668",
+            "hsa04932",
+            "hsa05010",
+            "hsa05016",
+            "hsa05134",
+            "hsa05142",
+            "hsa05145",
+            "hsa05152",
+            "hsa05161",
+            "hsa05168",
+            "hsa05200",
+            "hsa05203",
+            "hsa05416"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823259,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8427,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2504159,
+        "sourceNodeId": 8427,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8427,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "9080",
+          "idType": "ENTREZ",
+          "name": "9080",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2218151,
+        "sourceNodeId": 29,
+        "targetNodeId": 5955,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04910",
+            "hsa04932"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2508135,
+        "sourceNodeId": 5955,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 5955,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "208",
+          "idType": "ENTREZ",
+          "name": "208",
+          "pathways": [
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04062",
+            "hsa04066",
+            "hsa04068",
+            "hsa04150",
+            "hsa04151",
+            "hsa04152",
+            "hsa04210",
+            "hsa04261",
+            "hsa04370",
+            "hsa04380",
+            "hsa04510",
+            "hsa04530",
+            "hsa04550",
+            "hsa04611",
+            "hsa04620",
+            "hsa04630",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04666",
+            "hsa04668",
+            "hsa04722",
+            "hsa04725",
+            "hsa04728",
+            "hsa04910",
+            "hsa04914",
+            "hsa04915",
+            "hsa04917",
+            "hsa04919",
+            "hsa04920",
+            "hsa04932",
+            "hsa04973",
+            "hsa05142",
+            "hsa05145",
+            "hsa05152",
+            "hsa05160",
+            "hsa05161",
+            "hsa05162",
+            "hsa05164",
+            "hsa05166",
+            "hsa05169",
+            "hsa05200",
+            "hsa05205",
+            "hsa05210",
+            "hsa05211",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05220",
+            "hsa05221",
+            "hsa05222",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823296,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8416,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2506215,
+        "sourceNodeId": 8416,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8416,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "26285",
+          "idType": "ENTREZ",
+          "name": "26285",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47274,
+        "sourceNodeId": 5,
+        "targetNodeId": 529,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1103841,
+        "sourceNodeId": 529,
+        "targetNodeId": 5330,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04024"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2589204,
+        "sourceNodeId": 5330,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 529,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "8310",
+          "idType": "ENTREZ",
+          "name": "8310",
+          "pathways": [
+            "hsa00071",
+            "hsa00592",
+            "hsa01040",
+            "hsa01212",
+            "hsa03320",
+            "hsa04024",
+            "hsa04146"
+          ]
+        }
+      },
+      {
+        "id": 5330,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5501",
+          "idType": "ENTREZ",
+          "name": "5501",
+          "pathways": [
+            "hsa03015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04114",
+            "hsa04261",
+            "hsa04270",
+            "hsa04390",
+            "hsa04510",
+            "hsa04611",
+            "hsa04720",
+            "hsa04728",
+            "hsa04750",
+            "hsa04810",
+            "hsa04910",
+            "hsa04921",
+            "hsa05031",
+            "hsa05034",
+            "hsa05168",
+            "hsa05205"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2218149,
+        "sourceNodeId": 29,
+        "targetNodeId": 5954,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04910",
+            "hsa04932"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2508117,
+        "sourceNodeId": 5954,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 5954,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "207",
+          "idType": "ENTREZ",
+          "name": "207",
+          "pathways": [
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04062",
+            "hsa04066",
+            "hsa04068",
+            "hsa04150",
+            "hsa04151",
+            "hsa04152",
+            "hsa04210",
+            "hsa04261",
+            "hsa04370",
+            "hsa04380",
+            "hsa04510",
+            "hsa04530",
+            "hsa04550",
+            "hsa04611",
+            "hsa04620",
+            "hsa04630",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04666",
+            "hsa04668",
+            "hsa04722",
+            "hsa04725",
+            "hsa04728",
+            "hsa04910",
+            "hsa04914",
+            "hsa04915",
+            "hsa04917",
+            "hsa04919",
+            "hsa04920",
+            "hsa04932",
+            "hsa04973",
+            "hsa05142",
+            "hsa05145",
+            "hsa05152",
+            "hsa05160",
+            "hsa05161",
+            "hsa05162",
+            "hsa05164",
+            "hsa05166",
+            "hsa05169",
+            "hsa05200",
+            "hsa05205",
+            "hsa05210",
+            "hsa05211",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05220",
+            "hsa05221",
+            "hsa05222",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 244896,
+        "sourceNodeId": 5,
+        "targetNodeId": 1719,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00310"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1823330,
+        "sourceNodeId": 1719,
+        "targetNodeId": 8411,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04530"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2508914,
+        "sourceNodeId": 8411,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 1719,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "55870",
+          "idType": "ENTREZ",
+          "name": "55870",
+          "pathways": [
+            "hsa00310",
+            "hsa04530"
+          ]
+        }
+      },
+      {
+        "id": 8411,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "1366",
+          "idType": "ENTREZ",
+          "name": "1366",
+          "pathways": [
+            "hsa04514",
+            "hsa04530",
+            "hsa04670",
+            "hsa05160"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 304329,
+        "sourceNodeId": 5,
+        "targetNodeId": 2078,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00380"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2462267,
+        "sourceNodeId": 2078,
+        "targetNodeId": 8649,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05143"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2605817,
+        "sourceNodeId": 8649,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05168"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 2078,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3620",
+          "idType": "ENTREZ",
+          "name": "3620",
+          "pathways": [
+            "hsa00380",
+            "hsa05143"
+          ]
+        }
+      },
+      {
+        "id": 8649,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "54106",
+          "idType": "ENTREZ",
+          "name": "54106",
+          "pathways": [
+            "hsa04620",
+            "hsa05142",
+            "hsa05143",
+            "hsa05144",
+            "hsa05152",
+            "hsa05162",
+            "hsa05168"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 47274,
+        "sourceNodeId": 5,
+        "targetNodeId": 529,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00071"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 1103665,
+        "sourceNodeId": 529,
+        "targetNodeId": 5833,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa04024"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2508471,
+        "sourceNodeId": 5833,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 529,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "8310",
+          "idType": "ENTREZ",
+          "name": "8310",
+          "pathways": [
+            "hsa00071",
+            "hsa00592",
+            "hsa01040",
+            "hsa01212",
+            "hsa03320",
+            "hsa04024",
+            "hsa04146"
+          ]
+        }
+      },
+      {
+        "id": 5833,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "673",
+          "idType": "ENTREZ",
+          "name": "673",
+          "pathways": [
+            "hsa04010",
+            "hsa04012",
+            "hsa04015",
+            "hsa04024",
+            "hsa04062",
+            "hsa04068",
+            "hsa04150",
+            "hsa04270",
+            "hsa04510",
+            "hsa04650",
+            "hsa04720",
+            "hsa04722",
+            "hsa04726",
+            "hsa04730",
+            "hsa04810",
+            "hsa04910",
+            "hsa04914",
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05210",
+            "hsa05211",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05216",
+            "hsa05218",
+            "hsa05219",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 1349,
+        "sourceNodeId": 5,
+        "targetNodeId": 29,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00010",
+            "hsa00620"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2218145,
+        "sourceNodeId": 29,
+        "targetNodeId": 2917,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04910",
+            "hsa04930",
+            "hsa04932"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2507412,
+        "sourceNodeId": 2917,
+        "targetNodeId": 9999,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05160"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 5,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "223",
+          "idType": "ENTREZ",
+          "name": "223",
+          "pathways": [
+            "hsa00010",
+            "hsa00053",
+            "hsa00071",
+            "hsa00280",
+            "hsa00310",
+            "hsa00330",
+            "hsa00340",
+            "hsa00380",
+            "hsa00410",
+            "hsa00561",
+            "hsa00620"
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5313",
+          "idType": "ENTREZ",
+          "name": "5313",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04910",
+            "hsa04930",
+            "hsa04932",
+            "hsa04950"
+          ]
+        }
+      },
+      {
+        "id": 2917,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5291",
+          "idType": "ENTREZ",
+          "name": "5291",
+          "pathways": [
+            "hsa00562",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04022",
+            "hsa04024",
+            "hsa04062",
+            "hsa04066",
+            "hsa04068",
+            "hsa04070",
+            "hsa04150",
+            "hsa04151",
+            "hsa04152",
+            "hsa04210",
+            "hsa04261",
+            "hsa04370",
+            "hsa04380",
+            "hsa04510",
+            "hsa04550",
+            "hsa04611",
+            "hsa04620",
+            "hsa04630",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04666",
+            "hsa04668",
+            "hsa04670",
+            "hsa04722",
+            "hsa04725",
+            "hsa04750",
+            "hsa04810",
+            "hsa04910",
+            "hsa04914",
+            "hsa04915",
+            "hsa04917",
+            "hsa04919",
+            "hsa04921",
+            "hsa04930",
+            "hsa04932",
+            "hsa04960",
+            "hsa04973",
+            "hsa05100",
+            "hsa05142",
+            "hsa05145",
+            "hsa05146",
+            "hsa05160",
+            "hsa05161",
+            "hsa05162",
+            "hsa05164",
+            "hsa05166",
+            "hsa05169",
+            "hsa05200",
+            "hsa05203",
+            "hsa05205",
+            "hsa05210",
+            "hsa05211",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05220",
+            "hsa05221",
+            "hsa05222",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231"
+          ]
+        }
+      },
+      {
+        "id": 9999,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3434",
+          "idType": "ENTREZ",
+          "name": "3434",
+          "pathways": [
+            "hsa05160",
+            "hsa05168"
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,2276 @@
+[
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63191,
+        "sourceNodeId": 780,
+        "targetNodeId": 732,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2416658,
+        "sourceNodeId": 732,
+        "targetNodeId": 9855,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05034"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2771570,
+        "sourceNodeId": 9855,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05203"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 732,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00082",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00082",
+          "pathways": [
+            "hsa00130",
+            "hsa00350",
+            "hsa00360",
+            "hsa00400",
+            "hsa00460",
+            "hsa00730",
+            "hsa00970",
+            "hsa01210",
+            "hsa01230",
+            "hsa04728",
+            "hsa04916",
+            "hsa04917",
+            "hsa05012",
+            "hsa05030",
+            "hsa05031",
+            "hsa05034"
+          ]
+        }
+      },
+      {
+        "id": 9855,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "3017",
+          "idType": "ENTREZ",
+          "name": "3017",
+          "pathways": [
+            "hsa05034",
+            "hsa05203",
+            "hsa05322"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63153,
+        "sourceNodeId": 780,
+        "targetNodeId": 717,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 99951,
+        "sourceNodeId": 717,
+        "targetNodeId": 934,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00190"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2383191,
+        "sourceNodeId": 934,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05016"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 717,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00399",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00399",
+          "pathways": [
+            "hsa00130",
+            "hsa00190"
+          ]
+        }
+      },
+      {
+        "id": 934,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "4701",
+          "idType": "ENTREZ",
+          "name": "4701",
+          "pathways": [
+            "hsa00190",
+            "hsa04932",
+            "hsa05010",
+            "hsa05012",
+            "hsa05016"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63191,
+        "sourceNodeId": 780,
+        "targetNodeId": 732,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2416712,
+        "sourceNodeId": 732,
+        "targetNodeId": 9859,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05034"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2767857,
+        "sourceNodeId": 9859,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05203"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 732,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00082",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00082",
+          "pathways": [
+            "hsa00130",
+            "hsa00350",
+            "hsa00360",
+            "hsa00400",
+            "hsa00460",
+            "hsa00730",
+            "hsa00970",
+            "hsa01210",
+            "hsa01230",
+            "hsa04728",
+            "hsa04916",
+            "hsa04917",
+            "hsa05012",
+            "hsa05030",
+            "hsa05031",
+            "hsa05034"
+          ]
+        }
+      },
+      {
+        "id": 9859,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "8340",
+          "idType": "ENTREZ",
+          "name": "8340",
+          "pathways": [
+            "hsa05034",
+            "hsa05203",
+            "hsa05322"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63153,
+        "sourceNodeId": 780,
+        "targetNodeId": 717,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 100082,
+        "sourceNodeId": 717,
+        "targetNodeId": 936,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00190"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2396717,
+        "sourceNodeId": 936,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05016"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 717,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00399",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00399",
+          "pathways": [
+            "hsa00130",
+            "hsa00190"
+          ]
+        }
+      },
+      {
+        "id": 936,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "4698",
+          "idType": "ENTREZ",
+          "name": "4698",
+          "pathways": [
+            "hsa00190",
+            "hsa04932",
+            "hsa05010",
+            "hsa05012",
+            "hsa05016"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63191,
+        "sourceNodeId": 780,
+        "targetNodeId": 732,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2416706,
+        "sourceNodeId": 732,
+        "targetNodeId": 9482,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05034"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2780973,
+        "sourceNodeId": 9482,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05203"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 732,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00082",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00082",
+          "pathways": [
+            "hsa00130",
+            "hsa00350",
+            "hsa00360",
+            "hsa00400",
+            "hsa00460",
+            "hsa00730",
+            "hsa00970",
+            "hsa01210",
+            "hsa01230",
+            "hsa04728",
+            "hsa04916",
+            "hsa04917",
+            "hsa05012",
+            "hsa05030",
+            "hsa05031",
+            "hsa05034"
+          ]
+        }
+      },
+      {
+        "id": 9482,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "8841",
+          "idType": "ENTREZ",
+          "name": "8841",
+          "pathways": [
+            "hsa04919",
+            "hsa05034",
+            "hsa05203"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63167,
+        "sourceNodeId": 780,
+        "targetNodeId": 767,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 742865,
+        "sourceNodeId": 767,
+        "targetNodeId": 1460,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa01230"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2372992,
+        "sourceNodeId": 1460,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05016"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 767,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00251",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00251",
+          "pathways": [
+            "hsa00130",
+            "hsa00400",
+            "hsa00790",
+            "hsa01230"
+          ]
+        }
+      },
+      {
+        "id": 1460,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00025",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00025",
+          "pathways": [
+            "hsa00250",
+            "hsa00330",
+            "hsa00340",
+            "hsa00430",
+            "hsa00471",
+            "hsa00480",
+            "hsa00524",
+            "hsa00630",
+            "hsa00650",
+            "hsa00860",
+            "hsa00910",
+            "hsa00970",
+            "hsa01210",
+            "hsa01230",
+            "hsa02010",
+            "hsa04068",
+            "hsa04080",
+            "hsa04540",
+            "hsa04713",
+            "hsa04720",
+            "hsa04723",
+            "hsa04724",
+            "hsa04727",
+            "hsa04730",
+            "hsa04742",
+            "hsa04964",
+            "hsa04974",
+            "hsa05014",
+            "hsa05016",
+            "hsa05030",
+            "hsa05031",
+            "hsa05033",
+            "hsa05034",
+            "hsa05230"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63153,
+        "sourceNodeId": 780,
+        "targetNodeId": 717,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 100080,
+        "sourceNodeId": 717,
+        "targetNodeId": 1011,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00190"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2384236,
+        "sourceNodeId": 1011,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05016"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 717,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00399",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00399",
+          "pathways": [
+            "hsa00130",
+            "hsa00190"
+          ]
+        }
+      },
+      {
+        "id": 1011,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "514",
+          "idType": "ENTREZ",
+          "name": "514",
+          "pathways": [
+            "hsa00190",
+            "hsa05010",
+            "hsa05012",
+            "hsa05016"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63170,
+        "sourceNodeId": 780,
+        "targetNodeId": 733,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 753132,
+        "sourceNodeId": 733,
+        "targetNodeId": 30,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa01230"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2768451,
+        "sourceNodeId": 30,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05203"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 733,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C01179",
+          "idType": "KEGG_COMPOUND",
+          "name": "C01179",
+          "pathways": [
+            "hsa00130",
+            "hsa00350",
+            "hsa00400",
+            "hsa01210",
+            "hsa01230"
+          ]
+        }
+      },
+      {
+        "id": 30,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5315",
+          "idType": "ENTREZ",
+          "name": "5315",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04930",
+            "hsa05203",
+            "hsa05230"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63167,
+        "sourceNodeId": 780,
+        "targetNodeId": 767,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 742921,
+        "sourceNodeId": 767,
+        "targetNodeId": 30,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa01230"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2768451,
+        "sourceNodeId": 30,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05203"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 767,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00251",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00251",
+          "pathways": [
+            "hsa00130",
+            "hsa00400",
+            "hsa00790",
+            "hsa01230"
+          ]
+        }
+      },
+      {
+        "id": 30,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "5315",
+          "idType": "ENTREZ",
+          "name": "5315",
+          "pathways": [
+            "hsa00010",
+            "hsa00230",
+            "hsa00620",
+            "hsa01200",
+            "hsa01230",
+            "hsa04930",
+            "hsa05203",
+            "hsa05230"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63153,
+        "sourceNodeId": 780,
+        "targetNodeId": 717,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 100079,
+        "sourceNodeId": 717,
+        "targetNodeId": 952,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00190"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2395892,
+        "sourceNodeId": 952,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05016"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 717,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00399",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00399",
+          "pathways": [
+            "hsa00130",
+            "hsa00190"
+          ]
+        }
+      },
+      {
+        "id": 952,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "4719",
+          "idType": "ENTREZ",
+          "name": "4719",
+          "pathways": [
+            "hsa00190",
+            "hsa04932",
+            "hsa05010",
+            "hsa05012",
+            "hsa05016"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63136,
+        "sourceNodeId": 780,
+        "targetNodeId": 738,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 519768,
+        "sourceNodeId": 738,
+        "targetNodeId": 4052,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00900"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2587506,
+        "sourceNodeId": 4052,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05166"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 738,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C05427",
+          "idType": "KEGG_COMPOUND",
+          "name": "C05427",
+          "pathways": [
+            "hsa00130",
+            "hsa00900"
+          ]
+        }
+      },
+      {
+        "id": 4052,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "2224",
+          "idType": "ENTREZ",
+          "name": "2224",
+          "pathways": [
+            "hsa00900",
+            "hsa05164",
+            "hsa05166"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63191,
+        "sourceNodeId": 780,
+        "targetNodeId": 732,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2416698,
+        "sourceNodeId": 732,
+        "targetNodeId": 9882,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05034"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2779027,
+        "sourceNodeId": 9882,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05203"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 732,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00082",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00082",
+          "pathways": [
+            "hsa00130",
+            "hsa00350",
+            "hsa00360",
+            "hsa00400",
+            "hsa00460",
+            "hsa00730",
+            "hsa00970",
+            "hsa01210",
+            "hsa01230",
+            "hsa04728",
+            "hsa04916",
+            "hsa04917",
+            "hsa05012",
+            "hsa05030",
+            "hsa05031",
+            "hsa05034"
+          ]
+        }
+      },
+      {
+        "id": 9882,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "8367",
+          "idType": "ENTREZ",
+          "name": "8367",
+          "pathways": [
+            "hsa05034",
+            "hsa05203",
+            "hsa05322"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63170,
+        "sourceNodeId": 780,
+        "targetNodeId": 733,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 651313,
+        "sourceNodeId": 733,
+        "targetNodeId": 1460,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa01210",
+            "hsa01230"
+          ]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2372992,
+        "sourceNodeId": 1460,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05016"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 733,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C01179",
+          "idType": "KEGG_COMPOUND",
+          "name": "C01179",
+          "pathways": [
+            "hsa00130",
+            "hsa00350",
+            "hsa00400",
+            "hsa01210",
+            "hsa01230"
+          ]
+        }
+      },
+      {
+        "id": 1460,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00025",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00025",
+          "pathways": [
+            "hsa00250",
+            "hsa00330",
+            "hsa00340",
+            "hsa00430",
+            "hsa00471",
+            "hsa00480",
+            "hsa00524",
+            "hsa00630",
+            "hsa00650",
+            "hsa00860",
+            "hsa00910",
+            "hsa00970",
+            "hsa01210",
+            "hsa01230",
+            "hsa02010",
+            "hsa04068",
+            "hsa04080",
+            "hsa04540",
+            "hsa04713",
+            "hsa04720",
+            "hsa04723",
+            "hsa04724",
+            "hsa04727",
+            "hsa04730",
+            "hsa04742",
+            "hsa04964",
+            "hsa04974",
+            "hsa05014",
+            "hsa05016",
+            "hsa05030",
+            "hsa05031",
+            "hsa05033",
+            "hsa05034",
+            "hsa05230"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63191,
+        "sourceNodeId": 780,
+        "targetNodeId": 732,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2416697,
+        "sourceNodeId": 732,
+        "targetNodeId": 9879,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05034"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2778884,
+        "sourceNodeId": 9879,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05203"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 732,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00082",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00082",
+          "pathways": [
+            "hsa00130",
+            "hsa00350",
+            "hsa00360",
+            "hsa00400",
+            "hsa00460",
+            "hsa00730",
+            "hsa00970",
+            "hsa01210",
+            "hsa01230",
+            "hsa04728",
+            "hsa04916",
+            "hsa04917",
+            "hsa05012",
+            "hsa05030",
+            "hsa05031",
+            "hsa05034"
+          ]
+        }
+      },
+      {
+        "id": 9879,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "8364",
+          "idType": "ENTREZ",
+          "name": "8364",
+          "pathways": [
+            "hsa05034",
+            "hsa05203",
+            "hsa05322"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63153,
+        "sourceNodeId": 780,
+        "targetNodeId": 717,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 100075,
+        "sourceNodeId": 717,
+        "targetNodeId": 922,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00190"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2395279,
+        "sourceNodeId": 922,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05016"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 717,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00399",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00399",
+          "pathways": [
+            "hsa00130",
+            "hsa00190"
+          ]
+        }
+      },
+      {
+        "id": 922,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "4713",
+          "idType": "ENTREZ",
+          "name": "4713",
+          "pathways": [
+            "hsa00190",
+            "hsa04932",
+            "hsa05010",
+            "hsa05012",
+            "hsa05016"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63191,
+        "sourceNodeId": 780,
+        "targetNodeId": 732,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2416681,
+        "sourceNodeId": 732,
+        "targetNodeId": 9885,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05034"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2775390,
+        "sourceNodeId": 9885,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05203"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 732,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00082",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00082",
+          "pathways": [
+            "hsa00130",
+            "hsa00350",
+            "hsa00360",
+            "hsa00400",
+            "hsa00460",
+            "hsa00730",
+            "hsa00970",
+            "hsa01210",
+            "hsa01230",
+            "hsa04728",
+            "hsa04916",
+            "hsa04917",
+            "hsa05012",
+            "hsa05030",
+            "hsa05031",
+            "hsa05034"
+          ]
+        }
+      },
+      {
+        "id": 9885,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "8370",
+          "idType": "ENTREZ",
+          "name": "8370",
+          "pathways": [
+            "hsa05034",
+            "hsa05203",
+            "hsa05322"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63153,
+        "sourceNodeId": 780,
+        "targetNodeId": 717,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 100068,
+        "sourceNodeId": 717,
+        "targetNodeId": 921,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00190"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2394698,
+        "sourceNodeId": 921,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05016"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 717,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00399",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00399",
+          "pathways": [
+            "hsa00130",
+            "hsa00190"
+          ]
+        }
+      },
+      {
+        "id": 921,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "4714",
+          "idType": "ENTREZ",
+          "name": "4714",
+          "pathways": [
+            "hsa00190",
+            "hsa04932",
+            "hsa05010",
+            "hsa05012",
+            "hsa05016"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63191,
+        "sourceNodeId": 780,
+        "targetNodeId": 732,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2368732,
+        "sourceNodeId": 732,
+        "targetNodeId": 952,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05012"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2395892,
+        "sourceNodeId": 952,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05016"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 732,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00082",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00082",
+          "pathways": [
+            "hsa00130",
+            "hsa00350",
+            "hsa00360",
+            "hsa00400",
+            "hsa00460",
+            "hsa00730",
+            "hsa00970",
+            "hsa01210",
+            "hsa01230",
+            "hsa04728",
+            "hsa04916",
+            "hsa04917",
+            "hsa05012",
+            "hsa05030",
+            "hsa05031",
+            "hsa05034"
+          ]
+        }
+      },
+      {
+        "id": 952,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "4719",
+          "idType": "ENTREZ",
+          "name": "4719",
+          "pathways": [
+            "hsa00190",
+            "hsa04932",
+            "hsa05010",
+            "hsa05012",
+            "hsa05016"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63153,
+        "sourceNodeId": 780,
+        "targetNodeId": 717,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 100067,
+        "sourceNodeId": 717,
+        "targetNodeId": 945,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00190"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2394615,
+        "sourceNodeId": 945,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05016"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 717,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00399",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00399",
+          "pathways": [
+            "hsa00130",
+            "hsa00190"
+          ]
+        }
+      },
+      {
+        "id": 945,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "4728",
+          "idType": "ENTREZ",
+          "name": "4728",
+          "pathways": [
+            "hsa00190",
+            "hsa04932",
+            "hsa05010",
+            "hsa05012",
+            "hsa05016"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "weight": 3.0,
+    "edges": [
+      {
+        "id": 63191,
+        "sourceNodeId": 780,
+        "targetNodeId": 732,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa00130"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2368731,
+        "sourceNodeId": 732,
+        "targetNodeId": 917,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05012"]
+        },
+        "type": "Edge"
+      },
+      {
+        "id": 2395809,
+        "sourceNodeId": 917,
+        "targetNodeId": 5395,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": ["hsa05016"]
+        },
+        "type": "Edge"
+      }
+    ],
+    "nodes": [
+      {
+        "id": 780,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C20738",
+          "idType": "KEGG_COMPOUND",
+          "name": "C20738",
+          "pathways": ["hsa00130"]
+        }
+      },
+      {
+        "id": 732,
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "properties": {
+          "id": "C00082",
+          "idType": "KEGG_COMPOUND",
+          "name": "C00082",
+          "pathways": [
+            "hsa00130",
+            "hsa00350",
+            "hsa00360",
+            "hsa00400",
+            "hsa00460",
+            "hsa00730",
+            "hsa00970",
+            "hsa01210",
+            "hsa01230",
+            "hsa04728",
+            "hsa04916",
+            "hsa04917",
+            "hsa05012",
+            "hsa05030",
+            "hsa05031",
+            "hsa05034"
+          ]
+        }
+      },
+      {
+        "id": 917,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "4718",
+          "idType": "ENTREZ",
+          "name": "4718",
+          "pathways": [
+            "hsa00190",
+            "hsa04932",
+            "hsa05010",
+            "hsa05012",
+            "hsa05016"
+          ]
+        }
+      },
+      {
+        "id": 5395,
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "properties": {
+          "id": "6908",
+          "idType": "ENTREZ",
+          "name": "6908",
+          "pathways": [
+            "hsa03022",
+            "hsa05016",
+            "hsa05166",
+            "hsa05168",
+            "hsa05169",
+            "hsa05203"
+          ]
+        }
+      }
+    ]
+  }
+]

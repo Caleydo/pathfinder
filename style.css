@@ -1,0 +1,86 @@
+body {
+  margin: 0px; }
+
+g.node rect {
+  fill: #c8c8c8;
+  stroke: #1e1e1e; }
+g.node text {
+  text-anchor: middle;
+  font-family: sans-serif;
+  cursor: default;
+  font-size: 11px;
+  fill: #1e1e1e; }
+
+g.node.hover rect {
+  fill: #c80000;
+  stroke: #1e1e1e; }
+
+g.node.fixed rect {
+  fill: #c86432;
+  stroke: #1e0a02; }
+
+g.setNode text {
+  text-anchor: middle;
+  font-family: sans-serif;
+  cursor: default;
+  font-size: 11px;
+  fill: #1e1e1e; }
+g.setNode ellipse {
+  fill: #c8c8c8;
+  stroke: #1e1e1e; }
+
+g.edge line {
+  stroke: #505050;
+  stroke-width: 2px; }
+
+g.set text {
+  text-anchor: left;
+  font-family: sans-serif;
+  cursor: default;
+  font-size: 10px;
+  fill: #1e1e1e; }
+g.set line {
+  stroke: #969696;
+  stroke-width: 2px; }
+
+rect.filler {
+  fill: transparent; }
+
+.collapseIcon {
+  font-family: FontAwesome;
+  font-size: 16px;
+  cursor: pointer;
+  text-anchor: middle; }
+
+#arrowRight {
+  stroke: #505050;
+  fill: #505050; }
+
+#listView {
+  padding: 5px;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  float: left;
+  width: 50vw;
+  height: 100vh;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+.outer {
+  -webkit-flex: 1;
+  flex: 1;
+  height: 100%;
+  overflow: auto; }
+
+#pathlist, #setlist {
+  display: block;
+  width: 100%;
+  height: 100%; }
+
+#pathgraph {
+  float: right;
+  width: 40vw;
+  height: auto;
+  overflow: auto; }

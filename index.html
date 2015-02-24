@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="lib/font-awesome-4.3.0/css/font-awesome.min.css">
+  <script data-main="/config-gen.js?app=./app" src="/bower_components/requirejs/require.js"></script>
+  <!--<script type="text/javascript" src="./d3/d3.js"></script>-->
+</head>
+<body>
+
+<script type="text/javascript">
+
+</script>
+
+<div id="listView">
+  <div class="outer">
+    <div class="inner">
+      <div class="span4" id="pathlist">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--<div class="outer2">-->
+<!--<div class="inner2">-->
+<!--<div class="span4" id="setlist">-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<div class="outer">
+  <div class="inner">
+    <div class="span4" id="pathgraph">
+    </div>
+  </div>
+</div>
+<!--<script type="text/javascript">-->
+
+<!--var dataset = [25, 7, 20, 26, 11, 8, 25, 14, 23, 19,-->
+<!--14, 11, 22, 29, 11, 13, 12, 17, 18, 10, 24, 18, 25, 9, 3];-->
+<!--//  var dataset = [];-->
+<!--//  for (var i = 0; i < 25; i++) {-->
+<!--//    var newNumber = Math.floor(Math.random() * 30);-->
+<!--//    dataset.push(newNumber);-->
+<!--//  }-->
+<!--//  var dataset = [5, 10, 15, 20, 25];-->
+
+<!--var w = 500;-->
+<!--var h = 100;-->
+<!--var barPadding = 1;-->
+<!--var padding = 30;-->
+<!--var plotWidth = w-padding;-->
+
+<!--var svg = d3.select("body")-->
+<!--.append("svg")-->
+<!--.attr("width", w)-->
+<!--.attr("height", h);-->
+
+
+<!--var yScale = d3.scale.linear().domain([0, d3.max(dataset, function (d) {-->
+<!--return d-->
+<!--})]).range([h, 0]);-->
+
+<!--var axis = d3.svg.axis().-->
+<!--scale(yScale).-->
+<!--orient("right")-->
+<!--.ticks(3);-->
+
+<!--svg.append("g")-->
+<!--.attr("class", "axis")-->
+<!--.attr("transform", "translate("+plotWidth+", 0)")-->
+<!--.call(axis);-->
+
+<!--svg.selectAll("rect")-->
+<!--.data(dataset)-->
+<!--.enter()-->
+<!--.append("rect")-->
+<!--.attr("x", function (d, i) {-->
+<!--return i * (plotWidth / dataset.length);-->
+<!--})-->
+<!--.attr("y", function (d) {-->
+<!--return yScale(d);-->
+<!--})-->
+<!--.attr("width", plotWidth / dataset.length - barPadding)-->
+<!--.attr("height", function (d) {-->
+<!--return h-yScale(d);-->
+<!--})-->
+<!--.attr("fill", function (d) {-->
+<!--return "rgb(0,0," + (d * 10) + ")";-->
+<!--});-->
+
+
+<!--var tt = svg.selectAll("text").data(dataset);-->
+<!--tt.enter()-->
+<!--.append("text")-->
+<!--.attr("y", function (d) {-->
+<!--return 50;//(yScale(d)) + 15;-->
+<!--})-->
+<!--.attr("font-family", "sans-serif")-->
+<!--.attr("font-size", "11px")-->
+<!--.attr("fill", "red")-->
+<!--.attr("text-anchor", "middle");-->
+<!--tt.text(function (d) {-->
+<!--return d;-->
+<!--}).attr("x", function (d, i) {-->
+<!--return i * (plotWidth / dataset.length);//+ (plotWidth / dataset.length - barPadding) / 2;-->
+<!--});-->
+<!--tt.exit().remove();-->
+
+
+<!--</script>-->
+</body>
+</html>

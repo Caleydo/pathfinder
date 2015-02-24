@@ -1,0 +1,11 @@
+{
+  "name" : "caleydo-vis-pathway",
+  "version": "0.0.1",
+  "dependencies": {
+    "d3": "~3.4.11"
+  },
+  "caleydo" : {
+    "plugins": [
+    ]
+  }
+}
