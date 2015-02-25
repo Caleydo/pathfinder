@@ -18,18 +18,24 @@ g.node {
 
 }
 
-g.node.hover {
-  rect {
-    fill: rgb(200, 0, 0);
-    stroke: rgb(30, 30, 30);
-  }
-}
-
-
 g.node.fixed {
   rect {
     fill: rgb(200, 100, 50);
     stroke: rgb(30, 10, 2);
+  }
+}
+
+g.node.hovered {
+  rect {
+    fill: rgb(255, 200, 0);
+    stroke: rgb(30, 30, 30);
+  }
+}
+
+g.node.selected {
+  rect {
+    fill: rgb(255, 100, 0);
+    stroke: rgb(30, 30, 30);
   }
 }
 

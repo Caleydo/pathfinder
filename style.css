@@ -11,13 +11,17 @@ g.node text {
   font-size: 11px;
   fill: #1e1e1e; }
 
-g.node.hover rect {
-  fill: #c80000;
-  stroke: #1e1e1e; }
-
 g.node.fixed rect {
   fill: #c86432;
   stroke: #1e0a02; }
+
+g.node.hovered rect {
+  fill: #ffc800;
+  stroke: #1e1e1e; }
+
+g.nselected rect {
+  fill: #ff6400;
+  stroke: #1e1e1e; }
 
 g.setNode text {
   text-anchor: middle;

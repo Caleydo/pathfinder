@@ -1,5 +1,5 @@
-define(['jquery', 'd3', './listeners', './sorting', './setinfo'],
-  function ($, d3, listeners, sorting, setInfo) {
+define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
@@ -393,7 +393,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo'],
           .attr("x", nodeStart)
           .attr("y", 0)
           .attr("width", "100%")
-          .attr("height", pathHeight)
+          .attr("height", pathHeight);
 
         var nodeGroup = p.append("g")
           .attr("class", "nodeGroup");
@@ -412,13 +412,18 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo'],
 
             //sortingManager.sortPaths(svg, [sortingStrategies.getNodePresenceStrategy([d.id]),
             //  sortingManager.currentStrategyChain]);
-          })
-          .on("mouseover", function (d) {
-            d3.select(this).classed("hover", true);
-          })
-          .on("mouseout", function (d) {
-            d3.select(this).classed("hover", false);
           });
+        //.on("mouseover", function (d) {
+        //  d3.select(this).classed("hover", true);
+        //})
+        //.on("mouseout", function (d) {
+        //  d3.select(this).classed("hover", false);
+        //});
+        selectionUtil.addListeners(nodeGroup, "g.node", function (d) {
+            return d.id;
+          },
+          "node"
+        );
 
         node.append("rect")
           .attr("x", function (d, i) {

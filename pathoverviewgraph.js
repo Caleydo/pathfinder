@@ -1,4 +1,4 @@
-define(['jquery', 'd3', './listeners'], function ($, d3, listeners) {
+define(['jquery', 'd3', './listeners', './selectionutil'], function ($, d3, listeners, selectionUtil) {
     'use strict';
 
     function renderGraph(svg, graph) {
@@ -45,6 +45,12 @@ define(['jquery', 'd3', './listeners'], function ($, d3, listeners) {
         .attr("class", function (d) {
           return "node " + (d.fixed ? ("fixed") : "");
         });
+
+      selectionUtil.addListeners(nodeGroup, "g.node", function (d) {
+          return d.id;
+        },
+        "node"
+      );
 
       var nodeRects = node.append("rect")
         .attr("width", nodeWidth)
