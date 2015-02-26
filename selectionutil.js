@@ -62,6 +62,10 @@ define(["d3", "../caleydo/main"], function (d3, C) {
     })
   }
 
+  function removeListener(l, listeners) {
+
+  }
+
   return {
     selections: {
       node: new Selection(),
@@ -73,7 +77,27 @@ define(["d3", "../caleydo/main"], function (d3, C) {
       set: []
     },
 
-    addListeners: function (parent, selector, idAccessor, idType) {
+    removeListeners: function(listeners) {
+      var that = this;
+      if (listeners instanceof Array) {
+        listeners.forEach(function (l) {
+         removeSingle(l);
+        });
+      } else {
+        removeSingle(listeners);
+      }
+
+      function removeSingle(l) {
+        for(var key in that.listeners) {
+          var index = that.listeners[key].indexOf(l);
+          if (index > -1) {
+            that.listeners[key].splice(index, 1);
+          }
+        }
+      }
+    },
+
+    addListener: function (parent, selector, idAccessor, idType) {
 
       var that = this;
       var elements = parent.selectAll(selector)
@@ -86,9 +110,14 @@ define(["d3", "../caleydo/main"], function (d3, C) {
           notify(that.listeners[idType], "hovered");
         })
         .on("click", function (d) {
-          that.selections[idType].setSelection(idAccessor(d), "selected");
+          if (d3.event.ctrlKey) {
+            that.selections[idType].addToSelection(idAccessor(d), "selected");
+          } else {
+            that.selections[idType].setSelection(idAccessor(d), "selected");
+          }
           notify(that.listeners[idType], "selected");
         });
+
 
       var listener = function (selectionType) {
         parent.selectAll(selector)
@@ -111,12 +140,21 @@ define(["d3", "../caleydo/main"], function (d3, C) {
 
       this.listeners[idType].push(listener);
 
-      C.onDOMNodeRemoved(parent.node(), function () {
-        var index = that.listeners[idType].indexOf(listener);
-        if (index > -1) {
-          that.listeners[idType].splice(index, 1);
-        }
-      });
+
+      //make sure to set correct selection from start
+      notify(that.listeners[idType], "hovered");
+      notify(that.listeners[idType], "selected");
+
+      //This would be the way to go but reordering elements triggers the node removed event
+
+      //C.onDOMNodeRemoved(parent.node(), function (n) {
+      //  var index = that.listeners[idType].indexOf(listener);
+      //  if (index > -1) {
+      //    that.listeners[idType].splice(index, 1);
+      //  }
+      //});
+
+      return listener;
 
       //elements.node().addEventListener('DOMNodeRemoved')
       //

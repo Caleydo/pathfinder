@@ -46,7 +46,7 @@ define(['jquery', 'd3', './listeners', './selectionutil'], function ($, d3, list
           return "node " + (d.fixed ? ("fixed") : "");
         });
 
-      selectionUtil.addListeners(nodeGroup, "g.node", function (d) {
+      selectionUtil.addListener(nodeGroup, "g.node", function (d) {
           return d.id;
         },
         "node"
@@ -173,8 +173,8 @@ define(['jquery', 'd3', './listeners', './selectionutil'], function ($, d3, list
         //tick();
         //}
         nodeGroup.selectAll("g.node")
-          .attr("class", function (d) {
-            return "node " + (d.fixed ? ("fixed") : "");
+          .classed("fixed", function(d) {
+            return d.fixed
           });
 
         force.start();

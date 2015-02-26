@@ -1,6 +1,9 @@
 body {
   margin: 0px; }
 
+rect.filler {
+  fill: transparent; }
+
 g.node rect {
   fill: #c8c8c8;
   stroke: #1e1e1e; }
@@ -19,7 +22,7 @@ g.node.hovered rect {
   fill: #ffc800;
   stroke: #1e1e1e; }
 
-g.nselected rect {
+g.node.selected rect {
   fill: #ff6400;
   stroke: #1e1e1e; }
 
@@ -32,6 +35,12 @@ g.setNode text {
 g.setNode ellipse {
   fill: #c8c8c8;
   stroke: #1e1e1e; }
+
+g.setNode.hovered ellipse {
+  fill: #ffc800; }
+
+g.setNode.selected ellipse {
+  fill: #ff6400; }
 
 g.edge line {
   stroke: #505050;
@@ -47,8 +56,21 @@ g.set line {
   stroke: #969696;
   stroke-width: 2px; }
 
-rect.filler {
-  fill: transparent; }
+g.set.hovered text {
+  fill: #ffc800; }
+g.set.hovered line {
+  stroke: #ffc800;
+  stroke-width: 2px; }
+g.set.hovered rect.filler {
+  fill: rgba(255, 200, 0, 0.2); }
+
+g.set.selected text {
+  fill: #ff6400; }
+g.set.selected line {
+  stroke: #ff6400;
+  stroke-width: 2px; }
+g.set.selected rect.filler {
+  fill: rgba(255, 100, 0, 0.2); }
 
 .collapseIcon {
   font-family: FontAwesome;

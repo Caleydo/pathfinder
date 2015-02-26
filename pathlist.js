@@ -20,6 +20,8 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
     var SortingStrategy = sorting.SortingStrategy;
 
+    var selectionListeners = [];
+
     function PathLengthSortingStrategy() {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT);
     }
@@ -298,6 +300,9 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
         parent.select("#arrowRight").remove();
         parent.select("#SetLabelClipPath").remove();
+
+        selectionUtil.removeListeners(selectionListeners);
+        selectionListeners = [];
       },
 
 
@@ -419,11 +424,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         //.on("mouseout", function (d) {
         //  d3.select(this).classed("hover", false);
         //});
-        selectionUtil.addListeners(nodeGroup, "g.node", function (d) {
+        var l = selectionUtil.addListener(nodeGroup, "g.node", function (d) {
             return d.id;
           },
           "node"
         );
+        selectionListeners.push(l);
+
 
         node.append("rect")
           .attr("x", function (d, i) {
@@ -499,6 +506,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             sortingManager.sort(paths, parent, "g.pathContainer", getTransformFunction(paths));
           });
 
+        var l = selectionUtil.addListener(setGroup, "g.set", function (d) {
+            return d[0].id;
+          },
+          "set"
+        );
+        selectionListeners.push(l);
+
         set.append("rect")
           .attr("class", "filler")
           .attr("x", 0)
@@ -542,13 +556,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             return nodeStart + (d[0] * nodeWidth) + (d[0] * edgeSize) + nodeWidth / 2;
           })
           .attr("y1", function (d) {
-            return 2 * vSpacing + nodeHeight + (d[1] + 1) * setHeight - 3;
+            return 2 * vSpacing + nodeHeight + (d[1] + 1) * setHeight - 5;
           })
           .attr("x2", function (d) {
             return nodeStart + ((d[0] + 1) * nodeWidth) + ((d[0] + 1) * edgeSize) + nodeWidth / 2;
           })
           .attr("y2", function (d) {
-            return 2 * vSpacing + nodeHeight + (d[1] + 1) * setHeight - 3;
+            return 2 * vSpacing + nodeHeight + (d[1] + 1) * setHeight - 5;
           });
 
         set.append("title")

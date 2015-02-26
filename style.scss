@@ -2,6 +2,11 @@ body {
   margin: 0px;
 }
 
+rect.filler {
+  fill: rgba(0, 0, 0, 0)
+
+}
+
 g.node {
   rect {
     fill: rgb(200, 200, 200);
@@ -54,6 +59,19 @@ g.setNode {
   }
 }
 
+g.setNode.hovered {
+  ellipse {
+    fill: rgb(255, 200, 0);
+  }
+}
+
+g.setNode.selected {
+  ellipse {
+    fill: rgb(255, 100, 0);
+  }
+}
+
+
 g.edge {
   line {
     stroke: rgb(80,80,80);
@@ -76,10 +94,38 @@ g.set {
   }
 }
 
-rect.filler {
-  fill: rgba(0, 0, 0, 0)
+g.set.hovered {
+  text {
+    fill: rgb(255, 200, 0);
+  }
 
+  line {
+    stroke: rgb(255, 200, 0);
+    stroke-width: 2px;
+  }
+
+  rect.filler {
+    fill: rgba(255, 200, 0, 0.2)
+  }
 }
+
+g.set.selected {
+  text {
+    fill: rgb(255, 100, 0);
+  }
+
+  line {
+    stroke: rgb(255, 100, 0);
+    stroke-width: 2px;
+  }
+
+  rect.filler {
+    fill: rgba(255, 100, 0, 0.2)
+  }
+}
+
+
+
 
 .collapseIcon {
   font-family: FontAwesome;
