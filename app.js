@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', './listeners', './listview', './setlist', './pathoverviewgraph', './setinfo'],
+require(['jquery', 'd3', './listeners', './listview', './setlist', './pathoverviewgraph', './setinfo', 'font-awesome'],
   function ($, d3, listeners, listView, setList, overviewGraph, setInfo) {
     'use strict';
 

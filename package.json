@@ -2,7 +2,9 @@
   "name" : "caleydo-vis-pathway",
   "version": "0.0.1",
   "dependencies": {
-    "d3": "~3.4.11"
+    "d3": "~3.4.11",
+    "jquery": "~1.10.2",
+    "font-awesome": ">=4.2.0"
   },
   "caleydo" : {
     "plugins": [
