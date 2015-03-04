@@ -2,7 +2,8 @@
   "name" : "caleydo-pathfinder",
   "version": "0.0.1",
   "dependencies": {
-    "d3": "~3.4.11"
+    "d3": "~3.4.11",
+    "font-awesome": ">=4.2.0"
   },
   "caleydo" : {
     "plugins": [
