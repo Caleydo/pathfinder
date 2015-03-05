@@ -1,5 +1,5 @@
-define(['jquery', 'd3', './listeners', './sorting', './setinfo'],
-  function ($, d3, listeners, sorting, setInfo) {
+define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
@@ -19,6 +19,8 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo'],
     var pathSpacing = 15;
 
     var SortingStrategy = sorting.SortingStrategy;
+
+    var selectionListeners = [];
 
     function PathLengthSortingStrategy() {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT);
@@ -298,6 +300,9 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo'],
 
         parent.select("#arrowRight").remove();
         parent.select("#SetLabelClipPath").remove();
+
+        selectionUtil.removeListeners(selectionListeners);
+        selectionListeners = [];
       },
 
 
@@ -393,7 +398,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo'],
           .attr("x", nodeStart)
           .attr("y", 0)
           .attr("width", "100%")
-          .attr("height", pathHeight)
+          .attr("height", pathHeight);
 
         var nodeGroup = p.append("g")
           .attr("class", "nodeGroup");
@@ -412,13 +417,20 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo'],
 
             //sortingManager.sortPaths(svg, [sortingStrategies.getNodePresenceStrategy([d.id]),
             //  sortingManager.currentStrategyChain]);
-          })
-          .on("mouseover", function (d) {
-            d3.select(this).classed("hover", true);
-          })
-          .on("mouseout", function (d) {
-            d3.select(this).classed("hover", false);
           });
+        //.on("mouseover", function (d) {
+        //  d3.select(this).classed("hover", true);
+        //})
+        //.on("mouseout", function (d) {
+        //  d3.select(this).classed("hover", false);
+        //});
+        var l = selectionUtil.addListener(nodeGroup, "g.node", function (d) {
+            return d.id;
+          },
+          "node"
+        );
+        selectionListeners.push(l);
+
 
         node.append("rect")
           .attr("x", function (d, i) {
@@ -494,6 +506,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo'],
             sortingManager.sort(paths, parent, "g.pathContainer", getTransformFunction(paths));
           });
 
+        var l = selectionUtil.addListener(setGroup, "g.set", function (d) {
+            return d[0].id;
+          },
+          "set"
+        );
+        selectionListeners.push(l);
+
         set.append("rect")
           .attr("class", "filler")
           .attr("x", 0)
@@ -537,13 +556,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo'],
             return nodeStart + (d[0] * nodeWidth) + (d[0] * edgeSize) + nodeWidth / 2;
           })
           .attr("y1", function (d) {
-            return 2 * vSpacing + nodeHeight + (d[1] + 1) * setHeight - 3;
+            return 2 * vSpacing + nodeHeight + (d[1] + 1) * setHeight - 5;
           })
           .attr("x2", function (d) {
             return nodeStart + ((d[0] + 1) * nodeWidth) + ((d[0] + 1) * edgeSize) + nodeWidth / 2;
           })
           .attr("y2", function (d) {
-            return 2 * vSpacing + nodeHeight + (d[1] + 1) * setHeight - 3;
+            return 2 * vSpacing + nodeHeight + (d[1] + 1) * setHeight - 5;
           });
 
         set.append("title")

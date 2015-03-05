@@ -2,6 +2,11 @@ body {
   margin: 0px;
 }
 
+rect.filler {
+  fill: rgba(0, 0, 0, 0)
+
+}
+
 g.node {
   rect {
     fill: rgb(200, 200, 200);
@@ -18,18 +23,24 @@ g.node {
 
 }
 
-g.node.hover {
-  rect {
-    fill: rgb(200, 0, 0);
-    stroke: rgb(30, 30, 30);
-  }
-}
-
-
 g.node.fixed {
   rect {
     fill: rgb(200, 100, 50);
     stroke: rgb(30, 10, 2);
+  }
+}
+
+g.node.hovered {
+  rect {
+    fill: rgb(255, 200, 0);
+    stroke: rgb(30, 30, 30);
+  }
+}
+
+g.node.selected {
+  rect {
+    fill: rgb(255, 100, 0);
+    stroke: rgb(30, 30, 30);
   }
 }
 
@@ -47,6 +58,19 @@ g.setNode {
     stroke: rgb(30, 30, 30);
   }
 }
+
+g.setNode.hovered {
+  ellipse {
+    fill: rgb(255, 200, 0);
+  }
+}
+
+g.setNode.selected {
+  ellipse {
+    fill: rgb(255, 100, 0);
+  }
+}
+
 
 g.edge {
   line {
@@ -70,10 +94,38 @@ g.set {
   }
 }
 
-rect.filler {
-  fill: rgba(0, 0, 0, 0)
+g.set.hovered {
+  text {
+    fill: rgb(255, 200, 0);
+  }
 
+  line {
+    stroke: rgb(255, 200, 0);
+    stroke-width: 2px;
+  }
+
+  rect.filler {
+    fill: rgba(255, 200, 0, 0.2)
+  }
 }
+
+g.set.selected {
+  text {
+    fill: rgb(255, 100, 0);
+  }
+
+  line {
+    stroke: rgb(255, 100, 0);
+    stroke-width: 2px;
+  }
+
+  rect.filler {
+    fill: rgba(255, 100, 0, 0.2)
+  }
+}
+
+
+
 
 .collapseIcon {
   font-family: FontAwesome;

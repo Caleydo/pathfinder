@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', './listeners', './listview', './setlist', './pathoverviewgraph', './setinfo', 'font-awesome'],
+require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo',  'font-awesome'],
   function ($, d3, listeners, listView, setList, overviewGraph, setInfo) {
     'use strict';
 
@@ -218,21 +218,35 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './pathovervi
 
           for (var i = 0; i < path.edges.length; i++) {
             var edge = path.edges[i];
-            edge.properties["pathways"].forEach(function (pathwayId) {
 
-              var mySet = setDict[pathwayId];
-              if (typeof mySet == "undefined") {
-                mySet = {id: pathwayId, relIndices: [i]};
-                setDict[pathwayId] = mySet;
-                setList.push(mySet);
-              } else {
-                mySet.relIndices.push(i);
+            for (var key in edge.properties) {
+              if (key.charAt(0) !== '_') {
+                var property = edge.properties[key];
+                if (property instanceof Array) {
+                  edge.properties[key].forEach(function (setId) {
+                    addSet(setId, i);
+                  });
+                } else {
+                  addSet(edge.properties[key], i);
+                }
               }
-            });
+            }
+          }
+
+          function addSet(setId, relIndex) {
+            var mySet = setDict[setId];
+            if (typeof mySet == "undefined") {
+              mySet = {id: setId, relIndices: [relIndex]};
+              setDict[setId] = mySet;
+              setList.push(mySet);
+            } else {
+              mySet.relIndices.push(relIndex);
+            }
           }
 
           path.sets = setList;
         }
+
 
 
         //var propertyCosts = {

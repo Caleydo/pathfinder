@@ -1,13 +1,21 @@
 {
-  "name" : "caleydo-vis-pathway",
+  "name" : "caleydo-pathfinder",
   "version": "0.0.1",
   "dependencies": {
     "d3": "~3.4.11",
-    "jquery": "~1.10.2",
-    "font-awesome": ">=4.2.0"
+    "font-awesome": ">=4.2.0",
+    "webcola": "~3.1.0"
   },
   "caleydo" : {
     "plugins": [
-    ]
+    ],
+    "requirejs-config": {
+      "shim": {
+        "webcola": {
+          "deps": ["d3"],
+          "exports": "cola"
+        }
+      }
+    }
   }
 }

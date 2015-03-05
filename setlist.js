@@ -1,5 +1,5 @@
-define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo'],
-  function ($, d3, listeners, pathList, sorting, setInfo) {
+define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', './selectionutil'],
+  function ($, d3, listeners, pathList, sorting, setInfo, selectionUtil) {
     'use strict';
 
 
@@ -13,6 +13,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo'],
     var collapseButtonSpacing = 10;
 
     var allSetCombinations = [];
+    var selectionListeners = [];
 
     function NumPathsSortingStrategy() {
       sorting.SortingStrategy.call(this, sorting.SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT);
@@ -339,13 +340,16 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo'],
       },
 
       removeGuiElements: function (parent) {
-        var svg = d3.select("#pathlist svg");
+
+        pathList.removeGuiElements(parent);
 
         parent.selectAll("g.setComboContainer")
           .remove();
 
         parent.select("#arrowRight").remove();
         parent.select("#SetLabelClipPath").remove();
+        selectionUtil.removeListeners(selectionListeners);
+        selectionListeners = [];
       },
 
 
@@ -415,6 +419,13 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo'],
             //sortingManager.sortPaths(svg, [sortingStrategies.getNodePresenceStrategy([d.id]),
             //  sortingManager.currentStrategyChain]);
           });
+
+        var l = selectionUtil.addListener(setNodeGroup, "g.setNode", function (d) {
+            return d;
+          },
+          "set"
+        );
+        selectionListeners.push(l);
 
         node.append("ellipse")
           .attr("cx", function (d, i) {
