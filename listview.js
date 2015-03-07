@@ -7,9 +7,11 @@ define(['jquery', 'd3', './pathlist', './setlist'],
     return {
 
       paths: [],
-      currentView: pathList,
+      pathList: new pathList(),
+
 
       init: function () {
+        this.currentView = this.pathList;
         var svg = d3.select("#pathlist").append("svg");
         var viewTypeDiv = d3.select("#listView").insert("div", ":first-child");
         var that = this;
@@ -25,9 +27,9 @@ define(['jquery', 'd3', './pathlist', './setlist'],
           .property("checked", true)
           .on("click", function () {
 
-            if (that.currentView != pathList) {
+            if (that.currentView != that.pathList) {
               that.currentView.removeGuiElements(svg);
-              that.currentView = pathList;
+              that.currentView = that.pathList;
               that.currentView.init(svg);
               that.render(that.paths);
             }
@@ -35,7 +37,7 @@ define(['jquery', 'd3', './pathlist', './setlist'],
           });
         pathListWidgetDiv.append("label").text("Path List");
 
-        pathList.appendWidgets(pathListWidgetDiv, svg);
+        this.pathList.appendWidgets(pathListWidgetDiv, svg);
 
         var setListWidgetDiv = viewTypeDiv.append("div");
 

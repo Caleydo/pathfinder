@@ -79,17 +79,26 @@ g.edge {
   }
 }
 
-g.set {
+
+
+g.set, g.setType {
   text {
     text-anchor: left;
     font-family: sans-serif;
     cursor: default;
     font-size: 10px;
-    fill: rgb(30, 30, 30);
+//    fill: rgb(30, 30, 30);
+  }
+
+  text.collapseIconSmall {
+    font-family: FontAwesome;
+    font-size: 10px;
+    cursor: pointer;
+    text-anchor: middle;
   }
 
   line {
-    stroke: rgb(150,150,150);
+//    stroke: rgb(150,150,150);
     stroke-width: 2px;
   }
 }

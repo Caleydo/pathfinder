@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo',  'font-awesome'],
+require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', 'font-awesome'],
   function ($, d3, listeners, listView, setList, overviewGraph, setInfo) {
     'use strict';
 
@@ -156,18 +156,18 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           });
         });
 
-        $('#submit').on('click', function() {
-          var s= $('#from_node').val();
-          var t= $('#to_node').val();
+        $('#submit').on('click', function () {
+          var s = $('#from_node').val();
+          var t = $('#to_node').val();
           var k = $('#at_most_k').val();
           var $this = $(this).attr({
             disabled: 'disabled'
           }).html('<i class="fa fa-spinner fa-pulse"></i>');
-          searchPaths(s, t, k, function(path) {
-            console.log('got path',path);
+          searchPaths(s, t, k, function (path) {
+            console.log('got path', path);
           }).then(function (paths) {
             paths = JSON.parse(paths);
-            console.log('got paths',paths);
+            console.log('got paths', paths);
             $this = $this.attr({
               disabled: null
             }).text('Search');
@@ -190,23 +190,24 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
 
           if (paths.length > 0) {
-            var allSets = [];
+            var allSetIds = [];
             var setDict = {};
 
             paths.forEach(function (path) {
               addPathSets(path);
 
-              path.sets.forEach(function (s) {
-                var setExists = setDict[s.id];
-                if (!setExists) {
-                  allSets.push(s.id);
-                  setDict[s.id] = true;
-                }
+              path.setTypes.forEach(function (setType) {
+                setType.sets.forEach( function (s) {
+                  var setExists = setDict[s.id];
+                  if (!setExists) {
+                    allSetIds.push(s.id);
+                    setDict[s.id] = true;
+                    setInfo.addToType(setType.type, s.id);
+                  }
+                })
               });
 
             });
-
-
 
 
             listView.render(paths);
@@ -214,7 +215,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
             overviewGraph.render(paths);
 
-            setInfo.fetch(allSets);
+            setInfo.fetch(allSetIds);
 
             //$.ajax({
             //  type: 'POST',
@@ -231,6 +232,9 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
         }
 
         function addPathSets(path) {
+
+          var setTypeDict = {};
+          var setTypeList = [];
           var setDict = {};
           var setList = [];
 
@@ -242,29 +246,41 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
                 var property = edge.properties[key];
                 if (property instanceof Array) {
                   edge.properties[key].forEach(function (setId) {
-                    addSet(setId, i);
+                    addSet(key, setId, i);
                   });
                 } else {
-                  addSet(edge.properties[key], i);
+                  addSet(key, edge.properties[key], i);
                 }
               }
             }
           }
 
-          function addSet(setId, relIndex) {
-            var mySet = setDict[setId];
-            if (typeof mySet == "undefined") {
-              mySet = {id: setId, relIndices: [relIndex]};
-              setDict[setId] = mySet;
-              setList.push(mySet);
+          function addSet(type, setId, relIndex) {
+            var setType = setTypeDict[type];
+
+            if(typeof setType === "undefined") {
+              setType = { type: type, sets: [], setDict: {}}
+              setTypeDict[type] = setType;
+              setTypeList.push(setType);
+            }
+
+
+            var mySet = setType.setDict[setId];
+            if (typeof mySet === "undefined") {
+              mySet = {id: setId, relIndices: [relIndex], setType: type};
+              setType.setDict[setId] = mySet;
+              setType.sets.push(mySet);
             } else {
               mySet.relIndices.push(relIndex);
             }
           }
 
-          path.sets = setList;
-        }
+          setTypeList.forEach(function(setType) {
+            delete setType.setDict;
+          });
 
+          path.setTypes = setTypeList;
+        }
 
 
         //var propertyCosts = {
@@ -303,10 +319,12 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
     function getIncrementalJSON(url, data, onChunkDone) {
       var processed = 0;
+
       function sendChunk(path) {
         path = JSON.parse(path);
         onChunkDone(path);
       }
+
       function processPart(text) {
         var p = 0, act = 0, open = 0,
           l = text.length,
@@ -315,14 +333,14 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           act = 1;
         }
         start = act;
-        while(act < l) {
+        while (act < l) {
           c = text[act];
           if (c === '{') { //starting object
             open += 1;
           } else if (c === '}') { //closing object
             open -= 1;
             if (open === 0) { //found a full chunk
-              sendChunk(text.substring(start, act+1));
+              sendChunk(text.substring(start, act + 1));
               start = act + 1;
               if (text[start] === ',') { //skip ,
                 start += 1;
@@ -334,29 +352,31 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
         }
         return start; //everything before start was fully processed
       }
+
       return $.ajax({
         async: true,
-        url : url,
+        url: url,
         data: data,
-        dataType : 'text',
-        success: function(data) {
+        dataType: 'text',
+        success: function (data) {
           processPart(data.substr(processed))
         },
-        xhr: function(){
+        xhr: function () {
           // get the native XmlHttpRequest object
-          var xhr = $.ajaxSettings.xhr() ;
+          var xhr = $.ajaxSettings.xhr();
           // set the onprogress event handler
-          xhr.onprogress = function(evt){
+          xhr.onprogress = function (evt) {
             processed += processPart(evt.currentTarget.responseText.substr(processed));
-          } ;
-          return xhr ;
+          };
+          return xhr;
         }
       })
     }
 
     function searchPaths(source, target, k, onPathDone) {
-      return getIncrementalJSON('/api/pathway/path/'+source+'/'+target, { k : k || 10 }, onPathDone);
+      return getIncrementalJSON('/api/pathway/path/' + source + '/' + target, {k: k || 10}, onPathDone);
     }
+
     //$.get("/api/pathway/path", function (resp) {
     //
     //  var paths = JSON.parse(resp);
