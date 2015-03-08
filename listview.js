@@ -38,6 +38,9 @@ define(['jquery', 'd3', './pathlist', './setlist'],
         pathListWidgetDiv.append("label").text("Path List");
 
         this.pathList.appendWidgets(pathListWidgetDiv, svg);
+        this.pathList.addUpdateListener(function(list){
+          svg.attr("height", list.getTotalHeight());
+        });
 
         var setListWidgetDiv = viewTypeDiv.append("div");
 
@@ -69,6 +72,7 @@ define(['jquery', 'd3', './pathlist', './setlist'],
         this.paths = paths;
         var svg = d3.select("#pathlist svg");
         this.currentView.render(paths, svg);
+        svg.attr("height", this.currentView.getTotalHeight());
       }
     }
 

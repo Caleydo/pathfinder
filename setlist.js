@@ -251,7 +251,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
 
         if (!allSetCombinations[index].collapsed) {
           posY += allSetCombinations[index].pathList.getTotalHeight();
-          ;
+
 
         }
         posY += setContainerSpacing + setComboHeight;
@@ -283,6 +283,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
 
     return {
       appendWidgets: function (parent, svg) {
+        parent.append("label").text("Reverse");
         var sortButton = $('<input>').appendTo(parent)[0];
         $(sortButton).attr("type", "checkbox");
         $(sortButton).on("click", function () {
@@ -290,6 +291,22 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           sortingManager.ascending = !this.checked;
           sortingManager.sort(allSetCombinations, svg, "g.setComboContainer", getTransformFunction(allSetCombinations));
         });
+      },
+
+      getTotalHeight: function () {
+        var posY = 0;
+
+        for (var index = 0; index < allSetCombinations.length; index++) {
+
+          if (!allSetCombinations[index].collapsed) {
+            posY += allSetCombinations[index].pathList.getTotalHeight();
+
+
+          }
+          posY += setContainerSpacing + setComboHeight;
+
+        }
+        return posY;
       },
 
       init: function (svg) {
@@ -318,29 +335,6 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           .attr("y", 0)
           .attr("width", 90)
           .attr("height", 10);
-
-
-        //
-        //var sortButton = $('<input>').prependTo('div.outer')[0];
-        //$(sortButton).attr("type", "checkbox");
-        //$(sortButton).on("click", function () {
-        //  var that = this;
-        //  sortingManager.ascending = !this.checked;
-        //  sortingManager.sortPaths(svg);
-        //});
-        //
-        //var selectSortingStrategy = $('<select>').prependTo('div.outer')[0];
-        //$(selectSortingStrategy).append($("<option value='0'>Set Count Edge Weight</option>"));
-        //$(selectSortingStrategy).append($("<option value='1'>Path Length</option>"));
-        //$(selectSortingStrategy).on("change", function () {
-        //  if (this.value == '0') {
-        //    sortingManager.sortPaths(svg, [sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
-        //  }
-        //  if (this.value == '1') {
-        //    sortingManager.sortPaths(svg, [sortingStrategies.pathLength, sortingStrategies.pathId]);
-        //  }
-        //});
-
 
       },
 
