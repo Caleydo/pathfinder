@@ -190,24 +190,26 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
 
           if (paths.length > 0) {
-            var allSetIds = [];
-            var setDict = {};
+            //var allSetIds = [];
+            //var setDict = {};
 
-            paths.forEach(function (path) {
-              addPathSets(path);
+            fetchSetInfos(paths);
 
-              path.setTypes.forEach(function (setType) {
-                setType.sets.forEach( function (s) {
-                  var setExists = setDict[s.id];
-                  if (!setExists) {
-                    allSetIds.push(s.id);
-                    setDict[s.id] = true;
-                    setInfo.addToType(setType.type, s.id);
-                  }
-                })
-              });
-
-            });
+            //paths.forEach(function (path) {
+            //  addPathSets(path);
+            //
+            //  path.setTypes.forEach(function (setType) {
+            //    setType.sets.forEach(function (s) {
+            //      var setExists = setDict[s.id];
+            //      if (!setExists) {
+            //        allSetIds.push(s.id);
+            //        setDict[s.id] = true;
+            //        setInfo.addToType(setType.type, s.id);
+            //      }
+            //    })
+            //  });
+            //
+            //});
 
 
             listView.render(paths);
@@ -215,7 +217,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
             overviewGraph.render(paths);
 
-            setInfo.fetch(allSetIds);
+
 
             //$.ajax({
             //  type: 'POST',
@@ -231,55 +233,40 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           }
         }
 
-        function addPathSets(path) {
+        function fetchSetInfos(paths) {
 
-          var setTypeDict = {};
-          var setTypeList = [];
-          var setDict = {};
-          var setList = [];
+          var setIds = [];
 
-          for (var i = 0; i < path.edges.length; i++) {
-            var edge = path.edges[i];
-
-            for (var key in edge.properties) {
-              if (key.charAt(0) !== '_') {
-                var property = edge.properties[key];
-                if (property instanceof Array) {
-                  edge.properties[key].forEach(function (setId) {
-                    addSet(key, setId, i);
-                  });
-                } else {
-                  addSet(key, edge.properties[key], i);
+          paths.forEach(function (path) {
+            path.nodes.forEach(function (node) {
+              for (var key in node.properties) {
+                if (isSetProperty(key)) {
+                  var property = node.properties[key];
+                  if (property instanceof Array) {
+                    property.forEach(function (setId) {
+                      addSet(key, setId);
+                    });
+                  } else {
+                    addSet(key, property);
+                  }
                 }
               }
-            }
-          }
-
-          function addSet(type, setId, relIndex) {
-            var setType = setTypeDict[type];
-
-            if(typeof setType === "undefined") {
-              setType = { type: type, sets: [], setDict: {}}
-              setTypeDict[type] = setType;
-              setTypeList.push(setType);
-            }
-
-
-            var mySet = setType.setDict[setId];
-            if (typeof mySet === "undefined") {
-              mySet = {id: setId, relIndices: [relIndex], setType: type};
-              setType.setDict[setId] = mySet;
-              setType.sets.push(mySet);
-            } else {
-              mySet.relIndices.push(relIndex);
-            }
-          }
-
-          setTypeList.forEach(function(setType) {
-            delete setType.setDict;
+            });
           });
 
-          path.setTypes = setTypeList;
+          function isSetProperty(key) {
+            return key !== "id" && key !== "idType" && key !== "name";
+          }
+
+          function addSet(type, setId) {
+            setInfo.addToType(type, setId);
+
+            if(setIds.indexOf(setId) == -1) {
+              setIds.push(setId);
+            }
+          }
+
+          setInfo.fetch(setIds);
         }
 
 
