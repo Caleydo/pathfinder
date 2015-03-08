@@ -27,6 +27,16 @@ define(function () {
       }
     },
 
+    remove: function(listener, type) {
+      if (typeof this[type] === "undefined") {
+        return;
+      }
+      var index =  this[type].indexOf(listener);
+      if (index > -1) {
+        this[type].splice(index, 1);
+      }
+    },
+
     clear: function (type) {
       if (typeof this[type] !== "undefined") {
         this[type] = [];

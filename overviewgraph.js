@@ -173,6 +173,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
       );
 
       var nodeRects = node.append("rect")
+        .attr("rx", 5).attr("ry", 5)
         .attr("width", nodeWidth)
         .attr("height", nodeHeight);
 

@@ -116,6 +116,10 @@ g.set.hovered {
   rect.filler {
     fill: rgba(255, 200, 0, 0.2)
   }
+
+  circle {
+    fill: rgb(255, 200, 0);
+  }
 }
 
 g.set.selected {
@@ -130,6 +134,10 @@ g.set.selected {
 
   rect.filler {
     fill: rgba(255, 100, 0, 0.2)
+  }
+
+  circle {
+    fill: rgb(255, 100, 0);
   }
 }
 

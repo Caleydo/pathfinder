@@ -23,6 +23,12 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
     var selectionListeners = [];
 
+    var pathListUpdateTypes = {
+      UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY"
+    }
+
+    var isNodeSetVisible = false;
+
     function PathWrapper(path) {
       this.path = path;
       this.addPathSets(path);
@@ -44,6 +50,28 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         var setTypeDict = {};
         var setTypeList = [];
 
+        for (var i = 0; i < path.nodes.length; i++) {
+          var node = path.nodes[i];
+          for (var key in node.properties) {
+            if (isSetProperty(key)) {
+              var property = node.properties[key];
+              if (property instanceof Array) {
+                property.forEach(function (setId) {
+                  addSetForNode(key, setId, i);
+                });
+              } else {
+                var currentSet = addSet(key, property);
+                addSetForNode(key, property, i);
+              }
+            }
+          }
+        }
+        ;
+
+        function isSetProperty(key) {
+          return key !== "id" && key !== "idType" && key !== "name";
+        }
+
         for (var i = 0; i < path.edges.length; i++) {
           var edge = path.edges[i];
 
@@ -52,33 +80,49 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
               var property = edge.properties[key];
               if (property instanceof Array) {
                 edge.properties[key].forEach(function (setId) {
-                  addSet(key, setId, i);
+                  addSetForEdge(key, setId, i);
                 });
               } else {
-                addSet(key, edge.properties[key], i);
+                addSetForEdge(key, property, i);
               }
             }
           }
         }
 
-        function addSet(type, setId, relIndex) {
+        function addSetForNode(type, setId, nodeIndex) {
+          var currentSet = addSet(type, setId);
+          currentSet.nodeIndices.push(nodeIndex);
+          var currentSetType = setTypeDict[type];
+          if (currentSetType.nodeIndices.indexOf(nodeIndex) === -1) {
+            currentSetType.nodeIndices.push(nodeIndex);
+          }
+        }
+
+        function addSetForEdge(type, setId, relIndex) {
+          var currentSet = addSet(type, setId);
+          currentSet.relIndices.push(relIndex);
+          var currentSetType = setTypeDict[type];
+          if (currentSetType.relIndices.indexOf(relIndex) === -1) {
+            currentSetType.relIndices.push(relIndex);
+          }
+        }
+
+        function addSet(type, setId) {
           var setType = setTypeDict[type];
 
           if (typeof setType === "undefined") {
-            setType = {type: type, sets: [], setDict: {}, collapsed: false}
+            setType = {type: type, sets: [], setDict: {}, collapsed: false, nodeIndices: [], relIndices: []}
             setTypeDict[type] = setType;
             setTypeList.push(setType);
           }
 
-
           var mySet = setType.setDict[setId];
           if (typeof mySet === "undefined") {
-            mySet = {id: setId, relIndices: [relIndex], setType: type};
+            mySet = {id: setId, nodeIndices: [], relIndices: [], setType: type};
             setType.setDict[setId] = mySet;
             setType.sets.push(mySet);
-          } else {
-            mySet.relIndices.push(relIndex);
           }
+          return mySet;
         }
 
         setTypeList.forEach(function (setType) {
@@ -309,6 +353,10 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
     function PathList() {
       this.pathWrappers = [];
       this.updateListeners = [];
+      var that = this;
+      this.listUpdateListener = function (updatedObject) {
+        that.updatePathList(that.parent);
+      }
     }
 
     PathList.prototype = {
@@ -354,6 +402,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           sortingManager.ascending = !this.checked;
           sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getTransformFunction(pathlist.pathWrappers));
         });
+
+        var hideNodeOnlySetsButton = $('<input>').appendTo(parent)[0];
+        $(hideNodeOnlySetsButton).attr("type", "checkbox");
+        $(hideNodeOnlySetsButton).on("click", function () {
+          isNodeSetVisible = !this.checked;
+          listeners.notify(isNodeSetVisible, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        });
       }
       ,
 
@@ -364,14 +419,35 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           .each("start", function (d) {
             if (d.setType.collapsed) {
               d3.select(this).selectAll("g.set")
-                .attr("display", d.setType.collapsed ? "none" : "inline");
+                .attr("display", "none");
+              d3.select(this).selectAll("g.setTypeSummary")
+                .attr("display", "inline");
             }
+
+
           })
           .each("end", function (d) {
             if (!d.setType.collapsed) {
               d3.select(this).selectAll("g.set")
-                .attr("display", d.setType.collapsed ? "none" : "inline");
+                .attr("display", "inline");
+              d3.select(this).selectAll("g.setTypeSummary")
+                .attr("display", "none");
             }
+
+            d3.select(this).attr("display", function (d) {
+              if (isNodeSetVisible) {
+                return "inline";
+              }
+              return d.setType.relIndices.length > 0 ? "inline" : "none";
+            });
+
+            d3.select(this).selectAll("g.set")
+              .attr("display", function (d) {
+                if (isNodeSetVisible) {
+                  return "inline";
+                }
+                return d.set.relIndices.length > 0 ? "inline" : "none";
+              })
           });
 
         parent.selectAll("g.pathContainer")
@@ -422,6 +498,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
         selectionUtil.removeListeners(selectionListeners);
         selectionListeners = [];
+        listeners.remove(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
       }
       ,
 
@@ -429,6 +506,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       render: function (paths, parent) {
 
         this.pathWrappers = [];
+        this.parent = parent;
         this.wrapPaths(paths);
 
         if (paths.length > 0) {
@@ -448,6 +526,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             .attr("height", totalHeight);
 
           listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
+          listeners.add(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
         }
       }
       ,
@@ -479,7 +558,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         var p = pathContainer.append("g")
           .attr("class", "path")
           .on("click", function (d) {
-            listeners.notify(d, listeners.updateType.PATH_SELECTION);
+            listeners.notify(d.path, listeners.updateType.PATH_SELECTION);
           });
 
         p.append("rect")
@@ -499,20 +578,11 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           .enter()
           .append("g")
           .attr("class", "node")
+
           .on("dblclick", function (d) {
             sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
             sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getTransformFunction(that.pathWrappers));
-
-
-            //sortingManager.sortPaths(svg, [sortingStrategies.getNodePresenceStrategy([d.id]),
-            //  sortingManager.currentStrategyChain]);
           });
-        //.on("mouseover", function (d) {
-        //  d3.select(this).classed("hover", true);
-        //})
-        //.on("mouseout", function (d) {
-        //  d3.select(this).classed("hover", false);
-        //});
         var l = selectionUtil.addListener(nodeGroup, "g.node", function (d) {
             return d.id;
           },
@@ -526,6 +596,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             return nodeStart + (i * nodeWidth) + (i * edgeSize);
           })
           .attr("y", vSpacing)
+          .attr("rx", 5).attr("ry", 5)
           .attr("width", nodeWidth)
           .attr("height", nodeHeight);
         //.attr("fill", "rgb(200,200,200)")
@@ -589,7 +660,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           })
           .enter()
           .append("g")
-          .attr("class", "setType");
+          .attr("class", "setType")
+          .attr("display", function (d) {
+            if (isNodeSetVisible) {
+              return "inline";
+            }
+            return d.setType.relIndices.length > 0 ? "inline" : "none";
+          });
 
         setType.append("text")
           .attr("class", "collapseIconSmall")
@@ -615,6 +692,78 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             //updateSetList(parent);
           });
 
+        var setTypeSummaryContainer = setType.append("g")
+          .classed("setTypeSummary", true)
+          .attr("display", function (d) {
+            return d.setType.collapsed ? "inline" : "none";
+          });
+
+        setTypeSummaryContainer.each(function (d, i) {
+            d3.select(this).selectAll("circle")
+              .data(function () {
+                return d.setType.nodeIndices.map(function (index) {
+                  return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
+                });
+              })
+              .enter()
+              .append("circle")
+              .attr({
+                cx: function (d) {
+                  return nodeStart + (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
+                },
+                cy: function (d) {
+                  return getSetTypePositionY(d.pathIndex, d.setTypeIndex) + setHeight / 2;
+                },
+                r: 4,
+                fill: function (d) {
+                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                }
+              });
+
+
+            d3.select(this).selectAll("line")
+              .data(function () {
+                return d.setType.relIndices.map(function (index) {
+                  return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
+                });
+              })
+              .enter()
+              .append("line")
+              .attr({
+                x1: function (d) {
+                  return nodeStart + (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
+                }
+                ,
+                y1: function (d) {
+                  return getSetTypePositionY(d.pathIndex, d.setTypeIndex) + setHeight / 2;
+                  //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
+                },
+                x2: function (d) {
+                  return nodeStart + ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
+                },
+                y2: function (d) {
+                  return getSetTypePositionY(d.pathIndex, d.setTypeIndex) + setHeight / 2;
+                },
+                stroke: function (d) {
+                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                }
+              });
+          }
+        )
+        ;
+
+        function getSetTypePositionY(pathIndex, setTypeIndex) {
+          var pathWrapper = that.pathWrappers[pathIndex];
+
+          var numSets = 0;
+          for (var typeIndex = 0; typeIndex < setTypeIndex; typeIndex++) {
+            var setType = pathWrapper.setTypes[typeIndex];
+            numSets += setType.sets.length;
+          }
+
+          return 2 * vSpacing + nodeHeight + (numSets + setTypeIndex) * setHeight;
+        }
+
         setType.append("text")
           .text(function (d) {
             //var text = d[0].id;
@@ -623,15 +772,8 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           })
           .attr("x", 10)
           .attr("y", function (d, i) {
-            var pathWrapper = that.pathWrappers[d.pathIndex];
 
-            var numSets = 0;
-            for (var typeIndex = 0; typeIndex < i; typeIndex++) {
-              var setType = pathWrapper.setTypes[typeIndex];
-              numSets += setType.sets.length;
-            }
-
-            return 2 * vSpacing + nodeHeight + (numSets + i + 1) * setHeight;
+            return getSetTypePositionY(d.pathIndex, i) + setHeight;
           })
           .attr("fill", function (d) {
             return setInfo.getSetTypeInfo(d.setType.type).color;
@@ -654,6 +796,12 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           .enter()
           .append("g")
           .attr("class", "set")
+          .attr("display", function (d) {
+            if (isNodeSetVisible) {
+              return "inline";
+            }
+            return d.set.relIndices.length > 0 ? "inline" : "none";
+          })
           .on("dblclick", function (d) {
             sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
             sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getTransformFunction(that.pathWrappers));
@@ -708,6 +856,29 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           })
           .attr("clip-path", "url(#SetLabelClipPath)");
 
+        set.each(function (d, i) {
+          d3.select(this).selectAll("circle")
+            .data(function () {
+              return d.set.nodeIndices.map(function (index) {
+                return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, nodeIndex: index};
+              });
+            })
+            .enter()
+            .append("circle")
+            .attr({
+              cx: function (d) {
+                return nodeStart + (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
+              },
+              cy: function (d) {
+                return getSetPositionY(d.pathIndex, d.setTypeIndex, d.setIndex) + setHeight / 2;
+              },
+              r: 4,
+              fill: function (d) {
+                return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+              }
+            })
+        });
+
 
         set.selectAll("line")
           .data(function (d, i) {
@@ -752,6 +923,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             }
             return info.properties["name"];
           });
+
       }
 
     }
