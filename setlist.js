@@ -141,6 +141,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           paths: [path],
           pathList: new pathList()
         };
+        setCombo.pathList.init();
         setCombo.pathList.addUpdateListener(function (list) {
           updateSetList(myParent);
         })
@@ -309,49 +310,34 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
         return posY;
       },
 
-      init: function (svg) {
-
-        var w = 800;
-        var h = 800;
-
-        //var svg = d3.select("#setlist").append("svg")
-        svg.attr("width", w)
-          .attr("height", h);
-        svg.append("marker")
-          .attr("id", "arrowRight")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", "0")
-          .attr("refY", "5")
-          .attr("markerUnits", "strokeWidth")
-          .attr("markerWidth", "4")
-          .attr("markerHeight", "3")
-          .attr("orient", "auto")
-          .append("path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z");
-        svg.append("clipPath")
-          .attr("id", "SetLabelClipPath")
-          .append("rect")
-          .attr("x", 0)
-          .attr("y", 0)
-          .attr("width", 90)
-          .attr("height", 10);
-
+      init: function() {
+        listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
       },
 
-      removeGuiElements: function (parent) {
+      destroy: function (parent) {
 
         allSetCombinations.forEach(function (combo) {
-          combo.pathList.removeGuiElements(parent);
+          combo.pathList.destroy(parent);
         });
 
 
         parent.selectAll("g.setComboContainer")
           .remove();
 
-        parent.select("#arrowRight").remove();
-        parent.select("#SetLabelClipPath").remove();
+        //parent.select("#arrowRight").remove();
+        //parent.select("#SetLabelClipPath").remove();
         selectionUtil.removeListeners(selectionListeners);
         selectionListeners = [];
+        listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
+      },
+
+      removePaths: function (parent) {
+        this.destroy(parent);
+      }
+      ,
+
+      addPath: function (path) {
+//TODO
       },
 
 
@@ -364,8 +350,6 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           .remove();
 
         sortingManager.sort(allSetCombinations, parent, "g.setComboContainer", getTransformFunction(allSetCombinations));
-
-        listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
 
 
         var setComboContainer = parent.selectAll("g.setComboContainer")

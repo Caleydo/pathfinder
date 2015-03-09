@@ -23,6 +23,8 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
     var selectionListeners = [];
 
+    var currentSetTypeId = 0;
+
     var pathListUpdateTypes = {
       UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY"
     }
@@ -48,6 +50,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
     }
 
     function SetType(type) {
+      this.id = currentSetTypeId++;
       this.type = type;
       this.sets = [];
       this.setDict = {};
@@ -498,6 +501,10 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         });
       }
       ,
+      init: function() {
+        listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
+        listeners.add(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+      },
 
       updatePathList: function (parent) {
 
@@ -585,47 +592,29 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       }
       ,
 
-      init: function (svg) {
-
-        var w = 800;
-        var h = 800;
-
-        //var svg = d3.select("#pathlist").append("svg")
-        svg.attr("width", w)
-          .attr("height", h);
-        svg.append("marker")
-          .attr("id", "arrowRight")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", "0")
-          .attr("refY", "5")
-          .attr("markerUnits", "strokeWidth")
-          .attr("markerWidth", "4")
-          .attr("markerHeight", "3")
-          .attr("orient", "auto")
-          .append("path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z");
-        svg.append("clipPath")
-          .attr("id", "SetLabelClipPath")
-          .append("rect")
-          .attr("x", 0)
-          .attr("y", 0)
-          .attr("width", 90)
-          .attr("height", 10);
-
-      }
-      ,
+      destroy: function(parent) {
+        this.removePaths(parent);
+        listeners.remove(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
+      },
 
       removeGuiElements: function (parent) {
 
         parent.selectAll("g.pathContainer")
           .remove();
 
-        parent.select("#arrowRight").remove();
-        parent.select("#SetLabelClipPath").remove();
+        //parent.select("#arrowRight").remove();
+        //parent.select("#SetLabelClipPath").remove();
 
         selectionUtil.removeListeners(selectionListeners);
         selectionListeners = [];
-        listeners.remove(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        currentSetTypeId = 0;
+      }
+      ,
+
+      removePaths: function (parent) {
+        this.removeGuiElements(this.parent);
+        this.pathWrappers = [];
       }
       ,
 
@@ -638,23 +627,27 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
         if (paths.length > 0) {
 
-          parent.selectAll("g.pathContainer")
-            .remove();
-          sortingManager.sort(this.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(this.pathWrappers));
-          parent.selectAll("g.pathContainer")
-            .remove();
+          //parent.selectAll("g.pathContainer")
+          //  .remove();
+          //sortingManager.sort(this.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(this.pathWrappers));
+          //parent.selectAll("g.pathContainer")
+          //  .remove();
 
           this.renderPaths(parent);
 
-          var totalHeight = this.getTotalHeight();
+          //var totalHeight = this.getTotalHeight();
 
           //parent.attr("height", totalHeight);
           //parent.select("#SetLabelClipPath rect")
           //  .attr("height", totalHeight);
 
-          listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
-          listeners.add(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
         }
+      }
+      ,
+
+      addPath: function (path) {
+        this.pathWrappers.push(new PathWrapper(path));
+        this.renderPaths(this.parent);
       }
       ,
 
@@ -673,13 +666,16 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         var that = this;
 
 
-        var pathContainer = parent.selectAll("g.pathContainer")
+        var allPathContainers = parent.selectAll("g.pathContainer")
           .data(that.pathWrappers, getPathKey)
+
+        var pathContainer = allPathContainers
           .enter()
           .append("g");
 
+
         pathContainer.attr("class", "pathContainer")
-          .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
+          .attr("transform", "translate(0," + that.getTotalHeight() + ")");
         //.attr("visibility", visible ? "visible" : "hidden");
 
         var p = pathContainer.append("g")
@@ -698,11 +694,16 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         var nodeGroup = p.append("g")
           .attr("class", "nodeGroup");
 
-        var node = nodeGroup.selectAll("g.node")
+        var allNodes = allPathContainers.selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.node")
           .data(function (pathWrapper) {
             return pathWrapper.path.nodes;
-          })
-          .enter()
+          });
+
+        //var node = nodeGroup.selectAll("g.node")
+        //  .data(function (pathWrapper) {
+        //    return pathWrapper.path.nodes;
+        //  })
+        var node = allNodes.enter()
           .append("g")
           .attr("class", "node")
 
@@ -747,12 +748,21 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         var edgeGroup = p.append("g")
           .attr("class", "edgeGroup");
 
-        var edge = edgeGroup.selectAll("g.edge")
+
+        var allEdges = allPathContainers.selectAll("g.path").selectAll("g.edgeGroup").selectAll("g.edge")
           .data(function (pathWrapper, i) {
             return pathWrapper.path.edges.map(function (edge) {
               return {edge: edge, pathIndex: i};
             });
-          })
+          });
+
+        //var edge = edgeGroup.selectAll("g.edge")
+        //  .data(function (pathWrapper, i) {
+        //    return pathWrapper.path.edges.map(function (edge) {
+        //      return {edge: edge, pathIndex: i};
+        //    });
+        //  })
+        var edge = allEdges
           .enter()
           .append("g")
           .attr("class", "edge");
@@ -779,13 +789,21 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         var setGroup = pathContainer.append("g")
           .attr("class", "setGroup");
 
-        var setType = setGroup.selectAll("g.setType")
-            .data(function (pathWrapper, i) {
-              return pathWrapper.setTypes.map(function (mySetType) {
-                return {setType: mySetType, pathIndex: i};
-              });
-            })
-            .enter()
+        var allSetTypes = allPathContainers.selectAll("g.setGroup").selectAll("g.setType")
+          .data(function (pathWrapper, i) {
+            return pathWrapper.setTypes.map(function (mySetType) {
+              return {setType: mySetType, pathIndex: i};
+            });
+          });
+
+
+        //var setType = setGroup.selectAll("g.setType")
+        //    .data(function (pathWrapper, i) {
+        //      return pathWrapper.setTypes.map(function (mySetType) {
+        //        return {setType: mySetType, pathIndex: i};
+        //      });
+        //    })
+        var setType = allSetTypes.enter()
             .append("g")
             .classed("setType", true)
             .attr({
@@ -802,7 +820,9 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           ;
 
         setType.append("text")
-          .attr("class", "collapseIconSmall")
+          .attr("class", "collapseIconSmall");
+
+        allSetTypes.selectAll("text.collapseIconSmall")
           .attr("x", 5)
           .attr("y", setHeight)
           .text(function (d) {
@@ -1007,6 +1027,11 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         );
         selectionListeners.push(l);
 
+
+        allPathContainers.transition()
+          .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
+
+
         //function getSetPositionY(pathIndex, setTypeIndex, setIndex) {
         //  var pathWrapper = that.pathWrappers[pathIndex];
         //
@@ -1021,6 +1046,360 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
 
       }
+
+      //renderPaths: function (parent) {
+      //
+      //  var that = this;
+      //
+      //
+      //  var pathContainer = parent.selectAll("g.pathContainer")
+      //    .data(that.pathWrappers, getPathKey)
+      //    .enter()
+      //    .append("g");
+      //
+      //  pathContainer.attr("class", "pathContainer")
+      //    .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
+      //  //.attr("visibility", visible ? "visible" : "hidden");
+      //
+      //  var p = pathContainer.append("g")
+      //    .attr("class", "path")
+      //    .on("click", function (d) {
+      //      listeners.notify(d.path, listeners.updateType.PATH_SELECTION);
+      //    });
+      //
+      //  p.append("rect")
+      //    .attr("class", "filler")
+      //    .attr("x", nodeStart)
+      //    .attr("y", 0)
+      //    .attr("width", "100%")
+      //    .attr("height", pathHeight);
+      //
+      //  var nodeGroup = p.append("g")
+      //    .attr("class", "nodeGroup");
+      //
+      //  var node = nodeGroup.selectAll("g.node")
+      //    .data(function (pathWrapper) {
+      //      return pathWrapper.path.nodes;
+      //    })
+      //    .enter()
+      //    .append("g")
+      //    .attr("class", "node")
+      //
+      //    .on("dblclick", function (d) {
+      //      sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
+      //      sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
+      //    });
+      //  var l = selectionUtil.addListener(nodeGroup, "g.node", function (d) {
+      //      return d.id;
+      //    },
+      //    "node"
+      //  );
+      //  selectionListeners.push(l);
+      //
+      //
+      //  node.append("rect")
+      //    .attr("x", function (d, i) {
+      //      return nodeStart + (i * nodeWidth) + (i * edgeSize);
+      //    })
+      //    .attr("y", vSpacing)
+      //    .attr("rx", 5).attr("ry", 5)
+      //    .attr("width", nodeWidth)
+      //    .attr("height", nodeHeight);
+      //  //.attr("fill", "rgb(200,200,200)")
+      //  //.attr("stroke", "rgb(30,30,30)");
+      //
+      //  node.append("text")
+      //    .text(function (d) {
+      //      var text = d.properties["name"];
+      //      return getClampedText(text, 7);
+      //    })
+      //    .attr("x", function (d, i) {
+      //      return nodeStart + (i * nodeWidth) + (i * edgeSize) + nodeWidth / 2;
+      //    })
+      //    .attr("y", vSpacing + nodeHeight - 5)
+      //    .append("title")
+      //    .text(function (d) {
+      //      return d.properties["name"];
+      //    });
+      //  ;
+      //
+      //  var edgeGroup = p.append("g")
+      //    .attr("class", "edgeGroup");
+      //
+      //  var edge = edgeGroup.selectAll("g.edge")
+      //    .data(function (pathWrapper, i) {
+      //      return pathWrapper.path.edges.map(function (edge) {
+      //        return {edge: edge, pathIndex: i};
+      //      });
+      //    })
+      //    .enter()
+      //    .append("g")
+      //    .attr("class", "edge");
+      //
+      //  edge.append("line")
+      //    .attr("x1", function (d, i) {
+      //      if (isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)) {
+      //        return ( nodeStart + (i + 1) * nodeWidth) + (i * edgeSize);
+      //      } else {
+      //        return ( nodeStart + (i + 1) * nodeWidth) + ((i + 1) * edgeSize);
+      //      }
+      //    })
+      //    .attr("y1", vSpacing + nodeHeight / 2)
+      //    .attr("x2", function (d, i) {
+      //      if (isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)) {
+      //        return ( nodeStart + (i + 1) * nodeWidth) + ((i + 1) * edgeSize) - arrowWidth;
+      //      } else {
+      //        return ( nodeStart + (i + 1) * nodeWidth) + (i * edgeSize) + arrowWidth;
+      //      }
+      //    })
+      //    .attr("y2", vSpacing + nodeHeight / 2)
+      //    .attr("marker-end", "url(#arrowRight)");
+      //
+      //  var setGroup = pathContainer.append("g")
+      //    .attr("class", "setGroup");
+      //
+      //  var setType = setGroup.selectAll("g.setType")
+      //      .data(function (pathWrapper, i) {
+      //        return pathWrapper.setTypes.map(function (mySetType) {
+      //          return {setType: mySetType, pathIndex: i};
+      //        });
+      //      })
+      //      .enter()
+      //      .append("g")
+      //      .classed("setType", true)
+      //      .attr({
+      //        display: function (d) {
+      //
+      //          if (d.setType.canBeShown()) {
+      //            return "inline";
+      //          }
+      //          return "none";
+      //        },
+      //        transform: getSetTypeTransformFunction(that.pathWrappers)
+      //      }
+      //    )
+      //    ;
+      //
+      //  setType.append("text")
+      //    .attr("class", "collapseIconSmall")
+      //    .attr("x", 5)
+      //    .attr("y", setHeight)
+      //    .text(function (d) {
+      //      return d.setType.collapsed ? "\uf0da" : "\uf0dd";
+      //    })
+      //    .on("click", function (d) {
+      //      d.setType.collapsed = !d.setType.collapsed;
+      //      d3.select(this).text(d.setType.collapsed ? "\uf0da" : "\uf0dd");
+      //      that.updatePathList(parent);
+      //      //updateSetList(parent);
+      //    });
+      //
+      //  setType.append("text")
+      //    .text(function (d) {
+      //      //var text = d[0].id;
+      //      //return getClampedText(text, 15);
+      //      return d.setType.type;
+      //    })
+      //    .attr("x", 10)
+      //    .attr("y", setHeight)
+      //    .attr("fill", function (d) {
+      //      return setInfo.getSetTypeInfo(d.setType.type).color;
+      //    })
+      //    .attr("clip-path", "url(#SetLabelClipPath)");
+      //
+      //  var setTypeSummaryContainer = setType.append("g")
+      //    .classed("setTypeSummary", true)
+      //    .attr("display", function (d) {
+      //      return d.setType.collapsed ? "inline" : "none";
+      //    });
+      //
+      //  setTypeSummaryContainer.each(function (d, i) {
+      //      d3.select(this).selectAll("circle")
+      //        .data(function () {
+      //          return d.setType.nodeIndices.map(function (index) {
+      //            return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
+      //          });
+      //        })
+      //        .enter()
+      //        .append("circle")
+      //        .attr({
+      //          cx: function (d) {
+      //            return nodeStart + (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
+      //          },
+      //          cy: setHeight / 2,
+      //          r: 4,
+      //          fill: function (d) {
+      //            return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+      //          }
+      //        });
+      //
+      //
+      //      d3.select(this).selectAll("line")
+      //        .data(function () {
+      //          return d.setType.relIndices.map(function (index) {
+      //            return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
+      //          });
+      //        })
+      //        .enter()
+      //        .append("line")
+      //        .attr({
+      //          x1: function (d) {
+      //            return nodeStart + (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
+      //          }
+      //          ,
+      //          y1: setHeight / 2,
+      //          x2: function (d) {
+      //            return nodeStart + ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
+      //          },
+      //          y2: setHeight / 2,
+      //          stroke: function (d) {
+      //            return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+      //          }
+      //        });
+      //    }
+      //  )
+      //  ;
+      //
+      //
+      //  setType.each(function (d, i) {
+      //    var set = d3.select(this)
+      //      .selectAll("g.set")
+      //      .data(function () {
+      //        return d.setType.sets.map(function (myset) {
+      //          return {set: myset, pathIndex: d.pathIndex, setTypeIndex: i};
+      //        });
+      //      })
+      //      .enter()
+      //      .append("g")
+      //      .classed("set", true)
+      //      .attr({
+      //        display: function (d) {
+      //          if (d.set.canBeShown()) {
+      //            return "inline";
+      //          }
+      //          return "none";
+      //        },
+      //        transform: getSetTransformFunction(that.pathWrappers)
+      //      })
+      //      .on("dblclick", function (d) {
+      //        sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
+      //        sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
+      //      });
+      //
+      //    set.append("rect")
+      //      .attr("class", "filler")
+      //      .attr("x", 0)
+      //      .attr("y", 0)
+      //      .attr("width", "100%")
+      //      .attr("height", setHeight)
+      //
+      //    set.append("text")
+      //      .text(function (d) {
+      //        //var text = d[0].id;
+      //        //return getClampedText(text, 15);
+      //
+      //        var info = setInfo.get(d.set.id);
+      //        if (typeof info === "undefined") {
+      //          return d.set.id;
+      //        }
+      //        return info.properties["name"];
+      //      })
+      //      .attr("x", setTypeIndent)
+      //      .attr("y", setHeight)
+      //      .attr("fill", function (d) {
+      //        return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+      //      })
+      //      .attr("clip-path", "url(#SetLabelClipPath)");
+      //
+      //    set.append("title")
+      //      .text(function (d) {
+      //        var info = setInfo.get(d.set.id);
+      //        if (typeof info === "undefined") {
+      //          return d.set.id;
+      //        }
+      //        return info.properties["name"];
+      //      });
+      //
+      //    set.each(function (d, i) {
+      //      d3.select(this).selectAll("circle")
+      //        .data(function () {
+      //          return d.set.nodeIndices.map(function (index) {
+      //            return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, nodeIndex: index};
+      //          });
+      //        })
+      //        .enter()
+      //        .append("circle")
+      //        .attr({
+      //          cx: function (d) {
+      //            return nodeStart + (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
+      //          },
+      //          cy: function (d) {
+      //            return setHeight / 2;
+      //          },
+      //          r: 4,
+      //          fill: function (d) {
+      //            return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+      //          }
+      //        })
+      //    });
+      //
+      //
+      //    set.each(function (d, i) {
+      //
+      //      d3.select(this).selectAll("line").
+      //        data(function (d, i) {
+      //          return d.set.relIndices.map(function (index) {
+      //            return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, relIndex: index};
+      //          });
+      //        })
+      //        .enter()
+      //        .append("line")
+      //        .attr("x1", function (d) {
+      //          return nodeStart + (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
+      //        })
+      //        .attr("y1", function (d) {
+      //          return setHeight / 2;
+      //          //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
+      //        })
+      //        .attr("x2", function (d) {
+      //          return nodeStart + ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
+      //        })
+      //        .attr("y2", function (d) {
+      //          return setHeight / 2;
+      //          //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
+      //        })
+      //        .attr("stroke", function (d) {
+      //          return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+      //        });
+      //
+      //
+      //    });
+      //
+      //
+      //  });
+      //
+      //
+      //  var l = selectionUtil.addListener(setType, "g.set", function (d) {
+      //      return d.set.id;
+      //    },
+      //    "set"
+      //  );
+      //  selectionListeners.push(l);
+      //
+      //  //function getSetPositionY(pathIndex, setTypeIndex, setIndex) {
+      //  //  var pathWrapper = that.pathWrappers[pathIndex];
+      //  //
+      //  //  var numSets = 0;
+      //  //  for (var typeIndex = 0; typeIndex < setTypeIndex; typeIndex++) {
+      //  //    var setType = pathWrapper.setTypes[typeIndex];
+      //  //    numSets += setType.sets.length;
+      //  //  }
+      //  //
+      //  //  return 2 * vSpacing + nodeHeight + (numSets + setIndex + setTypeIndex + 1) * setHeight;
+      //  //}
+      //
+      //
+      //}
 
     }
 

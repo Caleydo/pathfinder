@@ -7,7 +7,8 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
     //var jsonPaths = require('./testpaths1.json');
 
-    //TODO: fetch amount of sets from server
+    var allPaths = [];
+    var currentPathId = 0;
 
 
     $(document).ready(function () {
@@ -163,21 +164,40 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           var $this = $(this).attr({
             disabled: 'disabled'
           }).html('<i class="fa fa-spinner fa-pulse"></i>');
+          reset();
           searchPaths(s, t, k, function (path) {
             console.log('got path', path);
+            addPath(path);
           }).then(function (paths) {
             paths = JSON.parse(paths);
             console.log('got paths', paths);
             $this = $this.attr({
               disabled: null
             }).text('Search');
-            loadPaths(paths);
+            //loadPaths(paths);
           });
         });
 
         $.getJSON("testpaths1.json", function (paths) {
           loadPaths(paths);
         });
+
+        function reset() {
+          allPaths = [];
+          currentPathId = 0;
+          listView.reset();
+          //TODO: reset views
+        }
+
+        function addPath(path) {
+          path.id = currentPathId++;
+          allPaths.push(path);
+
+          fetchSetInfos([path]);
+
+          listView.addPath(path);
+
+        }
 
         function loadPaths(paths) {
 
@@ -216,7 +236,6 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
             //setList.render(paths);
 
             overviewGraph.render(paths);
-
 
 
             //$.ajax({
@@ -276,7 +295,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           function addSet(type, setId) {
             setInfo.addToType(type, setId);
 
-            if(setIds.indexOf(setId) == -1) {
+            if (setIds.indexOf(setId) == -1) {
               setIds.push(setId);
             }
           }

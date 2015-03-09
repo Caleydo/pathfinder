@@ -13,6 +13,27 @@ define(['jquery', 'd3', './pathlist', './setlist'],
       init: function () {
         this.currentView = this.pathList;
         var svg = d3.select("#pathlist").append("svg");
+        svg.attr("width", 800)
+          .attr("height", 800);
+        svg.append("marker")
+          .attr("id", "arrowRight")
+          .attr("viewBox", "0 0 10 10")
+          .attr("refX", "0")
+          .attr("refY", "5")
+          .attr("markerUnits", "strokeWidth")
+          .attr("markerWidth", "4")
+          .attr("markerHeight", "3")
+          .attr("orient", "auto")
+          .append("path")
+          .attr("d", "M 0 0 L 10 5 L 0 10 z");
+        svg.append("clipPath")
+          .attr("id", "SetLabelClipPath")
+          .append("rect")
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr("width", 90)
+          .attr("height", 20);
+
         var viewTypeDiv = d3.select("#listView").insert("div", ":first-child");
         var that = this;
 
@@ -28,9 +49,9 @@ define(['jquery', 'd3', './pathlist', './setlist'],
           .on("click", function () {
 
             if (that.currentView != that.pathList) {
-              that.currentView.removeGuiElements(svg);
+              that.currentView.destroy(svg);
               that.currentView = that.pathList;
-              that.currentView.init(svg);
+              that.currentView.init();
               that.render(that.paths);
             }
 
@@ -53,9 +74,9 @@ define(['jquery', 'd3', './pathlist', './setlist'],
           .on("click", function () {
 
             if (that.currentView != setList) {
-              that.currentView.removeGuiElements(svg);
+              that.currentView.destroy(svg);
               that.currentView = setList;
-              that.currentView.init(svg);
+              that.currentView.init();
               that.render(that.paths);
             }
 
@@ -65,7 +86,6 @@ define(['jquery', 'd3', './pathlist', './setlist'],
 
         setList.appendWidgets(setListWidgetDiv, svg);
 
-        this.currentView.init(svg);
       },
 
       render: function (paths) {
@@ -73,6 +93,17 @@ define(['jquery', 'd3', './pathlist', './setlist'],
         var svg = d3.select("#pathlist svg");
         this.currentView.render(paths, svg);
         svg.attr("height", this.currentView.getTotalHeight());
+      },
+
+      addPath: function(path) {
+        this.currentView.addPath(path);
+        var svg = d3.select("#pathlist svg");
+        svg.attr("height", this.currentView.getTotalHeight());
+      },
+
+      reset: function () {
+        var svg = d3.select("#pathlist svg");
+        this.currentView.removePaths(svg);
       }
     }
 
