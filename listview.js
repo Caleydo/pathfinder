@@ -12,6 +12,7 @@ define(['jquery', 'd3', './pathlist', './setlist'],
 
       init: function () {
         this.currentView = this.pathList;
+        this.currentView.init();
         var svg = d3.select("#pathlist").append("svg");
         svg.attr("width", 800)
           .attr("height", 800);

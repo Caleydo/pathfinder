@@ -54,7 +54,7 @@ define(['./listeners'], function (listeners) {
             }
           }
 
-          listeners.notify(that, listeners.updateType.SET_INFO_UPDATE);
+          listeners.notify(listeners.updateType.SET_INFO_UPDATE, that);
         }
       });
     }

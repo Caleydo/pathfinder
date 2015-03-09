@@ -18,7 +18,7 @@ define(function () {
       this[type].push(listener);
     },
 
-    notify: function (updatedObject, type) {
+    notify: function (type, updatedObject) {
 
       if (typeof this[type] !== "undefined") {
         this[type].forEach(function (listener) {

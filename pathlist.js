@@ -21,12 +21,11 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
     var SortingStrategy = sorting.SortingStrategy;
 
-    var selectionListeners = [];
-
     var currentSetTypeId = 0;
 
     var pathListUpdateTypes = {
-      UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY"
+      UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY",
+      UPDATE_SORTING: "UPDATE_SORTING"
     }
 
     var showNodeSets = false;
@@ -313,7 +312,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
     var sortingStrategies = {
       pathLength: new PathLengthSortingStrategy(),
 
-      pathId: new sorting.IdSortingStrategy(sortingManager),
+      pathId: new sorting.IdSortingStrategy(sortingManager, function(pathWrapper) {return pathWrapper.path.id}),
 
       setCountEdgeWeight: new SetCountEdgeWeightSortingStrategy(),
 
@@ -438,9 +437,14 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
     function PathList() {
       this.pathWrappers = [];
       this.updateListeners = [];
+      this.selectionListeners = [];
       var that = this;
       this.listUpdateListener = function (updatedObject) {
         that.updatePathList(that.parent);
+      }
+
+      this.sortUpdateListener = function (sortStrategyChain) {
+        sortingManager.sort(that.pathWrappers, that.parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers), sortStrategyChain);
       }
     }
 
@@ -473,10 +477,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         $(selectSortingStrategy).append($("<option value='1'>Path Length</option>"));
         $(selectSortingStrategy).on("change", function () {
           if (this.value == '0') {
-            sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers), [sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
+            listeners.notify( pathListUpdateTypes.UPDATE_SORTING, [sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
+
+            //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers), [sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
           }
           if (this.value == '1') {
-            sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers), [sortingStrategies.pathLength, sortingStrategies.pathId]);
+            listeners.notify(pathListUpdateTypes.UPDATE_SORTING, [sortingStrategies.pathLength, sortingStrategies.pathId]);
+            //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers), [sortingStrategies.pathLength, sortingStrategies.pathId]);
           }
         });
 
@@ -487,7 +494,8 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         $(sortButton).on("click", function () {
           var that = this;
           sortingManager.ascending = !this.checked;
-          sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers));
+          listeners.notify(pathListUpdateTypes.UPDATE_SORTING);
+          //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers));
         });
 
         parent.append("label").text("Hide non-relationship sets");
@@ -497,13 +505,14 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           .prop("checked", true);
         $(hideNodeOnlySetsButton).on("click", function () {
           showNodeSets = !this.checked;
-          listeners.notify(showNodeSets, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+          listeners.notify(pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY, showNodeSets);
         });
       }
       ,
       init: function() {
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.add(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        listeners.add(this.sortUpdateListener, pathListUpdateTypes.UPDATE_SORTING);
       },
 
       updatePathList: function (parent) {
@@ -596,6 +605,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         this.removePaths(parent);
         listeners.remove(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
+        listeners.remove(this.sortUpdateListener, pathListUpdateTypes.UPDATE_SORTING);
       },
 
       removeGuiElements: function (parent) {
@@ -606,8 +616,8 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         //parent.select("#arrowRight").remove();
         //parent.select("#SetLabelClipPath").remove();
 
-        selectionUtil.removeListeners(selectionListeners);
-        selectionListeners = [];
+        selectionUtil.removeListeners(this.selectionListeners);
+        this.selectionListeners = [];
         currentSetTypeId = 0;
       }
       ,
@@ -681,7 +691,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         var p = pathContainer.append("g")
           .attr("class", "path")
           .on("click", function (d) {
-            listeners.notify(d.path, listeners.updateType.PATH_SELECTION);
+            listeners.notify(listeners.updateType.PATH_SELECTION, d.path);
           });
 
         p.append("rect")
@@ -709,14 +719,15 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
           .on("dblclick", function (d) {
             sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
-            sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
+            listeners.notify(pathListUpdateTypes.UPDATE_SORTING);
+            //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
           });
         var l = selectionUtil.addListener(nodeGroup, "g.node", function (d) {
             return d.id;
           },
           "node"
         );
-        selectionListeners.push(l);
+        that.selectionListeners.push(l);
 
 
         node.append("rect")
@@ -924,7 +935,8 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             })
             .on("dblclick", function (d) {
               sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
-              sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
+              listeners.notify(pathListUpdateTypes.UPDATE_SORTING);
+              //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
             });
 
           set.append("rect")
@@ -1025,7 +1037,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           },
           "set"
         );
-        selectionListeners.push(l);
+        that.selectionListeners.push(l);
 
 
         allPathContainers.transition()

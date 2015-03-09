@@ -19,13 +19,13 @@ define(function() {
     }
   }
 
-  function IdSortingStrategy(sortingManager) {
+  function IdSortingStrategy(sortingManager, idAccessor) {
     SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID);
     this.compare = function (a, b) {
       if (sortingManager.ascending) {
-        return d3.ascending(a.id, b.id);
+        return d3.ascending(idAccessor(a), idAccessor(b));
       }
-      return d3.descending(a.id, b.id);
+      return d3.descending(idAccessor(a), idAccessor(b));
     }
   }
 

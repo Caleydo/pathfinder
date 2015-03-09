@@ -60,7 +60,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
     var sortingManager = new sorting.SortingManager(true);
 
     var sortingStrategies = {
-      setId: new sorting.IdSortingStrategy(sortingManager),
+      setId: new sorting.IdSortingStrategy(sortingManager, function(setCombo) {return setCombo.id}),
       numPaths: new NumPathsSortingStrategy(),
       getSetNodePrensenceSortingStrategy: function (setIds) {
         return new SetNodePresenceSortingStrategy(setIds);
