@@ -505,20 +505,20 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         //  .transition()
 
 
-            //d3.select(this).attr("display", function (d) {
-            //  if (showNodeSets) {
-            //    return "inline";
-            //  }
-            //  return d.setType.relIndices.length > 0 ? "inline" : "none";
-            //});
+        //d3.select(this).attr("display", function (d) {
+        //  if (showNodeSets) {
+        //    return "inline";
+        //  }
+        //  return d.setType.relIndices.length > 0 ? "inline" : "none";
+        //});
 
-            //d3.select(this).selectAll("g.set")
-            //  .attr("display", function (d) {
-            //    if (showNodeSets) {
-            //      return "inline";
-            //    }
-            //    return d.set.relIndices.length > 0 ? "inline" : "none";
-            //  })
+        //d3.select(this).selectAll("g.set")
+        //  .attr("display", function (d) {
+        //    if (showNodeSets) {
+        //      return "inline";
+        //    }
+        //    return d.set.relIndices.length > 0 ? "inline" : "none";
+        //  })
 
 
         var that = this;
@@ -529,7 +529,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
 
         parent.selectAll("g.pathContainer")
-          .each(function() {
+          .each(function () {
             d3.select(this).selectAll("g.setType")
               .transition()
               .each("start", function (d) {
@@ -545,7 +545,10 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
                         .attr("display", "none");
                     }
                   });
-
+                if (!d.setType.canBeShown()) {
+                  d3.select(this)
+                    .attr("display", "none");
+                }
               })
               .attr("transform", getSetTypeTransformFunction(that.pathWrappers))
               .each("end", function (d) {
@@ -562,10 +565,15 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
                         .attr("display", "inline");
                     }
                   });
+
+                if (d.setType.canBeShown()) {
+                  d3.select(this)
+                    .attr("display", "inline");
+                }
               });
 
             d3.select(this).selectAll("g.setType")
-              .each(function() {
+              .each(function () {
                 d3.select(this).selectAll("g.set")
                   .transition()
                   .attr("transform", getSetTransformFunction(that.pathWrappers));

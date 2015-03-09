@@ -252,6 +252,21 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
                 }
               }
             });
+
+            path.edges.forEach(function (edge) {
+              for (var key in edge.properties) {
+                if (key.charAt(0) !== '_') {
+                  var property = edge.properties[key];
+                  if (property instanceof Array) {
+                    property.forEach(function (setId) {
+                      addSet(key, setId);
+                    });
+                  } else {
+                    addSet(key, property);
+                  }
+                }
+              }
+            });
           });
 
           function isSetProperty(key) {
