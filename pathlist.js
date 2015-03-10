@@ -25,7 +25,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
     var pathListUpdateTypes = {
       UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY",
-      UPDATE_SORTING: "UPDATE_SORTING"
+      UPDATE_PATH_SORTING: "UPDATE_PATH_SORTING"
     }
 
     var showNodeSets = false;
@@ -312,7 +312,9 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
     var sortingStrategies = {
       pathLength: new PathLengthSortingStrategy(),
 
-      pathId: new sorting.IdSortingStrategy(sortingManager, function(pathWrapper) {return pathWrapper.path.id}),
+      pathId: new sorting.IdSortingStrategy(sortingManager, function (pathWrapper) {
+        return pathWrapper.path.id
+      }),
 
       setCountEdgeWeight: new SetCountEdgeWeightSortingStrategy(),
 
@@ -443,8 +445,17 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         that.updatePathList(that.parent);
       }
 
-      this.sortUpdateListener = function (sortStrategyChain) {
-        sortingManager.sort(that.pathWrappers, that.parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers), sortStrategyChain);
+      this.sortUpdateListener = function (currentComparator) {
+        //sortingManager.sort(that.pathWrappers, that.parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers), sortStrategyChain);
+
+        that.pathWrappers.sort(currentComparator);
+
+        that.updateDataBinding();
+
+        that.parent.selectAll("g.pathContainer")
+          .sort(currentComparator)
+          .transition()
+          .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
       }
     }
 
@@ -477,12 +488,14 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         $(selectSortingStrategy).append($("<option value='1'>Path Length</option>"));
         $(selectSortingStrategy).on("change", function () {
           if (this.value == '0') {
-            listeners.notify( pathListUpdateTypes.UPDATE_SORTING, [sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
+            sortingManager.setStrategyChain([sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
+            listeners.notify(pathListUpdateTypes.UPDATE_PATH_SORTING, sortingManager.currentComparator);
 
             //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers), [sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
           }
           if (this.value == '1') {
-            listeners.notify(pathListUpdateTypes.UPDATE_SORTING, [sortingStrategies.pathLength, sortingStrategies.pathId]);
+            sortingManager.setStrategyChain([sortingStrategies.pathLength, sortingStrategies.pathId]);
+            listeners.notify(pathListUpdateTypes.UPDATE_PATH_SORTING, sortingManager.currentComparator);
             //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers), [sortingStrategies.pathLength, sortingStrategies.pathId]);
           }
         });
@@ -494,7 +507,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         $(sortButton).on("click", function () {
           var that = this;
           sortingManager.ascending = !this.checked;
-          listeners.notify(pathListUpdateTypes.UPDATE_SORTING);
+          listeners.notify(pathListUpdateTypes.UPDATE_PATH_SORTING, sortingManager.currentComparator);
           //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers));
         });
 
@@ -509,10 +522,10 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         });
       }
       ,
-      init: function() {
+      init: function () {
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.add(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
-        listeners.add(this.sortUpdateListener, pathListUpdateTypes.UPDATE_SORTING);
+        listeners.add(this.sortUpdateListener, pathListUpdateTypes.UPDATE_PATH_SORTING);
       },
 
       updatePathList: function (parent) {
@@ -601,11 +614,11 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       }
       ,
 
-      destroy: function(parent) {
+      destroy: function (parent) {
         this.removePaths(parent);
         listeners.remove(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
-        listeners.remove(this.sortUpdateListener, pathListUpdateTypes.UPDATE_SORTING);
+        listeners.remove(this.sortUpdateListener, pathListUpdateTypes.UPDATE_PATH_SORTING);
       },
 
       removeGuiElements: function (parent) {
@@ -671,6 +684,82 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       }
       ,
 
+      updateDataBinding: function () {
+        var pathContainers = this.parent.selectAll("g.pathContainer")
+          .data(this.pathWrappers, getPathKey);
+
+        pathContainers.each(function (pathWrapper, i) {
+
+          d3.select(this).selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.node")
+            .data(function () {
+              return pathWrapper.path.nodes;
+            });
+
+          d3.select(this).selectAll("g.path").selectAll("g.edgeGroup").selectAll("g.edge")
+            .data(function () {
+              return pathWrapper.path.edges.map(function (edge) {
+                return {edge: edge, pathIndex: i};
+              });
+            });
+
+          var setTypes = d3.select(this).selectAll("g.setGroup").selectAll("g.setType")
+            .data(function () {
+              return pathWrapper.setTypes.map(function (mySetType) {
+                return {setType: mySetType, pathIndex: i};
+              });
+            });
+
+          setTypes.each(function (d, i) {
+
+            d3.select(this).selectAll("g.setTypeSummary").each(function () {
+              d3.select(this).selectAll("circle")
+                .data(function () {
+                  return d.setType.nodeIndices.map(function (index) {
+                    return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
+                  });
+                });
+
+              d3.select(this).selectAll("line")
+                .data(function () {
+                  return d.setType.relIndices.map(function (index) {
+                    return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
+                  });
+                })
+            });
+
+            var set = d3.select(this)
+              .selectAll("g.set")
+              .data(function () {
+                return d.setType.sets.map(function (myset) {
+                  return {set: myset, pathIndex: d.pathIndex, setTypeIndex: i};
+                });
+              });
+
+            set.each(function (d, i) {
+              d3.select(this).selectAll("circle")
+                .data(function () {
+                  return d.set.nodeIndices.map(function (index) {
+                    return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, nodeIndex: index};
+                  });
+                });
+
+
+              d3.select(this).selectAll("line").
+                data(function (d, i) {
+                  return d.set.relIndices.map(function (index) {
+                    return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, relIndex: index};
+                  });
+                });
+            });
+
+
+
+
+          });
+
+        });
+      },
+
       renderPaths: function (parent) {
 
         var that = this;
@@ -719,7 +808,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
           .on("dblclick", function (d) {
             sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
-            listeners.notify(pathListUpdateTypes.UPDATE_SORTING);
+            listeners.notify(pathListUpdateTypes.UPDATE_PATH_SORTING, sortingManager.currentComparator);
             //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
           });
         var l = selectionUtil.addListener(nodeGroup, "g.node", function (d) {
@@ -935,7 +1024,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             })
             .on("dblclick", function (d) {
               sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
-              listeners.notify(pathListUpdateTypes.UPDATE_SORTING);
+              listeners.notify(pathListUpdateTypes.UPDATE_PATH_SORTING, sortingManager.currentComparator);
               //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
             });
 
@@ -994,10 +1083,6 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
                   return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
                 }
               })
-          });
-
-
-          set.each(function (d, i) {
 
             d3.select(this).selectAll("line").
               data(function (d, i) {

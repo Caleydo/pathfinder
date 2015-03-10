@@ -8,6 +8,7 @@ define(['jquery', 'd3', './pathlist', './setlist'],
 
       paths: [],
       pathList: new pathList(),
+      setList: new setList(),
 
 
       init: function () {
@@ -63,6 +64,9 @@ define(['jquery', 'd3', './pathlist', './setlist'],
         this.pathList.addUpdateListener(function(list){
           svg.attr("height", list.getTotalHeight());
         });
+        this.setList.addUpdateListener(function(list){
+          svg.attr("height", list.getTotalHeight());
+        });
 
         var setListWidgetDiv = viewTypeDiv.append("div");
 
@@ -74,9 +78,9 @@ define(['jquery', 'd3', './pathlist', './setlist'],
           })
           .on("click", function () {
 
-            if (that.currentView != setList) {
+            if (that.currentView != that.setList) {
               that.currentView.destroy(svg);
-              that.currentView = setList;
+              that.currentView = that.setList;
               that.currentView.init();
               that.render(that.paths);
             }
@@ -85,7 +89,7 @@ define(['jquery', 'd3', './pathlist', './setlist'],
         ;
         setListWidgetDiv.append("label").text("Set Combination List");
 
-        setList.appendWidgets(setListWidgetDiv, svg);
+        that.setList.appendWidgets(setListWidgetDiv, svg);
 
       },
 

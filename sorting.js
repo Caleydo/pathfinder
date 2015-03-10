@@ -64,18 +64,20 @@ define(function() {
         this.currentStrategyChain.unshift(strategy);
       }
       this.setStrategyChain(this.currentStrategyChain);
-    },
-
-    sort: function ( data, parent, selector, transformFunction, strategyChain) {
-      this.setStrategyChain(strategyChain || this.currentStrategyChain);
-
-      data.sort(this.currentComparator);
-
-      parent.selectAll(selector)
-        .sort(this.currentComparator)
-        .transition()
-        .attr("transform", transformFunction);
     }
+
+    //sort: function ( data, parent, selector, transformFunction, strategyChain) {
+    //  this.setStrategyChain(strategyChain || this.currentStrategyChain);
+    //
+    //  data.sort(this.currentComparator);
+    //
+    //  parent.selectAll(selector)
+    //    .data(data, function(d) {return d.path.id});
+    //  parent.selectAll(selector)
+    //    .sort(this.currentComparator)
+    //    .transition()
+    //    .attr("transform", transformFunction);
+    //}
   }
 
   function getChainComparator(strategies) {

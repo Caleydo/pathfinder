@@ -9,13 +9,12 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
     var setNodeRadiusX = 40;
     var setNodeRadiusY = 15;
     var setComboHeight = 2 * setNodeRadiusY + 2 * vSpacing;
-    var collapseButtonSize = 16;
     var collapseButtonSpacing = 10;
 
-    var allSetCombinations = [];
-    var selectionListeners = [];
+    var setListUpdateTypes = {
+      UPDATE_SET_COMBO_SORTING: "UPDATE_SET_COMBO_SORTING"
+    }
 
-    var myParent;
 
     function NumPathsSortingStrategy() {
       sorting.SortingStrategy.call(this, sorting.SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT);
@@ -60,7 +59,9 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
     var sortingManager = new sorting.SortingManager(true);
 
     var sortingStrategies = {
-      setId: new sorting.IdSortingStrategy(sortingManager, function(setCombo) {return setCombo.id}),
+      setId: new sorting.IdSortingStrategy(sortingManager, function (setCombo) {
+        return setCombo.id
+      }),
       numPaths: new NumPathsSortingStrategy(),
       getSetNodePrensenceSortingStrategy: function (setIds) {
         return new SetNodePresenceSortingStrategy(setIds);
@@ -142,9 +143,6 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           pathList: new pathList()
         };
         setCombo.pathList.init();
-        setCombo.pathList.addUpdateListener(function (list) {
-          updateSetList(myParent);
-        })
         setCombinations.push(setCombo);
         currentSetId++;
       }
@@ -215,53 +213,24 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
       return text;
     }
 
-    function updateSetList(parent) {
 
-      var setComboContainer = parent.selectAll("g.setComboContainer")
-        .transition()
-        .each("start", function (d) {
-          if (d.collapsed) {
-            d3.select(this).selectAll("g.pathListContainer")
-              .attr("display", d.collapsed ? "none" : "inline");
-          }
-        })
-        .attr("class", "setComboContainer")
-        .attr("transform", getTransformFunction(allSetCombinations))
-        .each("end", function (d) {
-          if (!d.collapsed) {
-            d3.select(this).selectAll("g.pathListContainer")
-              .attr("display", d.collapsed ? "none" : "inline");
-          }
-        });
-
-      updateListHeight(parent);
-      //setComboContainer.selectAll("g.pathContainer").
-      //  attr("transform", function (d, i) {
-      //    var posY = 0;
-      //    for (var index = 0; index < i; index++) {
-      //      posY += pathHeight + allPaths[index].sets.length * setHeight + pathSpacing;
-      //    }
-      //    return "translate(0," + posY + ")";
-      //  });
-    }
-
-    function updateListHeight(svg) {
-      var posY = 0;
-
-      for (var index = 0; index < allSetCombinations.length; index++) {
-
-        if (!allSetCombinations[index].collapsed) {
-          posY += allSetCombinations[index].pathList.getTotalHeight();
-
-
-        }
-        posY += setContainerSpacing + setComboHeight;
-
-      }
-      svg.attr("height", posY);
-      svg.select("#SetLabelClipPath rect")
-        .attr("height", posY);
-    }
+    //function updateListHeight(svg) {
+    //  var posY = 0;
+    //
+    //  for (var index = 0; index < allSetCombinations.length; index++) {
+    //
+    //    if (!allSetCombinations[index].collapsed) {
+    //      posY += allSetCombinations[index].pathList.getTotalHeight();
+    //
+    //
+    //    }
+    //    posY += setContainerSpacing + setComboHeight;
+    //
+    //  }
+    //  svg.attr("height", posY);
+    //  svg.select("#SetLabelClipPath rect")
+    //    .attr("height", posY);
+    //}
 
     function getTransformFunction(setCombinations) {
       return function (d, i) {
@@ -281,26 +250,104 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
       }
     }
 
+    function SetComboList() {
+      this.allSetCombinations = [];
+      this.selectionListeners = [];
+      this.updateListeners = [];
 
-    return {
+      var that = this;
+
+      this.sortUpdateListener = function (currentComparator) {
+        //sortingManager.sort(that.pathWrappers, that.parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers), sortStrategyChain);
+
+        that.allSetCombinations.sort(currentComparator);
+
+        that.updateDataBinding();
+
+        that.parent.selectAll("g.setComboContainer")
+          .sort(currentComparator)
+          .transition()
+          .attr("transform", getTransformFunction(that.allSetCombinations));
+      }
+    }
+
+    SetComboList.prototype = {
       appendWidgets: function (parent, svg) {
+        var that = this;
+
         parent.append("label").text("Reverse");
         var sortButton = $('<input>').appendTo(parent)[0];
         $(sortButton).attr("type", "checkbox");
         $(sortButton).on("click", function () {
           var that = this;
           sortingManager.ascending = !this.checked;
-          sortingManager.sort(allSetCombinations, svg, "g.setComboContainer", getTransformFunction(allSetCombinations));
+          listeners.notify(setListUpdateTypes.UPDATE_SET_COMBO_SORTING, sortingManager.currentComparator);
+          //sortingManager.sort(that.allSetCombinations, svg, "g.setComboContainer", getTransformFunction(that.allSetCombinations));
         });
+      },
+
+      updateDataBinding: function () {
+        var setComboContainers = this.parent.selectAll("g.setComboContainer")
+          .data(this.allSetCombinations, getKey)
+
+        setComboContainers.each(function (combination) {
+          d3.select(this).selectAll("g.setNodeGroup").selectAll("g.setNode")
+            .data(function () {
+              return combination.setIds;
+            })
+        });
+      },
+
+      addUpdateListener: function (l) {
+        this.updateListeners.push(l);
+      },
+
+      notifyUpdateListeners: function () {
+        var that = this;
+        this.updateListeners.forEach(function (l) {
+          l(that);
+        })
+      },
+
+      updateSetList: function () {
+
+        var setComboContainer = this.parent.selectAll("g.setComboContainer")
+          .transition()
+          .each("start", function (d) {
+            if (d.collapsed) {
+              d3.select(this).selectAll("g.pathListContainer")
+                .attr("display", d.collapsed ? "none" : "inline");
+            }
+          })
+          .attr("class", "setComboContainer")
+          .attr("transform", getTransformFunction(this.allSetCombinations))
+          .each("end", function (d) {
+            if (!d.collapsed) {
+              d3.select(this).selectAll("g.pathListContainer")
+                .attr("display", d.collapsed ? "none" : "inline");
+            }
+          });
+
+        this.notifyUpdateListeners();
+
+        //updateListHeight(parent);
+        //setComboContainer.selectAll("g.pathContainer").
+        //  attr("transform", function (d, i) {
+        //    var posY = 0;
+        //    for (var index = 0; index < i; index++) {
+        //      posY += pathHeight + allPaths[index].sets.length * setHeight + pathSpacing;
+        //    }
+        //    return "translate(0," + posY + ")";
+        //  });
       },
 
       getTotalHeight: function () {
         var posY = 0;
 
-        for (var index = 0; index < allSetCombinations.length; index++) {
+        for (var index = 0; index < this.allSetCombinations.length; index++) {
 
-          if (!allSetCombinations[index].collapsed) {
-            posY += allSetCombinations[index].pathList.getTotalHeight();
+          if (!this.allSetCombinations[index].collapsed) {
+            posY += this.allSetCombinations[index].pathList.getTotalHeight();
 
 
           }
@@ -310,13 +357,14 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
         return posY;
       },
 
-      init: function() {
+      init: function () {
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
+        listeners.add(this.sortUpdateListener, setListUpdateTypes.UPDATE_SET_COMBO_SORTING);
       },
 
       destroy: function (parent) {
 
-        allSetCombinations.forEach(function (combo) {
+        this.allSetCombinations.forEach(function (combo) {
           combo.pathList.destroy(parent);
         });
 
@@ -326,8 +374,8 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
 
         //parent.select("#arrowRight").remove();
         //parent.select("#SetLabelClipPath").remove();
-        selectionUtil.removeListeners(selectionListeners);
-        selectionListeners = [];
+        selectionUtil.removeListeners(this.selectionListeners);
+        this.selectionListeners = [];
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
       },
 
@@ -342,23 +390,32 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
 
 
       render: function (paths, parent) {
-        myParent = parent;
-        allSetCombinations = getSetCombinations(paths);
+        this.parent = parent;
+        var that = this;
+        this.allSetCombinations = getSetCombinations(paths);
+        this.allSetCombinations.forEach(function (setCombo) {
+          setCombo.pathList.addUpdateListener(function (list) {
+            that.updateSetList();
+          });
+        });
+
+        var that = this;
 
 
         parent.selectAll("g.setComboContainer")
           .remove();
 
-        sortingManager.sort(allSetCombinations, parent, "g.setComboContainer", getTransformFunction(allSetCombinations));
+        listeners.notify(setListUpdateTypes.UPDATE_SET_COMBO_SORTING, sortingManager.currentComparator);
+        //sortingManager.sort(that.allSetCombinations, parent, "g.setComboContainer", getTransformFunction(that.allSetCombinations));
 
 
         var setComboContainer = parent.selectAll("g.setComboContainer")
-          .data(allSetCombinations, getKey)
+          .data(that.allSetCombinations, getKey)
           .enter()
           .append("g");
 
         setComboContainer.attr("class", "setComboContainer")
-          .attr("transform", getTransformFunction(allSetCombinations));
+          .attr("transform", getTransformFunction(that.allSetCombinations));
 
         var setCombination = setComboContainer.append("g")
           .attr("class", "setCombination")
@@ -384,7 +441,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
             d.collapsed = !d.collapsed;
             d3.select(this).text(d.collapsed ? "\uf0da" : "\uf0dd");
 
-            updateSetList(parent);
+            that.updateSetList(parent);
           });
 
         var setNodeGroup = setCombination.append("g")
@@ -399,7 +456,8 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           .attr("class", "setNode")
           .on("dblclick", function (d) {
             sortingManager.addOrReplace(sortingStrategies.getSetNodePrensenceSortingStrategy([d]));
-            sortingManager.sort(allSetCombinations, parent, "g.setComboContainer", getTransformFunction(allSetCombinations));
+            listeners.notify(setListUpdateTypes.UPDATE_SET_COMBO_SORTING, sortingManager.currentComparator);
+            //sortingManager.sort(that.allSetCombinations, parent, "g.setComboContainer", getTransformFunction(that.allSetCombinations));
 
 
             //sortingManager.sortPaths(svg, [sortingStrategies.getNodePresenceStrategy([d.id]),
@@ -411,7 +469,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           },
           "set"
         );
-        selectionListeners.push(l);
+        this.selectionListeners.push(l);
 
         node.append("ellipse")
           .attr("cx", function (d, i) {
@@ -472,10 +530,15 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
 
           d.pathList.render(d.paths, d3.select(this), !d.collapsed);
         });
-        updateListHeight(parent);
+        //updateListHeight(parent);
+
+        this.notifyUpdateListeners();
       }
 
     }
+
+
+    return SetComboList;
 
 
   }
