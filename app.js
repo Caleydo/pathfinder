@@ -196,7 +196,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           fetchSetInfos([path]);
 
           listView.addPath(path);
-          overviewGraph.addPath(path);
+          //overviewGraph.addPath(path);
 
         }
 

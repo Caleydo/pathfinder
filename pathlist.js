@@ -885,7 +885,10 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             }
           })
           .attr("y2", vSpacing + nodeHeight / 2)
-          .attr("marker-end", "url(#arrowRight)");
+          .attr("marker-end", "url(#arrowRight)")
+          .attr("display", function(d) {
+            return d.edge.properties["_isNetworkEdge"] ? "inline" : "none";
+          });
 
         var setGroup = pathContainer.append("g")
           .attr("class", "setGroup");
