@@ -623,15 +623,20 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
       removeGuiElements: function () {
 
+        selectionUtil.removeListeners(this.selectionListeners);
+        this.selectionListeners = [];
+        currentSetTypeId = 0;
+
+        if(typeof this.parent === "undefined")
+        return;
+
         this.parent.selectAll("g.pathContainer")
           .remove();
 
         //parent.select("#arrowRight").remove();
         //parent.select("#SetLabelClipPath").remove();
 
-        selectionUtil.removeListeners(this.selectionListeners);
-        this.selectionListeners = [];
-        currentSetTypeId = 0;
+
       }
       ,
 

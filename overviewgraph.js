@@ -90,6 +90,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
       edgeMap: {},
       graph: {nodes: [], edges: [], groups: []},
 
+
       init: function () {
 
         var w = 800;
@@ -110,6 +111,17 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
           .append("path")
           .attr("d", "M 0 0 L 10 5 L 0 10 z");
 
+        svg.append("g")
+          .attr("class", "edgeGroup");
+        svg.append("g")
+          .attr("class", "nodeGroup");
+
+        this.force = webcola.d3adaptor()
+          .convergenceThreshold(0.1)
+          .avoidOverlaps(true)
+          .flowLayout('x', 50)
+          .size([w, h])
+          .jaccardLinkLengths(100);
 
       },
 
@@ -187,6 +199,11 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
           .remove();
         svg.selectAll("g.nodeGroup")
           .remove();
+        svg.append("g")
+          .attr("class", "edgeGroup");
+        svg.append("g")
+          .attr("class", "nodeGroup");
+
         this.paths = [];
         this.graph = {nodes: [], edges: [], groups: []};
         this.nodeIndexMap = {};
@@ -210,15 +227,10 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
         //  .handleDisconnected(false)
         //  .size([w, h]);
 
-        var force = webcola.d3adaptor()
-          .convergenceThreshold(0.1)
-          .avoidOverlaps(true)
-          .flowLayout('x', 50)
-          .size([w, h])
-          .jaccardLinkLengths(100);
 
 
-        force
+
+        that.force
           .nodes(that.graph.nodes)
           .links(that.graph.edges)
           .groups(that.graph.groups)
@@ -248,9 +260,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
           .attr("class", "group")
           .style("fill", "rgb(255,0,0)");
 
-
-        var edgeGroup = svg.append("g")
-          .attr("class", "edgeGroup");
+        var edgeGroup = svg.select("g.edgeGroup");
 
         var allEdges = edgeGroup.selectAll("g.edge")
           .data(that.graph.edges, function(edge) {return edge.edge.id});
@@ -263,8 +273,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
         var edgeLines = edge.append("line")
           .attr("marker-end", "url(#arrowRight)");
 
-        var nodeGroup = svg.append("g")
-          .attr("class", "nodeGroup");
+        var nodeGroup = svg.select("g.nodeGroup");
 
         var allNodes = nodeGroup.selectAll("g.node")
           .data(that.graph.nodes, function(node) {return node.id});
@@ -275,7 +284,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
           .attr("class", function (d) {
             return "node " + (d.fixed ? ("fixed") : "");
           })
-          .call(force.drag);
+          .call(that.force.drag);
 
         selectionUtil.addListener(nodeGroup, "g.node", function (d) {
             return d.id;
@@ -367,7 +376,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
             });
         }
 
-        force.on("tick", tick);
+        that.force.on("tick", tick);
 
         listeners.add(function (path) {
 
@@ -457,7 +466,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
             });
 
 
-          force
+          that.force
             .nodes(that.graph.nodes)
             .links(that.graph.edges)
             .groups(that.graph.groups)
