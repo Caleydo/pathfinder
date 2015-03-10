@@ -186,7 +186,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           allPaths = [];
           currentPathId = 0;
           listView.reset();
-          //TODO: reset views
+          overviewGraph.reset();
         }
 
         function addPath(path) {
@@ -196,6 +196,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           fetchSetInfos([path]);
 
           listView.addPath(path);
+          overviewGraph.addPath(path);
 
         }
 
