@@ -442,7 +442,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       this.selectionListeners = [];
       var that = this;
       this.listUpdateListener = function (updatedObject) {
-        that.updatePathList(that.parent);
+        that.updatePathList();
       }
 
       this.sortUpdateListener = function (currentComparator) {
@@ -478,12 +478,12 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         })
       },
 
-      appendWidgets: function (parent, svg) {
+      appendWidgets: function (widgetParent) {
 
         var pathlist = this;
 
 
-        var selectSortingStrategy = $('<select>').appendTo(parent)[0];
+        var selectSortingStrategy = $('<select>').appendTo(widgetParent)[0];
         $(selectSortingStrategy).append($("<option value='0'>Set Count Edge Weight</option>"));
         $(selectSortingStrategy).append($("<option value='1'>Path Length</option>"));
         $(selectSortingStrategy).on("change", function () {
@@ -500,9 +500,9 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           }
         });
 
-        parent.append("label").text("Reverse");
+        widgetParent.append("label").text("Reverse");
 
-        var sortButton = $('<input>').appendTo(parent)[0];
+        var sortButton = $('<input>').appendTo(widgetParent)[0];
         $(sortButton).attr("type", "checkbox");
         $(sortButton).on("click", function () {
           var that = this;
@@ -511,9 +511,9 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers));
         });
 
-        parent.append("label").text("Hide non-relationship sets");
+        widgetParent.append("label").text("Hide non-relationship sets");
 
-        var hideNodeOnlySetsButton = $('<input>').appendTo(parent)[0];
+        var hideNodeOnlySetsButton = $('<input>').appendTo(widgetParent)[0];
         $(hideNodeOnlySetsButton).attr("type", "checkbox")
           .prop("checked", true);
         $(hideNodeOnlySetsButton).on("click", function () {
@@ -528,7 +528,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         listeners.add(this.sortUpdateListener, pathListUpdateTypes.UPDATE_PATH_SORTING);
       },
 
-      updatePathList: function (parent) {
+      updatePathList: function () {
 
         //var setComboContainer = parent.selectAll("g.pathContainer g.setType")
         //  .transition()
@@ -552,12 +552,12 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
         var that = this;
 
-        parent.selectAll("g.pathContainer")
+        that.parent.selectAll("g.pathContainer")
           .transition()
           .attr("transform", getPathContainerTransformFunction(this.pathWrappers));
 
 
-        parent.selectAll("g.pathContainer")
+        that.parent.selectAll("g.pathContainer")
           .each(function () {
             d3.select(this).selectAll("g.setType")
               .transition()
@@ -614,16 +614,16 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       }
       ,
 
-      destroy: function (parent) {
-        this.removePaths(parent);
+      destroy: function () {
+        this.removePaths();
         listeners.remove(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.remove(this.sortUpdateListener, pathListUpdateTypes.UPDATE_PATH_SORTING);
       },
 
-      removeGuiElements: function (parent) {
+      removeGuiElements: function () {
 
-        parent.selectAll("g.pathContainer")
+        this.parent.selectAll("g.pathContainer")
           .remove();
 
         //parent.select("#arrowRight").remove();
@@ -635,42 +635,30 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       }
       ,
 
-      removePaths: function (parent) {
+      removePaths: function () {
         this.removeGuiElements(this.parent);
         this.pathWrappers = [];
       }
       ,
 
 
-      render: function (paths, parent) {
-
-        this.pathWrappers = [];
+      render: function (parent) {
         this.parent = parent;
-        this.wrapPaths(paths);
 
-        if (paths.length > 0) {
+        if (this.pathWrappers.length > 0) {
 
-          //parent.selectAll("g.pathContainer")
-          //  .remove();
-          //sortingManager.sort(this.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(this.pathWrappers));
-          //parent.selectAll("g.pathContainer")
-          //  .remove();
-
-          this.renderPaths(parent);
-
-          //var totalHeight = this.getTotalHeight();
-
-          //parent.attr("height", totalHeight);
-          //parent.select("#SetLabelClipPath rect")
-          //  .attr("height", totalHeight);
-
+          this.renderPaths();
         }
       }
       ,
 
+      setPaths: function (paths) {
+        this.pathWrappers = [];
+        this.wrapPaths(paths);
+      },
+
       addPath: function (path) {
         this.pathWrappers.push(new PathWrapper(path));
-        this.renderPaths(this.parent);
       }
       ,
 
@@ -760,12 +748,12 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         });
       },
 
-      renderPaths: function (parent) {
+      renderPaths: function () {
 
         var that = this;
 
 
-        var allPathContainers = parent.selectAll("g.pathContainer")
+        var allPathContainers = that.parent.selectAll("g.pathContainer")
           .data(that.pathWrappers, getPathKey)
 
         var pathContainer = allPathContainers
@@ -931,7 +919,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           .on("click", function (d) {
             d.setType.collapsed = !d.setType.collapsed;
             d3.select(this).text(d.setType.collapsed ? "\uf0da" : "\uf0dd");
-            that.updatePathList(parent);
+            that.updatePathList();
             //updateSetList(parent);
           });
 
@@ -1124,9 +1112,10 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         );
         that.selectionListeners.push(l);
 
+        this.sortUpdateListener(sortingManager.currentComparator);
 
-        allPathContainers.transition()
-          .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
+        //allPathContainers.transition()
+        //  .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
 
 
         //function getSetPositionY(pathIndex, setTypeIndex, setIndex) {

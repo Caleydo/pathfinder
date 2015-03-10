@@ -51,7 +51,7 @@ define(['jquery', 'd3', './pathlist', './setlist'],
           .on("click", function () {
 
             if (that.currentView != that.pathList) {
-              that.currentView.destroy(svg);
+              that.currentView.destroy();
               that.currentView = that.pathList;
               that.currentView.init();
               that.render(that.paths);
@@ -60,7 +60,7 @@ define(['jquery', 'd3', './pathlist', './setlist'],
           });
         pathListWidgetDiv.append("label").text("Path List");
 
-        this.pathList.appendWidgets(pathListWidgetDiv, svg);
+        this.pathList.appendWidgets(pathListWidgetDiv);
         this.pathList.addUpdateListener(function(list){
           svg.attr("height", list.getTotalHeight());
         });
@@ -79,7 +79,7 @@ define(['jquery', 'd3', './pathlist', './setlist'],
           .on("click", function () {
 
             if (that.currentView != that.setList) {
-              that.currentView.destroy(svg);
+              that.currentView.destroy();
               that.currentView = that.setList;
               that.currentView.init();
               that.render(that.paths);
@@ -89,26 +89,30 @@ define(['jquery', 'd3', './pathlist', './setlist'],
         ;
         setListWidgetDiv.append("label").text("Set Combination List");
 
-        that.setList.appendWidgets(setListWidgetDiv, svg);
+        that.setList.appendWidgets(setListWidgetDiv);
 
       },
 
       render: function (paths) {
         this.paths = paths;
         var svg = d3.select("#pathlist svg");
-        this.currentView.render(paths, svg);
+        this.currentView.setPaths(paths);
+        this.currentView.render(svg);
         svg.attr("height", this.currentView.getTotalHeight());
       },
 
       addPath: function(path) {
+        this.paths.push(path);
         this.currentView.addPath(path);
         var svg = d3.select("#pathlist svg");
+        this.currentView.render(svg);
         svg.attr("height", this.currentView.getTotalHeight());
       },
 
       reset: function () {
-        var svg = d3.select("#pathlist svg");
-        this.currentView.removePaths(svg);
+        //var svg = d3.select("#pathlist svg");
+        this.currentView.removePaths();
+        this.paths = [];
       }
     }
 

@@ -10,6 +10,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
     var setNodeRadiusY = 15;
     var setComboHeight = 2 * setNodeRadiusY + 2 * vSpacing;
     var collapseButtonSpacing = 10;
+    var currentSetComboId = 0;
 
     var setListUpdateTypes = {
       UPDATE_SET_COMBO_SORTING: "UPDATE_SET_COMBO_SORTING"
@@ -69,84 +70,6 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
     };
 
     sortingManager.setStrategyChain([sortingStrategies.numPaths, sortingStrategies.setId]);
-
-    function getSetCombinations(paths) {
-
-      var setCombinations = [];
-      var currentSetId = 0;
-
-      paths.forEach(function (path) {
-        nextEdge(path, 0, []);
-      });
-
-      return setCombinations;
-
-      function nextEdge(path, currentEdgeIndex, currentSetCombination) {
-
-
-        if (currentEdgeIndex >= path.edges.length) {
-          addToSetCombinations(currentSetCombination, path);
-          return;
-        }
-
-        var edge = path.edges[currentEdgeIndex];
-        var addedSet = false;
-        for (var key in edge.properties) {
-          if (key.charAt(0) !== '_') {
-            var property = edge.properties[key];
-            if (property instanceof Array) {
-              property.forEach(function (val) {
-                addSetToCombo(path, currentEdgeIndex, currentSetCombination, val)
-              });
-            } else {
-              addSetToCombo(path, currentEdgeIndex, currentSetCombination, property);
-            }
-            addedSet = true;
-          }
-        }
-        if (!addedSet) {
-          addSetToCombo(path, currentEdgeIndex, currentSetCombination, "__No_Set__");
-        }
-
-      }
-
-      function addSetToCombo(path, currentEdgeIndex, currentSetCombination, mySet) {
-        var combo = currentSetCombination;
-        if (currentSetCombination.length === 0 || (currentSetCombination.length > 0 && currentSetCombination[currentSetCombination.length - 1] !== mySet)) {
-          combo = currentSetCombination.slice(0);
-          combo.push(mySet);
-        }
-        nextEdge(path, currentEdgeIndex + 1, combo);
-      }
-
-      function addToSetCombinations(combination, path) {
-        for (var i = 0; i < setCombinations.length; i++) {
-          var c = setCombinations[i];
-          if (c.setIds.length === combination.length) {
-            var numEqualSets = 0;
-            for (var j = 0; j < c.setIds.length; j++) {
-              if (c.setIds[j] === combination[j]) {
-                numEqualSets++;
-              }
-            }
-            if (numEqualSets === combination.length) {
-              c.paths.push(path);
-              return;
-            }
-          }
-        }
-        var setCombo = {
-          id: currentSetId,
-          collapsed: true,
-          setIds: combination,
-          paths: [path],
-          pathList: new pathList()
-        };
-        setCombo.pathList.init();
-        setCombinations.push(setCombo);
-        currentSetId++;
-      }
-    }
 
     function updateSets(setInfo) {
 
@@ -272,11 +195,11 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
     }
 
     SetComboList.prototype = {
-      appendWidgets: function (parent, svg) {
+      appendWidgets: function (widgetParent) {
         var that = this;
 
-        parent.append("label").text("Reverse");
-        var sortButton = $('<input>').appendTo(parent)[0];
+        widgetParent.append("label").text("Reverse");
+        var sortButton = $('<input>').appendTo(widgetParent)[0];
         $(sortButton).attr("type", "checkbox");
         $(sortButton).on("click", function () {
           var that = this;
@@ -288,7 +211,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
 
       updateDataBinding: function () {
         var setComboContainers = this.parent.selectAll("g.setComboContainer")
-          .data(this.allSetCombinations, getKey)
+          .data(this.allSetCombinations, getKey);
 
         setComboContainers.each(function (combination) {
           d3.select(this).selectAll("g.setNodeGroup").selectAll("g.setNode")
@@ -362,14 +285,20 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
         listeners.add(this.sortUpdateListener, setListUpdateTypes.UPDATE_SET_COMBO_SORTING);
       },
 
-      destroy: function (parent) {
-
+      clearSetCombos: function (){
+        var that = this;
         this.allSetCombinations.forEach(function (combo) {
-          combo.pathList.destroy(parent);
+          combo.pathList.destroy();
         });
+        this.allSetCombinations = [];
+        currentSetComboId = 0;
+      },
 
+      destroy: function () {
 
-        parent.selectAll("g.setComboContainer")
+        this.clearSetCombos();
+
+        this.parent.selectAll("g.setComboContainer")
           .remove();
 
         //parent.select("#arrowRight").remove();
@@ -379,43 +308,127 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
       },
 
-      removePaths: function (parent) {
-        this.destroy(parent);
+      removePaths: function () {
+        this.destroy();
       }
       ,
 
-      addPath: function (path) {
-//TODO
-      },
-
-
-      render: function (paths, parent) {
-        this.parent = parent;
+      addToSetCombinations: function (paths) {
         var that = this;
-        this.allSetCombinations = getSetCombinations(paths);
-        this.allSetCombinations.forEach(function (setCombo) {
+
+        paths.forEach(function (path) {
+          nextEdge(path, 0, []);
+        });
+
+        function nextEdge(path, currentEdgeIndex, currentSetCombination) {
+
+
+          if (currentEdgeIndex >= path.edges.length) {
+            addToSetCombinations(currentSetCombination, path);
+            return;
+          }
+
+          var edge = path.edges[currentEdgeIndex];
+          var addedSet = false;
+          for (var key in edge.properties) {
+            if (key.charAt(0) !== '_') {
+              var property = edge.properties[key];
+              if (property instanceof Array) {
+                property.forEach(function (val) {
+                  addSetToCombo(path, currentEdgeIndex, currentSetCombination, val)
+                });
+              } else {
+                addSetToCombo(path, currentEdgeIndex, currentSetCombination, property);
+              }
+              addedSet = true;
+            }
+          }
+          if (!addedSet) {
+            addSetToCombo(path, currentEdgeIndex, currentSetCombination, "__No_Set__");
+          }
+
+        }
+
+        function addSetToCombo(path, currentEdgeIndex, currentSetCombination, mySet) {
+          var combo = currentSetCombination;
+          if (currentSetCombination.length === 0 || (currentSetCombination.length > 0 && currentSetCombination[currentSetCombination.length - 1] !== mySet)) {
+            combo = currentSetCombination.slice(0);
+            combo.push(mySet);
+          }
+          nextEdge(path, currentEdgeIndex + 1, combo);
+        }
+
+        function addToSetCombinations(combination, path) {
+          for (var i = 0; i < that.allSetCombinations.length; i++) {
+            var c = that.allSetCombinations[i];
+            if (c.setIds.length === combination.length) {
+              var numEqualSets = 0;
+              for (var j = 0; j < c.setIds.length; j++) {
+                if (c.setIds[j] === combination[j]) {
+                  numEqualSets++;
+                }
+              }
+              if (numEqualSets === combination.length) {
+                c.paths.push(path);
+                c.pathList.addPath(path);
+                return;
+              }
+            }
+          }
+          var setCombo = {
+            id: currentSetComboId,
+            collapsed: true,
+            setIds: combination,
+            paths: [path],
+            pathList: new pathList()
+          };
+          setCombo.pathList.init();
+          setCombo.pathList.addPath(path);
           setCombo.pathList.addUpdateListener(function (list) {
             that.updateSetList();
           });
-        });
+          that.allSetCombinations.push(setCombo);
+          currentSetComboId++;
+        }
+      },
 
+      addPath: function (path) {
+        this.addToSetCombinations([path]);
+      },
+
+      setPaths: function(paths) {
+        this.clearSetCombos();
+        this.addToSetCombinations(paths);
+      },
+
+
+      render: function (parent) {
+        this.parent = parent;
+        this.renderSetCombinations();
+
+      },
+
+      renderSetCombinations: function () {
         var that = this;
 
 
-        parent.selectAll("g.setComboContainer")
-          .remove();
 
-        listeners.notify(setListUpdateTypes.UPDATE_SET_COMBO_SORTING, sortingManager.currentComparator);
+        //that.parent.selectAll("g.setComboContainer")
+        //  .remove();
+
+
         //sortingManager.sort(that.allSetCombinations, parent, "g.setComboContainer", getTransformFunction(that.allSetCombinations));
 
 
-        var setComboContainer = parent.selectAll("g.setComboContainer")
-          .data(that.allSetCombinations, getKey)
+        var allSetComboContainers = that.parent.selectAll("g.setComboContainer")
+          .data(that.allSetCombinations, getKey);
+
+        var setComboContainer = allSetComboContainers
           .enter()
           .append("g");
 
         setComboContainer.attr("class", "setComboContainer")
-          .attr("transform", getTransformFunction(that.allSetCombinations));
+          .attr("transform", "translate(0," + that.getTotalHeight() + ")");
 
         var setCombination = setComboContainer.append("g")
           .attr("class", "setCombination")
@@ -441,16 +454,18 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
             d.collapsed = !d.collapsed;
             d3.select(this).text(d.collapsed ? "\uf0da" : "\uf0dd");
 
-            that.updateSetList(parent);
+            that.updateSetList(that.parent);
           });
 
         var setNodeGroup = setCombination.append("g")
           .attr("class", "setNodeGroup");
 
-        var node = setNodeGroup.selectAll("g.setNode")
+        var allNodes = allSetComboContainers.selectAll("g.setNodeGroup").selectAll("g.setNode")
           .data(function (combination) {
             return combination.setIds;
-          })
+          });
+
+        var node = allNodes
           .enter()
           .append("g")
           .attr("class", "setNode")
@@ -520,7 +535,9 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
             return d.collapsed ? "none" : "inline";
           });
 
-        pathListContainer.each(function (d, i) {
+        var allPathListContainers = allSetComboContainers.selectAll("g.pathListContainer");
+
+        allPathListContainers.each(function (d, i) {
           //var posY = 0;
           //
           //for (var index = 0; index < i; index++) {
@@ -528,12 +545,22 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           //  posY += pathsHeight + setContainerSpacing + setComboHeight;
           //}
 
-          d.pathList.render(d.paths, d3.select(this), !d.collapsed);
+          d.pathList.render(d3.select(this));
         });
         //updateListHeight(parent);
 
+        //allSetComboContainers.transition().
+        //  attr("transform", getTransformFunction(that.allSetCombinations));
+
         this.notifyUpdateListeners();
+
+
+        this.sortUpdateListener(sortingManager.currentComparator);
+        //listeners.notify(setListUpdateTypes.UPDATE_SET_COMBO_SORTING, sortingManager.currentComparator);
+
+
       }
+
 
     }
 
