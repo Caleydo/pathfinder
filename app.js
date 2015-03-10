@@ -171,12 +171,20 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
       var $this = $(this).attr({
         disabled: 'disabled'
       }).html('<i class="fa fa-spinner fa-pulse"></i>');
+      $('#loadProgress').show()
+        .attr("max", k)
+        .attr("value", 0);
+
       reset();
       searchPaths(s, t, k, function (path) {
         console.log('got path', path);
+
         addPath(path);
+        $('#loadProgress')
+          .attr("value", allPaths.length);
       }).then(function (paths) {
         paths = JSON.parse(paths);
+        $('#loadProgress').hide();
         console.log('got paths', paths);
         $this = $this.attr({
           disabled: null
