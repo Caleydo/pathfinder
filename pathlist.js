@@ -763,6 +763,19 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
         pathContainer.attr("class", "pathContainer")
           .attr("transform", "translate(0," + that.getTotalHeight() + ")");
+
+        pathContainer.append("rect")
+          .classed("pathContainerBackground", true)
+          .attr("fill", "#A1D99B")
+          .style("opacity", 0.8)
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr("width", "100%")
+          .attr("height", function(pathWrapper) {
+            return pathWrapper.getHeight();
+          });
+
+
         //.attr("visibility", visible ? "visible" : "hidden");
 
         var p = pathContainer.append("g")
@@ -1113,6 +1126,10 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         that.selectionListeners.push(l);
 
         this.sortUpdateListener(sortingManager.currentComparator);
+
+        pathContainer.selectAll("rect.pathContainerBackground").transition()
+          .duration(800)
+          .style("opacity", 0);
 
         //allPathContainers.transition()
         //  .attr("transform", getPathContainerTransformFunction(that.pathWrappers));

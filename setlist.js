@@ -437,11 +437,20 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           });
 
         setCombination.append("rect")
-          .attr("class", "filler")
+          .classed("setComboContainerBackground", true)
+          .attr("fill", "#A1D99B")
+          .style("opacity", 0.8)
           .attr("x", 0)
           .attr("y", 0)
           .attr("width", "100%")
           .attr("height", setComboHeight);
+
+        //setCombination.append("rect")
+        //  .attr("class", "filler")
+        //  .attr("x", 0)
+        //  .attr("y", 0)
+        //  .attr("width", "100%")
+        //  .attr("height", setComboHeight);
 
         setCombination.append("text")
           .attr("class", "collapseIcon")
@@ -556,6 +565,10 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
 
 
         this.sortUpdateListener(sortingManager.currentComparator);
+
+        setComboContainer.selectAll("rect.setComboContainerBackground").transition()
+          .duration(800)
+          .style("opacity", 0);
         //listeners.notify(setListUpdateTypes.UPDATE_SET_COMBO_SORTING, sortingManager.currentComparator);
 
 
