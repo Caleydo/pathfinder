@@ -56,12 +56,6 @@ define(["d3", "../caleydo/main"], function (d3, C) {
   };
 
 
-  function notify(listeners, selectionType) {
-    listeners.forEach(function (l) {
-      l(selectionType);
-    })
-  }
-
   function removeListener(l, listeners) {
 
   }
@@ -69,26 +63,35 @@ define(["d3", "../caleydo/main"], function (d3, C) {
   return {
     selections: {
       node: new Selection(),
-      set: new Selection()
+      set: new Selection(),
+      path: new Selection()
     },
 
     listeners: {
       node: [],
-      set: []
+      set: [],
+      path: []
     },
 
-    removeListeners: function(listeners) {
+    notify: function (idType, selectionType) {
+      var listeners = this.listeners[idType];
+      listeners.forEach(function (l) {
+        l(selectionType);
+      })
+    },
+
+    removeListeners: function (listeners) {
       var that = this;
       if (listeners instanceof Array) {
         listeners.forEach(function (l) {
-         removeSingle(l);
+          removeSingle(l);
         });
       } else {
         removeSingle(listeners);
       }
 
       function removeSingle(l) {
-        for(var key in that.listeners) {
+        for (var key in that.listeners) {
           var index = that.listeners[key].indexOf(l);
           if (index > -1) {
             that.listeners[key].splice(index, 1);
@@ -97,17 +100,21 @@ define(["d3", "../caleydo/main"], function (d3, C) {
       }
     },
 
-    addListener: function (parent, selector, idAccessor, idType) {
+    addListener: function (idType, listener) {
+      this.listeners[idType].push(listener);
+    },
+
+    addDefaultListener: function (parent, selector, idAccessor, idType) {
 
       var that = this;
       var elements = parent.selectAll(selector)
         .on("mouseover", function (d) {
           that.selections[idType].setSelection(idAccessor(d), "hovered");
-          notify(that.listeners[idType], "hovered");
+          that.notify(idType, "hovered");
         })
         .on("mouseout", function (d) {
           that.selections[idType].removeFromSelection(idAccessor(d), "hovered");
-          notify(that.listeners[idType], "hovered");
+          that.notify(idType, "hovered");
         })
         .on("click", function (d) {
           if (d3.event.ctrlKey) {
@@ -115,7 +122,7 @@ define(["d3", "../caleydo/main"], function (d3, C) {
           } else {
             that.selections[idType].setSelection(idAccessor(d), "selected");
           }
-          notify(that.listeners[idType], "selected");
+          that.notify(idType, "selected");
         });
 
 
@@ -142,8 +149,8 @@ define(["d3", "../caleydo/main"], function (d3, C) {
 
 
       //make sure to set correct selection from start
-      notify(that.listeners[idType], "hovered");
-      notify(that.listeners[idType], "selected");
+      this.notify(idType, "hovered");
+      this.notify(idType, "selected");
 
       //This would be the way to go but reordering elements triggers the node removed event
 

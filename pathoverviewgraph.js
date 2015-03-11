@@ -46,7 +46,7 @@ define(['jquery', 'd3', './listeners', './selectionutil'], function ($, d3, list
           return "node " + (d.fixed ? ("fixed") : "");
         });
 
-      selectionUtil.addListener(nodeGroup, "g.node", function (d) {
+      selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
           return d.id;
         },
         "node"

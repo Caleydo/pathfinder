@@ -488,7 +488,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
             //  sortingManager.currentStrategyChain]);
           });
 
-        var l = selectionUtil.addListener(setNodeGroup, "g.setNode", function (d) {
+        var l = selectionUtil.addDefaultListener(setNodeGroup, "g.setNode", function (d) {
             return d;
           },
           "set"

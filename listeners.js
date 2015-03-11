@@ -5,7 +5,6 @@ define(function () {
   return {
 
     updateType: {
-      PATH_SELECTION: "PATH_SELECTION",
       SET_INFO_UPDATE: "SET_INFO_UPDATE"
     },
 

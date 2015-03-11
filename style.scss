@@ -23,12 +23,12 @@ g.node {
 
 }
 
-g.node.fixed {
-  rect {
-    fill: rgb(200, 100, 50);
-    stroke: rgb(30, 10, 2);
-  }
-}
+//g.node.fixed {
+//  rect {
+//    fill: rgb(200, 100, 50);
+//    stroke: rgb(30, 10, 2);
+//  }
+//}
 
 g.node.hovered {
   rect {
@@ -37,10 +37,24 @@ g.node.hovered {
   }
 }
 
+g.node.path_hovered {
+  rect {
+    stroke: rgb(255, 200, 0);
+    stroke-width: 3px;
+  }
+}
+
 g.node.selected {
   rect {
     fill: rgb(255, 100, 0);
     stroke: rgb(30, 30, 30);
+  }
+}
+
+g.node.path_selected {
+  rect {
+    stroke: rgb(255, 100, 0);
+    stroke-width: 3px;
   }
 }
 
@@ -71,7 +85,6 @@ g.setNode.selected {
   }
 }
 
-
 g.edge {
   line {
     stroke: rgb(80,80,80);
@@ -79,6 +92,19 @@ g.edge {
   }
 }
 
+g.edge.path_hovered {
+  line {
+    stroke:rgb(255, 200, 0);
+    stroke-width: 3px;
+  }
+}
+
+g.edge.path_selected {
+  line {
+    stroke: rgb(255, 100, 0);
+    stroke-width: 3px;
+  }
+}
 
 
 g.set, g.setType {
@@ -100,6 +126,18 @@ g.set, g.setType {
   line {
 //    stroke: rgb(150,150,150);
     stroke-width: 2px;
+  }
+}
+
+g.path.hovered {
+  rect.filler {
+    fill: rgba(255, 200, 0, 0.2)
+  }
+}
+
+g.path.selected {
+  rect.filler {
+    fill: rgba(255, 100, 0, 0.2)
   }
 }
 

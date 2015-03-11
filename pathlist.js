@@ -784,10 +784,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         //.attr("visibility", visible ? "visible" : "hidden");
 
         var p = pathContainer.append("g")
-          .attr("class", "path")
-          .on("click", function (d) {
-            listeners.notify(listeners.updateType.PATH_SELECTION, d.path);
-          });
+          .attr("class", "path");
 
         p.append("rect")
           .attr("class", "filler")
@@ -795,6 +792,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           .attr("y", 0)
           .attr("width", "100%")
           .attr("height", pathHeight);
+
+        var l = selectionUtil.addDefaultListener(pathContainer, "g.path", function (d) {
+            return d.path.id;
+          },
+          "path"
+        );
+        that.selectionListeners.push(l);
 
         var nodeGroup = p.append("g")
           .attr("class", "nodeGroup");
@@ -817,7 +821,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             listeners.notify(pathListUpdateTypes.UPDATE_PATH_SORTING, sortingManager.currentComparator);
             //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
           });
-        var l = selectionUtil.addListener(nodeGroup, "g.node", function (d) {
+        var l = selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
             return d.id;
           },
           "node"
@@ -1126,7 +1130,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         });
 
 
-        var l = selectionUtil.addListener(setType, "g.set", function (d) {
+        var l = selectionUtil.addDefaultListener(setType, "g.set", function (d) {
             return d.set.id;
           },
           "set"
@@ -1200,7 +1204,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       //      sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
       //      sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
       //    });
-      //  var l = selectionUtil.addListener(nodeGroup, "g.node", function (d) {
+      //  var l = selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
       //      return d.id;
       //    },
       //    "node"
@@ -1490,7 +1494,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       //  });
       //
       //
-      //  var l = selectionUtil.addListener(setType, "g.set", function (d) {
+      //  var l = selectionUtil.addDefaultListener(setType, "g.set", function (d) {
       //      return d.set.id;
       //    },
       //    "set"

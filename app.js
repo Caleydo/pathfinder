@@ -1,13 +1,12 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', 'font-awesome'],
-  function ($, d3, listeners, listView, setList, overviewGraph, setInfo) {
+require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', 'font-awesome'],
+  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
 
-    var allPaths = [];
     var currentPathId = 0;
 
 
@@ -181,7 +180,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
         addPath(path);
         $('#loadProgress')
-          .attr("value", allPaths.length);
+          .attr("value", dataStore.paths.length);
       }).then(function (paths) {
         paths = JSON.parse(paths);
         $('#loadProgress').hide();
@@ -205,7 +204,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
     });
 
     function reset() {
-      allPaths = [];
+      dataStore.paths = [];
       currentPathId = 0;
       listView.reset();
       overviewGraph.reset();
@@ -213,7 +212,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
     function addPath(path) {
       path.id = currentPathId++;
-      allPaths.push(path);
+      dataStore.paths.push(path);
 
       fetchSetInfos([path]);
 
@@ -261,6 +260,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
         //setList.render(paths);
 
         overviewGraph.render(paths);
+
 
 
         //$.ajax({

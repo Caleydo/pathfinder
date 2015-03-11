@@ -1,6 +1,11 @@
 define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function ($, d3, webcola, listeners, selectionUtil) {
     'use strict';
 
+    var w = 800;
+    var h = 800;
+
+    var sideSpacing = 10;
+    //var arrowWidth = 7;
     var nodeWidth = 50;
     var nodeHeight = 20;
 
@@ -93,8 +98,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
 
       init: function () {
 
-        var w = 800;
-        var h = 800;
+        var that = this;
 
         var svg = d3.select("#pathgraph").append("svg")
         svg.attr("width", w)
@@ -123,6 +127,50 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
           .size([w, h])
           .jaccardLinkLengths(100);
 
+        selectionUtil.addListener("path", function (selectionType) {
+          var selectedIds = (selectionUtil.selections["path"])[selectionType];
+          var selected = false;
+
+          var selectedNodes = [];
+          var selectedEdges = [];
+          var lastPath = {};
+          selectedIds.forEach(function (pathId) {
+
+            for (var i = 0; i < that.paths.length; i++) {
+              lastPath = that.paths[i];
+              if (lastPath.id === pathId) {
+                selectedNodes = selectedNodes.concat(lastPath.nodes);
+                selectedEdges = selectedEdges.concat(lastPath.edges);
+                break;
+              }
+            }
+          });
+
+          svg.selectAll("g.nodeGroup").selectAll("g.node")
+            .classed("path_" + selectionType, function (d) {
+              for (var nodeIndex = 0; nodeIndex < selectedNodes.length; nodeIndex++) {
+                if (d.id === selectedNodes[nodeIndex].id) {
+                  return true;
+                }
+              }
+              return false;
+            });
+
+          svg.selectAll("g.edgeGroup").selectAll("g.edge")
+            .classed("path_" + selectionType, function (d) {
+              for (var edgeIndex = 0; edgeIndex < selectedEdges.length; edgeIndex++) {
+                if (d.edge.id === selectedEdges[edgeIndex].id) {
+                  return true;
+                }
+              }
+              return false;
+            });
+
+          if (selectionType === "selected") {
+            that.fixPath(lastPath);
+          }
+        });
+
       },
 
       addPathsToGraph: function (paths) {
@@ -141,8 +189,8 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
 
               if (typeof index == "undefined") {
                 that.nodeIndexMap[node.id.toString()] = that.nodeIndex;
-                node.width = nodeWidth;
-                node.height = nodeHeight * 2;
+                node.width = nodeWidth+20;
+                node.height = nodeHeight+20;
                 that.graph.nodes.push(node);
                 that.nodeIndex++;
               }
@@ -173,6 +221,121 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
         );
       },
 
+      fixPath: function (path) {
+
+        if (typeof path.nodes === "undefined") {
+          return;
+        }
+
+        var that = this;
+        var nodeStep = (w - 2 * (sideSpacing + nodeWidth / 2)) / (path.nodes.length - 1);
+        var posX = sideSpacing + nodeWidth / 2;
+        var posY = h / 2;
+        var svg = d3.select("#pathgraph");
+
+        this.graph.nodes.forEach(function (node) {
+          //if (node.fixed === true) {
+          delete node.parent;
+          //}
+          //delete node.x;
+          //delete node.y;
+          //delete node.px;
+          //delete node.py;
+          node.fixed = false;
+        });
+
+        //var nodeRangeDict = {};
+
+
+        //for (var i = 0; i <= 100; i++) {
+        //
+        //  var scale = i / 100;
+
+        var fixedNodes = [];
+
+        //var pathAlignmentConstraint = {
+        //  type: "alignment",
+        //  axis: "y",
+        //  offsets: []
+        //};
+        //
+        //var constraints = [pathAlignmentConstraint];
+
+
+        path.nodes.forEach(function (fixedNode) {
+
+          for (var i = 0; i < that.graph.nodes.length; i++) {
+
+            var node = that.graph.nodes[i];
+            if (node.id == fixedNode.id) {
+
+              //if (i === 0) {
+              //  nodeRangeDict[node.id.toString()] = {startX: node.x, endX: posX, startY: node.y, endY: posY};
+              //  node.fixed = true;
+              //  posX += nodeStep;
+              //} else {
+              //
+              //  var ranges = nodeRangeDict[node.id.toString()];
+              //
+              //  var vX = ranges.startX + scale * (ranges.endX - ranges.startX);
+              //  node.x = vX;
+              //  node.px = vX;
+              //  //delete node.px;
+              //  var vY = ranges.startY + scale * (ranges.endY - ranges.startY);
+              //  node.y = vY;
+              //  node.py = vY;
+
+              node.x = posX;
+              node.px = posX;
+              //delete node.px;
+              node.y = posY;
+              node.py = posY;
+              node.fixed = true;
+              posX += nodeStep;
+
+              fixedNodes.push(i);
+              //pathAlignmentConstraint.offsets.push({
+              //  node: i, offset: 0
+              //});
+
+              //if(fixedNodes.length >=2) {
+              //  constraints.push({axis: "x", left: fixedNodes[fixedNodes.length-2], right: fixedNodes[fixedNodes.length-1], gap: 300, equality:true})
+              //}
+              //delete node.py;
+
+            }
+          }
+        });
+        //tick();
+        //}
+        this.graph.groups = [
+          {"leaves": fixedNodes}];
+
+
+        this.force
+          .nodes(that.graph.nodes)
+          .links(that.graph.edges)
+          .groups(that.graph.groups)
+          //.constraints(constraints)
+          .start();
+
+        svg.selectAll(".group")
+          .data(that.graph.groups);
+        svg.selectAll("g.edgeGroup").selectAll("g.edge")
+          .data(that.graph.edges);
+
+        svg.selectAll("g.nodeGroup").selectAll("g.node")
+          .data(that.graph.nodes)
+          .classed("fixed", function (d) {
+            return d.fixed
+          });
+        //nodeGroup.selectAll("g.node")
+
+        //for(var i = 0; i < 200; i++) tick();
+        //force.stop();
+
+      },
+
       render: function (paths) {
         this.paths = paths;
         //if (paths.length > 0) {
@@ -182,7 +345,8 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
 
         this.renderGraph(svg);
         //}
-      },
+      }
+      ,
 
       addPath: function (path) {
         this.paths.push(path);
@@ -190,7 +354,8 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
         this.addPathsToGraph([path]);
 
         this.renderGraph(svg);
-      },
+      }
+      ,
 
       reset: function () {
         var svg = d3.select("#pathgraph svg");
@@ -209,15 +374,12 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
         this.nodeIndexMap = {};
         this.edgeMap = {};
         this.nodeIndex = 0;
-      },
+      }
+      ,
 
       renderGraph: function (svg) {
 
-        var w = 800;
-        var h = 800;
 
-        var sideSpacing = 10;
-        var arrowWidth = 7;
         var that = this;
 
 
@@ -226,8 +388,6 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
         //  .avoidOverlaps(true)
         //  .handleDisconnected(false)
         //  .size([w, h]);
-
-
 
 
         that.force
@@ -263,20 +423,24 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
         var edgeGroup = svg.select("g.edgeGroup");
 
         var allEdges = edgeGroup.selectAll("g.edge")
-          .data(that.graph.edges, function(edge) {return edge.edge.id});
+          .data(that.graph.edges, function (edge) {
+            return edge.edge.id
+          });
 
         var edge = allEdges
           .enter()
           .append("g")
           .attr("class", "edge");
 
-        var edgeLines = edge.append("line")
-          .attr("marker-end", "url(#arrowRight)");
+        var edgeLines = edge.append("line");
+        //.attr("marker-end", "url(#arrowRight)");
 
         var nodeGroup = svg.select("g.nodeGroup");
 
         var allNodes = nodeGroup.selectAll("g.node")
-          .data(that.graph.nodes, function(node) {return node.id});
+          .data(that.graph.nodes, function (node) {
+            return node.id
+          });
 
         var node = allNodes
           .enter()
@@ -286,7 +450,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
           })
           .call(that.force.drag);
 
-        selectionUtil.addListener(nodeGroup, "g.node", function (d) {
+        selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
             return d.id;
           },
           "node"
@@ -354,17 +518,17 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
             });
 
           allNodes.selectAll("text")
-          .attr("x", function (d) {
-            return d.x;
-          })
-          .attr("y", function (d) {
-            return d.y + 5;
-          });
+            .attr("x", function (d) {
+              return d.x;
+            })
+            .attr("y", function (d) {
+              return d.y + 5;
+            });
 
           allEdges.selectAll("line")
-          .attr("x1", function (d) {
-            return calcIntersectionX(d.source, d.target, nodeWidth, nodeHeight);
-          })
+            .attr("x1", function (d) {
+              return calcIntersectionX(d.source, d.target, nodeWidth, nodeHeight);
+            })
             .attr("y1", function (d) {
               return calcIntersectionY(d.source, d.target, nodeWidth, nodeHeight);
             })
@@ -377,113 +541,6 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
         }
 
         that.force.on("tick", tick);
-
-        listeners.add(function (path) {
-
-          var nodeStep = (w - 2 * (sideSpacing + nodeWidth / 2)) / (path.nodes.length - 1);
-          var posX = sideSpacing + nodeWidth / 2;
-          var posY = h / 2;
-          that.graph.nodes.forEach(function (node) {
-            //if (node.fixed === true) {
-            delete node.parent;
-            //}
-            //delete node.x;
-            //delete node.y;
-            //delete node.px;
-            //delete node.py;
-            node.fixed = false;
-          });
-
-          //var nodeRangeDict = {};
-
-
-          //for (var i = 0; i <= 100; i++) {
-          //
-          //  var scale = i / 100;
-
-          var fixedNodes = [];
-
-          //var pathAlignmentConstraint = {
-          //  type: "alignment",
-          //  axis: "y",
-          //  offsets: []
-          //};
-          //
-          //var constraints = [pathAlignmentConstraint];
-
-
-          path.nodes.forEach(function (fixedNode) {
-
-            for (var i = 0; i < that.graph.nodes.length; i++) {
-
-              var node = that.graph.nodes[i];
-              if (node.id == fixedNode.id) {
-
-                //if (i === 0) {
-                //  nodeRangeDict[node.id.toString()] = {startX: node.x, endX: posX, startY: node.y, endY: posY};
-                //  node.fixed = true;
-                //  posX += nodeStep;
-                //} else {
-                //
-                //  var ranges = nodeRangeDict[node.id.toString()];
-                //
-                //  var vX = ranges.startX + scale * (ranges.endX - ranges.startX);
-                //  node.x = vX;
-                //  node.px = vX;
-                //  //delete node.px;
-                //  var vY = ranges.startY + scale * (ranges.endY - ranges.startY);
-                //  node.y = vY;
-                //  node.py = vY;
-
-                node.x = posX;
-                node.px = posX;
-                //delete node.px;
-                node.y = posY;
-                node.py = posY;
-                node.fixed = true;
-                posX += nodeStep;
-
-                fixedNodes.push(i);
-                //pathAlignmentConstraint.offsets.push({
-                //  node: i, offset: 0
-                //});
-
-                //if(fixedNodes.length >=2) {
-                //  constraints.push({axis: "x", left: fixedNodes[fixedNodes.length-2], right: fixedNodes[fixedNodes.length-1], gap: 300, equality:true})
-                //}
-                //delete node.py;
-
-              }
-            }
-          });
-          //tick();
-          //}
-          that.graph.groups = [
-            {"leaves": fixedNodes}];
-          nodeGroup.selectAll("g.node")
-            .classed("fixed", function (d) {
-              return d.fixed
-            });
-
-
-          that.force
-            .nodes(that.graph.nodes)
-            .links(that.graph.edges)
-            .groups(that.graph.groups)
-            //.constraints(constraints)
-            .start();
-
-          svg.selectAll(".group")
-            .data(that.graph.groups);
-          edgeGroup.selectAll("g.edge")
-            .data(that.graph.edges);
-
-          nodeGroup.selectAll("g.node")
-            .data(that.graph.nodes);
-          //for(var i = 0; i < 200; i++) tick();
-          //force.stop();
-
-        }, listeners.updateType.PATH_SELECTION);
 
 
       }
