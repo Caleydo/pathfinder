@@ -9,7 +9,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
     var setNodeRadiusX = 40;
     var setNodeRadiusY = 15;
     var setComboHeight = 2 * setNodeRadiusY + 2 * vSpacing;
-    var collapseButtonSpacing = 10;
+    var collapseButtonSpacing = 28;
     var currentSetComboId = 0;
 
     var setListUpdateTypes = {
@@ -165,7 +165,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           posY += setContainerSpacing + setComboHeight;
 
           if (!setCombinations[index].collapsed) {
-            posY += setCombinations[index].pathList.getTotalHeight();
+            posY += setCombinations[index].pathList.getSize().height;
           }
         }
 
@@ -264,20 +264,31 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
         //  });
       },
 
-      getTotalHeight: function () {
+      getSize: function () {
         var posY = 0;
+
+        var maxWidth = 0;
 
         for (var index = 0; index < this.allSetCombinations.length; index++) {
 
-          if (!this.allSetCombinations[index].collapsed) {
-            posY += this.allSetCombinations[index].pathList.getTotalHeight();
+          var currentSetCombo = this.allSetCombinations[index];
 
+          var comboWidth = collapseButtonSpacing + currentSetCombo.setIds.length * 2 * setNodeRadiusX + (currentSetCombo.setIds.length - 1) * setNodeSpacing;
+          if (comboWidth > maxWidth) {
+            maxWidth = comboWidth;
+          }
+          if (!currentSetCombo.collapsed) {
+            var pathListSize = this.allSetCombinations[index].pathList.getSize()
+            if (pathListSize.width > maxWidth) {
+              maxWidth = pathListSize.width;
+            }
+            posY += pathListSize.height;
 
           }
           posY += setContainerSpacing + setComboHeight;
 
         }
-        return posY;
+        return {width: maxWidth, height: posY};
       },
 
       init: function () {
@@ -285,7 +296,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
         listeners.add(this.sortUpdateListener, setListUpdateTypes.UPDATE_SET_COMBO_SORTING);
       },
 
-      clearSetCombos: function (){
+      clearSetCombos: function () {
         var that = this;
         this.allSetCombinations.forEach(function (combo) {
           combo.pathList.destroy();
@@ -396,7 +407,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
         this.addToSetCombinations([path]);
       },
 
-      setPaths: function(paths) {
+      setPaths: function (paths) {
         this.clearSetCombos();
         this.addToSetCombinations(paths);
       },
@@ -410,7 +421,6 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
 
       renderSetCombinations: function () {
         var that = this;
-
 
 
         //that.parent.selectAll("g.setComboContainer")
@@ -428,7 +438,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           .append("g");
 
         setComboContainer.attr("class", "setComboContainer")
-          .attr("transform", "translate(0," + that.getTotalHeight() + ")");
+          .attr("transform", "translate(0," + that.getSize().height + ")");
 
         var setCombination = setComboContainer.append("g")
           .attr("class", "setCombination")
@@ -454,7 +464,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
 
         setCombination.append("text")
           .attr("class", "collapseIcon")
-          .attr("x", collapseButtonSpacing)
+          .attr("x", 10)
           .attr("y", setComboHeight - vSpacing - setNodeRadiusY + 5)
           .text(function (d) {
             return d.collapsed ? "\uf0da" : "\uf0dd";
@@ -497,7 +507,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
 
         node.append("ellipse")
           .attr("cx", function (d, i) {
-            return 2 * collapseButtonSpacing + 8 + setNodeRadiusX + (i * ((2 * setNodeRadiusX) + setNodeSpacing));
+            return collapseButtonSpacing + setNodeRadiusX + (i * ((2 * setNodeRadiusX) + setNodeSpacing));
           })
           .attr("cy", vSpacing + setNodeRadiusY)
           .attr("rx", setNodeRadiusX)
@@ -519,7 +529,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
             return text;
           })
           .attr("x", function (d, i) {
-            return 2 * collapseButtonSpacing + 8 + (i * ((2 * setNodeRadiusX) + setNodeSpacing)) + setNodeRadiusX;
+            return collapseButtonSpacing + (i * ((2 * setNodeRadiusX) + setNodeSpacing)) + setNodeRadiusX;
           })
           .attr("y", vSpacing + setNodeRadiusY + 4);
         node.append("title")

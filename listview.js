@@ -15,7 +15,7 @@ define(['jquery', 'd3', './pathlist', './setlist'],
         this.currentView = this.pathList;
         this.currentView.init();
         var svg = d3.select("#pathlist").append("svg");
-        svg.attr("width", 800)
+        svg.attr("width", "100%")
           .attr("height", 800);
         svg.append("marker")
           .attr("id", "arrowRight")
@@ -35,6 +35,10 @@ define(['jquery', 'd3', './pathlist', './setlist'],
           .attr("y", 0)
           .attr("width", 90)
           .attr("height", 20);
+
+        $(window).on('resize', function (e) {
+          that.updateViewSize();
+        });
 
         var viewTypeDiv = d3.select("#listView").insert("div", ":first-child");
         var that = this;
@@ -61,11 +65,11 @@ define(['jquery', 'd3', './pathlist', './setlist'],
         pathListWidgetDiv.append("label").text("Path List");
 
         this.pathList.appendWidgets(pathListWidgetDiv);
-        this.pathList.addUpdateListener(function(list){
-          svg.attr("height", list.getTotalHeight());
+        this.pathList.addUpdateListener(function (list) {
+          that.updateViewSize();
         });
-        this.setList.addUpdateListener(function(list){
-          svg.attr("height", list.getTotalHeight());
+        this.setList.addUpdateListener(function (list) {
+          that.updateViewSize();
         });
 
         var setListWidgetDiv = viewTypeDiv.append("div");
@@ -93,20 +97,30 @@ define(['jquery', 'd3', './pathlist', './setlist'],
 
       },
 
+      updateViewSize: function () {
+
+        var svg = d3.select("#pathlist svg");
+        var minViewSize = this.currentView.getSize();
+        var parent = $("#pathlist");
+        var parentWidth = document.getElementById("pathlist").offsetWidth;
+        svg.attr("width", parentWidth > minViewSize.width ? "100%" : minViewSize.width);
+        svg.attr("height", minViewSize.height);
+      },
+
       render: function (paths) {
         this.paths = paths;
         var svg = d3.select("#pathlist svg");
         this.currentView.setPaths(paths);
         this.currentView.render(svg);
-        svg.attr("height", this.currentView.getTotalHeight());
+        this.updateViewSize();
       },
 
-      addPath: function(path) {
+      addPath: function (path) {
         this.paths.push(path);
         this.currentView.addPath(path);
         var svg = d3.select("#pathlist svg");
         this.currentView.render(svg);
-        svg.attr("height", this.currentView.getTotalHeight());
+        this.updateViewSize();
       },
 
       reset: function () {

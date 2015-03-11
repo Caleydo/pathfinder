@@ -94,6 +94,17 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         return height;
       },
 
+      getWidth: function () {
+        var height = pathHeight;
+        this.setTypes.forEach(function (setType) {
+          if (setType.canBeShown()) {
+            height += setType.getHeight();
+          }
+        });
+
+        return nodeStart + this.path.nodes.length * nodeWidth + this.path.edges.length * edgeSize;
+      },
+
       addPathSets: function (path) {
 
         var setTypeDict = {};
@@ -627,8 +638,8 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         this.selectionListeners = [];
         currentSetTypeId = 0;
 
-        if(typeof this.parent === "undefined")
-        return;
+        if (typeof this.parent === "undefined")
+          return;
 
         this.parent.selectAll("g.pathContainer")
           .remove();
@@ -667,13 +678,18 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       }
       ,
 
-      getTotalHeight: function () {
+      getSize: function () {
         var totalHeight = 0;
+        var currentMaxWidth = 0;
 
         this.pathWrappers.forEach(function (pathWrapper) {
           totalHeight += pathWrapper.getHeight() + pathSpacing;
+          var currentWidth = pathWrapper.getWidth();
+          if (currentWidth > currentMaxWidth) {
+            currentMaxWidth = currentWidth;
+          }
         });
-        return totalHeight;
+        return {width: currentMaxWidth, height: totalHeight};
       }
       ,
 
@@ -746,8 +762,6 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             });
 
 
-
-
           });
 
         });
@@ -767,7 +781,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
 
         pathContainer.attr("class", "pathContainer")
-          .attr("transform", "translate(0," + that.getTotalHeight() + ")");
+          .attr("transform", "translate(0," + that.getSize().height + ")");
 
         pathContainer.append("rect")
           .classed("pathContainerBackground", true)
@@ -776,7 +790,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           .attr("x", 0)
           .attr("y", 0)
           .attr("width", "100%")
-          .attr("height", function(pathWrapper) {
+          .attr("height", function (pathWrapper) {
             return pathWrapper.getHeight();
           });
 
@@ -895,7 +909,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           })
           .attr("y2", vSpacing + nodeHeight / 2)
           .attr("marker-end", "url(#arrowRight)")
-          .attr("display", function(d) {
+          .attr("display", function (d) {
             return d.edge.properties["_isNetworkEdge"] ? "inline" : "none";
           });
 
