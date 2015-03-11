@@ -230,8 +230,8 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
         paths[i].id = i;
       }
 
-      listeners.clear(listeners.updateType.PATH_SELECTION);
-      listeners.clear(listeners.updateType.SET_INFO_UPDATE);
+      //listeners.clear(listeners.updateType.PATH_SELECTION);
+      //listeners.clear(listeners.updateType.SET_INFO_UPDATE);
 
 
       if (paths.length > 0) {
