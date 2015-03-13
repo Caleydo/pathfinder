@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', 'font-awesome'],
+require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', 'font-awesome', 'jquery-ui'],
   function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore) {
     'use strict';
 
@@ -162,6 +162,21 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
       });
     });
+    var search_cache = {};
+    $('#from_node, #to_node').autocomplete({
+        minLength: 3,
+        source: function( request, response ) {
+          var term = request.term;
+          if ( term in search_cache ) {
+            response( search_cache[ term ] );
+            return;
+          }
+          $.getJSON('/api/pathway/search', { q : term}).then(function(data) {
+            search_cache[ term ] = data;
+            response( data );
+          });
+        }
+      });
 
     $('#submit').on('click', function () {
       var s = $('#from_node').val();
@@ -181,7 +196,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
         addPath(path);
         $('#loadProgress')
           .attr("value", dataStore.paths.length);
-      }).then(function (paths) {
+      }, true).then(function (paths) {
         paths = JSON.parse(paths);
         $('#loadProgress').hide();
         console.log('got paths', paths);
@@ -419,8 +434,8 @@ function getIncrementalJSON(url, data, onChunkDone) {
   })
 }
 
-function searchPaths(source, target, k, onPathDone) {
-  return getIncrementalJSON('/api/pathway/path/' + source + '/' + target, {k: k || 10}, onPathDone);
+function searchPaths(source, target, k, onPathDone, nodeids) {
+  return getIncrementalJSON('/api/pathway/path/' + source + '/' + target, {k: k || 10, nodeids: nodeids === true}, onPathDone);
 }
 
 //$.get("/api/pathway/path", function (resp) {

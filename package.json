@@ -4,7 +4,8 @@
   "dependencies": {
     "d3": "~3.4.11",
     "font-awesome": ">=4.2.0",
-    "webcola": "~3.1.0"
+    "webcola": "~3.1.0",
+    "jquery-ui": "~1.10.2"
   },
   "caleydo" : {
     "plugins": [
@@ -14,7 +15,8 @@
         "webcola": {
           "deps": ["d3"],
           "exports": "cola"
-        }
+        },
+        "jquery-ui": ["css!${baseUrl}/jquery-ui/themes/smoothness/jquery-ui.css", "jquery"]
       }
     }
   }
