@@ -240,8 +240,13 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
 
   PathStatsView.prototype.reset = function () {
     this.paths = [];
-    this.nodeTypeWrappers.childElements = [];
-    this.setTypeWrappers.childElements = [];
+    this.nodeTypeDict = {};
+    this.setTypeDict = {};
+    this.dataRoot = new HierarchyElement();
+    this.nodeTypeWrappers = new BaseHierarchyElement(this.dataRoot);
+    this.setTypeWrappers = new BaseHierarchyElement(this.dataRoot);
+    this.dataRoot.childElements.push(this.nodeTypeWrappers);
+    this.dataRoot.childElements.push(this.setTypeWrappers);
     selectionUtil.removeListeners(this.selectionListeners);
     this.selectionListeners = [];
     currentNodeTypeWrapperId = 0;
