@@ -3,6 +3,7 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
   var HierarchyElement = hierarchyElements.HierarchyElement;
 
   var HIERARCHY_ELEMENT_HEIGHT = 12;
+  var LEVEL1_HIERARCHY_ELEMENT_HEIGHT = 18;
   var COLLAPSE_BUTTON_SPACING = 10;
   var BAR_START_X = 110;
   var MAX_BAR_WIDTH = 80;
@@ -23,6 +24,15 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
   BaseHierarchyElement.prototype = Object.create(HierarchyElement.prototype);
   BaseHierarchyElement.prototype.getBaseHeight = function () {
     return HIERARCHY_ELEMENT_HEIGHT;
+  }
+
+  function Level1HierarchyElement(parentElement) {
+    HierarchyElement.call(this, parentElement);
+  }
+
+  Level1HierarchyElement.prototype = Object.create(HierarchyElement.prototype);
+  Level1HierarchyElement.prototype.getBaseHeight = function () {
+    return LEVEL1_HIERARCHY_ELEMENT_HEIGHT;
   }
 
   function NodeWrapper(parentElement, node) {
@@ -92,6 +102,16 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
     }
   }
 
+  SetWrapper.prototype.addEdge = function (edge, path) {
+    if (this.pathIds.indexOf(path.id) === -1) {
+      this.pathIds.push(path.id);
+    }
+
+    if (this.edgeIds.indexOf(edge.id) === -1) {
+      this.edgeIds.push(edge.id);
+    }
+  }
+
   function SetTypeWrapper(parentElement, type) {
     this.id = currentSetTypeWrapperId++;
     BaseHierarchyElement.call(this, parentElement);
@@ -119,17 +139,31 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
     setWrapper.addNode(node, path);
   };
 
+  SetTypeWrapper.prototype.addEdge = function (setId, edge, path) {
+    var setWrapper = this.setWrapperDict[setId.toString()];
+
+    if (this.pathIds.indexOf(path.id) === -1) {
+      this.pathIds.push(path.id);
+    }
+
+    if (typeof setWrapper === "undefined") {
+      setWrapper = new SetWrapper(this, setId);
+      this.setWrapperDict[setId.toString()] = setWrapper;
+      this.childElements.push(setWrapper);
+    }
+    setWrapper.addEdge(edge, path);
+  };
+
   function PathStatsView() {
     view.call(this, "#pathstats");
     this.paths = [];
     this.nodeTypeDict = {};
     this.setTypeDict = {};
     this.dataRoot = new HierarchyElement();
-    this.nodeTypeWrappers = new BaseHierarchyElement(this.dataRoot);
-    this.setTypeWrappers = new BaseHierarchyElement(this.dataRoot);
+    this.nodeTypeWrappers = new Level1HierarchyElement(this.dataRoot);
+    this.setTypeWrappers = new Level1HierarchyElement(this.dataRoot);
     this.dataRoot.childElements.push(this.nodeTypeWrappers);
     this.dataRoot.childElements.push(this.setTypeWrappers);
-
 
 
     this.selectionListeners = [];
@@ -178,7 +212,7 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
       }
 
       //No proper type label found
-      if(!nodeAdded) {
+      if (!nodeAdded) {
         addNode(node, path, "Unknown");
       }
 
@@ -218,20 +252,30 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
       setType.addNode(setId, node, path);
     }
 
-    //path.edges.forEach(function (edge) {
-    //  for (var key in edge.properties) {
-    //    if (key.charAt(0) !== '_') {
-    //      var property = edge.properties[key];
-    //      if (property instanceof Array) {
-    //        property.forEach(function (setId) {
-    //          addSet(key, setId);
-    //        });
-    //      } else {
-    //        addSet(key, property);
-    //      }
-    //    }
-    //  }
-    //});
+    function addEdgeSet(type, setId, path, edge) {
+      var setType = that.setTypeDict[type];
+      if (typeof setType === "undefined") {
+        setType = new SetTypeWrapper(that.setTypeWrappers, type);
+        that.setTypeDict[type] = setType;
+        that.setTypeWrappers.childElements.push(setType);
+      }
+      setType.addEdge(setId, edge, path);
+    }
+
+    path.edges.forEach(function (edge) {
+      for (var key in edge.properties) {
+        if (key.charAt(0) !== '_') {
+          var property = edge.properties[key];
+          if (property instanceof Array) {
+            property.forEach(function (setId) {
+              addEdgeSet(key, setId, path, edge);
+            });
+          } else {
+            addEdgeSet(key, property, path, edge);
+          }
+        }
+      }
+    });
 
     function isSetProperty(key) {
       return key !== "id" && key !== "idType" && key !== "name";
@@ -243,8 +287,8 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
     this.nodeTypeDict = {};
     this.setTypeDict = {};
     this.dataRoot = new HierarchyElement();
-    this.nodeTypeWrappers = new BaseHierarchyElement(this.dataRoot);
-    this.setTypeWrappers = new BaseHierarchyElement(this.dataRoot);
+    this.nodeTypeWrappers = new Level1HierarchyElement(this.dataRoot);
+    this.setTypeWrappers = new Level1HierarchyElement(this.dataRoot);
     this.dataRoot.childElements.push(this.nodeTypeWrappers);
     this.dataRoot.childElements.push(this.setTypeWrappers);
     selectionUtil.removeListeners(this.selectionListeners);
@@ -270,8 +314,8 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
 
     d3.selectAll("g.level1HierarchyElement")
       .attr({
-      transform: hierarchyElements.transformFunction
-    });
+        transform: hierarchyElements.transformFunction
+      });
 
 
     var nodeTypeGroup = d3.selectAll("g.nodeTypeGroup");
@@ -383,6 +427,8 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
       .text(function (d) {
         return d.pathIds.length
       });
+
+    this.updateViewSize();
   };
 
   PathStatsView.prototype.getMinSize = function () {
@@ -412,15 +458,28 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
     allLevel1HierarchyElements.enter()
       .append("g")
       .classed("level1HierarchyElement", true)
-      .each(function(d) {
-        if(d === that.nodeTypeWrappers) {
+      .each(function (d) {
+        if (d === that.nodeTypeWrappers) {
           d3.select(this)
-            .classed("nodeTypeGroup", true);
+            .classed("nodeTypeGroup", true)
+            .append("text")
+            .text("Nodes")
+            .attr({
+              x: 0,
+              y: d.getBaseHeight()
+            });
 
 
-        } else if(d === that.setTypeWrappers) {
+        } else if (d === that.setTypeWrappers) {
           d3.select(this)
-            .classed("setTypeGroup", true);
+            .classed("setTypeGroup", true)
+            .append("text")
+            .text("Sets")
+            .attr({
+              x: 0,
+              y: d.getBaseHeight()
+            });
+          ;
         }
       });
     this.renderNodeStats();
@@ -428,7 +487,7 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
     this.renderSetStats();
 
     this.updateView();
-    this.updateViewSize();
+
   };
 
   PathStatsView.prototype.renderNodeStats = function () {
@@ -438,8 +497,8 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
     var nodeTypeGroup = d3.selectAll("g.nodeTypeGroup");
 
     nodeTypeGroup.attr({
-        transform: hierarchyElements.transformFunction
-      });
+      transform: hierarchyElements.transformFunction
+    });
 
     var that = this;
 
@@ -545,7 +604,8 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
         pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getNodePresenceStrategy([d.node.id]));
         listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
         //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
-      });;
+      });
+    ;
 
     node.append("rect")
       .classed("filler", true)
@@ -707,7 +767,8 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './l
         pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getSetPresenceStrategy([d.setId]));
         listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
         //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
-      });;
+      });
+    ;
 
     set.append("rect")
       .classed("filler", true)
