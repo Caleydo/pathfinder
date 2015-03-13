@@ -1,11 +1,9 @@
-define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil'],
-  function ($, d3, listeners, sorting, setInfo, selectionUtil) {
+define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil', './pathsorting'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
 
-    //TODO: fetch amount of sets from server
-    var totalNumSets = 290;
 
 
     var nodeStart = 90;
@@ -19,13 +17,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
     var setHeight = 10;
     var pathSpacing = 15;
 
-    var SortingStrategy = sorting.SortingStrategy;
-
     var currentSetTypeId = 0;
 
+    var sortingManager = pathSorting.sortingManager;
+    var sortingStrategies = pathSorting.sortingStrategies;
+
     var pathListUpdateTypes = {
-      UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY",
-      UPDATE_PATH_SORTING: "UPDATE_PATH_SORTING"
+      UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY"
     }
 
     var showNodeSets = false;
@@ -195,163 +193,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       }
     };
 
-    function PathLengthSortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT);
-    }
 
-    PathLengthSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
-    PathLengthSortingStrategy.prototype.compare = function (a, b) {
-      if (sortingManager.ascending) {
-        return d3.ascending(a.path.edges.length, b.path.edges.length);
-      }
-      return d3.descending(a.path.edges.length, b.path.edges.length);
-    }
-
-
-    function SetCountEdgeWeightSortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID);
-    }
-
-    SetCountEdgeWeightSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
-    SetCountEdgeWeightSortingStrategy.prototype.compare = function (a, b) {
-      function calcWeight(pathWrapper) {
-        var totalWeight = 0;
-
-        pathWrapper.path.edges.forEach(function (edge) {
-            var numSets = 0;
-            for (var key in edge.properties) {
-              if (key.charAt(0) !== '_') {
-                var property = edge.properties[key];
-                if (property instanceof Array) {
-                  numSets += property.length;
-                } else {
-                  numSets++;
-                }
-              }
-            }
-
-            totalWeight += (totalNumSets - numSets + 1) / totalNumSets;
-          }
-        );
-
-        return totalWeight;
-      }
-
-      var weightA = calcWeight(a);
-      var weightB = calcWeight(b);
-
-      if (sortingManager.ascending) {
-        return d3.ascending(weightA, weightB);
-      }
-      return d3.descending(weightA, weightB);
-    }
-
-    function NodePresenceSortingStrategy(nodeIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE);
-      this.compare = function (a, b) {
-        var numNodesA = 0;
-        var numNodesB = 0;
-        nodeIds.forEach(function (nodeId) {
-          a.path.nodes.forEach(function (node) {
-            if (node.id === nodeId) {
-              numNodesA++;
-            }
-          });
-
-          b.path.nodes.forEach(function (node) {
-            if (node.id === nodeId) {
-              numNodesB++;
-            }
-          });
-        });
-
-        //Inverse definition of ascending and descending, as more nodes should be ranked higher
-        if (sortingManager.ascending) {
-          return d3.descending(numNodesA, numNodesB);
-        }
-        return d3.ascending(numNodesA, numNodesB);
-      }
-    }
-
-    NodePresenceSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
-
-    function SetPresenceSortingStrategy(setIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE);
-      this.compare = function (a, b) {
-        var setScoreA = 0;
-        var setScoreB = 0;
-        setIds.forEach(function (setId) {
-          var setOccurrencesA = getSetOccurrences(a, setId);
-          setScoreA += setOccurrencesA / a.path.edges.length;
-          var setOccurrencesB = getSetOccurrences(b, setId);
-          setScoreB += setOccurrencesB / b.path.edges.length;
-        });
-
-        //Inverse definition of ascending and descending, as higher score should be ranked higher
-        if (sortingManager.ascending) {
-          return d3.descending(setScoreA, setScoreB);
-        }
-        return d3.ascending(setScoreA, setScoreB);
-      }
-
-      function getSetOccurrences(pathWrapper, setId) {
-        var numSetOccurrences = 0;
-        pathWrapper.path.edges.forEach(function (edge) {
-          for (var key in edge.properties) {
-            if (key.charAt(0) !== '_') {
-              var property = edge.properties[key];
-              if (property instanceof Array) {
-                for (var i = 0; i < property.length; i++) {
-                  if (property[i] === setId) {
-                    numSetOccurrences++
-                  }
-                }
-              } else if (property === setId) {
-                numSetOccurrences++;
-              }
-            }
-          }
-        });
-        return numSetOccurrences;
-      }
-    }
-
-    SetPresenceSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
-
-    var sortingManager = new sorting.SortingManager(true);
-
-    var sortingStrategies = {
-      pathLength: new PathLengthSortingStrategy(),
-
-      pathId: new sorting.IdSortingStrategy(sortingManager, function (pathWrapper) {
-        return pathWrapper.path.id
-      }),
-
-      setCountEdgeWeight: new SetCountEdgeWeightSortingStrategy(),
-
-      getNodePresenceStrategy: function (nodeIds) {
-        return new NodePresenceSortingStrategy(nodeIds);
-      },
-
-      getSetPresenceStrategy: function (setIds) {
-        return new SetPresenceSortingStrategy(setIds);
-      },
-
-      getChainComparator: function (strategies) {
-        return function (a, b) {
-
-          for (var i = 0; i < strategies.length; i++) {
-            var res = strategies[i].compare(a, b);
-            if (res !== 0) {
-              return res;
-            }
-          }
-          return 0;
-        }
-      }
-    }
-
-    sortingManager.setStrategyChain([sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
 
 
 //var allPaths = [];
@@ -500,13 +342,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         $(selectSortingStrategy).on("change", function () {
           if (this.value == '0') {
             sortingManager.setStrategyChain([sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
-            listeners.notify(pathListUpdateTypes.UPDATE_PATH_SORTING, sortingManager.currentComparator);
+            listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
 
             //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers), [sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
           }
           if (this.value == '1') {
             sortingManager.setStrategyChain([sortingStrategies.pathLength, sortingStrategies.pathId]);
-            listeners.notify(pathListUpdateTypes.UPDATE_PATH_SORTING, sortingManager.currentComparator);
+            listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
             //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers), [sortingStrategies.pathLength, sortingStrategies.pathId]);
           }
         });
@@ -518,7 +360,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         $(sortButton).on("click", function () {
           var that = this;
           sortingManager.ascending = !this.checked;
-          listeners.notify(pathListUpdateTypes.UPDATE_PATH_SORTING, sortingManager.currentComparator);
+          listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
           //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers));
         });
 
@@ -536,7 +378,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       init: function () {
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.add(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
-        listeners.add(this.sortUpdateListener, pathListUpdateTypes.UPDATE_PATH_SORTING);
+        listeners.add(this.sortUpdateListener, pathSorting.updateType);
       },
 
       updatePathList: function () {
@@ -629,7 +471,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         this.removePaths();
         listeners.remove(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
-        listeners.remove(this.sortUpdateListener, pathListUpdateTypes.UPDATE_PATH_SORTING);
+        listeners.remove(this.sortUpdateListener, pathSorting.updateType);
       },
 
       removeGuiElements: function () {
@@ -832,7 +674,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
           .on("dblclick", function (d) {
             sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
-            listeners.notify(pathListUpdateTypes.UPDATE_PATH_SORTING, sortingManager.currentComparator);
+            listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
             //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
           });
         var l = selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
@@ -1051,7 +893,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             })
             .on("dblclick", function (d) {
               sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
-              listeners.notify(pathListUpdateTypes.UPDATE_PATH_SORTING, sortingManager.currentComparator);
+              listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
               //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
             });
 

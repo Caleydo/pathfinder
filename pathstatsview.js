@@ -1,4 +1,4 @@
-define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil'], function ($, d3, view, hierarchyElements, selectionUtil) {
+define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil', './listeners', './pathsorting'], function ($, d3, view, hierarchyElements, selectionUtil, listeners, pathSorting) {
 
   var HierarchyElement = hierarchyElements.HierarchyElement;
 
@@ -166,19 +166,20 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil'], fun
     this.paths.push(path);
     var that = this;
     path.nodes.forEach(function (node) {
+      var nodeAdded = false;
       for (var i = 0; i < node.labels.length; i++) {
         var currentLabel = node.labels[i];
         if (currentLabel.charAt(0) !== "_") {
           //Assume first valid data label to be node type
-          var nodeType = that.nodeTypeDict[currentLabel];
-          if (typeof nodeType === "undefined") {
-            nodeType = new NodeTypeWrapper(that.nodeTypeWrappers, currentLabel);
-            that.nodeTypeDict[currentLabel] = nodeType;
-            that.nodeTypeWrappers.childElements.push(nodeType);
-          }
-          nodeType.addNode(node, path);
+          addNode(node, path, currentLabel);
+          nodeAdded = true;
           break;
         }
+      }
+
+      //No proper type label found
+      if(!nodeAdded) {
+        addNode(node, path, "Unknown");
       }
 
       for (var key in node.properties) {
@@ -196,6 +197,16 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil'], fun
 
 
     });
+
+    function addNode(node, path, type) {
+      var nodeType = that.nodeTypeDict[type];
+      if (typeof nodeType === "undefined") {
+        nodeType = new NodeTypeWrapper(that.nodeTypeWrappers, type);
+        that.nodeTypeDict[type] = nodeType;
+        that.nodeTypeWrappers.childElements.push(nodeType);
+      }
+      nodeType.addNode(node, path);
+    }
 
     function addNodeSet(type, setId, path, node) {
       var setType = that.setTypeDict[type];
@@ -524,7 +535,12 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil'], fun
       .attr({
         display: hierarchyElements.displayFunction,
         transform: "translate(0," + Math.max($(this.parentSelector)[0].offsetHeight, that.getMinSize().height) + ")"
-      });
+      })
+      .on("dblclick", function (d) {
+        pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getNodePresenceStrategy([d.node.id]));
+        listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+        //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
+      });;
 
     node.append("rect")
       .classed("filler", true)
@@ -681,7 +697,12 @@ define(['jquery', 'd3', './view', './hierarchyelements', './selectionutil'], fun
       .attr({
         display: hierarchyElements.displayFunction,
         transform: "translate(0," + Math.max($(this.parentSelector)[0].offsetHeight, that.getMinSize().height) + ")"
-      });
+      })
+      .on("dblclick", function (d) {
+        pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getSetPresenceStrategy([d.setId]));
+        listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+        //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
+      });;
 
     set.append("rect")
       .classed("filler", true)
