@@ -9,6 +9,7 @@ define(['./listeners'], function (listeners) {
   return {
     setTypeInfos: {},
     setInfos: {},
+    currentlyLoading : {},
 
     addToType: function (setType, setId) {
       var t = this.setTypeInfos[setType];
@@ -32,31 +33,35 @@ define(['./listeners'], function (listeners) {
 
     fetch: function (setIds) {
       var that = this;
-      $.ajax({
-        type: 'POST',
-        url: '/api/pathway/setinfo',
-        accepts: 'application/json',
-        contentType: 'application/json',
-        data: JSON.stringify(setIds),
-        success: function (response) {
-          var setInfos = JSON.parse(response);
-          for (var key in setInfos) {
+      //reduce to still unknown setsIds
 
-            var tempPWKey = key.substr(5, key.length);
-            var localInfo = that.setInfos[tempPWKey];
-            var fetchedInfo = setInfos[key];
-            if (typeof localInfo !== "undefined") {
-              for (var k in fetchedInfo) {
-                localInfo[k] = fetchedInfo[k];
-              }
-            } else {
-              that.setInfos[tempPWKey] = fetchedInfo;
-            }
-          }
+      var lookup = setIds.filter(function(id) { return !(id in that.setInfos); });
 
-          listeners.notify(listeners.updateType.SET_INFO_UPDATE, that);
-        }
+      if (lookup.length === 0) { //all already loaded
+        listeners.notify(listeners.updateType.SET_INFO_UPDATE, that);
+        return;
+      }
+
+      //not currently loading
+      lookup = setIds.filter(function(id) { return !(id in that.currentlyLoading); });
+
+      if (lookup.length === 0) {
+        return; // another callback will fire
+      }
+
+      //mark all as being catched
+      lookup.forEach(function(d) { that.currentlyLoading[d] = true});
+      $.getJSON('/api/pathway/setinfo', {
+        sets : lookup
+      }).then(function (data) {
+        //integrate the map
+        Object.keys(data).map(function(id) {
+          var key = id.substr(5);
+          that.setInfos[key] = data[id];
+          delete that.currentlyLoading[key];
+        });
+        listeners.notify(listeners.updateType.SET_INFO_UPDATE, that);
       });
     }
   }
-})
+});
