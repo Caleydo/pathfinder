@@ -120,12 +120,17 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
         svg.append("g")
           .attr("class", "nodeGroup");
 
-        this.force = webcola.d3adaptor()
-          .convergenceThreshold(0.1)
-          .avoidOverlaps(true)
-          .flowLayout('x', 50)
-          .size([w, h])
-          .jaccardLinkLengths(100);
+        this.force = d3.layout.force()
+          .linkDistance(100)
+          .charge(-1000)
+          .size([w, h]);
+
+        //webcola.d3adaptor()
+        //.convergenceThreshold(0.1)
+        //.avoidOverlaps(true)
+        //.flowLayout('x', 50)
+        //.size([w, h])
+        //.jaccardLinkLengths(100);
 
         selectionUtil.addListener("path", function (selectionType) {
           var selectedIds = (selectionUtil.selections["path"])[selectionType];
@@ -189,8 +194,8 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
 
               if (typeof index == "undefined") {
                 that.nodeIndexMap[node.id.toString()] = that.nodeIndex;
-                node.width = nodeWidth+20;
-                node.height = nodeHeight+20;
+                node.width = nodeWidth + 20;
+                node.height = nodeHeight + 20;
                 that.graph.nodes.push(node);
                 that.nodeIndex++;
               }
@@ -308,19 +313,19 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
         });
         //tick();
         //}
-        this.graph.groups = [
-          {"leaves": fixedNodes}];
+        //this.graph.groups = [
+        //  {"leaves": fixedNodes}];
 
 
         this.force
           .nodes(that.graph.nodes)
           .links(that.graph.edges)
-          .groups(that.graph.groups)
+          //.groups(that.graph.groups)
           //.constraints(constraints)
           .start();
 
-        svg.selectAll(".group")
-          .data(that.graph.groups);
+        //svg.selectAll(".group")
+        //  .data(that.graph.groups);
         svg.selectAll("g.edgeGroup").selectAll("g.edge")
           .data(that.graph.edges);
 
@@ -393,7 +398,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
         that.force
           .nodes(that.graph.nodes)
           .links(that.graph.edges)
-          .groups(that.graph.groups)
+          //.groups(that.graph.groups)
           //.constraints([{
           //  type: "alignment",
           //  axis: "y",
@@ -411,14 +416,14 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
           //])
           .start(10, 30, 100);
 
-        var allGroups = svg.selectAll(".group")
-          .data(that.graph.groups);
-
-        var group = allGroups
-          .enter().append("rect")
-          .attr("rx", 8).attr("ry", 8)
-          .attr("class", "group")
-          .style("fill", "rgb(255,0,0)");
+        //var allGroups = svg.selectAll(".group")
+        //  .data(that.graph.groups);
+        //
+        //var group = allGroups
+        //  .enter().append("rect")
+        //  .attr("rx", 8).attr("ry", 8)
+        //  .attr("class", "group")
+        //  .style("fill", "rgb(255,0,0)");
 
         var edgeGroup = svg.select("g.edgeGroup");
 
@@ -494,18 +499,18 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
             }
           });
 
-          allGroups.selectAll("rect").attr("x", function (d) {
-            return d.bounds.x;
-          })
-            .attr("y", function (d) {
-              return d.bounds.y;
-            })
-            .attr("width", function (d) {
-              return d.bounds.width();
-            })
-            .attr("height", function (d) {
-              return d.bounds.height();
-            });
+          //allGroups.selectAll("rect").attr("x", function (d) {
+          //  return d.bounds.x;
+          //})
+          //  .attr("y", function (d) {
+          //    return d.bounds.y;
+          //  })
+          //  .attr("width", function (d) {
+          //    return d.bounds.width();
+          //  })
+          //  .attr("height", function (d) {
+          //    return d.bounds.height();
+          //  });
 
           allNodes.selectAll("rect")
             .attr("x", function (d) {

@@ -149,8 +149,10 @@ define(["d3", "../caleydo/main"], function (d3, C) {
 
 
       //make sure to set correct selection from start
-      this.notify(idType, "hovered");
-      this.notify(idType, "selected");
+      listener("hovered");
+      listener("selected");
+      //this.notify(idType, "hovered");
+      //this.notify(idType, "selected");
 
       //This would be the way to go but reordering elements triggers the node removed event
 

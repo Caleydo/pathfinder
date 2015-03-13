@@ -30,6 +30,7 @@ g.node {
 //  }
 //}
 
+
 g.node.hovered {
   rect {
     fill: rgb(255, 200, 0);
@@ -106,6 +107,41 @@ g.edge.path_selected {
   }
 }
 
+g.nodeTypeStats {
+
+  text {
+    text-anchor: left;
+    font-family: sans-serif;
+    cursor: default;
+    font-size: 10px;
+    //    fill: rgb(30, 30, 30);
+  }
+
+  text.collapseIconSmall {
+    font-family: FontAwesome;
+    font-size: 10px;
+    cursor: pointer;
+    text-anchor: middle;
+  }
+}
+
+g.setTypeStats {
+
+  text {
+    text-anchor: left;
+    font-family: sans-serif;
+    cursor: default;
+    font-size: 10px;
+    //    fill: rgb(30, 30, 30);
+  }
+
+  text.collapseIconSmall {
+    font-family: FontAwesome;
+    font-size: 10px;
+    cursor: pointer;
+    text-anchor: middle;
+  }
+}
 
 g.set, g.setType {
   text {
@@ -126,6 +162,30 @@ g.set, g.setType {
   line {
 //    stroke: rgb(150,150,150);
     stroke-width: 2px;
+  }
+}
+
+g.nodeStats.hovered {
+  rect.filler {
+    fill: rgba(255, 200, 0, 0.2)
+  }
+}
+
+g.nodeStats.selected {
+  rect.filler {
+    fill: rgba(255, 100, 0, 0.2)
+  }
+}
+
+g.setStats.hovered {
+  rect.filler {
+    fill: rgba(255, 200, 0, 0.2)
+  }
+}
+
+g.setStats.selected {
+  rect.filler {
+    fill: rgba(255, 100, 0, 0.2)
   }
 }
 
@@ -200,13 +260,15 @@ g.set.selected {
   display: flex;
   flex-direction: column;
   float: left;
-  width: 50vw;
+  width: 45vw;
   height: 100vh;
 
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+
+
 
 .outer {
 
@@ -221,18 +283,25 @@ g.set.selected {
 //  width: 50vw;
 //  height:100vh;
 //}
-#pathlist, #setlist {
+#pathlist, #pathgraph, #pathstats {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-#pathgraph {
-  float: right;
+#pathGraphView {
+  display: inline-block;
   width: 40vw;
   height: auto;
   overflow: auto;
-//  display: block;
-//  width: 100%;
-//  height: 100%;
+}
+
+#pathStatsView {
+  display: inline-block;
+  width: 13vw;
+  height: 100vh;
+  overflow: auto;
+  //  display: block;
+  //  width: 100%;
+  //  height: 100%;
 }
