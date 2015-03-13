@@ -1,8 +1,8 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', 'font-awesome', 'jquery-ui'],
-  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore) {
+define(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './search/main', 'font-awesome', 'bootstrap'],
+  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, SearchPath) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
@@ -162,49 +162,13 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
       });
     });
-    var search_cache = {};
-    $('#from_node, #to_node').autocomplete({
-        minLength: 3,
-        source: function( request, response ) {
-          var term = request.term;
-          if ( term in search_cache ) {
-            response( search_cache[ term ] );
-            return;
-          }
-          $.getJSON('/api/pathway/search', { q : term}).then(function(data) {
-            search_cache[ term ] = data;
-            response( data );
-          });
-        }
-      });
 
-    $('#submit').on('click', function () {
-      var s = $('#from_node').val();
-      var t = $('#to_node').val();
-      var k = $('#at_most_k').val();
-      var $this = $(this).attr({
-        disabled: 'disabled'
-      }).html('<i class="fa fa-spinner fa-pulse"></i>');
-      $('#loadProgress').show()
-        .attr("max", k)
-        .attr("value", 0);
-
-      reset();
-      searchPaths(s, t, k, function (path) {
-        console.log('got path', path);
-
+    var search = $(new SearchPath('#search_path'));
+    search.on({
+      reset: reset,
+      addPath: function(event, path) {
         addPath(path);
-        $('#loadProgress')
-          .attr("value", dataStore.paths.length);
-      }, true).then(function (paths) {
-        paths = JSON.parse(paths);
-        $('#loadProgress').hide();
-        console.log('got paths', paths);
-        $this = $this.attr({
-          disabled: null
-        }).text('Search');
-        //loadPaths(paths);
-      });
+      }
     });
 
     $.getJSON("testpaths1.json", function (paths) {
@@ -378,65 +342,6 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 )
 ;
 
-function getIncrementalJSON(url, data, onChunkDone) {
-  var processed = 0;
-
-  function sendChunk(path) {
-    path = JSON.parse(path);
-    onChunkDone(path);
-  }
-
-  function processPart(text) {
-    var p = 0, act = 0, open = 0,
-      l = text.length,
-      c, start;
-    if (text[act] === '[') { //skip initial [
-      act = 1;
-    }
-    start = act;
-    while (act < l) {
-      c = text[act];
-      if (c === '{') { //starting object
-        open += 1;
-      } else if (c === '}') { //closing object
-        open -= 1;
-        if (open === 0) { //found a full chunk
-          sendChunk(text.substring(start, act + 1));
-          start = act + 1;
-          if (text[start] === ',') { //skip ,
-            start += 1;
-            act += 1;
-          }
-        }
-      }
-      act++;
-    }
-    return start; //everything before start was fully processed
-  }
-
-  return $.ajax({
-    async: true,
-    url: url,
-    data: data,
-    dataType: 'text',
-    success: function (data) {
-      processPart(data.substr(processed))
-    },
-    xhr: function () {
-      // get the native XmlHttpRequest object
-      var xhr = $.ajaxSettings.xhr();
-      // set the onprogress event handler
-      xhr.onprogress = function (evt) {
-        processed += processPart(evt.currentTarget.responseText.substr(processed));
-      };
-      return xhr;
-    }
-  })
-}
-
-function searchPaths(source, target, k, onPathDone, nodeids) {
-  return getIncrementalJSON('/api/pathway/path/' + source + '/' + target, {k: k || 10, nodeids: nodeids === true}, onPathDone);
-}
 
 //$.get("/api/pathway/path", function (resp) {
 //

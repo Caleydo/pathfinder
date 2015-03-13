@@ -5,18 +5,23 @@
     "d3": "~3.4.11",
     "font-awesome": ">=4.2.0",
     "webcola": "~3.1.0",
-    "jquery-ui": "~1.10.2"
+    "jquery-ui": "~1.10.2",
+    "bootstrap" : "~3.3.1"
   },
   "caleydo" : {
     "plugins": [
     ],
     "requirejs-config": {
+      "paths": {
+        "bootstrap": "${baseUrl}/bootstrap/dist/js/bootstrap"
+      },
       "shim": {
         "webcola": {
           "deps": ["d3"],
           "exports": "cola"
         },
-        "jquery-ui": ["css!${baseUrl}/jquery-ui/themes/smoothness/jquery-ui.css", "jquery"]
+        "jquery-ui": ["css!${baseUrl}/jquery-ui/themes/smoothness/jquery-ui.css", "jquery"],
+        "bootstrap": ["css!${baseUrl}/bootstrap/dist/css/bootstrap"]
       }
     }
   }

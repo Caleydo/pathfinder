@@ -1,0 +1,19 @@
+<form id="search_form" class="form-inline">
+  <div class="form-group form-inline">
+    <label for="from_node">Start Node</label>
+    <input type="text" class="form-control" id="from_node" placeholder="Search..." required="required">
+  </div>
+  <div class="form-group form-inline">
+    <label for="to_node">Target Node</label>
+    <input type="text" class="form-control" id="to_node" placeholder="Search..." required="required">
+  </div>
+  <div class="form-group form-inline">
+    <label for="at_most_k">Return At Most </label>
+    <div class="input-group">
+      <input type="number" class="form-control" class="form-control" id="at_most_k" maxlength="3" placeholder="k" required="required">
+      <div class="input-group-addon">paths</div>
+    </div>
+  </div>
+  <button id="submit" class="btn btn-primary">Search</button>
+  <progress id="loadProgress" max="5" value="3" style="display: none"></progress>
+</form>
