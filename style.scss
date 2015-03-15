@@ -125,7 +125,7 @@ g.nodeTypeStats {
   }
 }
 
-g.setTypeStats {
+g.statTypes {
 
   text {
     text-anchor: left;
@@ -165,29 +165,18 @@ g.set, g.setType {
   }
 }
 
-g.nodeStats.hovered {
+g.stats.hovered {
   rect.filler {
     fill: rgba(255, 200, 0, 0.2)
   }
 }
 
-g.nodeStats.selected {
+g.stats.selected {
   rect.filler {
     fill: rgba(255, 100, 0, 0.2)
   }
 }
 
-g.setStats.hovered {
-  rect.filler {
-    fill: rgba(255, 200, 0, 0.2)
-  }
-}
-
-g.setStats.selected {
-  rect.filler {
-    fill: rgba(255, 100, 0, 0.2)
-  }
-}
 
 g.path.hovered {
   rect.filler {
