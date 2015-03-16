@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata'],
-  function ($, d3, view, hierarchyElements, selectionUtil, statData) {
+define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil'],
+  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
     var NodeTypeWrapper = statData.NodeTypeWrapper;
@@ -61,24 +61,11 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       this.paths.push(path);
       var that = this;
       path.nodes.forEach(function (node) {
-        var nodeAdded = false;
-        for (var i = 0; i < node.labels.length; i++) {
-          var currentLabel = node.labels[i];
-          if (currentLabel.charAt(0) !== "_") {
-            //Assume first valid data label to be node type
-            addNode(node, path, currentLabel);
-            nodeAdded = true;
-            break;
-          }
-        }
+        addNode(node, path, pathUtil.getNodeType(node));
 
-        //No proper type label found
-        if (!nodeAdded) {
-          addNode(node, path, "Unknown");
-        }
 
         for (var key in node.properties) {
-          if (isSetProperty(key)) {
+          if (pathUtil.isNodeSetProperty(key)) {
             var property = node.properties[key];
             if (property instanceof Array) {
               property.forEach(function (setId) {
@@ -125,7 +112,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       path.edges.forEach(function (edge) {
         for (var key in edge.properties) {
-          if (key.charAt(0) !== '_') {
+          if (pathUtil.isEdgeSetProperty(key)) {
             var property = edge.properties[key];
             if (property instanceof Array) {
               property.forEach(function (setId) {
@@ -137,10 +124,6 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           }
         }
       });
-
-      function isSetProperty(key) {
-        return key !== "id" && key !== "idType" && key !== "name";
-      }
     };
 
     PathStatsView.prototype.reset = function () {

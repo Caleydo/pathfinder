@@ -1,4 +1,4 @@
-define(['./sorting'], function (sorting) {
+define(['./sorting', './pathutil', './query/querymodel'], function (sorting, pathUtil, q) {
     var SortingStrategy = sorting.SortingStrategy;
 
     //TODO: fetch amount of sets from server
@@ -85,6 +85,21 @@ define(['./sorting'], function (sorting) {
 
     NodePresenceSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
+    function PathQuerySortingStrategy(pathQuery) {
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE);
+      this.pathQuery = pathQuery;
+    }
+
+    PathQuerySortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+    PathQuerySortingStrategy.prototype.compare = function (a, b) {
+      var scoreA = this.pathQuery.match(a.path) === true ? 1 : 0;
+      var scoreB = this.pathQuery.match(b.path) === true ? 1 : 0;
+      if (sortingManager.ascending) {
+        return d3.descending(scoreA, scoreB);
+      }
+      return d3.ascending(scoreA, scoreB);
+    };
+
     function SetPresenceSortingStrategy(setIds) {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE);
       this.compare = function (a, b) {
@@ -110,7 +125,7 @@ define(['./sorting'], function (sorting) {
         var numSetOccurrences = 0;
         pathWrapper.path.edges.forEach(function (edge) {
           for (var key in edge.properties) {
-            if (key.charAt(0) !== '_') {
+            if (pathUtil.isEdgeSetProperty(key)) {
               var property = edge.properties[key];
               if (property instanceof Array) {
                 for (var i = 0; i < property.length; i++) {
@@ -127,7 +142,7 @@ define(['./sorting'], function (sorting) {
 
         pathWrapper.path.nodes.forEach(function (node) {
           for (var key in node.properties) {
-            if (isSetProperty(key)) {
+            if (pathUtil.isNodeSetProperty(key)) {
               var property = node.properties[key];
               if (property instanceof Array) {
                 for (var i = 0; i < property.length; i++) {
@@ -142,10 +157,6 @@ define(['./sorting'], function (sorting) {
           }
 
         });
-
-        function isSetProperty(key) {
-          return key !== "id" && key !== "idType" && key !== "name";
-        }
 
         return numSetOccurrences;
 
@@ -173,6 +184,10 @@ define(['./sorting'], function (sorting) {
         return new SetPresenceSortingStrategy(setIds);
       },
 
+      getPathQueryStrategy: function (pathQuery) {
+        return new PathQuerySortingStrategy(pathQuery);
+      },
+
       getChainComparator: function (strategies) {
         return function (a, b) {
 
@@ -185,7 +200,39 @@ define(['./sorting'], function (sorting) {
           return 0;
         }
       }
-    }
+    };
+
+    //var pathQuery = new pathQueryModel.NodeMatcher(new pathQueryModel.Or(new pathQueryModel.NodeNameConstraint("C00527"), new pathQueryModel.NodeNameConstraint("C00431")));
+
+    //var pathQuery = new q.NodeMatcher(new q.OrConstraint(new q.AndConstraint(new q.NodeSetPresenceConstraint("hsa01230"), new q.NodeSetPresenceConstraint("hsa00300")), new q.NodeNameConstraint("C00431")));
+
+    //var pathQuery = new q.NodeMatcher(new q.AndConstraint(new q.new q.NodeNameConstraint("C00431"), new q.NodeSetPresenceConstraint("hsa00310")));
+
+    //var pathQuery = new q.QueryMatchRegionRelation(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.NodeMatcher(new q.NodeNameConstraint("C00527")), q.MatchRegionRelations.subsequent);
+
+    //var pathQuery = new q.QueryMatchRegionRelation(new q.QueryMatchRegionRelation(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00071")), q.MatchRegionRelations.equal), new q.NodeMatcher(new q.NodeTypeConstraint("Compound")), q.MatchRegionRelations.subsequent);
+
+    //var pathQuery = new q.QueryMatchRegionRelation(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.NodeMatcher(new q.NodeTypeConstraint("Compound")), q.MatchRegionRelations.subsequent);
+
+    //var pathQuery = new q.RegionMatcher(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.MatchRegion(2, 2), true);
+
+    //var pathQuery = new q.Or(new q.RegionMatcher(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.MatchRegion(2, 2), true), new q.NodeMatcher(new q.NodeNameConstraint("C00164")));
+
+    //var pathQuery = new q.QueryMatchRegionRelation(
+    //  new q.QueryMatchRegionRelation(
+    //    new q.QueryMatchRegionRelation(
+    //      new q.QueryMatchRegionRelation(
+    //        new q.QueryMatchRegionRelation(
+    //          new q.QueryMatchRegionRelation(
+    //            new q.NodeMatcher(new q.NodeNameConstraint("1152")),
+    //            new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00330")), q.MatchRegionRelations.max1EqualsMin2),
+    //          new q.NodeMatcher(new q.NodeNameConstraint("219")), q.MatchRegionRelations.subsequent),
+    //        new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00310")), q.MatchRegionRelations.max1EqualsMin2),
+    //      new q.NodeMatcher(new q.NodeTypeConstraint("Compound")), q.MatchRegionRelations.subsequent),
+    //    new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00310")), q.MatchRegionRelations.max1EqualsMin2),
+    //  new q.NodeMatcher(new  q.NodeNameConstraint("23067")), q.MatchRegionRelations.subsequent);
+
+    //sortingManager.setStrategyChain([sortingStrategies.getPathQueryStrategy(pathQuery), sortingStrategies.pathId]);
 
     sortingManager.setStrategyChain([sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
 
@@ -197,4 +244,4 @@ define(['./sorting'], function (sorting) {
     }
 
   }
-)
+);

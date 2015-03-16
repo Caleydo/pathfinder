@@ -1,8 +1,8 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search/main', 'font-awesome'],
-  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, SearchPath) {
+require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search/main', './pathutil', 'font-awesome'],
+  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, SearchPath, pathUtil) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
@@ -248,7 +248,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           paths.forEach(function (path) {
             path.nodes.forEach(function (node) {
               for (var key in node.properties) {
-                if (isSetProperty(key)) {
+                if (pathUtil.isNodeSetProperty(key)) {
                   var property = node.properties[key];
                   if (property instanceof Array) {
                     property.forEach(function (setId) {
@@ -263,7 +263,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
             path.edges.forEach(function (edge) {
               for (var key in edge.properties) {
-                if (key.charAt(0) !== '_') {
+                if (pathUtil.isEdgeSetProperty(key)) {
                   var property = edge.properties[key];
                   if (property instanceof Array) {
                     property.forEach(function (setId) {
@@ -276,10 +276,6 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
               }
             });
           });
-
-          function isSetProperty(key) {
-            return key !== "id" && key !== "idType" && key !== "name";
-          }
 
           function addSet(type, setId) {
             setInfo.addToType(type, setId);

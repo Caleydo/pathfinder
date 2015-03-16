@@ -1,5 +1,5 @@
-define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', './selectionutil'],
-  function ($, d3, listeners, pathList, sorting, setInfo, selectionUtil) {
+define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', './selectionutil', './pathUtil'],
+  function ($, d3, listeners, pathList, sorting, setInfo, selectionUtil, pathUtil) {
     'use strict';
 
 
@@ -342,7 +342,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           var edge = path.edges[currentEdgeIndex];
           var addedSet = false;
           for (var key in edge.properties) {
-            if (key.charAt(0) !== '_') {
+            if (pathUtil.isEdgeSetProperty(key)) {
               var property = edge.properties[key];
               if (property instanceof Array) {
                 property.forEach(function (val) {

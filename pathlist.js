@@ -1,5 +1,5 @@
-define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil', './pathsorting'],
-  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting) {
+define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil', './pathsorting', './pathutil'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
@@ -111,7 +111,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         for (var i = 0; i < path.nodes.length; i++) {
           var node = path.nodes[i];
           for (var key in node.properties) {
-            if (isSetProperty(key)) {
+            if (pathUtil.isNodeSetProperty(key)) {
               var property = node.properties[key];
               if (property instanceof Array) {
                 property.forEach(function (setId) {
@@ -126,15 +126,11 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         }
         ;
 
-        function isSetProperty(key) {
-          return key !== "id" && key !== "idType" && key !== "name";
-        }
-
         for (var i = 0; i < path.edges.length; i++) {
           var edge = path.edges[i];
 
           for (var key in edge.properties) {
-            if (key.charAt(0) !== '_') {
+            if (pathUtil.isEdgeSetProperty(key)) {
               var property = edge.properties[key];
               if (property instanceof Array) {
                 edge.properties[key].forEach(function (setId) {
