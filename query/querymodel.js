@@ -18,7 +18,9 @@ define(['../pathutil'], function (pathUtil) {
     },
 
     getMatchRegions: function (path, getFirstOnly) {
-      return [];
+      return path.nodes.map(function (node, i) {
+        return [new MatchRegion(i, i)];
+      });
     }
   };
 

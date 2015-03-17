@@ -1,8 +1,8 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search/main', './pathutil', 'font-awesome'],
-  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, SearchPath, pathUtil) {
+require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search/main', './pathutil', './query/queryview', 'font-awesome'],
+  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, SearchPath, pathUtil, QueryView) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
@@ -10,8 +10,13 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
     var currentPathId = 0;
 
 
+
+
     $(document).ready(function () {
 
+        var queryView = new QueryView("#pathQuery");
+
+        queryView.init();
         overviewGraph.init();
         listView.init();
         pathStatsView.init();
@@ -334,4 +339,4 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
 
   }
-)
+);
