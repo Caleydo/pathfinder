@@ -23,6 +23,29 @@ g.node {
 
 }
 
+g.listItem {
+  rect {
+    fill: rgb(255, 255, 255);
+    stroke: rgb(255, 255, 255);
+  }
+
+  text {
+    font-family: sans-serif;
+    cursor: default;
+    font-size: 12px;
+    fill: rgb(30, 30, 30);
+  }
+
+}
+
+g.listItem.hovered {
+  rect {
+    fill: rgb(150, 200, 255);
+    stroke: rgb(255, 255, 255);
+  }
+
+}
+
 //g.node.fixed {
 //  rect {
 //    fill: rgb(200, 100, 50);

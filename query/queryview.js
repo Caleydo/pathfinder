@@ -1,7 +1,10 @@
-define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners'], function ($, d3, View, q, pathSorting, listeners) {
+define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners', '../listoverlay'], function ($, d3, View, q, pathSorting, listeners, ListOverlay) {
+
+    var listOverlay = new ListOverlay();
 
     function BaseGUIElement(parent) {
       this.parent = parent;
+      this.translate = {x: 0, y: 0};
     }
 
     BaseGUIElement.prototype = {
@@ -112,6 +115,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       this.children.forEach(function (child) {
         var childSize = child.getSize();
         child.rootElement.attr("transform", "translate(" + posX + ", " + posY + ")");
+        child.translate.x = that.translate.x + posX;
+        child.translate.y = that.translate.y + posY;
         child.update();
         if (that.horizontal) {
           posX += childSize.width;
@@ -226,8 +231,15 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
             var index = that.parent.children.indexOf(that);
             that.parent.insert(index + 1, new NodeContainer(that.parent));
             that.parent.insert(index + 1, new SequenceFiller(that.parent));
-          }
 
+            listOverlay.show(d3.select("#queryOverlay"), [{
+              text: "Add Node", callback: function () {
+              }
+            }, {
+              text: "Add Edge", callback: function () {
+              }
+            }], that.translate.x, that.translate.y);
+          }
         )
 
         ;
@@ -631,10 +643,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getPathQueryStrategy(pathQuery));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
         });
+
       var container = new SequenceContainer();
       container.init(svg);
       container.update();
 
+      svg.append("g")
+        .attr("id", "queryOverlay")
     };
 
     return QueryView;
