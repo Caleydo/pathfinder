@@ -165,13 +165,16 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           });
         });
 
-        var search = $(new SearchPath('#search_path'));
-        search.on({
+        var search = new SearchPath('#search_path');
+        $(search).on({
           reset: reset,
           addPath: function (event, path) {
             addPath(path);
           }
         });
+        listeners.add(function(query) {
+          search.setQuery(query);
+        }, listeners.updateType.QUERY_UPDATE);
 
         //$.getJSON("testpaths1.json", function (paths) {
         //

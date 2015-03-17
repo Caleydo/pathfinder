@@ -21,7 +21,8 @@ define(['../pathutil'], function (pathUtil) {
       return path.nodes.map(function (node, i) {
         return [new MatchRegion(i, i)];
       });
-    }
+    },
+    serialize: function() { return {}; }
   };
 
 
@@ -31,7 +32,8 @@ define(['../pathutil'], function (pathUtil) {
   Constraint.prototype = {
     match: function (o) {
       return true;
-    }
+    },
+    serialize: function() { return {}; }
   };
 
   function AndConstraint(constraint1, constraint2) {
@@ -43,6 +45,9 @@ define(['../pathutil'], function (pathUtil) {
   AndConstraint.prototype.match = function (o) {
     return this.constraint1.match(o) && this.constraint2.match(o);
   };
+  AndConstraint.prototype.serialize = function() {
+    return { '$and' : [ this.constraint1.serialize(), this.constraint2.serialize()]}
+  };
 
   function OrConstraint(constraint1, constraint2) {
     this.constraint1 = constraint1;
@@ -52,6 +57,9 @@ define(['../pathutil'], function (pathUtil) {
   OrConstraint.prototype = Object.create(Constraint.prototype);
   OrConstraint.prototype.match = function (o) {
     return this.constraint1.match(o) || this.constraint2.match(o);
+  };
+  OrConstraint.prototype.serialize = function() {
+    return { '$or' : [ this.constraint1.serialize(), this.constraint2.serialize()]}
   };
 
   function NodeIdConstraint(nodeId) {
@@ -63,6 +71,9 @@ define(['../pathutil'], function (pathUtil) {
   NodeIdConstraint.prototype.match = function (node) {
     return node.id === this.nodeId;
   };
+  NodeIdConstraint.prototype.serialize = function() {
+    return { context: 'node', prop: 'id', '$eq' : this.nodeId }
+  };
 
   function NodeNameConstraint(nodeName) {
     Constraint.call(this);
@@ -73,6 +84,9 @@ define(['../pathutil'], function (pathUtil) {
   NodeNameConstraint.prototype.match = function (node) {
     return node.properties["name"] === this.nodeName;
   };
+  NodeIdConstraint.prototype.serialize = function() {
+    return { context: 'node', 'prop': 'name', '$eq' : this.nodeName }
+  };
 
   function NodeTypeConstraint(nodeType) {
     Constraint.call(this);
@@ -82,6 +96,9 @@ define(['../pathutil'], function (pathUtil) {
   NodeTypeConstraint.prototype = Object.create(Constraint.prototype);
   NodeTypeConstraint.prototype.match = function (node) {
     return pathUtil.getNodeType(node) === this.nodeType;
+  };
+  NodeIdConstraint.prototype.serialize = function() {
+    return { context: 'node', '$contains' : this.nodeType }
   };
 
   function NodeSetPresenceConstraint(setId) {
@@ -109,6 +126,10 @@ define(['../pathutil'], function (pathUtil) {
     }
     return false;
   };
+  NodeSetPresenceConstraint.prototype.serialize = function() {
+    //FIXME hard coded
+    return { context: 'node', 'prop': 'pathways', '$contains' : this.setId };
+  };
 
   function EdgeSetPresenceConstraint(setId) {
     Constraint.call(this);
@@ -134,6 +155,10 @@ define(['../pathutil'], function (pathUtil) {
         }
       }
     }
+    EdgeSetPresenceConstraint.prototype.serialize = function() {
+      //FIXME hard coded
+      return { context: 'edge', 'prop': 'pathways', '$contains' : this.setId };
+    };
 
     return false;
   };
@@ -158,6 +183,9 @@ define(['../pathutil'], function (pathUtil) {
     }
     return matchRegions;
   };
+  NodeMatcher.prototype.serialize = function() {
+    return this.constraint.serialize();
+  };
 
 
   function EdgeMatcher(constraint) {
@@ -179,7 +207,10 @@ define(['../pathutil'], function (pathUtil) {
       }
     }
     return matchRegions;
-  }
+  };
+  EdgeMatcher.prototype.serialize = function() {
+    return this.constraint.serialize();
+  };
 
 
   function And(query1, query2) {
@@ -206,7 +237,10 @@ define(['../pathutil'], function (pathUtil) {
     }
     //Not sure if concat is correct but And will probably not be used when regions are required, MatchRegionRelations will be used in that case
     return matchRegions1.concat(matchRegions2);
-  }
+  };
+  And.prototype.serialize = function() {
+    return { '$and' : [ this.query1.serialize(), this.query2.serialize()] };
+  };
 
   function Or(query1, query2) {
     PathQuery.call(this);
@@ -224,7 +258,10 @@ define(['../pathutil'], function (pathUtil) {
     var matchRegions1 = this.query1.getMatchRegions(path);
     var matchRegions2 = this.query2.getMatchRegions(path);
     return matchRegions1.concat(matchRegions2);
-  }
+  };
+  Or.prototype.serialize = function() {
+    return { '$or' : [ this.query1.serialize(), this.query2.serialize()] };
+  };
 
   function RegionMatcher(query, region, relativeToEnd) {
     PathQuery.call(this);
@@ -248,19 +285,24 @@ define(['../pathutil'], function (pathUtil) {
     }
     return [];
   };
+  RegionMatcher.prototype.serialize = function() {
+    var r = this.query.serialize();
+    r['$region'] = [this.region.minIndex, this.region.maxIndex];
+    r['$fromEnd'] = this.relativeToEnd;
+  };
 
   var MatchRegionRelations = {
-    subsequent: function (region1, region2) {
+    subsequent: function subsequent(region1, region2) {
       return region2.minIndex === (region1.maxIndex + 1);
     },
-    equal: function (region1, region2) {
+    equal: function equal(region1, region2) {
       return region1.minIndex === region2.minIndex && region1.maxIndex == region2.maxIndex;
     },
-    max1EqualsMin2: function (region1, region2) {
+    max1EqualsMin2: function max1EqualsMin2(region1, region2) {
       return region1.maxIndex === region2.minIndex;
     },
 
-    greater: function (region1, region2) {
+    greater: function greater(region1, region2) {
       return region2.minIndex > region1.maxIndex;
     }
   };
@@ -303,6 +345,11 @@ define(['../pathutil'], function (pathUtil) {
       }
     }
     return mergedMatchRegions;
+  };
+  QueryMatchRegionRelation.prototype.serialize = function() {
+    var r= {};
+    r['$'+this.regionRelation.name] = [ this.query1.serialize(), this.query2.serialize()];
+    return r;
   };
 
   return {

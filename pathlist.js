@@ -694,7 +694,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
         node.append("text")
           .text(function (d) {
-            var text = d.properties["name"];
+            var text = d.properties["id"];
             return getClampedText(text, 7);
           })
           .attr("x", function (d, i) {

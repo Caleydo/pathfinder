@@ -5,7 +5,8 @@ define(function () {
   return {
 
     updateType: {
-      SET_INFO_UPDATE: "SET_INFO_UPDATE"
+      SET_INFO_UPDATE: "SET_INFO_UPDATE",
+      QUERY_UPDATE : 'QUERY_UPDATE'
     },
 
     add: function (listener, type) {
