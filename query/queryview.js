@@ -642,6 +642,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           var pathQuery = container.getPathQuery();
           pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getPathQueryStrategy(pathQuery));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+          listeners.notify(listeners.updateType.QUERY_UPDATE, pathQuery);
         });
 
       var container = new SequenceContainer();

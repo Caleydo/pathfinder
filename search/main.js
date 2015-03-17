@@ -4,7 +4,7 @@
 define(['jquery','jquery-ui'],function($) {
   'use strict';
 
-  function getIncrementalJSON(url, data, onChunkDone) {
+  function getIncrementalJSON(url, data, onChunkDone, extraArgs) {
     var processed = 0;
 
     function sendChunk(path) {
@@ -40,7 +40,7 @@ define(['jquery','jquery-ui'],function($) {
       return start; //everything before start was fully processed
     }
 
-    return $.ajax({
+    return $.ajax($.extend({
       async: true,
       url: url,
       data: data,
@@ -57,20 +57,26 @@ define(['jquery','jquery-ui'],function($) {
         };
         return xhr;
       }
-    })
+    },extraArgs))
   }
 
-  function searchPaths(source, target, k, maxDepth, onPathDone, nodeids) {
+  function searchPaths(source, target, k, maxDepth, onPathDone, nodeids, query) {
     var args = {
       k: k || 10,
       maxDepth: maxDepth || 10,
       nodeids: nodeids === true
     };
-    return getIncrementalJSON('/api/pathway/path/' + source + '/' + target, args, onPathDone);
+    var extraArgs = {};
+    if (query) {
+      extraArgs.method = 'POST';
+      args.query = JSON.stringify(query.serialize());
+    }
+    return getIncrementalJSON('/api/pathway/path/' + source + '/' + target, args, onPathDone, extraArgs);
   }
 
   function SearchPath(selector) {
     var that = this;
+    this._query = null;
     this.search_cache = {};
     $(selector).load('search/search.html', function() {
       that.init();
@@ -96,10 +102,13 @@ define(['jquery','jquery-ui'],function($) {
   SearchPath.prototype.init = function() {
     var that = this;
     this.enableAutocomplete();
-    $('#search_form').on('submit', this.handleSubmit.bind($(this)));
+    $('#search_form').on('submit', this.handleSubmit.bind(this));
   };
-  SearchPath.prototype.handleSubmit = function() {
-    var $this = this;
+  SearchPath.prototype.setQuery = function(query) {
+    this._query = query;
+  };
+  SearchPath.prototype.handleSubmit = function(event) {
+    var $this = $(this);
     var s = $('#from_node').val();
     var t = $('#to_node').val();
     var k = + $('#at_most_k').val();
@@ -110,13 +119,17 @@ define(['jquery','jquery-ui'],function($) {
       .attr("value", 0);
 
     $this.trigger('reset');
+
+    event.preventDefault();
+    event.stopPropagation();
+
     var count = 0;
     var search = searchPaths(s, t, k, maxDepth, function (path) {
       console.log('got path', path);
       $this.trigger('addPath', path);
       count++;
       $progress.attr("value", count);
-    }, true);
+    }, true, this._query);
 
     search.success(function (paths) {
       paths = JSON.parse(paths);
