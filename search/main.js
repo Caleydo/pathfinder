@@ -60,8 +60,13 @@ define(['jquery','jquery-ui'],function($) {
     })
   }
 
-  function searchPaths(source, target, k, onPathDone, nodeids) {
-    return getIncrementalJSON('/api/pathway/path/' + source + '/' + target, {k: k || 10, nodeids: nodeids === true}, onPathDone);
+  function searchPaths(source, target, k, maxDepth, onPathDone, nodeids) {
+    var args = {
+      k: k || 10,
+      maxDepth: maxDepth || 10,
+      nodeids: nodeids === true
+    };
+    return getIncrementalJSON('/api/pathway/path/' + source + '/' + target, args, onPathDone);
   }
 
   function SearchPath(selector) {
@@ -98,6 +103,7 @@ define(['jquery','jquery-ui'],function($) {
     var s = $('#from_node').val();
     var t = $('#to_node').val();
     var k = + $('#at_most_k').val();
+    var maxDepth = + $('#longest_path').val();
 
     var $progress = $('#loadProgress').show()
       .attr("max", k)
@@ -105,7 +111,7 @@ define(['jquery','jquery-ui'],function($) {
 
     $this.trigger('reset');
     var count = 0;
-    var search = searchPaths(s, t, k, function (path) {
+    var search = searchPaths(s, t, k, maxDepth, function (path) {
       console.log('got path', path);
       $this.trigger('addPath', path);
       count++;
@@ -119,7 +125,7 @@ define(['jquery','jquery-ui'],function($) {
     });
     search.error(function (error) {
       $progress.hide();
-      $('<div title="Error">'+error+'</div>').dialog();
+      $('<div title="Error">'+JSON.stringify(error)+'</div>').dialog();
     });
 
     return false; //no real submit
