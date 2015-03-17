@@ -1,8 +1,9 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search/main', './pathutil', './query/queryview', 'font-awesome'],
+require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search/main', './pathutil', './query/queryview', 'font-awesome', 'bootstrap'],
   function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, SearchPath, pathUtil, QueryView) {
+
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
@@ -172,28 +173,28 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           }
         });
 
-        $.getJSON("testpaths1.json", function (paths) {
-
-          var i = 0;
-
-          var interval = setInterval(function () {
-
-            if (i >= paths.length) {
-              clearInterval(interval);
-              return;
-            }
-            addPath(paths[i]);
-            i++;
-
-          }, 100);
-
-          //paths.forEach(function (path) {
-          //
-          //
-          //  //loadPaths(paths);
-          //});
-          //loadPaths(paths);
-        });
+        //$.getJSON("testpaths1.json", function (paths) {
+        //
+        //  var i = 0;
+        //
+        //  var interval = setInterval(function () {
+        //
+        //    if (i >= paths.length) {
+        //      clearInterval(interval);
+        //      return;
+        //    }
+        //    addPath(paths[i]);
+        //    i++;
+        //
+        //  }, 100);
+        //
+        //  //paths.forEach(function (path) {
+        //  //
+        //  //
+        //  //  //loadPaths(paths);
+        //  //});
+        //  //loadPaths(paths);
+        //});
 
         function reset() {
           dataStore.paths = [];
