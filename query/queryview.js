@@ -1,7 +1,93 @@
-define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners'], function ($, d3, View, q, pathSorting, listeners) {
+define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners', '../listoverlay'], function ($, d3, View, q, pathSorting, listeners, ListOverlay) {
+
+    var listOverlay = new ListOverlay();
+
+    var DEFAULT_OVERLAY_BUTTON_SIZE = 16;
+    var OR_BUTTON_WIDTH = 24;
+    var AND_BUTTON_WIDTH = 38;
+    var CAPTION_SIZE = 10;
+
+    function addOverlayButton(parent, x, y, width, height, buttonText, textX, textY, color) {
+
+      var button = d3.select("#queryOverlay").append("g")
+        .classed("overlayButton", true)
+        .attr({
+          transform: "translate(" + (parent.translate.x) + "," + (parent.translate.y) + ")"
+        });
+
+      button.append("rect")
+        .attr({
+          x: x,
+          y: y,
+          width: width,
+          height: height
+        });
+
+      button.append("text")
+        .attr({
+          x: textX,
+          y: textY,
+          fill: color
+        })
+        .text(buttonText);
+
+      ;
+      return button;
+    }
+
+
+    function addAddButton(parent, data, x, y) {
+
+      var button = addOverlayButton(parent, x, y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf067", x + DEFAULT_OVERLAY_BUTTON_SIZE / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 1, "green");
+
+      button.on("click", function () {
+          listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
+        }
+      );
+      return button;
+    }
+
+    function addAndButton(parent, data, x, y) {
+
+      var button = addOverlayButton(parent, x, y, AND_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "AND", x + AND_BUTTON_WIDTH / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 2, "orange");
+
+      button.on("click", function () {
+          listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
+        }
+      );
+      return button;
+    }
+
+    function addOrButton(parent, data, x, y) {
+
+      var button = addOverlayButton(parent, x, y, OR_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "OR", x + OR_BUTTON_WIDTH / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 2, "lightblue");
+
+      button.on("click", function () {
+          listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
+        }
+      );
+      return button;
+    }
+
+    function addRemoveButton(parent, x, y) {
+
+      var button = addOverlayButton(parent, x, y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf00d", x + DEFAULT_OVERLAY_BUTTON_SIZE / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 3, "red");
+
+      button.on("click", function () {
+          parent.parent.removeChild(parent.parent.children.indexOf(parent));
+          d3.select("#queryOverlay").selectAll("g.overlayButton")
+            .remove();
+        }
+      );
+
+      return button;
+    }
 
     function BaseGUIElement(parent) {
       this.parent = parent;
+      this.translate = {x: 0, y: 0};
+      this.fillHorizontal = true;
+      this.fillVertical = true;
     }
 
     BaseGUIElement.prototype = {
@@ -10,28 +96,28 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         this.rootElement = domParent.append("g")
           .classed("queryElement", true);
 
-        $(this.rootElement[0]).mouseenter(function () {
+        this.myDomElements = this.rootElement.append("g")
+          .classed("myDomElements", true);
+
+        $(this.myDomElements[0]).mouseenter(function () {
           if (that.showRemoveButton()) {
             var size = that.getSize();
 
-            that.rootElement.append("rect")
-              .classed("removeButton", true)
-              .attr({
-                x: size.width - 16,
-                y: 0,
-                width: 16,
-                height: 16,
-                fill: "magenta"
-              })
-              .on("click", function () {
-                that.parent.removeChild(that.parent.children.indexOf(that));
-              });
+            var button = addRemoveButton(that, size.width - DEFAULT_OVERLAY_BUTTON_SIZE, 0);
+
           }
         });
 
-        $(this.rootElement[0]).mouseleave(function () {
-          that.rootElement.selectAll("rect.removeButton")
-            .remove();
+        $(this.myDomElements[0]).mouseleave(function () {
+          if (!e) var e = window.event;
+          var relTarg = e.relatedTarget || e.toElement;
+
+          var classname = relTarg.parentNode.className
+
+          if (classname.baseVal !== "overlayButton") {
+            d3.select("#queryOverlay").selectAll("g.overlayButton")
+              .remove();
+          }
         });
       },
 
@@ -63,24 +149,37 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       }
     };
 
+    //------------------------------------------
+
     function ElementContainer(parent, horizontal) {
       BaseGUIElement.call(this, parent);
       this.children = [];
       this.horizontal = horizontal;
-      this.padding = 5;
+      this.hPadding = 5;
+      this.vPadding = 5;
+      this.elementSpacing = 5;
     }
 
     ElementContainer.prototype = Object.create(BaseGUIElement.prototype);
 
-    ElementContainer.prototype.add = function (childElement) {
-      this.children.push(childElement);
-      childElement.init(this.rootElement);
-      this.updateParent();
-    };
+    ElementContainer.prototype.init = function (domParent) {
+      BaseGUIElement.prototype.init.call(this, domParent);
+
+      this.childDomElements = this.rootElement.append("g")
+        .classed("childDomElements", true);
+
+
+    },
+
+      ElementContainer.prototype.add = function (childElement) {
+        this.children.push(childElement);
+        childElement.init(this.childDomElements);
+        this.updateParent();
+      };
 
     ElementContainer.prototype.insert = function (index, childElement) {
       this.children.splice(index, 0, childElement);
-      childElement.init(this.rootElement);
+      childElement.init(this.childDomElements);
       this.updateParent();
     };
 
@@ -91,7 +190,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
         this.children[index] = newChild;
         child.remove();
-        newChild.init(this.rootElement);
+        newChild.init(this.childDomElements);
         this.updateParent();
       }
     };
@@ -105,18 +204,20 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
     ElementContainer.prototype.update = function () {
 
-      var posX = this.padding;
-      var posY = this.padding;
+      var posX = this.hPadding;
+      var posY = this.vPadding;
       var that = this;
 
       this.children.forEach(function (child) {
         var childSize = child.getSize();
         child.rootElement.attr("transform", "translate(" + posX + ", " + posY + ")");
+        child.translate.x = that.translate.x + posX;
+        child.translate.y = that.translate.y + posY;
         child.update();
         if (that.horizontal) {
-          posX += childSize.width;
+          posX += childSize.width + that.elementSpacing;
         } else {
-          posY += childSize.height;
+          posY += childSize.height + that.elementSpacing;
         }
       });
     };
@@ -126,8 +227,19 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     };
 
     ElementContainer.prototype.getSize = function () {
-      var height = this.padding * 2;
-      var width = this.padding * 2;
+
+      var minSize = this.getMinSize();
+      var childSize = this.calcChildSize();
+
+      return {
+        width: Math.max(childSize.width, minSize.width) + this.hPadding * 2,
+        height: Math.max(childSize.height, minSize.height) + this.vPadding * 2
+      };
+    };
+
+    ElementContainer.prototype.calcChildSize = function () {
+      var width = this.horizontal ? Math.max(0, this.elementSpacing * (this.children.length - 1)) : 0;
+      var height = !this.horizontal ? Math.max(0, this.elementSpacing * (this.children.length - 1)) : 0;
       var that = this;
 
       this.children.forEach(function (child) {
@@ -145,41 +257,337 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         }
       });
 
-      var minSize = this.getMinSize();
-
-      return {width: Math.max(width, minSize.width), height: Math.max(height, minSize.height)};
+      return {width: width, height: height};
     };
 
-    function NodeNameElement(parent) {
+    //------------------------------------------
+
+    function CaptionContainer(parent, caption, horizontal) {
+      ElementContainer.call(this, parent, horizontal);
+      this.caption = caption;
+    }
+
+    CaptionContainer.prototype = Object.create(ElementContainer.prototype);
+
+    CaptionContainer.prototype.renderCaption = function (domParent) {
+      this.myDomElements.append("text")
+        .attr({
+          x: 0,
+          y: CAPTION_SIZE
+        })
+        .text(this.caption);
+    };
+
+    CaptionContainer.prototype.update = function () {
+
+      var posX = this.hPadding;
+      var posY = this.vPadding + CAPTION_SIZE;
+      var that = this;
+
+      this.children.forEach(function (child) {
+        var childSize = child.getSize();
+        child.rootElement.attr("transform", "translate(" + posX + ", " + posY + ")");
+        child.translate.x = that.translate.x + posX;
+        child.translate.y = that.translate.y + posY;
+        child.update();
+        if (that.horizontal) {
+          posX += childSize.width + that.elementSpacing;
+          ;
+        } else {
+          posY += childSize.height + that.elementSpacing;
+          ;
+        }
+      });
+    };
+
+    CaptionContainer.prototype.getSize = function () {
+
+      var minSize = this.getMinSize();
+      var childSize = this.calcChildSize();
+
+      return {
+        width: Math.max(childSize.width, minSize.width) + this.hPadding * 2,
+        height: Math.max(childSize.height, minSize.height) + this.vPadding * 2 + CAPTION_SIZE
+      };
+    };
+
+    //-------------------------------------------
+
+    function NodeConstraintElement(parent) {
       BaseGUIElement.call(this, parent);
     }
 
-    NodeNameElement.prototype = Object.create(BaseGUIElement.prototype);
+    NodeConstraintElement.prototype = Object.create(BaseGUIElement.prototype);
 
-    NodeNameElement.prototype.init = function (domParent) {
-      ElementContainer.prototype.init.call(this, domParent);
+    NodeConstraintElement.prototype.addInput = function (domParent, initialText) {
 
-      this.rootElement.append("foreignObject")
+      var size = this.getSize();
+
+      domParent.append("rect")
         .attr({
-          width: 100,
-          height: 30
+          x: 0,
+          y: 0,
+          width: size.width,
+          height: size.height,
+          fill: "rgba(255,255,255,0.5)"
+        });
+
+      domParent.append("text")
+        .attr({
+          x: 5,
+          y: 14
+        }).text(initialText);
+
+      domParent.append("foreignObject")
+        .attr({
+          x: 35,
+          y: 2,
+          width: 52,
+          height: 20
         }).append("xhtml:div")
-        .style("font", "15px 'Arial'")
-        .html('<input type="text" placeholder="Node name" required="required">');
+        .style("font", "10px 'Arial'")
+        .html('<input type="text" placeholder="' + initialText + '" required="required" size="5px" width="5px" class="queryConstraint">');
+
+      var that = this;
+
+      function replaceWithContainer(ContainerConstructor, isContainerHorizontal, ElementConstructor) {
+        var container = new ContainerConstructor(that.parent, isContainerHorizontal);
+        that.parent.replace(that, container)
+        that.parent = container;
+        container.add(that);
+        container.add(new ElementConstructor(container))
+      }
+
+      $(domParent[0]).mouseenter(function () {
+
+
+        addAndButton(that, [{
+          text: "Add Node Name", callback: function () {
+            replaceWithContainer(AndContainer, true, NodeNameElement);
+          }
+        },
+          {
+            text: "Add Set", callback: function () {
+            replaceWithContainer(AndContainer, true, NodeSetElement);
+          }
+          },
+          {
+            text: "Add Node Type", callback: function () {
+            replaceWithContainer(AndContainer, true, NodeTypeElement);
+          }
+          }], size.width - AND_BUTTON_WIDTH, size.height - 5);
+
+        addOrButton(that, [{
+          text: "Add Node Name", callback: function () {
+            replaceWithContainer(OrContainer, false, NodeNameElement);
+          }
+        },
+          {
+            text: "Add Set", callback: function () {
+            replaceWithContainer(OrContainer, false, NodeSetElement);
+          }
+          },
+          {
+            text: "Add Node Type", callback: function () {
+            replaceWithContainer(OrContainer, false, NodeTypeElement);
+          }
+          }], (size.width - OR_BUTTON_WIDTH) / 2, size.height - 5);
+
+
+      });
+
+
+      //$(domParent[0]).mouseleave(function () {
+      //
+      //  d3.select("#queryOverlay").selectAll("g.overlayButton")
+      //    .remove();
+      //});
+    }
+
+    NodeConstraintElement.prototype.getSize = function () {
+      return {width: 92, height: 24};
     };
 
-    NodeNameElement.prototype.getSize = function () {
-      return {width: 100, height: 30};
+//----------------------------------------
+
+    function NodeNameElement(parent) {
+      NodeConstraintElement.call(this, parent);
+    }
+
+    NodeNameElement.prototype = Object.create(NodeConstraintElement.prototype);
+
+    NodeNameElement.prototype.init = function (domParent) {
+      NodeConstraintElement.prototype.init.call(this, domParent);
+
+      this.addInput(this.myDomElements, "Name");
     };
 
     NodeNameElement.prototype.getPathQuery = function () {
-      var el = this.rootElement.select("input");
+      var el = this.myDomElements.select("input");
       var val = $(el[0]).val();
 
       return new q.NodeNameConstraint(val);
     };
 
 
+//-----------------------------------
+
+    function NodeSetElement(parent) {
+      NodeConstraintElement.call(this, parent);
+    }
+
+    NodeSetElement.prototype = Object.create(NodeConstraintElement.prototype);
+
+    NodeSetElement.prototype.init = function (domParent) {
+      NodeConstraintElement.prototype.init.call(this, domParent);
+
+      this.addInput(this.myDomElements, "Set");
+    };
+
+    NodeSetElement.prototype.getPathQuery = function () {
+      var el = this.myDomElements.select("input");
+      var val = $(el[0]).val();
+
+      return new q.NodeSetPresenceConstraint(val);
+    };
+
+//-----------------------------------
+
+    function NodeTypeElement(parent) {
+      NodeConstraintElement.call(this, parent);
+
+    }
+
+    NodeTypeElement.prototype = Object.create(NodeConstraintElement.prototype);
+
+    NodeTypeElement.prototype.init = function (domParent) {
+      NodeConstraintElement.prototype.init.call(this, domParent);
+
+      this.addInput(this.myDomElements, "Type");
+    };
+
+    NodeTypeElement.prototype.getPathQuery = function () {
+      var el = this.myDomElements.select("input");
+      var val = $(el[0]).val();
+
+      return new q.NodeTypeConstraint(val);
+    };
+
+//--------------------------------------
+
+    function AndContainer(parent, horizontal) {
+      CaptionContainer.call(this, parent, "AND", horizontal || false);
+      //ElementContainer.call(this, parent, horizontal || false);
+      //this.vPadding = 0;
+    }
+
+    AndContainer.prototype = Object.create(CaptionContainer.prototype);
+
+    AndContainer.prototype.init = function (domParent) {
+      CaptionContainer.prototype.init.call(this, domParent);
+
+      var that = this;
+
+      var size = this.getSize();
+
+      this.myDomElements.append("rect")
+        .classed("andContainerBg", true)
+        .attr({
+          x: 0,
+          y: 0,
+          width: size.width,
+          height: size.height,
+          fill: "orange",
+          stroke: "black"
+        });
+
+      this.renderCaption(this.myDomElements);
+    };
+
+    AndContainer.prototype.getMinSize = function () {
+      return {width: 40, height: 40};
+    }
+
+    AndContainer.prototype.update = function () {
+      CaptionContainer.prototype.update.call(this);
+
+      var size = this.getSize();
+      this.myDomElements.select("rect.andContainerBg")
+        .transition()
+        .attr({
+          width: size.width,
+          height: size.height
+        });
+    };
+
+    AndContainer.prototype.getPathQuery = function () {
+      if (this.children.length == 0) {
+        return new q.And(new q.PathQuery(), new q.PathQuery());
+      } else if (this.children.length == 1) {
+        return new q.And(this.children[0].getPathQuery(), new q.PathQuery());
+      }
+      return new q.And(this.children[0].getPathQuery(), this.children[1].getPathQuery());
+    };
+
+
+    //--------------------------
+
+    function OrContainer(parent, horizontal) {
+      CaptionContainer.call(this, parent, "OR", horizontal || false);
+      //ElementContainer.call(this, parent, horizontal || false);
+      //this.vPadding = 0;
+    }
+
+    OrContainer.prototype = Object.create(CaptionContainer.prototype);
+
+    OrContainer.prototype.init = function (domParent) {
+      CaptionContainer.prototype.init.call(this, domParent);
+
+      var that = this;
+
+      var size = this.getSize();
+
+      this.myDomElements.append("rect")
+        .classed("orContainerBg", true)
+        .attr({
+          x: 0,
+          y: 0,
+          width: size.width,
+          height: size.height,
+          fill: "lightblue",
+          stroke: "black"
+        });
+
+      this.renderCaption(this.myDomElements);
+    };
+
+    OrContainer.prototype.getMinSize = function () {
+      return {width: 40, height: 40};
+    }
+
+    OrContainer.prototype.update = function () {
+      CaptionContainer.prototype.update.call(this);
+
+      var size = this.getSize();
+      this.myDomElements.select("rect.orContainerBg")
+        .transition()
+        .attr({
+          width: size.width,
+          height: size.height
+        });
+    };
+
+    OrContainer.prototype.getPathQuery = function () {
+      if (this.children.length == 0) {
+        return new q.Or(new q.PathQuery(), new q.PathQuery());
+      } else if (this.children.length == 1) {
+        return new q.Or(this.children[0].getPathQuery(), new q.PathQuery());
+      }
+      return new q.Or(this.children[0].getPathQuery(), this.children[1].getPathQuery());
+    };
+
+
+//------------------------------------------------------
     function NodeContainer(parent) {
       ElementContainer.call(this, parent, true);
     }
@@ -193,57 +601,39 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
 
       //Use jquery mouseenter and mouseleave to prevent flickering of add button
-      $(this.rootElement[0]).mouseenter(function () {
+      $(this.myDomElements[0]).mouseenter(function () {
         var size = that.getSize();
         if (that.children.length <= 0) {
 
-          that.rootElement.append("rect")
-            .classed("addButton", true)
-            .attr({
-              x: size.width / 2 - 8,
-              y: size.height / 2 - 8,
-              width: 16,
-              height: 16,
-              fill: "green"
-            })
-            .on("click", function () {
+          addAddButton(that, [{
+            text: "Add Node Name", callback: function () {
               that.add(new NodeNameElement(that));
               d3.select(this).remove();
-            });
+            }
+          },
+            {
+              text: "Add Set", callback: function () {
+              that.add(new NodeSetElement(that));
+              d3.select(this).remove();
+            }
+            },
+            {
+              text: "Add Node Type", callback: function () {
+              that.add(new NodeTypeElement(that));
+              d3.select(this).remove();
+            }
+            }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+
         }
 
-        that.rootElement.append("rect")
-          .classed("addNodeButton", true)
-          .attr({
-            x: size.width - 16,
-            y: size.height / 2 - 16,
-            width: 16,
-            height: 16,
-            fill: "red"
-          })
-          .on("click", function () {
-
+        addAddButton(that, [{
+          text: "Add Node", callback: function () {
             var index = that.parent.children.indexOf(that);
             that.parent.insert(index + 1, new NodeContainer(that.parent));
             that.parent.insert(index + 1, new SequenceFiller(that.parent));
           }
-
-        )
-
-        ;
-
-        that.rootElement.append("rect")
-          .classed("addEdgeButton", true)
-          .attr({
-            x: size.width - 16,
-            y: size.height / 2,
-            width: 16,
-            height: 16,
-            fill: "blue"
-          })
-          .on("click", function () {
-
-
+        }, {
+          text: "Add Edge", callback: function () {
             var index = that.parent.children.indexOf(that);
 
             if (index < that.parent.children.length - 1) {
@@ -253,23 +643,19 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
               }
             }
             that.parent.insert(index + 1, new EdgeContainer(that.parent));
-
-
-          });
+          }
+        }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
       });
 
-      $(this.rootElement[0]).mouseleave(function () {
-        that.rootElement.selectAll("rect.addButton")
-          .remove();
-        that.rootElement.selectAll("rect.addNodeButton")
-          .remove();
-        that.rootElement.selectAll("rect.addEdgeButton")
-          .remove();
-      });
+
+      //$(this.myDomElements[0]).mouseleave(function () {
+      //  d3.select("#queryOverlay").selectAll("g.overlayButton")
+      //    .remove();
+      //});
 
       var size = this.getSize();
 
-      this.rootElement.append("rect")
+      this.myDomElements.append("rect")
         .classed("nodeContainerBg", true)
         .attr({
           x: 0,
@@ -281,11 +667,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         });
     };
 
+
     NodeContainer.prototype.update = function () {
       ElementContainer.prototype.update.call(this);
 
       var size = this.getSize();
-      this.rootElement.selectAll("rect.nodeContainerBg")
+      this.myDomElements.selectAll("rect.nodeContainerBg")
         .transition()
         .attr({
           width: size.width,
@@ -300,6 +687,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       return new q.NodeMatcher(this.children[0].getPathQuery());
     };
 
+    //---------------------------------------------
+
     function EdgeContainer(parent) {
       ElementContainer.call(this, parent, true);
     }
@@ -313,7 +702,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
       var size = this.getSize();
 
-      this.rootElement.append("rect")
+      this.myDomElements.append("rect")
         .classed("nodeContainerBg", true)
         .attr({
           x: 0,
@@ -324,7 +713,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           stroke: "black"
         });
 
-      this.rootElement.append("line")
+      this.myDomElements.append("line")
         .attr({
           x1: 5,
           y1: size.height / 2,
@@ -334,18 +723,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           stroke: "black"
         });
 
-      $(this.rootElement[0]).mouseenter(function () {
-        that.rootElement.append("rect")
-          .classed("addNodeButton", true)
-          .attr({
-            x: size.width - 16,
-            y: size.height / 2 - 16,
-            width: 16,
-            height: 16,
-            fill: "red"
-          })
-          .on("click", function () {
+      $(this.myDomElements[0]).mouseenter(function () {
 
+        addAddButton(that, [{
+          text: "Add Node", callback: function () {
             var index = that.parent.children.indexOf(that);
 
             if (index < that.parent.children.length - 1) {
@@ -355,43 +736,29 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
               }
             }
             that.parent.insert(index + 1, new NodeContainer(that.parent));
-
           }
-        )
-        ;
-
-        that.rootElement.append("rect")
-          .classed("addEdgeButton", true)
-          .attr({
-            x: size.width - 16,
-            y: size.height / 2,
-            width: 16,
-            height: 16,
-            fill: "blue"
-          })
-          .on("click", function () {
-
+        }, {
+          text: "Add Edge", callback: function () {
             var index = that.parent.children.indexOf(that);
 
             that.parent.insert(index + 1, new EdgeContainer(that.parent));
             that.parent.insert(index + 1, new SequenceFiller(that.parent));
+          }
+        }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
-          });
       });
 
-      $(this.rootElement[0]).mouseleave(function () {
-        that.rootElement.selectAll("rect.addEdgeButton")
-          .remove();
-        that.rootElement.selectAll("rect.addNodeButton")
-          .remove();
-      });
+      //$(this.myDomElements[0]).mouseleave(function () {
+      //  d3.select("#queryOverlay").selectAll("g.overlayButton")
+      //    .remove();
+      //});
     };
 
     EdgeContainer.prototype.update = function () {
       ElementContainer.prototype.update.call(this);
 
       var size = this.getSize();
-      this.rootElement.selectAll("rect.nodeContainerBg")
+      this.myDomElements.selectAll("rect.nodeContainerBg")
         .transition()
         .attr({
           width: size.width,
@@ -418,7 +785,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
       var size = this.getSize();
 
-      this.rootElement.append("rect")
+      this.myDomElements.append("rect")
         .attr({
           x: 0,
           y: 0,
@@ -428,7 +795,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           stroke: "black"
         });
 
-      this.rootElement.append("line")
+      this.myDomElements.append("line")
         .attr({
           x1: 5,
           y1: size.height / 2,
@@ -443,22 +810,11 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       var that = this;
 
       //Use jquery mouseenter and mouseleave to prevent flickering of add button
-      $(this.rootElement[0]).mouseenter(function () {
+      $(this.myDomElements[0]).mouseenter(function () {
         var size = that.getSize();
 
-        var index = that.parent.children.indexOf(that);
-
-        that.rootElement.append("rect")
-          .classed("addNodeButton", true)
-          .attr({
-            x: size.width / 2 - 16,
-            y: size.height / 2 - 8,
-            width: 16,
-            height: 16,
-            fill: "red"
-          })
-          .on("click", function () {
-
+        addAddButton(that, [{
+          text: "Add Node", callback: function () {
             var index = that.parent.children.indexOf(that);
 
             if (index > 0 && index < that.parent.children.length - 1) {
@@ -472,19 +828,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
             that.parent.insert(index, new NodeContainer(that.parent));
             that.parent.insert(index, new SequenceFiller(that.parent));
-          });
-
-        that.rootElement.append("rect")
-          .classed("addEdgeButton", true)
-          .attr({
-            x: size.width / 2,
-            y: size.height / 2 - 8,
-            width: 16,
-            height: 16,
-            fill: "blue"
-          })
-          .on("click", function () {
-
+          }
+        }, {
+          text: "Add Edge", callback: function () {
             var index = that.parent.children.indexOf(that);
 
             if (index > 0 && index < that.parent.children.length - 1) {
@@ -498,16 +844,15 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
             that.parent.insert(index, new EdgeContainer(that.parent));
             that.parent.insert(index, new SequenceFiller(that.parent));
+          }
+        }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
-          });
       });
 
-      $(this.rootElement[0]).mouseleave(function () {
-        that.rootElement.selectAll("rect.addEdgeButton")
-          .remove();
-        that.rootElement.selectAll("rect.addNodeButton")
-          .remove();
-      });
+      //$(this.rootElement[0]).mouseleave(function () {
+      //  d3.select("#queryOverlay").selectAll("g.overlayButton")
+      //    .remove();
+      //});
     };
 
     SequenceFiller.prototype.showRemoveButton = function () {
@@ -632,10 +977,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
           listeners.notify(listeners.updateType.QUERY_UPDATE, pathQuery);
         });
+
       var container = new SequenceContainer();
       container.init(svg);
       container.update();
 
+      svg.append("g")
+        .attr("id", "queryOverlay")
     };
 
     return QueryView;

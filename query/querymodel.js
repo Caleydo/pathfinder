@@ -136,7 +136,7 @@ define(['../pathutil'], function (pathUtil) {
     this.setId = setId;
   }
 
-  EdgeSetPresenceConstraint.prototype = Object.create(PathQuery.prototype);
+  EdgeSetPresenceConstraint.prototype = Object.create(Constraint.prototype);
 
   EdgeSetPresenceConstraint.prototype.match = function (edge) {
     var propertyKeys = Object.keys(edge.properties);

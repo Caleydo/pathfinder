@@ -2,7 +2,7 @@ define(function () {
   function HierarchyElement(parentItem) {
     this.parentElement = parentItem;
     this.collapsed = false;
-    this.childElements = [];
+    this.childDomElements = [];
   }
 
   HierarchyElement.prototype = {
@@ -24,7 +24,7 @@ define(function () {
     },
 
     getChildElements: function () {
-      return this.childElements;
+      return this.childDomElements;
     },
     canBeShown: function () {
       return true;

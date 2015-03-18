@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 24.02.2015.
  */
-define(['./listeners'], function (listeners) {
+define(['d3', './listeners'], function (d3, listeners) {
 
   var scale = d3.scale.category10();
   var numTypes = -1;
