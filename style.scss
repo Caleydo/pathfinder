@@ -2,10 +2,22 @@ body {
   margin: 0px;
 }
 
+text {
+  text-anchor: left;
+  font-family: sans-serif;
+  cursor: default;
+  font-size: 10px;
+  //    fill: rgb(30, 30, 30);
+}
+
 rect.filler {
   fill: rgba(0, 0, 0, 0)
 
 }
+
+//input.queryConstraint {
+//  line-height: 5px;
+//}
 
 g.node {
   rect {

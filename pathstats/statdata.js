@@ -72,7 +72,7 @@ define(['../hierarchyelements', '../listeners', '../pathsorting'], function(hier
     if (typeof nodeWrapper === "undefined") {
       nodeWrapper = new NodeWrapper(this, node);
       this.nodeWrapperDict[node.id.toString()] = nodeWrapper;
-      this.childElements.push(nodeWrapper);
+      this.childDomElements.push(nodeWrapper);
     }
     nodeWrapper.addPath(path);
   };
@@ -139,7 +139,7 @@ define(['../hierarchyelements', '../listeners', '../pathsorting'], function(hier
     if (typeof setWrapper === "undefined") {
       setWrapper = new SetWrapper(this, setId);
       this.setWrapperDict[setId.toString()] = setWrapper;
-      this.childElements.push(setWrapper);
+      this.childDomElements.push(setWrapper);
     }
     setWrapper.addNode(node, path);
   };
@@ -154,7 +154,7 @@ define(['../hierarchyelements', '../listeners', '../pathsorting'], function(hier
     if (typeof setWrapper === "undefined") {
       setWrapper = new SetWrapper(this, setId);
       this.setWrapperDict[setId.toString()] = setWrapper;
-      this.childElements.push(setWrapper);
+      this.childDomElements.push(setWrapper);
     }
     setWrapper.addEdge(edge, path);
   };

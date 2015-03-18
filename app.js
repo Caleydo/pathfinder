@@ -176,28 +176,28 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           search.setQuery(query);
         }, listeners.updateType.QUERY_UPDATE);
 
-        //$.getJSON("testpaths1.json", function (paths) {
-        //
-        //  var i = 0;
-        //
-        //  var interval = setInterval(function () {
-        //
-        //    if (i >= paths.length) {
-        //      clearInterval(interval);
-        //      return;
-        //    }
-        //    addPath(paths[i]);
-        //    i++;
-        //
-        //  }, 100);
-        //
-        //  //paths.forEach(function (path) {
-        //  //
-        //  //
-        //  //  //loadPaths(paths);
-        //  //});
-        //  //loadPaths(paths);
-        //});
+        $.getJSON("testpaths1.json", function (paths) {
+
+          var i = 0;
+
+          var interval = setInterval(function () {
+
+            if (i >= paths.length) {
+              clearInterval(interval);
+              return;
+            }
+            addPath(paths[i]);
+            i++;
+
+          }, 100);
+
+          //paths.forEach(function (path) {
+          //
+          //
+          //  //loadPaths(paths);
+          //});
+          //loadPaths(paths);
+        });
 
         function reset() {
           dataStore.paths = [];

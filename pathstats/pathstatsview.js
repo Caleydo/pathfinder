@@ -23,8 +23,8 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       this.dataRoot = new HierarchyElement();
       this.nodeTypeWrappers = new Level1HierarchyElement(this.dataRoot);
       this.setTypeWrappers = new Level1HierarchyElement(this.dataRoot);
-      this.dataRoot.childElements.push(this.nodeTypeWrappers);
-      this.dataRoot.childElements.push(this.setTypeWrappers);
+      this.dataRoot.childDomElements.push(this.nodeTypeWrappers);
+      this.dataRoot.childDomElements.push(this.setTypeWrappers);
 
 
       this.selectionListeners = [];
@@ -85,7 +85,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         if (typeof nodeType === "undefined") {
           nodeType = new NodeTypeWrapper(that.nodeTypeWrappers, type);
           that.nodeTypeDict[type] = nodeType;
-          that.nodeTypeWrappers.childElements.push(nodeType);
+          that.nodeTypeWrappers.childDomElements.push(nodeType);
         }
         nodeType.addNode(node, path);
       }
@@ -95,7 +95,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         if (typeof setType === "undefined") {
           setType = new SetTypeWrapper(that.setTypeWrappers, type);
           that.setTypeDict[type] = setType;
-          that.setTypeWrappers.childElements.push(setType);
+          that.setTypeWrappers.childDomElements.push(setType);
         }
         setType.addNode(setId, node, path);
       }
@@ -105,7 +105,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         if (typeof setType === "undefined") {
           setType = new SetTypeWrapper(that.setTypeWrappers, type);
           that.setTypeDict[type] = setType;
-          that.setTypeWrappers.childElements.push(setType);
+          that.setTypeWrappers.childDomElements.push(setType);
         }
         setType.addEdge(setId, edge, path);
       }
@@ -133,8 +133,8 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       this.dataRoot = new HierarchyElement();
       this.nodeTypeWrappers = new Level1HierarchyElement(this.dataRoot);
       this.setTypeWrappers = new Level1HierarchyElement(this.dataRoot);
-      this.dataRoot.childElements.push(this.nodeTypeWrappers);
-      this.dataRoot.childElements.push(this.setTypeWrappers);
+      this.dataRoot.childDomElements.push(this.nodeTypeWrappers);
+      this.dataRoot.childDomElements.push(this.setTypeWrappers);
       selectionUtil.removeListeners(this.selectionListeners);
       this.selectionListeners = [];
       //currentNodeTypeWrapperId = 0;
@@ -152,9 +152,9 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
     };
 
     PathStatsView.prototype.getBarScale = function () {
-      var scaleDomain = [0, Math.max(this.nodeTypeWrappers.childElements.length <= 0 ? 0 : (d3.max(this.nodeTypeWrappers.childElements, function (d) {
+      var scaleDomain = [0, Math.max(this.nodeTypeWrappers.childDomElements.length <= 0 ? 0 : (d3.max(this.nodeTypeWrappers.childDomElements, function (d) {
         return d.pathIds.length;
-      })), this.setTypeWrappers.childElements.length <= 0 ? 0 : d3.max(this.setTypeWrappers.childElements, function (d) {
+      })), this.setTypeWrappers.childDomElements.length <= 0 ? 0 : d3.max(this.setTypeWrappers.childDomElements, function (d) {
         return d.pathIds.length;
       }))];
 
@@ -176,9 +176,9 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       };
 
       statTypeGroups.each(function (d) {
-        d.childElements.sort(comparator);
+        d.childDomElements.sort(comparator);
         var allStatTypes = d3.select(this).selectAll("g.statTypes")
-          .data(d.childElements, getKey);
+          .data(d.childDomElements, getKey);
 
         allStatTypes
           .sort(comparator)
@@ -190,10 +190,10 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
         allStatTypes.each(function (typeWrapper) {
 
-          typeWrapper.childElements.sort(comparator);
+          typeWrapper.childDomElements.sort(comparator);
 
           d3.select(this).selectAll("g.stats")
-            .data(typeWrapper.childElements, getKey);
+            .data(typeWrapper.childDomElements, getKey);
 
           d3.select(this).selectAll("g.stats")
             .sort(comparator)
@@ -230,13 +230,13 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
     PathStatsView.prototype.getMinSize = function () {
       var totalHeight = 0;
-      this.nodeTypeWrappers.childElements.forEach(function (nodeTypeWrapper) {
+      this.nodeTypeWrappers.childDomElements.forEach(function (nodeTypeWrapper) {
         if (nodeTypeWrapper.canBeShown()) {
           totalHeight += nodeTypeWrapper.getHeight();
         }
       });
 
-      this.setTypeWrappers.childElements.forEach(function (setTypeWrapper) {
+      this.setTypeWrappers.childDomElements.forEach(function (setTypeWrapper) {
         if (setTypeWrapper.canBeShown()) {
           totalHeight += setTypeWrapper.getHeight();
         }
@@ -250,7 +250,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       var that = this;
 
-      var allLevel1HierarchyElements = d3.select("#pathstats svg").selectAll("g.level1HierarchyElement").data(this.dataRoot.childElements);
+      var allLevel1HierarchyElements = d3.select("#pathstats svg").selectAll("g.level1HierarchyElement").data(this.dataRoot.childDomElements);
 
       allLevel1HierarchyElements.enter()
         .append("g")
@@ -278,11 +278,11 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
               });
           }
         });
-      this.renderStats("g.nodeTypeGroup", this.nodeTypeWrappers.childElements, function (d) {
+      this.renderStats("g.nodeTypeGroup", this.nodeTypeWrappers.childDomElements, function (d) {
         return d.node.id;
       }, "node");
       //this.renderStats();
-      this.renderStats("g.setTypeGroup", this.setTypeWrappers.childElements, function (d) {
+      this.renderStats("g.setTypeGroup", this.setTypeWrappers.childDomElements, function (d) {
         return d.setId;
       }, "set");
 
@@ -357,7 +357,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       var allStats = allStatTypes.selectAll("g.statGroup").selectAll("g.stats")
         .data(function (typeWrapper) {
-          return typeWrapper.childElements;
+          return typeWrapper.childDomElements;
         }, getKey);
 
       var stats = allStats
