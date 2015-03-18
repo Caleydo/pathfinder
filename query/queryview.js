@@ -2,6 +2,57 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
     var listOverlay = new ListOverlay();
 
+    var OVERLAY_BUTTON_SIZE = 16;
+
+    function addOverlayButton(parent, x, y, buttonText, textX, textY, color) {
+
+      var button = parent.rootElement.append("g")
+        .classed("overlayButton", true);
+
+      button.append("rect")
+        .attr({
+          x: x,
+          y: y,
+          width: OVERLAY_BUTTON_SIZE,
+          height: OVERLAY_BUTTON_SIZE
+        });
+
+      button.append("text")
+        .attr({
+          x: textX,
+          y: textY,
+          fill: color
+        })
+        .text(buttonText);
+
+      ;
+      return button;
+    }
+
+
+    function addAddButton(parent, data, x, y) {
+
+      var button = addOverlayButton(parent, x, y, "\uf067", x + OVERLAY_BUTTON_SIZE / 2, y + OVERLAY_BUTTON_SIZE - 1, "green");
+
+      button.on("click", function () {
+          listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
+        }
+      );
+      return button;
+    }
+
+    function addRemoveButton(parent, x, y) {
+
+      var button = addOverlayButton(parent, x, y, "\uf00d", x + OVERLAY_BUTTON_SIZE / 2, y + OVERLAY_BUTTON_SIZE - 3, "red");
+
+      button.on("click", function () {
+          parent.parent.removeChild(that.parent.children.indexOf(parent));
+        }
+      );
+
+      return button;
+    }
+
     function BaseGUIElement(parent) {
       this.parent = parent;
       this.translate = {x: 0, y: 0};
@@ -17,18 +68,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           if (that.showRemoveButton()) {
             var size = that.getSize();
 
-            that.rootElement.append("rect")
-              .classed("removeButton", true)
-              .attr({
-                x: size.width - 16,
-                y: 0,
-                width: 16,
-                height: 16,
-                fill: "magenta"
-              })
-              .on("click", function () {
-                that.parent.removeChild(that.parent.children.indexOf(that));
-              });
+            var button = addRemoveButton(that, size.width - OVERLAY_BUTTON_SIZE, 0);
+
           }
         });
 
@@ -202,60 +243,23 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         var size = that.getSize();
         if (that.children.length <= 0) {
 
-          that.rootElement.append("rect")
-            .classed("addButton", true)
-            .attr({
-              x: size.width / 2 - 8,
-              y: size.height / 2 - 8,
-              width: 16,
-              height: 16,
-              fill: "green"
-            })
-            .on("click", function () {
+          addAddButton(that, [{
+            text: "Add Node Name", callback: function () {
               that.add(new NodeNameElement(that));
               d3.select(this).remove();
-            });
+            }
+          }], (size.width - OVERLAY_BUTTON_SIZE) / 2, (size.height - OVERLAY_BUTTON_SIZE) / 2);
+
         }
 
-        that.rootElement.append("rect")
-          .classed("addNodeButton", true)
-          .attr({
-            x: size.width - 16,
-            y: size.height / 2 - 16,
-            width: 16,
-            height: 16,
-            fill: "red"
-          })
-          .on("click", function () {
-
+        addAddButton(that, [{
+          text: "Add Node", callback: function () {
             var index = that.parent.children.indexOf(that);
             that.parent.insert(index + 1, new NodeContainer(that.parent));
             that.parent.insert(index + 1, new SequenceFiller(that.parent));
-
-            listOverlay.show(d3.select("#queryOverlay"), [{
-              text: "Add Node", callback: function () {
-              }
-            }, {
-              text: "Add Edge", callback: function () {
-              }
-            }], that.translate.x, that.translate.y);
           }
-        )
-
-        ;
-
-        that.rootElement.append("rect")
-          .classed("addEdgeButton", true)
-          .attr({
-            x: size.width - 16,
-            y: size.height / 2,
-            width: 16,
-            height: 16,
-            fill: "blue"
-          })
-          .on("click", function () {
-
-
+        }, {
+          text: "Add Edge", callback: function () {
             var index = that.parent.children.indexOf(that);
 
             if (index < that.parent.children.length - 1) {
@@ -265,17 +269,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
               }
             }
             that.parent.insert(index + 1, new EdgeContainer(that.parent));
-
-
-          });
+          }
+        }], size.width - OVERLAY_BUTTON_SIZE, (size.height - OVERLAY_BUTTON_SIZE) / 2);
       });
 
       $(this.rootElement[0]).mouseleave(function () {
-        that.rootElement.selectAll("rect.addButton")
+        that.rootElement.selectAll("rect.addConstraintButton")
           .remove();
-        that.rootElement.selectAll("rect.addNodeButton")
-          .remove();
-        that.rootElement.selectAll("rect.addEdgeButton")
+        that.rootElement.selectAll("g.overlayButton")
           .remove();
       });
 
@@ -347,17 +348,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         });
 
       $(this.rootElement[0]).mouseenter(function () {
-        that.rootElement.append("rect")
-          .classed("addNodeButton", true)
-          .attr({
-            x: size.width - 16,
-            y: size.height / 2 - 16,
-            width: 16,
-            height: 16,
-            fill: "red"
-          })
-          .on("click", function () {
 
+        addAddButton(that, [{
+          text: "Add Node", callback: function () {
             var index = that.parent.children.indexOf(that);
 
             if (index < that.parent.children.length - 1) {
@@ -367,34 +360,20 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
               }
             }
             that.parent.insert(index + 1, new NodeContainer(that.parent));
-
           }
-        )
-        ;
-
-        that.rootElement.append("rect")
-          .classed("addEdgeButton", true)
-          .attr({
-            x: size.width - 16,
-            y: size.height / 2,
-            width: 16,
-            height: 16,
-            fill: "blue"
-          })
-          .on("click", function () {
-
+        }, {
+          text: "Add Edge", callback: function () {
             var index = that.parent.children.indexOf(that);
 
             that.parent.insert(index + 1, new EdgeContainer(that.parent));
             that.parent.insert(index + 1, new SequenceFiller(that.parent));
+          }
+        }], size.width - OVERLAY_BUTTON_SIZE, (size.height - OVERLAY_BUTTON_SIZE) / 2);
 
-          });
       });
 
       $(this.rootElement[0]).mouseleave(function () {
-        that.rootElement.selectAll("rect.addEdgeButton")
-          .remove();
-        that.rootElement.selectAll("rect.addNodeButton")
+        that.rootElement.selectAll("g.overlayButton")
           .remove();
       });
     };
@@ -458,19 +437,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       $(this.rootElement[0]).mouseenter(function () {
         var size = that.getSize();
 
-        var index = that.parent.children.indexOf(that);
-
-        that.rootElement.append("rect")
-          .classed("addNodeButton", true)
-          .attr({
-            x: size.width / 2 - 16,
-            y: size.height / 2 - 8,
-            width: 16,
-            height: 16,
-            fill: "red"
-          })
-          .on("click", function () {
-
+        addAddButton(that, [{
+          text: "Add Node", callback: function () {
             var index = that.parent.children.indexOf(that);
 
             if (index > 0 && index < that.parent.children.length - 1) {
@@ -484,19 +452,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
             that.parent.insert(index, new NodeContainer(that.parent));
             that.parent.insert(index, new SequenceFiller(that.parent));
-          });
-
-        that.rootElement.append("rect")
-          .classed("addEdgeButton", true)
-          .attr({
-            x: size.width / 2,
-            y: size.height / 2 - 8,
-            width: 16,
-            height: 16,
-            fill: "blue"
-          })
-          .on("click", function () {
-
+          }
+        }, {
+          text: "Add Edge", callback: function () {
             var index = that.parent.children.indexOf(that);
 
             if (index > 0 && index < that.parent.children.length - 1) {
@@ -510,14 +468,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
             that.parent.insert(index, new EdgeContainer(that.parent));
             that.parent.insert(index, new SequenceFiller(that.parent));
+          }
+        }], (size.width - OVERLAY_BUTTON_SIZE) / 2, (size.height - OVERLAY_BUTTON_SIZE) / 2);
 
-          });
       });
 
       $(this.rootElement[0]).mouseleave(function () {
-        that.rootElement.selectAll("rect.addEdgeButton")
-          .remove();
-        that.rootElement.selectAll("rect.addNodeButton")
+        that.rootElement.selectAll("g.overlayButton")
           .remove();
       });
     };

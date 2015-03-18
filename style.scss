@@ -53,7 +53,6 @@ g.listItem.hovered {
 //  }
 //}
 
-
 g.node.hovered {
   rect {
     fill: rgb(255, 200, 0);
@@ -111,14 +110,14 @@ g.setNode.selected {
 
 g.edge {
   line {
-    stroke: rgb(80,80,80);
+    stroke: rgb(80, 80, 80);
     stroke-width: 2px;
   }
 }
 
 g.edge.path_hovered {
   line {
-    stroke:rgb(255, 200, 0);
+    stroke: rgb(255, 200, 0);
     stroke-width: 3px;
   }
 }
@@ -148,6 +147,22 @@ g.nodeTypeStats {
   }
 }
 
+g.overlayButton {
+  text {
+    font-family: FontAwesome;
+    font-size: 16px;
+    cursor: pointer;
+    text-anchor: middle;
+  }
+
+  rect {
+    fill: rgb(255, 255, 255);
+    stroke: rgb(30, 30, 30);
+    stroke-width: 1px;
+
+  }
+}
+
 g.statTypes {
 
   text {
@@ -172,7 +187,7 @@ g.set, g.setType {
     font-family: sans-serif;
     cursor: default;
     font-size: 10px;
-//    fill: rgb(30, 30, 30);
+    //    fill: rgb(30, 30, 30);
   }
 
   text.collapseIconSmall {
@@ -183,7 +198,7 @@ g.set, g.setType {
   }
 
   line {
-//    stroke: rgb(150,150,150);
+    //    stroke: rgb(150,150,150);
     stroke-width: 2px;
   }
 }
@@ -199,7 +214,6 @@ g.stats.selected {
     fill: rgba(255, 100, 0, 0.2)
   }
 }
-
 
 g.path.hovered {
   rect.filler {
@@ -251,9 +265,6 @@ g.set.selected {
   }
 }
 
-
-
-
 .collapseIcon {
   font-family: FontAwesome;
   font-size: 16px;
@@ -262,8 +273,8 @@ g.set.selected {
 }
 
 #arrowRight {
-  stroke: rgb(80,80,80);
-  fill: rgb(80,80,80);
+  stroke: rgb(80, 80, 80);
+  fill: rgb(80, 80, 80);
 }
 
 #listView {
@@ -280,17 +291,16 @@ g.set.selected {
   box-sizing: border-box;
 }
 
-
-
 .outer {
 
   -webkit-flex: 1;
   flex: 1;
 
-//  width: 45vw;
+  //  width: 45vw;
   height: 100%;
   overflow: auto;
 }
+
 //.inner {
 //  width: 50vw;
 //  height:100vh;

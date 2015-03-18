@@ -1,7 +1,7 @@
 define(['jquery', 'd3'], function ($, d3) {
 
   var ITEM_HEIGHT = 18;
-  var ITEM_WIDTH = 80;
+  var ITEM_WIDTH = 120;
 
 
   function ListOverlay() {
