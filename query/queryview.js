@@ -260,6 +260,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       return {width: width, height: height};
     };
 
+    ElementContainer.prototype.getPathQuery = function () {
+      if (this.children.length <= 0) {
+        return new q.PathQuery();
+      }
+      return this.children[0].getPathQuery();
+    }
+
     //------------------------------------------
 
     function CaptionContainer(parent, caption, horizontal) {
@@ -497,7 +504,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           y: 0,
           width: size.width,
           height: size.height,
-          fill: "orange",
+          fill: "#fed9a6",
           stroke: "black"
         });
 
@@ -554,7 +561,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           y: 0,
           width: size.width,
           height: size.height,
-          fill: "lightblue",
+          fill: "#b3cde3",
           stroke: "black"
         });
 
@@ -630,16 +637,20 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           text: "Add Node", callback: function () {
             var index = that.parent.children.indexOf(that);
             that.parent.insert(index + 1, new NodeContainer(that.parent));
-            that.parent.insert(index + 1, new SequenceFiller(that.parent));
+            if (that.parent instanceof SequenceContainer) {
+              that.parent.insert(index + 1, new SequenceFiller(that.parent));
+            }
           }
         }, {
           text: "Add Edge", callback: function () {
             var index = that.parent.children.indexOf(that);
 
-            if (index < that.parent.children.length - 1) {
-              var nextChild = that.parent.children[index + 1];
-              if (!(nextChild instanceof SequenceFiller)) {
-                that.parent.insert(index + 1, new SequenceFiller(that.parent));
+            if (that.parent instanceof SequenceContainer) {
+              if (index < that.parent.children.length - 1) {
+                var nextChild = that.parent.children[index + 1];
+                if (!(nextChild instanceof SequenceFiller)) {
+                  that.parent.insert(index + 1, new SequenceFiller(that.parent));
+                }
               }
             }
             that.parent.insert(index + 1, new EdgeContainer(that.parent));
@@ -729,10 +740,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           text: "Add Node", callback: function () {
             var index = that.parent.children.indexOf(that);
 
-            if (index < that.parent.children.length - 1) {
-              var nextChild = that.parent.children[index + 1];
-              if (!(nextChild instanceof SequenceFiller)) {
-                that.parent.insert(index + 1, new SequenceFiller(that.parent));
+            if (that.parent instanceof SequenceContainer) {
+              if (index < that.parent.children.length - 1) {
+                var nextChild = that.parent.children[index + 1];
+                if (!(nextChild instanceof SequenceFiller)) {
+                  that.parent.insert(index + 1, new SequenceFiller(that.parent));
+                }
               }
             }
             that.parent.insert(index + 1, new NodeContainer(that.parent));
@@ -742,7 +755,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
             var index = that.parent.children.indexOf(that);
 
             that.parent.insert(index + 1, new EdgeContainer(that.parent));
-            that.parent.insert(index + 1, new SequenceFiller(that.parent));
+            if (that.parent instanceof SequenceContainer) {
+              that.parent.insert(index + 1, new SequenceFiller(that.parent));
+            }
           }
         }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
@@ -772,6 +787,89 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       }
       return new q.EdgeMatcher(this.children[0].getPathQuery());
     };
+
+    //---------------------------------------------
+
+    function UnorderedContainer(parent) {
+      CaptionContainer.call(this, parent, "Unordered", true);
+    }
+
+    UnorderedContainer.prototype = Object.create(CaptionContainer.prototype);
+
+    UnorderedContainer.prototype.init = function (domParent) {
+      CaptionContainer.prototype.init.call(this, domParent);
+
+      var that = this;
+
+      var size = this.getSize();
+
+      this.myDomElements.append("rect")
+        .classed("unordererdContainerBg", true)
+        .attr({
+          x: 0,
+          y: 0,
+          width: size.width,
+          height: size.height,
+          fill: "#ccebc5",
+          stroke: "black"
+        });
+
+      this.renderCaption(this.myDomElements);
+
+      $(this.myDomElements[0]).mouseenter(function () {
+
+        if (that.children.length <= 0) {
+          addAddButton(that, [{
+            text: "Add Node", callback: function () {
+              that.add(new NodeContainer(that));
+            }
+          }, {
+            text: "Add Edge", callback: function () {
+              that.add(new EdgeContainer(that));
+            }
+          }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+        }
+
+      });
+
+      //$(this.myDomElements[0]).mouseleave(function () {
+      //  d3.select("#queryOverlay").selectAll("g.overlayButton")
+      //    .remove();
+      //});
+    };
+
+    UnorderedContainer.prototype.update = function () {
+      CaptionContainer.prototype.update.call(this);
+
+      var size = this.getSize();
+      this.myDomElements.selectAll("rect.unordererdContainerBg")
+        .transition()
+        .attr({
+          width: size.width,
+          height: size.height
+        });
+    };
+
+    UnorderedContainer.prototype.getPathQuery = function () {
+      if (this.children.length == 0) {
+        return new q.PathQuery();
+      }
+
+      var prevQuery = 0;
+
+      this.children.forEach(function(child) {
+        var currentQuery = child.getPathQuery();
+        if(prevQuery != 0) {
+          prevQuery = new q.And(prevQuery, currentQuery);
+        } else {
+          prevQuery = currentQuery;
+        }
+      })
+
+      return prevQuery;
+    };
+
+    //--------------------------------
 
 
     function SequenceFiller(parent) {
@@ -871,17 +969,71 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       return show;
     };
 
+    //--------------------------------------
+
     function SequenceContainer(parent) {
-      ElementContainer.call(this, parent, true);
+      CaptionContainer.call(this, parent, "Sequence", true);
     }
 
-    SequenceContainer.prototype = Object.create(ElementContainer.prototype);
+
+    SequenceContainer.prototype = Object.create(CaptionContainer.prototype);
 
     SequenceContainer.prototype.init = function (parent) {
-      ElementContainer.prototype.init.call(this, parent);
+      CaptionContainer.prototype.init.call(this, parent);
+
+
+      var size = this.getSize();
+
+      this.myDomElements.append("rect")
+        .classed("seqContainerBg", true)
+        .attr({
+          x: 0,
+          y: 0,
+          width: size.width,
+          height: size.height,
+          fill: "white",
+          stroke: "black"
+        });
+
+      this.renderCaption(this.myDomElements);
+
       this.add(new NodeContainer(this));
       this.add(new SequenceFiller(this));
       this.add(new NodeContainer(this));
+
+      var that = this;
+
+      function replaceWithContainer(ContainerConstructor, isContainerHorizontal, ElementConstructor) {
+        var container = new ContainerConstructor(that.parent, isContainerHorizontal);
+        that.parent.replace(that, container)
+        that.parent = container;
+
+        container.children.push(that);
+        $(container.childDomElements[0]).append($(that.rootElement[0]));
+        container.add(new ElementConstructor(container))
+      }
+
+      $(this.myDomElements[0]).mouseenter(function () {
+
+
+        addAndButton(that, [{
+          text: "Add Unordered", callback: function () {
+            replaceWithContainer(AndContainer, false, UnorderedContainer);
+          }
+        }], size.width - AND_BUTTON_WIDTH, size.height - 5);
+
+        addOrButton(that, [{
+          text: "Add Unordered", callback: function () {
+            replaceWithContainer(OrContainer, false, UnorderedContainer);
+          }
+        },
+          {
+            text: "Add Sequence", callback: function () {
+            replaceWithContainer(OrContainer, false, SequenceContainer);
+          }
+          }], (size.width - OR_BUTTON_WIDTH) / 2, size.height - 5);
+
+      });
     };
 
     SequenceContainer.prototype.update = function () {
@@ -911,7 +1063,15 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         }
       }
 
-      ElementContainer.prototype.update.call(this);
+      CaptionContainer.prototype.update.call(this);
+
+      var size = this.getSize();
+      this.myDomElements.selectAll("rect.seqContainerBg")
+        .transition()
+        .attr({
+          width: size.width,
+          height: size.height
+        });
     }
     ;
 
@@ -954,6 +1114,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     };
 
 
+    //----------------------
+
     function QueryView(selector) {
       View.call(this, selector);
       this.grabHSpace = false;
@@ -963,7 +1125,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     QueryView.prototype = Object.create(View.prototype);
 
     QueryView.prototype.getMinSize = function () {
-      return {width: 800, height: 200};
+      return {width: "100%", height: 400};
     };
 
     QueryView.prototype.init = function () {
@@ -978,9 +1140,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           listeners.notify(listeners.updateType.QUERY_UPDATE, pathQuery);
         });
 
-      var container = new SequenceContainer();
+      var container = new ElementContainer();
       container.init(svg);
-      container.update();
+      container.add(new SequenceContainer(container));
 
       svg.append("g")
         .attr("id", "queryOverlay")
