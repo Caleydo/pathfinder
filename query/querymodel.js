@@ -296,8 +296,13 @@ define(['../pathutil'], function (pathUtil) {
       return region2.minIndex === (region1.maxIndex + 1);
     },
     equal: function equal(region1, region2) {
-      return region1.minIndex === region2.minIndex && region1.maxIndex == region2.maxIndex;
+      return region1.minIndex === region2.minIndex && region1.maxIndex === region2.maxIndex;
     },
+
+    unequal: function equal(region1, region2) {
+      return region1.minIndex !== region2.minIndex && region1.maxIndex !== region2.maxIndex;
+    },
+
     max1EqualsMin2: function max1EqualsMin2(region1, region2) {
       return region1.maxIndex === region2.minIndex;
     },

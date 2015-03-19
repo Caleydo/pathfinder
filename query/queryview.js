@@ -246,9 +246,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       this.children.forEach(function (child) {
         var childSize = child.getSize();
         if (that.horizontal) {
-          posY = baseTranslateY +(maxSize - childSize.height) / 2;
+          posY = baseTranslateY + (maxSize - childSize.height) / 2;
         } else {
-          posX = baseTranslateX +(maxSize - childSize.width) / 2;
+          posX = baseTranslateX + (maxSize - childSize.width) / 2;
         }
 
         child.rootElement.attr("transform", "translate(" + posX + ", " + posY + ")");
@@ -264,7 +264,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     };
 
     ElementContainer.prototype.getMinSize = function () {
-      return {width: 80, height: 30};
+      return {width: 80, height: 38};
     };
 
     ElementContainer.prototype.getSize = function () {
@@ -453,7 +453,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
             text: "Add Node Type", callback: function () {
             replaceWithContainer(that, AndContainer, true, NodeTypeElement);
           }
-          }], size.width - AND_BUTTON_WIDTH, size.height - 5);
+          }], (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH) / 2, size.height - 5);
 
         addOrButton(that, [{
           text: "Add Node Name", callback: function () {
@@ -469,7 +469,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
             text: "Add Node Type", callback: function () {
             replaceWithContainer(that, OrContainer, false, NodeTypeElement);
           }
-          }], (size.width - OR_BUTTON_WIDTH) / 2, size.height - 5);
+          }], (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH) / 2 + AND_BUTTON_WIDTH, size.height - 5);
 
 
       });
@@ -796,18 +796,37 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         return new q.PathQuery();
       }
 
+      var nodeMatchers = 0;
+      var edgeMatchers = 0;
+
       var prevQuery = 0;
 
       this.children.forEach(function (child) {
         var currentQuery = child.getPathQuery();
-        if (prevQuery != 0) {
-          prevQuery = new q.And(prevQuery, currentQuery);
-        } else {
-          prevQuery = currentQuery;
-        }
-      })
 
-      return prevQuery;
+        if (child instanceof NodeContainer) {
+          if (nodeMatchers != 0) {
+            nodeMatchers = new q.QueryMatchRegionRelation(nodeMatchers, currentQuery, q.MatchRegionRelations.unequal);
+          } else {
+            nodeMatchers = currentQuery;
+          }
+        } else {
+          if (edgeMatchers != 0) {
+            edgeMatchers = new q.QueryMatchRegionRelation(edgeMatchers, currentQuery, q.MatchRegionRelations.unequal);
+          } else {
+            edgeMatchers = currentQuery;
+          }
+        }
+      });
+      if (nodeMatchers === 0) {
+        return edgeMatchers;
+      }
+
+      if (edgeMatchers === 0) {
+        return nodeMatchers;
+      }
+
+      return new q.And(nodeMatchers, edgeMatchers);
     };
 
     //--------------------------------
@@ -935,7 +954,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           text: "Add Unordered", callback: function () {
             replaceWithContainer(that, AndContainer, false, UnorderedContainer);
           }
-        }], size.width - AND_BUTTON_WIDTH, size.height - 5);
+        }], (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH) / 2, size.height - 5);
 
         addOrButton(that, [{
           text: "Add Unordered", callback: function () {
@@ -946,7 +965,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
             text: "Add Sequence", callback: function () {
             replaceWithContainer(that, OrContainer, false, SequenceContainer);
           }
-          }], (size.width - OR_BUTTON_WIDTH) / 2, size.height - 5);
+          }], (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH) / 2 + AND_BUTTON_WIDTH, size.height - 5);
 
       });
     };
