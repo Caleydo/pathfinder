@@ -83,6 +83,18 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       return button;
     }
 
+    function replaceWithContainer(currentElement, ContainerConstructor, isContainerHorizontal, ElementConstructor) {
+      var container = new ContainerConstructor(currentElement.parent, isContainerHorizontal);
+      currentElement.parent.replace(currentElement, container);
+      currentElement.parent = container;
+
+      container.children.push(currentElement);
+      $(container.childDomElements[0]).append($(currentElement.rootElement[0]));
+      container.add(new ElementConstructor(container))
+    }
+
+    //-----------------------------------------
+
     function BaseGUIElement(parent) {
       this.parent = parent;
       this.translate = {x: 0, y: 0};
@@ -122,7 +134,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       },
 
       getSize: function () {
-        return {width: 100, height: 100};
+        return {width: 80, height: 30};
       },
       update: function () {
 
@@ -203,13 +215,42 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     };
 
     ElementContainer.prototype.update = function () {
+      this.updateMyDomElements();
+      this.updateChildren(this.hPadding, this.vPadding);
 
-      var posX = this.hPadding;
-      var posY = this.vPadding;
+    };
+
+    ElementContainer.prototype.updateMyDomElements = function () {
+    };
+
+    ElementContainer.prototype.updateChildren = function (baseTranslateX, baseTranslateY) {
+
+      var posX = baseTranslateX;
+      var posY = baseTranslateY;
+      var maxSize = 0;
       var that = this;
 
       this.children.forEach(function (child) {
         var childSize = child.getSize();
+        if (that.horizontal) {
+          if (childSize.height > maxSize) {
+            maxSize = childSize.height;
+          }
+        } else {
+          if (childSize.width > maxSize) {
+            maxSize = childSize.width;
+          }
+        }
+      });
+
+      this.children.forEach(function (child) {
+        var childSize = child.getSize();
+        if (that.horizontal) {
+          posY = baseTranslateY +(maxSize - childSize.height) / 2;
+        } else {
+          posX = baseTranslateX +(maxSize - childSize.width) / 2;
+        }
+
         child.rootElement.attr("transform", "translate(" + posX + ", " + posY + ")");
         child.translate.x = that.translate.x + posX;
         child.translate.y = that.translate.y + posY;
@@ -223,7 +264,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     };
 
     ElementContainer.prototype.getMinSize = function () {
-      return {width: 100, height: 100};
+      return {width: 80, height: 30};
     };
 
     ElementContainer.prototype.getSize = function () {
@@ -265,18 +306,38 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         return new q.PathQuery();
       }
       return this.children[0].getPathQuery();
-    }
+    };
 
-    //------------------------------------------
+    //--------------------------
 
-    function CaptionContainer(parent, caption, horizontal) {
+    function BoxContainer(parent, fillColor, strokeColor, horizontal) {
       ElementContainer.call(this, parent, horizontal);
-      this.caption = caption;
+      this.fillColor = fillColor;
+      this.strokeColor = strokeColor;
     }
 
-    CaptionContainer.prototype = Object.create(ElementContainer.prototype);
+    BoxContainer.prototype = Object.create(ElementContainer.prototype);
 
-    CaptionContainer.prototype.renderCaption = function (domParent) {
+    BoxContainer.prototype.init = function (domParent) {
+      ElementContainer.prototype.init.call(this, domParent);
+
+      var size = this.getSize();
+
+      this.myDomElements.append("rect")
+        .classed("boxContainerBg", true)
+        .attr({
+          x: 0,
+          y: 0,
+          rx: 3,
+          ry: 3,
+          width: size.width,
+          height: size.height,
+          fill: this.fillColor,
+          stroke: this.strokeColor
+        });
+    };
+
+    BoxContainer.prototype.renderCaption = function (domParent) {
       this.myDomElements.append("text")
         .attr({
           x: 0,
@@ -285,26 +346,44 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         .text(this.caption);
     };
 
+    BoxContainer.prototype.updateMyDomElements = function () {
+      ElementContainer.prototype.updateMyDomElements.call(this);
+
+      var size = this.getSize();
+      this.myDomElements.select("rect.boxContainerBg")
+        .transition()
+        .attr({
+          width: size.width,
+          height: size.height
+        });
+    };
+
+    //------------------------------------------
+
+    function CaptionContainer(parent, caption, fillColor, strokeColor, horizontal) {
+      BoxContainer.call(this, parent, fillColor, strokeColor, horizontal);
+      this.caption = caption;
+    }
+
+    CaptionContainer.prototype = Object.create(BoxContainer.prototype);
+
+    CaptionContainer.prototype.init = function (domParent) {
+      BoxContainer.prototype.init.call(this, domParent);
+
+      var size = this.getSize();
+
+      this.myDomElements.append("text")
+        .attr({
+          x: 2,
+          y: CAPTION_SIZE
+        })
+        .text(this.caption);
+    };
+
     CaptionContainer.prototype.update = function () {
+      this.updateMyDomElements();
+      this.updateChildren(this.hPadding, this.vPadding + CAPTION_SIZE);
 
-      var posX = this.hPadding;
-      var posY = this.vPadding + CAPTION_SIZE;
-      var that = this;
-
-      this.children.forEach(function (child) {
-        var childSize = child.getSize();
-        child.rootElement.attr("transform", "translate(" + posX + ", " + posY + ")");
-        child.translate.x = that.translate.x + posX;
-        child.translate.y = that.translate.y + posY;
-        child.update();
-        if (that.horizontal) {
-          posX += childSize.width + that.elementSpacing;
-          ;
-        } else {
-          posY += childSize.height + that.elementSpacing;
-          ;
-        }
-      });
     };
 
     CaptionContainer.prototype.getSize = function () {
@@ -357,46 +436,38 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
       var that = this;
 
-      function replaceWithContainer(ContainerConstructor, isContainerHorizontal, ElementConstructor) {
-        var container = new ContainerConstructor(that.parent, isContainerHorizontal);
-        that.parent.replace(that, container)
-        that.parent = container;
-        container.add(that);
-        container.add(new ElementConstructor(container))
-      }
-
       $(domParent[0]).mouseenter(function () {
-
+        var size = that.getSize();
 
         addAndButton(that, [{
           text: "Add Node Name", callback: function () {
-            replaceWithContainer(AndContainer, true, NodeNameElement);
+            replaceWithContainer(that, AndContainer, true, NodeNameElement);
           }
         },
           {
             text: "Add Set", callback: function () {
-            replaceWithContainer(AndContainer, true, NodeSetElement);
+            replaceWithContainer(that, AndContainer, true, NodeSetElement);
           }
           },
           {
             text: "Add Node Type", callback: function () {
-            replaceWithContainer(AndContainer, true, NodeTypeElement);
+            replaceWithContainer(that, AndContainer, true, NodeTypeElement);
           }
           }], size.width - AND_BUTTON_WIDTH, size.height - 5);
 
         addOrButton(that, [{
           text: "Add Node Name", callback: function () {
-            replaceWithContainer(OrContainer, false, NodeNameElement);
+            replaceWithContainer(that, OrContainer, false, NodeNameElement);
           }
         },
           {
             text: "Add Set", callback: function () {
-            replaceWithContainer(OrContainer, false, NodeSetElement);
+            replaceWithContainer(that, OrContainer, false, NodeSetElement);
           }
           },
           {
             text: "Add Node Type", callback: function () {
-            replaceWithContainer(OrContainer, false, NodeTypeElement);
+            replaceWithContainer(that, OrContainer, false, NodeTypeElement);
           }
           }], (size.width - OR_BUTTON_WIDTH) / 2, size.height - 5);
 
@@ -483,48 +554,15 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 //--------------------------------------
 
     function AndContainer(parent, horizontal) {
-      CaptionContainer.call(this, parent, "AND", horizontal || false);
+      CaptionContainer.call(this, parent, "AND", "#fed9a6", "black", horizontal || false);
       //ElementContainer.call(this, parent, horizontal || false);
       //this.vPadding = 0;
     }
 
     AndContainer.prototype = Object.create(CaptionContainer.prototype);
 
-    AndContainer.prototype.init = function (domParent) {
-      CaptionContainer.prototype.init.call(this, domParent);
-
-      var that = this;
-
-      var size = this.getSize();
-
-      this.myDomElements.append("rect")
-        .classed("andContainerBg", true)
-        .attr({
-          x: 0,
-          y: 0,
-          width: size.width,
-          height: size.height,
-          fill: "#fed9a6",
-          stroke: "black"
-        });
-
-      this.renderCaption(this.myDomElements);
-    };
-
     AndContainer.prototype.getMinSize = function () {
-      return {width: 40, height: 40};
-    }
-
-    AndContainer.prototype.update = function () {
-      CaptionContainer.prototype.update.call(this);
-
-      var size = this.getSize();
-      this.myDomElements.select("rect.andContainerBg")
-        .transition()
-        .attr({
-          width: size.width,
-          height: size.height
-        });
+      return {width: 40, height: 20};
     };
 
     AndContainer.prototype.getPathQuery = function () {
@@ -540,48 +578,16 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     //--------------------------
 
     function OrContainer(parent, horizontal) {
-      CaptionContainer.call(this, parent, "OR", horizontal || false);
+      CaptionContainer.call(this, parent, "OR", "#b3cde3", "black", horizontal || false);
       //ElementContainer.call(this, parent, horizontal || false);
       //this.vPadding = 0;
     }
 
     OrContainer.prototype = Object.create(CaptionContainer.prototype);
 
-    OrContainer.prototype.init = function (domParent) {
-      CaptionContainer.prototype.init.call(this, domParent);
-
-      var that = this;
-
-      var size = this.getSize();
-
-      this.myDomElements.append("rect")
-        .classed("orContainerBg", true)
-        .attr({
-          x: 0,
-          y: 0,
-          width: size.width,
-          height: size.height,
-          fill: "#b3cde3",
-          stroke: "black"
-        });
-
-      this.renderCaption(this.myDomElements);
-    };
 
     OrContainer.prototype.getMinSize = function () {
-      return {width: 40, height: 40};
-    }
-
-    OrContainer.prototype.update = function () {
-      CaptionContainer.prototype.update.call(this);
-
-      var size = this.getSize();
-      this.myDomElements.select("rect.orContainerBg")
-        .transition()
-        .attr({
-          width: size.width,
-          height: size.height
-        });
+      return {width: 40, height: 20};
     };
 
     OrContainer.prototype.getPathQuery = function () {
@@ -596,13 +602,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
 //------------------------------------------------------
     function NodeContainer(parent) {
-      ElementContainer.call(this, parent, true);
+      BoxContainer.call(this, parent, "rgb(200, 200, 200)", "rgb(30, 30, 30)", false);
     }
 
-    NodeContainer.prototype = Object.create(ElementContainer.prototype);
+    NodeContainer.prototype = Object.create(BoxContainer.prototype);
 
     NodeContainer.prototype.init = function (domParent) {
-      ElementContainer.prototype.init.call(this, domParent);
+      BoxContainer.prototype.init.call(this, domParent);
 
       var that = this;
 
@@ -659,36 +665,6 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       });
 
 
-      //$(this.myDomElements[0]).mouseleave(function () {
-      //  d3.select("#queryOverlay").selectAll("g.overlayButton")
-      //    .remove();
-      //});
-
-      var size = this.getSize();
-
-      this.myDomElements.append("rect")
-        .classed("nodeContainerBg", true)
-        .attr({
-          x: 0,
-          y: 0,
-          width: size.width,
-          height: size.height,
-          fill: "gray",
-          stroke: "black"
-        });
-    };
-
-
-    NodeContainer.prototype.update = function () {
-      ElementContainer.prototype.update.call(this);
-
-      var size = this.getSize();
-      this.myDomElements.selectAll("rect.nodeContainerBg")
-        .transition()
-        .attr({
-          width: size.width,
-          height: size.height
-        });
     };
 
     NodeContainer.prototype.getPathQuery = function () {
@@ -701,30 +677,20 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     //---------------------------------------------
 
     function EdgeContainer(parent) {
-      ElementContainer.call(this, parent, true);
+      BoxContainer.call(this, parent, "white", "black", true);
     }
 
-    EdgeContainer.prototype = Object.create(ElementContainer.prototype);
+    EdgeContainer.prototype = Object.create(BoxContainer.prototype);
 
     EdgeContainer.prototype.init = function (domParent) {
-      ElementContainer.prototype.init.call(this, domParent);
+      BoxContainer.prototype.init.call(this, domParent);
 
       var that = this;
 
       var size = this.getSize();
 
-      this.myDomElements.append("rect")
-        .classed("nodeContainerBg", true)
-        .attr({
-          x: 0,
-          y: 0,
-          width: size.width,
-          height: size.height,
-          fill: "white",
-          stroke: "black"
-        });
-
       this.myDomElements.append("line")
+        .classed("edgeLine", true)
         .attr({
           x1: 5,
           y1: size.height / 2,
@@ -735,6 +701,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         });
 
       $(this.myDomElements[0]).mouseenter(function () {
+
+        var size = that.getSize();
 
         addAddButton(that, [{
           text: "Add Node", callback: function () {
@@ -770,14 +738,16 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     };
 
     EdgeContainer.prototype.update = function () {
-      ElementContainer.prototype.update.call(this);
+      BoxContainer.prototype.update.call(this);
 
       var size = this.getSize();
-      this.myDomElements.selectAll("rect.nodeContainerBg")
+      this.myDomElements.selectAll("line.edgeLine")
         .transition()
         .attr({
-          width: size.width,
-          height: size.height
+          x1: 5,
+          y1: size.height / 2,
+          x2: size.width - 5,
+          y2: size.height / 2
         });
     };
 
@@ -791,7 +761,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     //---------------------------------------------
 
     function UnorderedContainer(parent) {
-      CaptionContainer.call(this, parent, "Unordered", true);
+      CaptionContainer.call(this, parent, "Unordered", "#ccebc5", "black", true);
     }
 
     UnorderedContainer.prototype = Object.create(CaptionContainer.prototype);
@@ -801,22 +771,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
       var that = this;
 
-      var size = this.getSize();
-
-      this.myDomElements.append("rect")
-        .classed("unordererdContainerBg", true)
-        .attr({
-          x: 0,
-          y: 0,
-          width: size.width,
-          height: size.height,
-          fill: "#ccebc5",
-          stroke: "black"
-        });
-
-      this.renderCaption(this.myDomElements);
-
       $(this.myDomElements[0]).mouseenter(function () {
+
+        var size = that.getSize();
 
         if (that.children.length <= 0) {
           addAddButton(that, [{
@@ -827,27 +784,11 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
             text: "Add Edge", callback: function () {
               that.add(new EdgeContainer(that));
             }
-          }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+          }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
         }
 
       });
 
-      //$(this.myDomElements[0]).mouseleave(function () {
-      //  d3.select("#queryOverlay").selectAll("g.overlayButton")
-      //    .remove();
-      //});
-    };
-
-    UnorderedContainer.prototype.update = function () {
-      CaptionContainer.prototype.update.call(this);
-
-      var size = this.getSize();
-      this.myDomElements.selectAll("rect.unordererdContainerBg")
-        .transition()
-        .attr({
-          width: size.width,
-          height: size.height
-        });
     };
 
     UnorderedContainer.prototype.getPathQuery = function () {
@@ -857,9 +798,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
       var prevQuery = 0;
 
-      this.children.forEach(function(child) {
+      this.children.forEach(function (child) {
         var currentQuery = child.getPathQuery();
-        if(prevQuery != 0) {
+        if (prevQuery != 0) {
           prevQuery = new q.And(prevQuery, currentQuery);
         } else {
           prevQuery = currentQuery;
@@ -889,8 +830,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           y: 0,
           width: size.width,
           height: size.height,
-          fill: "white",
-          stroke: "black"
+          fill: "white"
         });
 
       this.myDomElements.append("line")
@@ -972,7 +912,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     //--------------------------------------
 
     function SequenceContainer(parent) {
-      CaptionContainer.call(this, parent, "Sequence", true);
+      CaptionContainer.call(this, parent, "Sequence", "white", "black", true);
     }
 
 
@@ -982,54 +922,29 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       CaptionContainer.prototype.init.call(this, parent);
 
 
-      var size = this.getSize();
-
-      this.myDomElements.append("rect")
-        .classed("seqContainerBg", true)
-        .attr({
-          x: 0,
-          y: 0,
-          width: size.width,
-          height: size.height,
-          fill: "white",
-          stroke: "black"
-        });
-
-      this.renderCaption(this.myDomElements);
-
       this.add(new NodeContainer(this));
       this.add(new SequenceFiller(this));
       this.add(new NodeContainer(this));
 
       var that = this;
 
-      function replaceWithContainer(ContainerConstructor, isContainerHorizontal, ElementConstructor) {
-        var container = new ContainerConstructor(that.parent, isContainerHorizontal);
-        that.parent.replace(that, container)
-        that.parent = container;
-
-        container.children.push(that);
-        $(container.childDomElements[0]).append($(that.rootElement[0]));
-        container.add(new ElementConstructor(container))
-      }
-
       $(this.myDomElements[0]).mouseenter(function () {
-
+        var size = that.getSize();
 
         addAndButton(that, [{
           text: "Add Unordered", callback: function () {
-            replaceWithContainer(AndContainer, false, UnorderedContainer);
+            replaceWithContainer(that, AndContainer, false, UnorderedContainer);
           }
         }], size.width - AND_BUTTON_WIDTH, size.height - 5);
 
         addOrButton(that, [{
           text: "Add Unordered", callback: function () {
-            replaceWithContainer(OrContainer, false, UnorderedContainer);
+            replaceWithContainer(that, OrContainer, false, UnorderedContainer);
           }
         },
           {
             text: "Add Sequence", callback: function () {
-            replaceWithContainer(OrContainer, false, SequenceContainer);
+            replaceWithContainer(that, OrContainer, false, SequenceContainer);
           }
           }], (size.width - OR_BUTTON_WIDTH) / 2, size.height - 5);
 
@@ -1064,14 +979,6 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       }
 
       CaptionContainer.prototype.update.call(this);
-
-      var size = this.getSize();
-      this.myDomElements.selectAll("rect.seqContainerBg")
-        .transition()
-        .attr({
-          width: size.width,
-          height: size.height
-        });
     }
     ;
 
