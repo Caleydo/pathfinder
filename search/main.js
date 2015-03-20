@@ -6,16 +6,13 @@ define(['jquery','jquery-ui'],function($, io) {
 
   function SearchPath(selector) {
     var that = this;
-    this.search_cache = {};
     $(selector).load('search/search.html', function() {
       that.init();
     });
     this.query = null;
-    this.socket = new WebSocket('ws://' + document.domain + ':' + location.port+'/api/pathway/query');
     this.onMsg = {};
-    this.socket.onmessage = function(msg) {
-      that.onMessage(JSON.parse(msg));
-    }
+    this._socket = null;
+    this._initialMessage = [];
   }
   SearchPath.prototype.onMessage = function(msg) {
     var l = this.onMsg[msg.type];
@@ -24,24 +21,31 @@ define(['jquery','jquery-ui'],function($, io) {
     }
   };
   SearchPath.prototype.send = function(type, msg) {
-    this.socket.send(JSON.stringify({ type : type, data: msg}));
-  };
-  SearchPath.prototype.enableAutocomplete = function() {
     var that = this;
-    $('#from_node, #to_node').autocomplete({
-      minLength: 3,
-      source: function( request, response ) {
-        var term = request.term;
-        if ( term in that.search_cache ) {
-          response( that.search_cache[ term ] );
-          return;
-        }
-        $.getJSON('/api/pathway/search', { q : term}).then(function(data) {
-          that.search_cache[ term ] = data.results;
-          response( data.results );
+    if (!this._socket) {
+      that._initialMessage.push({ type: type, data: msg});
+
+      var s = new WebSocket('ws://' + document.domain + ':' + location.port + '/api/pathway/query');
+      s.onmessage = function (msg) {
+        console.log('got message', msg);
+        that.onMessage(JSON.parse(msg.data));
+      };
+      s.onopen = function() {
+        that._socket = s;
+        that._initialMessage.forEach(function(msg) {
+          s.send(JSON.stringify(msg));
         });
-      }
-    });
+        that._initialMessage = [];
+      };
+      s.onclose = function () {
+        that._socket = null; //clear socket upon close
+      };
+
+    } else if (this._socket.readyState !== WebSocket.OPEN) {
+      that._initialMessage.push({ type: type, data: msg});
+    } else {
+      this._socket.send(JSON.stringify({type: type, data: msg}));
+    }
   };
   SearchPath.prototype.init = function() {
     var that = this;
@@ -87,7 +91,6 @@ define(['jquery','jquery-ui'],function($, io) {
       count++;
       $progress.attr("value", count);
     }, function (paths) {
-      paths = JSON.parse(paths);
       $progress.hide();
       console.log('got paths', paths);
     });
