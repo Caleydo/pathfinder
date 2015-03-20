@@ -1,4 +1,4 @@
-define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function ($, d3, webcola, listeners, selectionUtil) {
+define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsorting'], function ($, d3, webcola, listeners, selectionUtil, pathSorting) {
     'use strict';
 
     var w = 800;
@@ -453,7 +453,10 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil'], function (
           .attr("class", function (d) {
             return "node " + (d.fixed ? ("fixed") : "");
           })
-          .call(that.force.drag);
+          .on("dblclick", function(d) {
+            pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getNodePresenceStrategy([d.id]));
+            listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+          });
 
         selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
             return d.id;
