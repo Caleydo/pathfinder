@@ -317,7 +317,7 @@ g.set.selected {
 //  width: 50vw;
 //  height:100vh;
 //}
-#pathlist, #pathgraph, #pathstats {
+#pathlist, #pathgraph, #pathstats, #pathQuery {
   display: block;
   width: 100%;
   height: 100%;
@@ -327,6 +327,13 @@ g.set.selected {
   display: inline-block;
   width: 40vw;
   height: auto;
+  overflow: auto;
+}
+
+#pathQueryView {
+  display: inline-block;
+  width: 100%;
+  height: 100px;
   overflow: auto;
 }
 
