@@ -1167,7 +1167,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
     QueryView.prototype.getMinSize = function () {
       if (typeof this.container === "undefined") {
-        return {width: 200, height: 200};
+        return {width: 200, height: 100};
       }
       var containerSize = this.container.getSize();
       return {width: containerSize.width + 80, height: containerSize.height + 20};
@@ -1194,30 +1194,17 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       )
       ;
 
-      //$('#updateQueryLocal').on('submit',function () {
-      //
-      //    var pathQuery = that.container.getPathQuery();
-      //    pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getPathQueryStrategy(pathQuery));
-      //    listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-      //    listeners.notify(listeners.updateType.QUERY_UPDATE, pathQuery);
-      //  }
-      //)
-      //;
-
     };
 
-//QueryView.prototype.updateViewSize = function () {
-//
-//  var minSize = this.getMinSize;
-//  var viewParent = $("#pathQueryView")[0];
-//
-//  viewParent.css
-//
-//  var svg = d3.select(this.parentSelector + " svg");
-//  svg.attr("width", $(this.parentSelector)[0].offsetWidth > minSize.width && this.grabHSpace ? "100%" : minSize.width);
-//  svg.attr("height", $(this.parentSelector)[0].offsetHeight
-//
-//};
+    QueryView.prototype.updateViewSize = function () {
+
+      var minSize = this.getMinSize();
+      var viewParent = $("#pathQueryView");
+      if (viewParent.height() < minSize.height && viewParent.height() < 300) {
+        viewParent.height(Math.min(minSize.height+10, 300));
+      }
+      View.prototype.updateViewSize.call(this);
+    };
 
     var queryView = new QueryView();
 
