@@ -164,11 +164,24 @@ define(['../pathutil'], function (pathUtil) {
   };
 
 
+
+
   function NodeMatcher(constraint) {
     this.constraint = constraint;
+    //a bit hacky
+    this.isStartNode = false;
+    this.isEndNode = false;
   }
 
   NodeMatcher.prototype = Object.create(PathQuery.prototype);
+
+  NodeMatcher.prototype.setStartNode = function (isStartNode) {
+    this.isStartNode = isStartNode;
+  };
+
+  NodeMatcher.prototype.setEndNode = function (isEndNode) {
+    this.isEndNode = isEndNode;
+  };
 
   NodeMatcher.prototype.getMatchRegions = function (path, getFirstOnly) {
     var matchRegions = [];

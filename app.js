@@ -2,7 +2,7 @@
  * Created by Christian on 11.12.2014.
  */
 require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search/main', './pathutil', './query/queryview', 'font-awesome', 'bootstrap'],
-  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, SearchPath, pathUtil, QueryView) {
+  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, SearchPath, pathUtil, queryView) {
 
     'use strict';
 
@@ -15,7 +15,16 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
     $(document).ready(function () {
 
-        var queryView = new QueryView("#pathQuery");
+        var search = new SearchPath('#search_path');
+        $(search).on({
+          reset: reset,
+          addPath: function (event, path) {
+            addPath(path);
+          }
+        });
+        listeners.add(function(query) {
+          search.setQuery(query);
+        }, listeners.updateType.QUERY_UPDATE);
 
         queryView.init();
         overviewGraph.init();
@@ -165,16 +174,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           });
         });
 
-        var search = new SearchPath('#search_path');
-        $(search).on({
-          reset: reset,
-          addPath: function (event, path) {
-            addPath(path);
-          }
-        });
-        listeners.add(function(query) {
-          search.setQuery(query);
-        }, listeners.updateType.QUERY_UPDATE);
+
 
         $.getJSON("testpaths1.json", function (paths) {
 

@@ -6,6 +6,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     var OR_BUTTON_WIDTH = 24;
     var AND_BUTTON_WIDTH = 38;
     var CAPTION_SIZE = 10;
+    var POSITION_LABEL_WIDTH = 40;
+    var POSITION_LABEL_HEIGHT = 10;
 
     function addOverlayButton(parent, x, y, width, height, buttonText, textX, textY, color) {
 
@@ -100,6 +102,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       this.translate = {x: 0, y: 0};
       this.fillHorizontal = true;
       this.fillVertical = true;
+      this.isInitialized = false;
     }
 
     BaseGUIElement.prototype = {
@@ -131,6 +134,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
               .remove();
           }
         });
+        this.isInitialized = true;
       },
 
       getSize: function () {
@@ -215,6 +219,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     };
 
     ElementContainer.prototype.update = function () {
+      if (typeof this.parent === "undefined") {
+        queryView.updateViewSize();
+      }
       this.updateMyDomElements();
       this.updateChildren(this.hPadding, this.vPadding);
 
@@ -480,7 +487,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       //  d3.select("#queryOverlay").selectAll("g.overlayButton")
       //    .remove();
       //});
-    }
+    };
 
     NodeConstraintElement.prototype.getSize = function () {
       return {width: 92, height: 24};
@@ -498,6 +505,41 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       NodeConstraintElement.prototype.init.call(this, domParent);
 
       this.addInput(this.myDomElements, "Name");
+
+      var that = this;
+      that.search_cache = {};
+
+      var inputField = $(this.myDomElements[0]).find("input");
+      inputField.autocomplete({
+        minLength: 3,
+        source: function (request, response) {
+          var term = request.term;
+          if (term in that.search_cache) {
+            response(that.search_cache[term]);
+            return;
+          }
+          $.getJSON('/api/pathway/search', {q: term}).then(function (data) {
+            that.search_cache[term] = data.results;
+            response(data.results);
+          });
+        },
+        select: function (event, ui) {
+          inputField.val(ui.item.label);
+          that.id = ui.item.value;
+          return false; // Prevent the widget from inserting the value.
+        },
+        focus: function (event, ui) {
+          inputField.val(ui.item.label);
+          that.id = ui.item.value;
+          return false; // Prevent the widget from inserting the value.
+        }
+      });
+
+
+      //inputField.on('autocompletechange change', function () {
+      //  inputField.text(this.label);
+      //  //$('#tagsname').html('You selected: ' + this.value);
+      //});
     };
 
     NodeNameElement.prototype.getPathQuery = function () {
@@ -602,13 +644,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
 //------------------------------------------------------
     function NodeContainer(parent) {
-      BoxContainer.call(this, parent, "rgb(200, 200, 200)", "rgb(30, 30, 30)", false);
+      CaptionContainer.call(this, parent, "", "rgb(200, 200, 200)", "rgb(30, 30, 30)", false);
+      this.hasPosition = false;
     }
 
-    NodeContainer.prototype = Object.create(BoxContainer.prototype);
+    NodeContainer.prototype = Object.create(CaptionContainer.prototype);
 
     NodeContainer.prototype.init = function (domParent) {
-      BoxContainer.prototype.init.call(this, domParent);
+      CaptionContainer.prototype.init.call(this, domParent);
 
       var that = this;
 
@@ -663,18 +706,86 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           }
         }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
       });
-
-
     };
+
+    NodeContainer.prototype.setPosition = function (index) {
+      this.hasPosition = true;
+      this.index = index;
+      var text = "";
+      if (index === 0) {
+        text = "Start";
+      } else if (index > 0) {
+        text = "Start+" + index;
+      } else if (index === -1) {
+        text = "End";
+      } else {
+        text = "End-" + Math.abs((index + 1));
+      }
+
+      var size = this.getSize();
+      if (this.isInitialized) {
+        this.myDomElements.append("rect")
+          .classed("positionBg", true)
+          .attr({
+            x: (size.width - POSITION_LABEL_WIDTH) / 2,
+            y: 1,
+            width: POSITION_LABEL_WIDTH,
+            height: POSITION_LABEL_HEIGHT,
+            fill: "white"
+          });
+
+        this.myDomElements.append("text")
+          .classed("positionText", true)
+          .attr({
+            x: size.width / 2,
+            y: 9,
+            "text-anchor": "middle"
+          }
+        ).text(text);
+
+      }
+    };
+
+    NodeContainer.prototype.updateMyDomElements = function () {
+      CaptionContainer.prototype.updateMyDomElements.call(this);
+
+      var size = this.getSize();
+
+      this.myDomElements.select("rect.positionBg")
+        .transition()
+        .attr({
+          x: (size.width - POSITION_LABEL_WIDTH) / 2
+        });
+
+      this.myDomElements.select("text.positionText")
+        .transition()
+        .attr({
+          x: size.width / 2
+        }
+      );
+    }
 
     NodeContainer.prototype.getPathQuery = function () {
       if (this.children.length == 0) {
         return new q.NodeMatcher(new q.Constraint());
       }
+      if (this.hasPosition) {
+
+        var i = (this.index < 0) ? Math.abs((this.index + 1)) : this.index;
+        var n = new q.NodeMatcher(this.children[0].getPathQuery());
+        if (this.index === 0) {
+          n.setStartNode(true);
+        } else if (this.index === -1) {
+          n.setEndNode(true);
+        }
+
+        return new q.RegionMatcher(n, new q.MatchRegion(i, i), this.index < 0);
+      }
+
       return new q.NodeMatcher(this.children[0].getPathQuery());
     };
 
-    //---------------------------------------------
+//---------------------------------------------
 
     function EdgeContainer(parent) {
       BoxContainer.call(this, parent, "white", "black", true);
@@ -758,7 +869,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       return new q.EdgeMatcher(this.children[0].getPathQuery());
     };
 
-    //---------------------------------------------
+//---------------------------------------------
 
     function UnorderedContainer(parent) {
       CaptionContainer.call(this, parent, "Unordered", "#ccebc5", "black", true);
@@ -829,7 +940,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       return new q.And(nodeMatchers, edgeMatchers);
     };
 
-    //--------------------------------
+//--------------------------------
 
 
     function SequenceFiller(parent) {
@@ -928,7 +1039,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       return show;
     };
 
-    //--------------------------------------
+//--------------------------------------
 
     function SequenceContainer(parent) {
       CaptionContainer.call(this, parent, "Sequence", "white", "black", true);
@@ -940,10 +1051,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     SequenceContainer.prototype.init = function (parent) {
       CaptionContainer.prototype.init.call(this, parent);
 
+      var nc1 = new NodeContainer(this);
+      var nc2 = new NodeContainer(this);
 
-      this.add(new NodeContainer(this));
+      this.add(nc1);
       this.add(new SequenceFiller(this));
-      this.add(new NodeContainer(this));
+      this.add(nc2);
+      nc1.setPosition(0);
+      nc2.setPosition(-1);
 
       var that = this;
 
@@ -1040,10 +1155,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     };
 
 
-    //----------------------
+//----------------------
 
-    function QueryView(selector) {
-      View.call(this, selector);
+    function QueryView() {
+      View.call(this, "#pathQuery");
       this.grabHSpace = false;
       this.grabVSpace = false;
     }
@@ -1051,30 +1166,62 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     QueryView.prototype = Object.create(View.prototype);
 
     QueryView.prototype.getMinSize = function () {
-      return {width: "100%", height: 400};
+      if (typeof this.container === "undefined") {
+        return {width: 200, height: 200};
+      }
+      var containerSize = this.container.getSize();
+      return {width: containerSize.width + 80, height: containerSize.height + 20};
     };
 
     QueryView.prototype.init = function () {
       View.prototype.init.call(this);
       var svg = d3.select(this.parentSelector + " svg");
-      d3.select(this.parentSelector).append("button")
-        .text("Update")
-        .on("click", function () {
-          var pathQuery = container.getPathQuery();
+
+      this.container = new ElementContainer();
+      this.container.init(svg);
+      this.container.add(new SequenceContainer(this.container));
+      var that = this;
+
+      svg.append("g")
+        .attr("id", "queryOverlay");
+
+      $('#updateQueryLocal').click(function () {
+          var pathQuery = that.container.getPathQuery();
           pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getPathQueryStrategy(pathQuery));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
           listeners.notify(listeners.updateType.QUERY_UPDATE, pathQuery);
-        });
+        }
+      )
+      ;
 
-      var container = new ElementContainer();
-      container.init(svg);
-      container.add(new SequenceContainer(container));
+      //$('#updateQueryLocal').on('submit',function () {
+      //
+      //    var pathQuery = that.container.getPathQuery();
+      //    pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getPathQueryStrategy(pathQuery));
+      //    listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+      //    listeners.notify(listeners.updateType.QUERY_UPDATE, pathQuery);
+      //  }
+      //)
+      //;
 
-      svg.append("g")
-        .attr("id", "queryOverlay")
     };
 
-    return QueryView;
+//QueryView.prototype.updateViewSize = function () {
+//
+//  var minSize = this.getMinSize;
+//  var viewParent = $("#pathQueryView")[0];
+//
+//  viewParent.css
+//
+//  var svg = d3.select(this.parentSelector + " svg");
+//  svg.attr("width", $(this.parentSelector)[0].offsetWidth > minSize.width && this.grabHSpace ? "100%" : minSize.width);
+//  svg.attr("height", $(this.parentSelector)[0].offsetHeight
+//
+//};
+
+    var queryView = new QueryView();
+
+    return queryView;
 
   }
 )
