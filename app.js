@@ -23,7 +23,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
           }
         });
         listeners.add(function(query) {
-          search.setQuery(query);
+          search.updateQuery(query, true);
         }, listeners.updateType.QUERY_UPDATE);
 
         queryView.init();

@@ -1,87 +1,31 @@
 /**
  * Created by sam on 13.03.2015.
  */
-define(['jquery','jquery-ui'],function($) {
+define(['jquery','jquery-ui'],function($, io) {
   'use strict';
-
-  function getIncrementalJSON(url, data, onChunkDone, extraArgs) {
-    var processed = 0;
-
-    function sendChunk(path) {
-      path = JSON.parse(path);
-      onChunkDone(path);
-    }
-
-    function processPart(text) {
-      var p = 0, act = 0, open = 0,
-        l = text.length,
-        c, start;
-      if (text[act] === '[') { //skip initial [
-        act = 1;
-      }
-      start = act;
-      while (act < l) {
-        c = text[act];
-        if (c === '{') { //starting object
-          open += 1;
-        } else if (c === '}') { //closing object
-          open -= 1;
-          if (open === 0) { //found a full chunk
-            sendChunk(text.substring(start, act + 1));
-            start = act + 1;
-            if (text[start] === ',') { //skip ,
-              start += 1;
-              act += 1;
-            }
-          }
-        }
-        act++;
-      }
-      return start; //everything before start was fully processed
-    }
-
-    return $.ajax($.extend({
-      async: true,
-      url: url,
-      data: data,
-      dataType: 'text',
-      success: function (data) {
-        processPart(data.substr(processed))
-      },
-      xhr: function () {
-        // get the native XmlHttpRequest object
-        var xhr = $.ajaxSettings.xhr();
-        // set the onprogress event handler
-        xhr.onprogress = function (evt) {
-          processed += processPart(evt.currentTarget.responseText.substr(processed));
-        };
-        return xhr;
-      }
-    },extraArgs))
-  }
-
-  function searchPaths(source, target, k, maxDepth, onPathDone, nodeids, query) {
-    var args = {
-      k: k || 10,
-      maxDepth: maxDepth || 10,
-      nodeids: nodeids === true
-    };
-    var extraArgs = {};
-    if (query) {
-      extraArgs.method = 'POST';
-      args.query = JSON.stringify(query.serialize());
-    }
-    return getIncrementalJSON('/api/pathway/path/' + source + '/' + target, args, onPathDone, extraArgs);
-  }
 
   function SearchPath(selector) {
     var that = this;
-    this._query = null;
     this.search_cache = {};
     $(selector).load('search/search.html', function() {
       that.init();
     });
+    this.query = null;
+    this.socket = new WebSocket('ws://' + document.domain + ':' + location.port+'/api/pathway/query');
+    this.onMsg = {};
+    this.socket.onmessage = function(msg) {
+      that.onMessage(JSON.parse(msg));
+    }
   }
+  SearchPath.prototype.onMessage = function(msg) {
+    var l = this.onMsg[msg.type];
+    if (l) {
+      l(msg.data);
+    }
+  };
+  SearchPath.prototype.send = function(type, msg) {
+    this.socket.send(JSON.stringify({ type : type, data: msg}));
+  };
   SearchPath.prototype.enableAutocomplete = function() {
     var that = this;
     $('#from_node, #to_node').autocomplete({
@@ -101,16 +45,29 @@ define(['jquery','jquery-ui'],function($) {
   };
   SearchPath.prototype.init = function() {
     var that = this;
-    this.enableAutocomplete();
+    //this.enableAutocomplete();
+
     $('#search_form').on('submit', this.handleSubmit.bind(this));
   };
-  SearchPath.prototype.setQuery = function(query) {
-    this._query = query;
+  SearchPath.prototype.loadQuery = function(query, k, maxDepth, onPathDone, onPathsDone) {
+    var msg = {
+      k : k || 10,
+      maxDepth : maxDepth || 10,
+      query : query ? query.serialize() : null
+    };
+    this.onMsg.path = onPathDone;
+    this.onMsg.done = onPathsDone;
+    this.send('query', msg);
+  };
+  SearchPath.prototype.updateQuery = function(query, trigger) {
+    trigger = trigger || false;
+    this.query = query;
+    if (trigger) {
+      $('#search_form').submit();
+    }
   };
   SearchPath.prototype.handleSubmit = function(event) {
     var $this = $(this);
-    var s = $('#from_node').val();
-    var t = $('#to_node').val();
     var k = + $('#at_most_k').val();
     var maxDepth = + $('#longest_path').val();
 
@@ -124,21 +81,15 @@ define(['jquery','jquery-ui'],function($) {
     event.stopPropagation();
 
     var count = 0;
-    var search = searchPaths(s, t, k, maxDepth, function (path) {
+    this.loadQuery(this.query, k, maxDepth, function (path) {
       console.log('got path', path);
       $this.trigger('addPath', path);
       count++;
       $progress.attr("value", count);
-    }, true, this._query);
-
-    search.success(function (paths) {
+    }, function (paths) {
       paths = JSON.parse(paths);
       $progress.hide();
       console.log('got paths', paths);
-    });
-    search.error(function (error) {
-      $progress.hide();
-      $('<div title="Error">'+JSON.stringify(error)+'</div>').dialog();
     });
 
     return false; //no real submit
