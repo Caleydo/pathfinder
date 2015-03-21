@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners', '../listoverlay'], function ($, d3, View, q, pathSorting, listeners, ListOverlay) {
+define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners', '../listoverlay', './pathquery'], function ($, d3, View, q, pathSorting, listeners, ListOverlay, pathQuery) {
 
     var listOverlay = new ListOverlay();
 
@@ -1186,10 +1186,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         .attr("id", "queryOverlay");
 
       $('#updateQueryLocal').click(function () {
-          var pathQuery = that.container.getPathQuery();
-          pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getPathQueryStrategy(pathQuery));
-          listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-          listeners.notify(listeners.updateType.QUERY_UPDATE, pathQuery);
+          var query = that.container.getPathQuery();
+
+          pathQuery.set(query);
         }
       )
       ;

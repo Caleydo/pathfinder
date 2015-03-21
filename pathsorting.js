@@ -1,4 +1,4 @@
-define(['./sorting', './pathutil', './query/querymodel'], function (sorting, pathUtil, q) {
+define(['./sorting', './pathutil', './query/querymodel', './listeners'], function (sorting, pathUtil, q, listeners) {
     var SortingStrategy = sorting.SortingStrategy;
 
     //TODO: fetch amount of sets from server
@@ -233,6 +233,12 @@ define(['./sorting', './pathutil', './query/querymodel'], function (sorting, pat
     //  new q.NodeMatcher(new  q.NodeNameConstraint("23067")), q.MatchRegionRelations.subsequent);
 
     //sortingManager.setStrategyChain([sortingStrategies.getPathQueryStrategy(pathQuery), sortingStrategies.pathId]);
+
+    listeners.add(function (query) {
+      sortingManager.addOrReplace(sortingStrategies.getPathQueryStrategy(query));
+      listeners.notify("UPDATE_PATH_SORTING", sortingManager.currentComparator);
+    }, listeners.updateType.QUERY_UPDATE);
+
 
     sortingManager.setStrategyChain([sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
 
