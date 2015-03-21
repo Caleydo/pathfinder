@@ -1193,6 +1193,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         }
       );
 
+      ServerSearch.on('query_done', function() {
+        $('#query_interface button[type="submit"] i').attr('class','fa fa-search');
+      });
+
       $('#query_interface form').on('submit', function(event) {
         event.stopPropagation();
         event.preventDefault();
@@ -1201,6 +1205,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         var maxDepth = + $('#longest_path').val();
         var query = that.container.getPathQuery();
 
+        $('#query_interface button[type="submit"] i').attr('class','fa fa-spinner fa-pulse');
         ServerSearch.loadQuery(query, k, maxDepth);
 
         return false;
