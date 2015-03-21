@@ -783,13 +783,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     }
 
     NodeContainer.prototype.getPathQuery = function () {
-      if (this.children.length == 0) {
-        return new q.NodeMatcher(new q.Constraint());
-      }
+
+      var constraint = this.children.length === 0 ? new q.Constraint() : this.children[0].getPathQuery();
+
       if (this.hasPosition) {
 
         var i = (this.index < 0) ? Math.abs((this.index + 1)) : this.index;
-        var n = new q.NodeMatcher(this.children[0].getPathQuery());
+        var n = new q.NodeMatcher(constraint);
         if (this.index === 0) {
           n.setStartNode(true);
         } else if (this.index === -1) {
@@ -799,7 +799,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         return new q.RegionMatcher(n, new q.MatchRegion(i, i), this.index < 0);
       }
 
-      return new q.NodeMatcher(this.children[0].getPathQuery());
+      return new q.NodeMatcher(constraint);
     };
 
 //---------------------------------------------
