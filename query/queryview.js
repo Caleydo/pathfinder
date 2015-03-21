@@ -507,7 +507,6 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       this.addInput(this.myDomElements, "Name");
 
       var that = this;
-      that.search_cache = {};
 
       var inputField = $(this.myDomElements[0]).find("input");
       inputField.autocomplete({
@@ -557,6 +556,29 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       NodeConstraintElement.prototype.init.call(this, domParent);
 
       this.addInput(this.myDomElements, "Set");
+
+      var that = this;
+
+      var inputField = $(this.myDomElements[0]).find("input");
+      inputField.autocomplete({
+        minLength: 3,
+        source: function (request, response) {
+          var term = request.term;
+          ServerSearch.search(term,'name','_Set_Node').then(function(results) {
+            response(results);
+          })
+        },
+        select: function (event, ui) {
+          inputField.val(ui.item.id);
+          that.id = ui.item.value;
+          return false; // Prevent the widget from inserting the value.
+        },
+        focus: function (event, ui) {
+          inputField.val(ui.item.id);
+          that.id = ui.item.value;
+          return false; // Prevent the widget from inserting the value.
+        }
+      });
     };
 
     NodeSetElement.prototype.getPathQuery = function () {
