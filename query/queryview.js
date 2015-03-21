@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners', '../listoverlay'], function ($, d3, View, q, pathSorting, listeners, ListOverlay) {
+define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners', '../listoverlay', '../search/main'], function ($, d3, View, q, pathSorting, listeners, ListOverlay, ServerSearch) {
 
     var listOverlay = new ListOverlay();
 
@@ -514,14 +514,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         minLength: 3,
         source: function (request, response) {
           var term = request.term;
-          if (term in that.search_cache) {
-            response(that.search_cache[term]);
-            return;
-          }
-          $.getJSON('/api/pathway/search', {q: term}).then(function (data) {
-            that.search_cache[term] = data.results;
-            response(data.results);
-          });
+          ServerSearch.search(term,'name','_Network_Node').then(function(results) {
+            response(results);
+          })
         },
         select: function (event, ui) {
           inputField.val(ui.item.label);
@@ -1174,6 +1169,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     };
 
     QueryView.prototype.init = function () {
+      //load content first
+      $('#query_interface').load('query/view.html', this.initImpl.bind(this));
+    };
+    QueryView.prototype.initImpl = function() {
       View.prototype.init.call(this);
       var svg = d3.select(this.parentSelector + " svg");
 
@@ -1185,15 +1184,27 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       svg.append("g")
         .attr("id", "queryOverlay");
 
-      $('#updateQueryLocal').click(function () {
+      $('#filter_query').click(function () {
           var pathQuery = that.container.getPathQuery();
           pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getPathQueryStrategy(pathQuery));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
           listeners.notify(listeners.updateType.QUERY_UPDATE, pathQuery);
+          return false;
         }
-      )
-      ;
+      );
 
+      $('#query_interface form').on('submit', function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        var k = + $('#at_most_k').val();
+        var maxDepth = + $('#longest_path').val();
+        var query = that.container.getPathQuery();
+
+        ServerSearch.loadQuery(query, k, maxDepth);
+
+        return false;
+      });
     };
 
     QueryView.prototype.updateViewSize = function () {

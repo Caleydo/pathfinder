@@ -2,7 +2,7 @@
  * Created by Christian on 11.12.2014.
  */
 require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search/main', './pathutil', './query/queryview', 'font-awesome', 'bootstrap'],
-  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, SearchPath, pathUtil, queryView) {
+  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView) {
 
     'use strict';
 
@@ -15,17 +15,22 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
     $(document).ready(function () {
 
-        var search = new SearchPath('#search_path');
-        $(search).on({
-          reset: reset,
-          addPath: function (event, path) {
-            addPath(path);
+        var $progress = $('header .progress-bar');
+        ServerSearch.on({
+          query_start: function() {
+            reset();
+            $progress.css('width','0%');
+          },
+          query_path: function (event, data) {
+            addPath(data.path);
+            var k = data.query.k;
+            var i = data.i;
+            d3.select($progress[0]).transition().duration(100).style('width',d3.round(i/k*100,0)+'%');
+          },
+          query_done: function() {
+            $progress.parent();
           }
         });
-        listeners.add(function(query) {
-          search.updateQuery(query, true);
-        }, listeners.updateType.QUERY_UPDATE);
-
         queryView.init();
         overviewGraph.init();
         listView.init();

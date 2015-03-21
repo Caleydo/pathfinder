@@ -1,102 +1,100 @@
 /**
  * Created by sam on 13.03.2015.
  */
-define(['jquery','jquery-ui'],function($, io) {
+define(['jquery','jquery-ui'],function($) {
   'use strict';
 
-  function SearchPath(selector) {
-    var that = this;
-    $(selector).load('search/search.html', function() {
-      that.init();
-    });
-    this.query = null;
-    this.onMsg = {};
+  function ServerSearch() {
+    this._events = $(this);
     this._socket = null;
     this._initialMessage = [];
+
+    this.search_cache = {};
   }
-  SearchPath.prototype.onMessage = function(msg) {
-    var l = this.onMsg[msg.type];
-    if (l) {
-      l(msg.data);
-    }
+  ServerSearch.prototype.on = function() {
+    return this._events.on.apply(this._events, Array.prototype.slice.call(arguments));
   };
-  SearchPath.prototype.send = function(type, msg) {
+  ServerSearch.prototype.off = function() {
+    return this._events.off.apply(this._events, Array.prototype.slice.call(arguments));
+  };
+  ServerSearch.prototype.fire = function() {
+    return this._events.trigger.apply(this._events, Array.prototype.slice.call(arguments));
+  };
+  ServerSearch.prototype.onMessage = function(msg) {
+    this.fire(msg.type, msg.data);
+  };
+  function asMessage(type, msg) {
+    return JSON.stringify({type: type, data: msg});
+  }
+  ServerSearch.prototype.send = function(type, msg) {
     var that = this;
     if (!this._socket) {
-      that._initialMessage.push({ type: type, data: msg});
+      that._initialMessage.push(asMessage(type,msg));
 
       var s = new WebSocket('ws://' + document.domain + ':' + location.port + '/api/pathway/query');
+      that.fire('ws_open');
       s.onmessage = function (msg) {
-        console.log('got message', msg);
+        //console.log('got message', msg);
         that.onMessage(JSON.parse(msg.data));
       };
       s.onopen = function() {
         that._socket = s;
         that._initialMessage.forEach(function(msg) {
-          s.send(JSON.stringify(msg));
+          s.send(msg);
         });
         that._initialMessage = [];
+        that.fire('ws_ready');
       };
       s.onclose = function () {
         that._socket = null; //clear socket upon close
+        that.fire('ws_closed');
       };
 
     } else if (this._socket.readyState !== WebSocket.OPEN) {
-      that._initialMessage.push({ type: type, data: msg});
+      //not yet open cache it
+      that._initialMessage.push(asMessage(type, msg));
     } else {
-      this._socket.send(JSON.stringify({type: type, data: msg}));
+      //send directly
+      this._socket.send(asMessage(type, msg));
     }
   };
-  SearchPath.prototype.init = function() {
-    var that = this;
-    //this.enableAutocomplete();
 
-    $('#search_form').on('submit', this.handleSubmit.bind(this));
-  };
-  SearchPath.prototype.loadQuery = function(query, k, maxDepth, onPathDone, onPathsDone) {
+  ServerSearch.prototype.loadQuery = function(query, k, maxDepth) {
     var msg = {
       k : k || 10,
       maxDepth : maxDepth || 10,
       query : query ? query.serialize() : null
     };
-    this.onMsg.path = onPathDone;
-    this.onMsg.done = onPathsDone;
     this.send('query', msg);
   };
-  SearchPath.prototype.updateQuery = function(query, trigger) {
-    trigger = trigger || false;
-    this.query = query;
-    if (trigger) {
-      $('#search_form').submit();
+
+  ServerSearch.prototype.clearSearchCache = function() {
+    this.search_cache = {};
+  };
+
+  /**
+   * server search for auto completion
+   * @param query the query to search
+   * @param prop the property to look in
+   * @param nodeType the node type to look in
+   * @returns {a promise}
+   */
+  ServerSearch.prototype.search = function(query, prop, nodeType) {
+    prop = prop || 'name';
+    nodeType = nodeType || '_Network_Node';
+    var cache = this.search_cache[nodeType+'.'+prop];
+    if (!cache) {
+      cache = {};
+      this.search_cache[nodeType+'.'+prop] = cache;
     }
-  };
-  SearchPath.prototype.handleSubmit = function(event) {
-    var $this = $(this);
-    var k = + $('#at_most_k').val();
-    var maxDepth = + $('#longest_path').val();
-
-    var $progress = $('#loadProgress').show()
-      .attr("max", k)
-      .attr("value", 0);
-
-    $this.trigger('reset');
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    var count = 0;
-    this.loadQuery(this.query, k, maxDepth, function (path) {
-      console.log('got path', path);
-      $this.trigger('addPath', path);
-      count++;
-      $progress.attr("value", count);
-    }, function (paths) {
-      $progress.hide();
-      console.log('got paths', paths);
+    if (cache && query in cache) {
+      return $.when(cache[query]);
+    }
+    return $.getJSON('/api/pathway/search', {q: query, prop: prop, label: nodeType}).then(function (data) {
+      cache[query] = data.results;
+      return data.results;
     });
-
-    return false; //no real submit
   };
 
-  return SearchPath;
+  return new ServerSearch();
 });
