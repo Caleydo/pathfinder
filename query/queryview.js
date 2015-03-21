@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners', '../listoverlay', './pathquery'], function ($, d3, View, q, pathSorting, listeners, ListOverlay, pathQuery) {
+define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners', '../listoverlay', '../search/main', './pathquery'], function ($, d3, View, q, pathSorting, listeners, ListOverlay, ServerSearch, pathQuery) {
 
     var listOverlay = new ListOverlay();
 
@@ -507,21 +507,15 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       this.addInput(this.myDomElements, "Name");
 
       var that = this;
-      that.search_cache = {};
 
       var inputField = $(this.myDomElements[0]).find("input");
       inputField.autocomplete({
         minLength: 3,
         source: function (request, response) {
           var term = request.term;
-          if (term in that.search_cache) {
-            response(that.search_cache[term]);
-            return;
-          }
-          $.getJSON('/api/pathway/search', {q: term}).then(function (data) {
-            that.search_cache[term] = data.results;
-            response(data.results);
-          });
+          ServerSearch.search(term, 'name', '_Network_Node').then(function (results) {
+            response(results);
+          })
         },
         select: function (event, ui) {
           inputField.val(ui.item.label);
@@ -562,6 +556,29 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       NodeConstraintElement.prototype.init.call(this, domParent);
 
       this.addInput(this.myDomElements, "Set");
+
+      var that = this;
+
+      var inputField = $(this.myDomElements[0]).find("input");
+      inputField.autocomplete({
+        minLength: 3,
+        source: function (request, response) {
+          var term = request.term;
+          ServerSearch.search(term, 'name', '_Set_Node').then(function (results) {
+            response(results);
+          })
+        },
+        select: function (event, ui) {
+          inputField.val(ui.item.id);
+          that.id = ui.item.value;
+          return false; // Prevent the widget from inserting the value.
+        },
+        focus: function (event, ui) {
+          inputField.val(ui.item.id);
+          that.id = ui.item.value;
+          return false; // Prevent the widget from inserting the value.
+        }
+      });
     };
 
     NodeSetElement.prototype.getPathQuery = function () {
@@ -1174,6 +1191,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     };
 
     QueryView.prototype.init = function () {
+      //load content first
+      $('#query_interface').load('query/view.html', this.initImpl.bind(this));
+    };
+    QueryView.prototype.initImpl = function () {
       View.prototype.init.call(this);
       var svg = d3.select(this.parentSelector + " svg");
 
@@ -1185,14 +1206,31 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       svg.append("g")
         .attr("id", "queryOverlay");
 
-      $('#updateQueryLocal').click(function () {
+      $('#filter_query').click(function () {
           var query = that.container.getPathQuery();
 
           pathQuery.set(query);
+          return false;
         }
-      )
-      ;
+      );
 
+      ServerSearch.on('query_done', function () {
+        $('#query_interface button[type="submit"] i').attr('class', 'fa fa-search');
+      });
+
+      $('#query_interface form').on('submit', function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        var k = +$('#at_most_k').val();
+        var maxDepth = +$('#longest_path').val();
+        var query = that.container.getPathQuery();
+
+        $('#query_interface button[type="submit"] i').attr('class', 'fa fa-spinner fa-pulse');
+        ServerSearch.loadQuery(query, k, maxDepth);
+
+        return false;
+      });
     };
 
     QueryView.prototype.updateViewSize = function () {
@@ -1200,7 +1238,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       var minSize = this.getMinSize();
       var viewParent = $("#pathQueryView");
       if (viewParent.height() < minSize.height && viewParent.height() < 300) {
-        viewParent.height(Math.min(minSize.height+10, 300));
+        viewParent.height(Math.min(minSize.height + 10, 300));
       }
       View.prototype.updateViewSize.call(this);
     };

@@ -2,7 +2,7 @@
  * Created by Christian on 11.12.2014.
  */
 require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search/main', './pathutil', './query/queryview', 'font-awesome', 'bootstrap'],
-  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, SearchPath, pathUtil, queryView) {
+  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView) {
 
     'use strict';
 
@@ -15,17 +15,22 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
 
     $(document).ready(function () {
 
-        var search = new SearchPath('#search_path');
-        $(search).on({
-          reset: reset,
-          addPath: function (event, path) {
-            addPath(path);
+        var $progress = $('header .progress-bar');
+        ServerSearch.on({
+          query_start: function() {
+            reset();
+            $progress.css('width','0%');
+          },
+          query_path: function (event, data) {
+            addPath(data.path);
+            var k = data.query.k;
+            var i = data.i;
+            d3.select($progress[0]).transition().duration(100).style('width',d3.round(i/k*100,0)+'%');
+          },
+          query_done: function() {
+            $progress.parent();
           }
         });
-        listeners.add(function(query) {
-          search.setQuery(query);
-        }, listeners.updateType.QUERY_UPDATE);
-
         queryView.init();
         overviewGraph.init();
         listView.init();
@@ -159,24 +164,23 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
         //  loadPaths(paths);
         //} );
 
-        var selectPaths = $('<select>').prependTo('#listView')[0];
-
-        $(selectPaths).append($("<option value='testpaths1.json'>20 paths from node 1800 to node 1713</option>"));
-        $(selectPaths).append($("<option value='testpaths2.json'>50 paths from node 1800 to node 1713</option>"));
-        $(selectPaths).append($("<option value='testpaths3.json'>50 paths from node 5 to node 9999</option>"));
-        $(selectPaths).append($("<option value='testpaths4.json'>20 paths from node 780 to node 5395</option>"));
-        $(selectPaths).on("change", function () {
-          $.getJSON(this.value, function (paths) {
-            reset();
-
-            loadPaths(paths);
-
-          });
+        var selectPaths = d3.select('#select_dump');
+        $.getJSON('dump/testpaths.json').then(function(data) {
+          var options = selectPaths.selectAll('option').data([{value: '', label: ''}].concat(data));
+          options.enter().append('option')
+            .attr('value', function(d) { return d.value})
+            .text(function(d) { return d.label;});
+        });
+        selectPaths.on("change", function () {
+          if (this.value != '') {
+            $.getJSON(this.value, function (paths) {
+              reset();
+              loadPaths(paths);
+            });
+          }
         });
 
-
-
-        $.getJSON("testpaths1.json", function (paths) {
+        $.getJSON("dump/testpaths1.json", function (paths) {
 
           var i = 0;
 

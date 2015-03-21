@@ -1,0 +1,14 @@
+[ {
+    "label": "20 paths from node 1800 to node 1713",
+    "value": "dump/testpaths1.json"
+  },{
+    "label": "50 paths from node 1800 to node 1713",
+    "value": "dump/testpaths2.json"
+  },{
+    "label": "50 paths from node 5 to node 9999",
+    "value": "dump/testpaths3.json"
+  },{
+    "label": "20 paths from node 780 to node 5395",
+    "value": "dump/testpaths4.json"
+  }
+]

@@ -84,7 +84,7 @@ define(['../pathutil'], function (pathUtil) {
   NodeNameConstraint.prototype.match = function (node) {
     return node.properties["name"] === this.nodeName;
   };
-  NodeIdConstraint.prototype.serialize = function() {
+  NodeNameConstraint.prototype.serialize = function() {
     return { context: 'node', 'prop': 'name', '$eq' : this.nodeName }
   };
 
@@ -97,7 +97,7 @@ define(['../pathutil'], function (pathUtil) {
   NodeTypeConstraint.prototype.match = function (node) {
     return pathUtil.getNodeType(node) === this.nodeType;
   };
-  NodeIdConstraint.prototype.serialize = function() {
+  NodeTypeConstraint.prototype.serialize = function() {
     return { context: 'node', '$contains' : this.nodeType }
   };
 
@@ -157,7 +157,7 @@ define(['../pathutil'], function (pathUtil) {
     }
     EdgeSetPresenceConstraint.prototype.serialize = function() {
       //FIXME hard coded
-      return { context: 'edge', 'prop': 'pathways', '$contains' : this.setId };
+      return { context: 'rel', 'prop': 'pathways', '$contains' : this.setId };
     };
 
     return false;
@@ -197,7 +197,14 @@ define(['../pathutil'], function (pathUtil) {
     return matchRegions;
   };
   NodeMatcher.prototype.serialize = function() {
-    return this.constraint.serialize();
+    var r = this.constraint.serialize();
+    if (this.isStartNode) {
+      r.isStart = true;
+    }
+    if (this.isEndNode) {
+      r.isEnd = true;
+    }
+    return r;
   };
 
 
@@ -300,8 +307,12 @@ define(['../pathutil'], function (pathUtil) {
   };
   RegionMatcher.prototype.serialize = function() {
     var r = this.query.serialize();
-    r['$region'] = [this.region.minIndex, this.region.maxIndex];
-    r['$fromEnd'] = this.relativeToEnd;
+    var reg = [this.region.minIndex, this.region.maxIndex];
+    if (this.relativeToEnd) {
+      reg = [-1 - this.region.minIndex, -1 - this.region.maxIndex];
+    }
+    r['$region'] = reg;
+    return r;
   };
 
   var MatchRegionRelations = {
@@ -366,7 +377,9 @@ define(['../pathutil'], function (pathUtil) {
   };
   QueryMatchRegionRelation.prototype.serialize = function() {
     var r= {};
-    r['$'+this.regionRelation.name] = [ this.query1.serialize(), this.query2.serialize()];
+    r['$relate'] = this.regionRelation.name;
+    r['a'] = this.query1.serialize();
+    r['b'] = this.query2.serialize();
     return r;
   };
 
