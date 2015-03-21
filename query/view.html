@@ -7,6 +7,26 @@
     </div>
   </div>
 
+  <div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Set Position</h4>
+        </div>
+        <div class="modal-body">
+          <input type="radio" id="startOffsetButton"/>Start + <input type="text" id="startOffsetInput"></br>
+          <input type="radio" id="endOffsetButton"/>End - <input type="text" id="endOffsetInput"></br>
+          <input type="radio" id="noPositionButton"/>None
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="positionConfirm" data-dismiss="modal">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="form-group form-inline">
     <label for="at_most_k">Return At Most </label>
     <div class="input-group">

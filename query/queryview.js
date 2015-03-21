@@ -1,6 +1,8 @@
-define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners', '../listoverlay', '../search/main', './pathquery'], function ($, d3, View, q, pathSorting, listeners, ListOverlay, ServerSearch, pathQuery) {
+define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners', '../listoverlay', '../search/main', './pathquery'],
+  function ($, d3, View, q, pathSorting, listeners, ListOverlay, ServerSearch, pathQuery) {
 
     var listOverlay = new ListOverlay();
+
 
     var DEFAULT_OVERLAY_BUTTON_SIZE = 16;
     var OR_BUTTON_WIDTH = 24;
@@ -47,6 +49,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
         }
       );
+      return button;
+    }
+
+    function addPositionButton(parent, callBack, x, y) {
+      var button = addOverlayButton(parent, x, y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf13d", x + DEFAULT_OVERLAY_BUTTON_SIZE / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 1, "black");
+
+      button.on("click", callBack);
       return button;
     }
 
@@ -741,35 +750,60 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
         }
 
-        addAddButton(that, [{
-          text: "Add Node", callback: function () {
-            var index = that.parent.children.indexOf(that);
-            that.parent.insert(index + 1, new NodeContainer(that.parent));
-            if (that.parent instanceof SequenceContainer) {
-              that.parent.insert(index + 1, new SequenceFiller(that.parent));
-            }
-          }
-        }, {
-          text: "Add Edge", callback: function () {
-            var index = that.parent.children.indexOf(that);
+        if (!that.hasPosition && !(that.parent instanceof UnorderedContainer)) {
+          addPositionButton(that, function () {
+            that.showPositionDialog();
+          }, (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, 0);
+        }
 
-            if (that.parent instanceof SequenceContainer) {
-              if (index < that.parent.children.length - 1) {
-                var nextChild = that.parent.children[index + 1];
-                if (!(nextChild instanceof SequenceFiller)) {
-                  that.parent.insert(index + 1, new SequenceFiller(that.parent));
-                }
+        if (!(that.hasPosition && (that.index === 0 || that.index === -1))) {
+          addAddButton(that, [{
+            text: "Add Node", callback: function () {
+              var index = that.parent.children.indexOf(that);
+              that.parent.insert(index + 1, new NodeContainer(that.parent));
+              if (that.parent instanceof SequenceContainer) {
+                that.parent.insert(index + 1, new SequenceFiller(that.parent));
               }
             }
-            that.parent.insert(index + 1, new EdgeContainer(that.parent));
-          }
-        }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+          }, {
+            text: "Add Edge", callback: function () {
+              var index = that.parent.children.indexOf(that);
+
+              if (that.parent instanceof SequenceContainer) {
+                if (index < that.parent.children.length - 1) {
+                  var nextChild = that.parent.children[index + 1];
+                  if (!(nextChild instanceof SequenceFiller)) {
+                    that.parent.insert(index + 1, new SequenceFiller(that.parent));
+                  }
+                }
+              }
+              that.parent.insert(index + 1, new EdgeContainer(that.parent));
+            }
+          }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+        }
       });
     };
+
+    NodeContainer.prototype.showPositionDialog = function () {
+      var that = this;
+
+      $("#positionConfirm").click(function () {
+        if ($("#startOffsetButton").prop("checked")) {
+          that.setPosition(parseInt($("#startOffsetInput").val(), 10));
+        } else if ($("#endOffsetButton").prop("checked")) {
+          that.setPosition(-(1 + parseInt($("#endOffsetInput").val(), 10)));
+        } else {
+          that.removePosition();
+        }
+      });
+
+      $("#myModal").modal("show");
+    }
 
     NodeContainer.prototype.setPosition = function (index) {
       this.hasPosition = true;
       this.index = index;
+      var that = this;
       var text = "";
       if (index === 0) {
         text = "Start";
@@ -783,8 +817,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
       var size = this.getSize();
       if (this.isInitialized) {
-        this.myDomElements.append("rect")
-          .classed("positionBg", true)
+        var g = this.myDomElements.append("g")
+          .classed("positionGroup", true)
+          .on("dblclick", function () {
+            that.showPositionDialog();
+          });
+
+        g.append("rect")
           .attr({
             x: (size.width - POSITION_LABEL_WIDTH) / 2,
             y: 1,
@@ -793,8 +832,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
             fill: "white"
           });
 
-        this.myDomElements.append("text")
-          .classed("positionText", true)
+        g.append("text")
           .attr({
             x: size.width / 2,
             y: 9,
@@ -802,6 +840,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           }
         ).text(text);
 
+      }
+    };
+
+    NodeContainer.prototype.removePosition = function () {
+      this.hasPosition = false;
+
+      if (this.isInitialized) {
+        this.myDomElements.selectAll("g.positionGroup").remove();
       }
     };
 
@@ -1066,39 +1112,63 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       $(this.myDomElements[0]).mouseenter(function () {
         var size = that.getSize();
 
-        addAddButton(that, [{
-          text: "Add Node", callback: function () {
-            var index = that.parent.children.indexOf(that);
+        if (that.parent instanceof PathContainer) {
+          addAddButton(that, [{
+            text: "Add Sequence", callback: function () {
+              that.parent.replace(that, new SequenceContainer(that.parent));
+            }
+          }, {
+            text: "Add Unordered", callback: function () {
+              that.parent.replace(that, new UnorderedContainer(that.parent));
+            }
+          }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
-            if (index > 0 && index < that.parent.children.length - 1) {
-              var prevChild = that.parent.children[index - 1];
-              var nextChild = that.parent.children[index + 1];
-              if (prevChild instanceof EdgeContainer && nextChild instanceof EdgeContainer) {
+        } else {
+          addAddButton(that, [{
+            text: "Add Node", callback: function () {
+              var index = that.parent.children.indexOf(that);
+
+
+              if (index === 0 && that.parent.children.length === 1) {
                 that.parent.replace(that, new NodeContainer(that.parent));
                 return;
               }
+
+              if (index > 0 && index < that.parent.children.length - 1) {
+                var prevChild = that.parent.children[index - 1];
+                var nextChild = that.parent.children[index + 1];
+                if (prevChild instanceof EdgeContainer && nextChild instanceof EdgeContainer) {
+                  that.parent.replace(that, new NodeContainer(that.parent));
+                  return;
+                }
+              }
+
+              that.parent.insert(index, new NodeContainer(that.parent));
+              that.parent.insert(index, new SequenceFiller(that.parent));
             }
+          }, {
+            text: "Add Edge", callback: function () {
+              var index = that.parent.children.indexOf(that);
 
-            that.parent.insert(index, new NodeContainer(that.parent));
-            that.parent.insert(index, new SequenceFiller(that.parent));
-          }
-        }, {
-          text: "Add Edge", callback: function () {
-            var index = that.parent.children.indexOf(that);
-
-            if (index > 0 && index < that.parent.children.length - 1) {
-              var prevChild = that.parent.children[index - 1];
-              var nextChild = that.parent.children[index + 1];
-              if (prevChild instanceof NodeContainer && nextChild instanceof NodeContainer) {
+              if (index === 0 && that.parent.children.length === 1) {
                 that.parent.replace(that, new EdgeContainer(that.parent));
                 return;
               }
-            }
 
-            that.parent.insert(index, new EdgeContainer(that.parent));
-            that.parent.insert(index, new SequenceFiller(that.parent));
-          }
-        }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+              if (index > 0 && index < that.parent.children.length - 1) {
+                var prevChild = that.parent.children[index - 1];
+                var nextChild = that.parent.children[index + 1];
+                if (prevChild instanceof NodeContainer && nextChild instanceof NodeContainer) {
+                  that.parent.replace(that, new EdgeContainer(that.parent));
+                  return;
+                }
+              }
+
+              that.parent.insert(index, new EdgeContainer(that.parent));
+              that.parent.insert(index, new SequenceFiller(that.parent));
+            }
+          }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+        }
 
       });
 
@@ -1136,14 +1206,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     SequenceContainer.prototype.init = function (parent) {
       CaptionContainer.prototype.init.call(this, parent);
 
-      var nc1 = new NodeContainer(this);
-      var nc2 = new NodeContainer(this);
-
-      this.add(nc1);
       this.add(new SequenceFiller(this));
-      this.add(nc2);
-      nc1.setPosition(0);
-      nc2.setPosition(-1);
 
       var that = this;
 
@@ -1243,6 +1306,63 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       return prevQuery;
     };
 
+//---------------------------
+    function PathContainer(parent) {
+      BoxContainer.call(this, parent, "white", "black", true);
+    }
+
+
+    PathContainer.prototype = Object.create(BoxContainer.prototype);
+
+    PathContainer.prototype.init = function (parent) {
+      BoxContainer.prototype.init.call(this, parent);
+
+      var nc1 = new NodeContainer(this);
+      var nc2 = new NodeContainer(this);
+
+      this.add(nc1);
+      this.add(new SequenceFiller(this));
+      this.add(nc2);
+      nc1.setPosition(0);
+      nc2.setPosition(-1);
+
+      var that = this;
+
+      $(this.myDomElements[0]).mouseenter(function () {
+        var size = that.getSize();
+
+        addOrButton(that, [{
+          text: "Add Path", callback: function () {
+            replaceWithContainer(that, OrContainer, false, PathContainer);
+          }
+        }], (size.width - OR_BUTTON_WIDTH) / 2, size.height - 5);
+
+      });
+    };
+
+
+    PathContainer.prototype.getPathQuery = function () {
+      if (this.children.length < 3) {
+        return new g.PathQuery();
+      }
+
+      var prevQuery = 0;
+
+      this.children.forEach(function (child) {
+        var currentQuery = child.getPathQuery();
+
+        if (!(child instanceof SequenceFiller)) {
+          if (prevQuery === 0) {
+            prevQuery = currentQuery;
+          }
+          else {
+            prevQuery = new q.And(prevQuery, currentQuery);
+          }
+        }
+      });
+
+      return prevQuery;
+    };
 
 //----------------------
 
@@ -1272,11 +1392,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
       this.container = new ElementContainer();
       this.container.init(svg);
-      this.container.add(new SequenceContainer(this.container));
+      this.container.add(new PathContainer(this.container));
       var that = this;
 
       svg.append("g")
         .attr("id", "queryOverlay");
+
 
       $('#filter_query').click(function () {
           var query = that.container.getPathQuery();
