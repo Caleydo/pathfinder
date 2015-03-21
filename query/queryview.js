@@ -5,6 +5,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     var DEFAULT_OVERLAY_BUTTON_SIZE = 16;
     var OR_BUTTON_WIDTH = 24;
     var AND_BUTTON_WIDTH = 38;
+    var NOT_BUTTON_WIDTH = 38;
     var CAPTION_SIZE = 10;
     var POSITION_LABEL_WIDTH = 40;
     var POSITION_LABEL_HEIGHT = 10;
@@ -60,6 +61,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       return button;
     }
 
+    function addNotButton(parent, callBack, x, y) {
+
+      var button = addOverlayButton(parent, x, y, NOT_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "NOT", x + NOT_BUTTON_WIDTH / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 2, "red");
+
+      button.on("click", callBack);
+      return button;
+    }
+
     function addOrButton(parent, data, x, y) {
 
       var button = addOverlayButton(parent, x, y, OR_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "OR", x + OR_BUTTON_WIDTH / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 2, "lightblue");
@@ -69,6 +78,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         }
       );
       return button;
+    }
+
+    function addBooleanButtons(parent, x, y, andData, orData, notCallBack) {
+      addAndButton(parent, andData, x, y);
+      addOrButton(parent, orData, x + AND_BUTTON_WIDTH, y);
+      addNotButton(parent, notCallBack, x + AND_BUTTON_WIDTH + OR_BUTTON_WIDTH, y);
     }
 
     function addRemoveButton(parent, x, y) {
@@ -92,7 +107,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
       container.children.push(currentElement);
       $(container.childDomElements[0]).append($(currentElement.rootElement[0]));
-      container.add(new ElementConstructor(container))
+      if (typeof  ElementConstructor !== "undefined") {
+        container.add(new ElementConstructor(container))
+      } else {
+        container.updateParent();
+      }
+
     }
 
     //-----------------------------------------
@@ -446,38 +466,39 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       $(domParent[0]).mouseenter(function () {
         var size = that.getSize();
 
-        addAndButton(that, [{
-          text: "Add Node Name", callback: function () {
-            replaceWithContainer(that, AndContainer, true, NodeNameElement);
-          }
-        },
-          {
-            text: "Add Set", callback: function () {
-            replaceWithContainer(that, AndContainer, true, NodeSetElement);
-          }
+        addBooleanButtons(that, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [{
+            text: "Add Node Name", callback: function () {
+              replaceWithContainer(that, AndContainer, true, NodeNameElement);
+            }
           },
-          {
-            text: "Add Node Type", callback: function () {
-            replaceWithContainer(that, AndContainer, true, NodeTypeElement);
-          }
-          }], (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH) / 2, size.height - 5);
-
-        addOrButton(that, [{
-          text: "Add Node Name", callback: function () {
-            replaceWithContainer(that, OrContainer, false, NodeNameElement);
-          }
-        },
-          {
-            text: "Add Set", callback: function () {
-            replaceWithContainer(that, OrContainer, false, NodeSetElement);
-          }
+            {
+              text: "Add Set", callback: function () {
+              replaceWithContainer(that, AndContainer, true, NodeSetElement);
+            }
+            },
+            {
+              text: "Add Node Type", callback: function () {
+              replaceWithContainer(that, AndContainer, true, NodeTypeElement);
+            }
+            }],
+          [{
+            text: "Add Node Name", callback: function () {
+              replaceWithContainer(that, OrContainer, false, NodeNameElement);
+            }
           },
-          {
-            text: "Add Node Type", callback: function () {
-            replaceWithContainer(that, OrContainer, false, NodeTypeElement);
+            {
+              text: "Add Set", callback: function () {
+              replaceWithContainer(that, OrContainer, false, NodeSetElement);
+            }
+            },
+            {
+              text: "Add Node Type", callback: function () {
+              replaceWithContainer(that, OrContainer, false, NodeTypeElement);
+            }
+            }], function () {
+            replaceWithContainer(that, NotContainer, false);
           }
-          }], (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH) / 2 + AND_BUTTON_WIDTH, size.height - 5);
-
+        );
 
       });
 
@@ -631,6 +652,27 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         return new q.And(this.children[0].getPathQuery(), new q.PathQuery());
       }
       return new q.And(this.children[0].getPathQuery(), this.children[1].getPathQuery());
+    };
+
+    //----------------------------------------
+
+    function NotContainer(parent, horizontal) {
+      CaptionContainer.call(this, parent, "NOT", "#fbb4ae", "black", horizontal || false);
+      //ElementContainer.call(this, parent, horizontal || false);
+      //this.vPadding = 0;
+    }
+
+    NotContainer.prototype = Object.create(CaptionContainer.prototype);
+
+    NotContainer.prototype.getMinSize = function () {
+      return {width: 40, height: 20};
+    };
+
+    NotContainer.prototype.getPathQuery = function () {
+      if (this.children.length == 0) {
+        return new q.Not(new q.PathQuery());
+      }
+      return new q.Not(this.children[0].getPathQuery());
     };
 
 
@@ -915,6 +957,32 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
         }
 
+        addBooleanButtons(that, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5,
+          [{
+            text: "Add Unordered", callback: function () {
+              replaceWithContainer(that, AndContainer, false, UnorderedContainer);
+            }
+          },
+            {
+              text: "Add Sequence", callback: function () {
+              replaceWithContainer(that, AndContainer, false, SequenceContainer);
+            }
+            }],
+          [{
+            text: "Add Unordered", callback: function () {
+              replaceWithContainer(that, OrContainer, false, UnorderedContainer);
+            }
+          },
+            {
+              text: "Add Sequence", callback: function () {
+              replaceWithContainer(that, OrContainer, false, SequenceContainer);
+            }
+            }],
+          function () {
+            replaceWithContainer(that, NotContainer, false);
+          }
+        );
+
       });
 
     };
@@ -1082,22 +1150,26 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       $(this.myDomElements[0]).mouseenter(function () {
         var size = that.getSize();
 
-        addAndButton(that, [{
-          text: "Add Unordered", callback: function () {
-            replaceWithContainer(that, AndContainer, false, UnorderedContainer);
+        addBooleanButtons(that, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5,
+          [{
+            text: "Add Unordered", callback: function () {
+              replaceWithContainer(that, AndContainer, false, UnorderedContainer);
+            }
+          }],
+          [{
+            text: "Add Unordered", callback: function () {
+              replaceWithContainer(that, OrContainer, false, UnorderedContainer);
+            }
+          },
+            {
+              text: "Add Sequence", callback: function () {
+              replaceWithContainer(that, OrContainer, false, SequenceContainer);
+            }
+            }],
+          function () {
+            replaceWithContainer(that, NotContainer, false);
           }
-        }], (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH) / 2, size.height - 5);
-
-        addOrButton(that, [{
-          text: "Add Unordered", callback: function () {
-            replaceWithContainer(that, OrContainer, false, UnorderedContainer);
-          }
-        },
-          {
-            text: "Add Sequence", callback: function () {
-            replaceWithContainer(that, OrContainer, false, SequenceContainer);
-          }
-          }], (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH) / 2 + AND_BUTTON_WIDTH, size.height - 5);
+        );
 
       });
     };
