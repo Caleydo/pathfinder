@@ -95,14 +95,50 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       addNotButton(parent, notCallBack, x + AND_BUTTON_WIDTH + OR_BUTTON_WIDTH, y);
     }
 
-    function addRemoveButton(parent, x, y) {
+    function addRemoveButton(element, x, y) {
 
-      var button = addOverlayButton(parent, x, y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf00d", x + DEFAULT_OVERLAY_BUTTON_SIZE / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 3, "red");
+      var button = addOverlayButton(element, x, y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf00d", x + DEFAULT_OVERLAY_BUTTON_SIZE / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 3, "red");
 
       button.on("click", function () {
-          parent.parent.removeChild(parent.parent.children.indexOf(parent));
+          var parent = element.parent;
+          parent.removeChild(parent.children.indexOf(element));
+
+
+          if (parent instanceof PathContainer) {
+
+            if(parent.children.length === 2) {
+              parent.insert(1, new SequenceFiller(parent));
+            }
+          } else {
+
+            while (typeof parent !== "undefined" && ((parent instanceof AndContainer || parent instanceof OrContainer && parent.children.length <= 1)
+            || (parent instanceof NotContainer && parent.children.length <= 0))) {
+
+              var grandParent = parent.parent;
+              var parentIndex = grandParent.children.indexOf(parent);
+
+              if (typeof grandParent !== "undefined") {
+                parent.children.forEach(function (child) {
+                  grandParent.children.splice(parentIndex, 0, child);
+                  child.parent = grandParent;
+                  $(grandParent.childDomElements[0]).append($(child.rootElement[0]));
+                });
+
+                grandParent.removeChild(grandParent.children.indexOf(parent));
+              }
+
+              parent = grandParent;
+            }
+          }
+
+          if(parent instanceof PathContainer && parent.children.length === 2) {
+            parent.insert(1, new SequenceFiller(parent));
+          }
+
+
           d3.select("#queryOverlay").selectAll("g.overlayButton")
             .remove();
+
         }
       );
 
@@ -212,7 +248,6 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
       this.childDomElements = this.rootElement.append("g")
         .classed("childDomElements", true);
-
 
     },
 
@@ -812,50 +847,59 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       });
 
       $("#myModal").modal("show");
-    }
-
-    NodeContainer.prototype.setPosition = function (index) {
-      this.hasPosition = true;
-      this.index = index;
-      var that = this;
-      var text = "";
-      if (index === 0) {
-        text = "Start";
-      } else if (index > 0) {
-        text = "Start+" + index;
-      } else if (index === -1) {
-        text = "End";
-      } else {
-        text = "End-" + Math.abs((index + 1));
-      }
-
-      var size = this.getSize();
-      if (this.isInitialized) {
-        var g = this.myDomElements.append("g")
-          .classed("positionGroup", true)
-          .on("dblclick", function () {
-            that.showPositionDialog();
-          });
-
-        g.append("rect")
-          .attr({
-            x: (size.width - POSITION_LABEL_WIDTH) / 2,
-            y: 1,
-            width: POSITION_LABEL_WIDTH,
-            height: POSITION_LABEL_HEIGHT,
-            fill: "white"
-          });
-
-        g.append("text")
-          .attr({
-            x: size.width / 2,
-            y: 9,
-            "text-anchor": "middle"
-          }
-        ).text(text);
-
-      }
     };
+
+    NodeContainer.prototype.showRemoveButton = function () {
+      if (this.hasPosition && (this.index === 0 || this.index === -1)) {
+        return false;
+      }
+      return CaptionContainer.prototype.showRemoveButton.call(this);
+    },
+
+      NodeContainer.prototype.setPosition = function (index) {
+        this.hasPosition = true;
+        this.index = index;
+        var that = this;
+        var text = "";
+        if (index === 0) {
+          text = "Start";
+        } else if (index > 0) {
+          text = "Start+" + index;
+        } else if (index === -1) {
+          text = "End";
+        } else {
+          text = "End-" + Math.abs((index + 1));
+        }
+
+        var size = this.getSize();
+        if (this.isInitialized) {
+          var g = this.myDomElements.append("g")
+            .classed("positionGroup", true)
+            .on("dblclick", function () {
+              if (that.index !== 0 && that.index !== -1) {
+                that.showPositionDialog();
+              }
+            });
+
+          g.append("rect")
+            .attr({
+              x: (size.width - POSITION_LABEL_WIDTH) / 2,
+              y: 1,
+              width: POSITION_LABEL_WIDTH,
+              height: POSITION_LABEL_HEIGHT,
+              fill: "white"
+            });
+
+          g.append("text")
+            .attr({
+              x: size.width / 2,
+              y: 9,
+              "text-anchor": "middle"
+            }
+          ).text(text);
+
+        }
+      };
 
     NodeContainer.prototype.removePosition = function () {
       this.hasPosition = false;
@@ -870,19 +914,19 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
       var size = this.getSize();
 
-      this.myDomElements.select("rect.positionBg")
+      this.myDomElements.select("g.positionGroup rect")
         .transition()
         .attr({
           x: (size.width - POSITION_LABEL_WIDTH) / 2
         });
 
-      this.myDomElements.select("text.positionText")
+      this.myDomElements.select("g.positionGroup text")
         .transition()
         .attr({
           x: size.width / 2
         }
       );
-    }
+    };
 
     NodeContainer.prototype.getPathQuery = function () {
 
@@ -1368,6 +1412,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       });
     };
 
+    PathContainer.prototype.showRemoveButton = function () {
+      if (typeof this.parent.parent === "undefined") {
+        return false;
+      }
+      return BoxContainer.prototype.showRemoveButton.call(this);
+    };
 
     PathContainer.prototype.getPathQuery = function () {
       if (this.children.length < 3) {
