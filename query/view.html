@@ -7,41 +7,60 @@
     </div>
   </div>
 
-  <div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-            aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Set Position</h4>
-        </div>
-        <div class="modal-body">
-          <input type="radio" id="startOffsetButton"/>Start + <input type="text" id="startOffsetInput"></br>
-          <input type="radio" id="endOffsetButton"/>End - <input type="text" id="endOffsetInput"></br>
-          <input type="radio" id="noPositionButton"/>None
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" id="positionConfirm" data-dismiss="modal">Ok</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="form-group form-inline">
     <label for="at_most_k">Return At Most </label>
+
     <div class="input-group">
-      <input type="number" class="form-control" id="at_most_k" style="width: 5em;" maxlength="3" placeholder="k" value="20" required="required">
+      <input type="number" class="form-control" id="at_most_k" style="width: 5em;" maxlength="3" placeholder="k"
+             value="20" required="required">
+
       <div class="input-group-addon">paths</div>
     </div>
   </div>
   <div class="form-group form-inline">
     <label for="longest_path">Max Path Length </label>
+
     <div class="input-group">
-      <input type="number" class="form-control" style="width: 5em;" id="longest_path" maxlength="3" placeholder="max length" value="5" required="required">
+      <input type="number" class="form-control" style="width: 5em;" id="longest_path" maxlength="3"
+             placeholder="max length" value="5" required="required">
+
       <div class="input-group-addon">nodes</div>
     </div>
   </div>
   <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
   <button id="filter_query" class="btn btn-default"><i class="fa fa-filter"></i></button>
 </form>
+
+<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+          aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Set Position</h4>
+      </div>
+      <div class="modal-body">
+
+        <form role="form">
+          <div class="radio">
+            <label for="startOffsetInput"><input type="radio" name="optradio" id="startOffsetButton"/>Start + </label>
+            <input type="number" id="startOffsetInput" style="width: 5em; position:absolute; left:70px;" maxlength="3"
+                   value="1" min="1" required="required">
+          </div>
+          <div class="radio">
+            <label for="endOffsetInput"><input type="radio" name="optradio" id="endOffsetButton"/>End - </label>
+            <input type="number" id="endOffsetInput" style="width: 5em; position:absolute; left:70px;" maxlength="3"
+                   value="1" min="1" required="required">
+          </div>
+          <div class="radio">
+            <label><input type="radio" name="optradio" id="noPositionButton" checked/>None</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="positionConfirm" data-dismiss="modal">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
 

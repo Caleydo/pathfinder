@@ -787,6 +787,19 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     NodeContainer.prototype.showPositionDialog = function () {
       var that = this;
 
+      $("#startOffsetInput").val(1);
+      $("#endOffsetInput").val(1);
+
+      if (!this.hasPosition) {
+        $("#noPositionButton").prop("checked", true);
+      } else if (this.index > 0) {
+        $("#startOffsetButton").prop("checked", true)
+        $("#startOffsetInput").val(this.index);
+      } else {
+        $("#endOffsetButton").prop("checked", true)
+        $("#endOffsetInput").val(Math.abs(this.index + 1));
+      }
+
       $("#positionConfirm").click(function () {
         if ($("#startOffsetButton").prop("checked")) {
           that.setPosition(parseInt($("#startOffsetInput").val(), 10));
@@ -795,6 +808,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         } else {
           that.removePosition();
         }
+        $("#positionConfirm").off("click");
       });
 
       $("#myModal").modal("show");
@@ -884,7 +898,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           n.setEndNode(true);
         }
 
-        return new q.RegionMatcher(n, new q.MatchRegion(i, i), this.index < 0);
+        return new q.RegionMatcher(n, new q.MatchRegion(i, i), this.index < 0, q.MatchRegionRelations.equal);
       }
 
       return new q.NodeMatcher(constraint);
@@ -1044,7 +1058,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       var prevQuery = 0;
 
       this.children.forEach(function (child) {
-        var currentQuery = child.getPathQuery();
+        var currentQuery = getPathBoundedQuery(child);
 
         if (child instanceof NodeContainer) {
           if (nodeMatchers != 0) {
@@ -1196,6 +1210,20 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
 //--------------------------------------
 
+    function getPathBoundedQuery(element) {
+      if (element instanceof NodeContainer) {
+
+        var greaterStart = new q.RegionMatcher(element.getPathQuery(), new q.MatchRegion(0, 0), false, q.MatchRegionRelations.greater);
+        return new q.RegionMatcher(greaterStart, new q.MatchRegion(0, 0), true, q.MatchRegionRelations.less);
+
+      } else if (element instanceof EdgeContainer) {
+        var greaterStart = new q.RegionMatcher(element.getPathQuery(), new q.MatchRegion(0, 0), false, q.MatchRegionRelations.greater);
+        var greaterOrEqualStart = new q.Or(greaterStart, new q.RegionMatcher(element.getPathQuery(), new q.MatchRegion(0, 0), false, q.MatchRegionRelations.equal));
+        return new q.RegionMatcher(greaterOrEqualStart, new q.MatchRegion(0, 0), true, q.MatchRegionRelations.less);
+      }
+      return element.getPathQuery();
+    }
+
     function SequenceContainer(parent) {
       CaptionContainer.call(this, parent, "Sequence", "white", "black", true);
     }
@@ -1272,7 +1300,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       if (this.children.length === 0) {
         return new g.PathQuery();
       } else if (this.children.length === 1) {
-        return this.children[0].getPathQuery();
+        return getPathBoundedQuery(this.children[0]);
       }
 
       var prevQuery = 0;
@@ -1281,12 +1309,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       for (var i = 0; i < this.children.length; i++) {
         var child = this.children[i];
         if (!(child instanceof SequenceFiller)) {
-          var currentQuery = child.getPathQuery();
+          var currentQuery = getPathBoundedQuery(child);
 
           if (prevQuery != 0) {
 
             if (prevChild instanceof SequenceFiller) {
-              prevQuery = new q.QueryMatchRegionRelation(prevQuery, currentQuery, q.MatchRegionRelations.greater);
+              prevQuery = new q.QueryMatchRegionRelation(prevQuery, currentQuery, q.MatchRegionRelations.less);
             } else {
               if (prevChild instanceof NodeContainer && child instanceof EdgeContainer) {
                 prevQuery = new q.QueryMatchRegionRelation(prevQuery, currentQuery, q.MatchRegionRelations.max1EqualsMin2);

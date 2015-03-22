@@ -321,11 +321,12 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
     return {'$not': [this.query.serialize()]};
   };
 
-  function RegionMatcher(query, region, relativeToEnd) {
+  function RegionMatcher(query, region, relativeToEnd, regionRelation) {
     PathQuery.call(this);
     this.query = query;
     this.region = region;
     this.relativeToEnd = relativeToEnd;
+    this.regionRelation = regionRelation;
   }
 
   RegionMatcher.prototype = Object.create(PathQuery.prototype);
@@ -336,12 +337,16 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
       myRegion = new MatchRegion(path.nodes.length - 1 - this.region.minIndex, path.nodes.length - 1 - this.region.maxIndex);
     }
     var matchRegions = this.query.getMatchRegions(path);
+    var validRegions = [];
     for (var i = 0; i < matchRegions.length; i++) {
-      if (MatchRegionRelations.equal(matchRegions[i], myRegion)) {
-        return [myRegion];
+      if (this.regionRelation(matchRegions[i], myRegion)) {
+        validRegions.push(matchRegions[i]);
+        if(getFirstOnly) {
+          return validRegions;
+        }
       }
     }
-    return [];
+    return validRegions;
   };
   RegionMatcher.prototype.serialize = function () {
     var r = this.query.serialize();
@@ -350,6 +355,7 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
       reg = [-1 - this.region.minIndex, -1 - this.region.maxIndex];
     }
     r['$region'] = reg;
+    r['$relate'] = this.regionRelation.name;
     return r;
   };
 
@@ -370,7 +376,11 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
     },
 
     greater: function greater(region1, region2) {
-      return region2.minIndex > region1.maxIndex;
+      return region1.maxIndex > region2.minIndex;
+    },
+
+    less: function less(region1, region2) {
+      return region1.maxIndex < region2.minIndex;
     }
   };
 

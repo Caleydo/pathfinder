@@ -644,6 +644,9 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           .attr("y", 0)
           .attr("width", "100%")
           .attr("height", pathHeight);
+          //.on("click", function(d) {
+          //  console.log(d.path.id);
+          //});
 
         var l = selectionUtil.addDefaultListener(pathContainer, "g.path", function (d) {
             return d.path.id;
