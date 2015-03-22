@@ -106,7 +106,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
           if (parent instanceof PathContainer) {
 
-            if(parent.children.length === 2) {
+            if (parent.children.length === 2) {
               parent.insert(1, new SequenceFiller(parent));
             }
           } else {
@@ -131,7 +131,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
             }
           }
 
-          if(parent instanceof PathContainer && parent.children.length === 2) {
+          if (parent instanceof PathContainer && parent.children.length === 2) {
             parent.insert(1, new SequenceFiller(parent));
           }
 
@@ -468,15 +468,15 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       };
     };
 
-    //-------------------------------------------
+    //------------------------------------------
 
-    function NodeConstraintElement(parent) {
+    function ConstraintElement(parent) {
       BaseGUIElement.call(this, parent);
     }
 
-    NodeConstraintElement.prototype = Object.create(BaseGUIElement.prototype);
+    ConstraintElement.prototype = Object.create(BaseGUIElement.prototype);
 
-    NodeConstraintElement.prototype.addInput = function (domParent, initialText) {
+    ConstraintElement.prototype.addInput = function (domParent, initialText) {
 
       var size = this.getSize();
 
@@ -504,6 +504,56 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         }).append("xhtml:div")
         .style("font", "10px 'Arial'")
         .html('<input type="text" placeholder="' + initialText + '" required="required" size="5px" width="5px" class="queryConstraint">');
+    };
+
+    ConstraintElement.prototype.getSize = function () {
+      return {width: 92, height: 24};
+    };
+
+    //-------------------------------------------
+
+    function EdgeConstraintElement(parent) {
+      ConstraintElement.call(this, parent);
+    }
+
+    EdgeConstraintElement.prototype = Object.create(ConstraintElement.prototype);
+
+    EdgeConstraintElement.prototype.addInput = function (domParent, initialText) {
+      ConstraintElement.prototype.addInput.call(this, domParent, initialText);
+
+      var that = this;
+
+      $(domParent[0]).mouseenter(function () {
+        var size = that.getSize();
+
+        addBooleanButtons(that, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [
+            {
+              text: "Add Set", callback: function () {
+              replaceWithContainer(that, AndContainer, true, EdgeSetElement);
+            }
+            }],
+          [{
+            text: "Add Set", callback: function () {
+              replaceWithContainer(that, OrContainer, false, EdgeSetElement);
+            }
+          }], function () {
+            replaceWithContainer(that, NotContainer, false);
+          }
+        );
+
+      });
+    };
+
+    //-------------------------------------------
+
+    function NodeConstraintElement(parent) {
+      ConstraintElement.call(this, parent);
+    }
+
+    NodeConstraintElement.prototype = Object.create(ConstraintElement.prototype);
+
+    NodeConstraintElement.prototype.addInput = function (domParent, initialText) {
+      ConstraintElement.prototype.addInput.call(this, domParent, initialText);
 
       var that = this;
 
@@ -545,17 +595,6 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         );
 
       });
-
-
-      //$(domParent[0]).mouseleave(function () {
-      //
-      //  d3.select("#queryOverlay").selectAll("g.overlayButton")
-      //    .remove();
-      //});
-    };
-
-    NodeConstraintElement.prototype.getSize = function () {
-      return {width: 92, height: 24};
     };
 
 //----------------------------------------
@@ -611,6 +650,29 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
 //-----------------------------------
 
+    function getSetAutoComplete(inputField, element) {
+      return {
+        minLength: 3,
+        source: function (request, response) {
+          var term = request.term;
+          ServerSearch.search(term, 'name', '_Set_Node').then(function (results) {
+            response(results);
+          })
+        },
+        select: function (event, ui) {
+          inputField.val(ui.item.id);
+          element.id = ui.item.value;
+          return false; // Prevent the widget from inserting the value.
+        },
+        focus: function (event, ui) {
+          inputField.val(ui.item.id);
+          element.id = ui.item.value;
+          return false; // Prevent the widget from inserting the value.
+        }
+      }
+    }
+
+
     function NodeSetElement(parent) {
       NodeConstraintElement.call(this, parent);
     }
@@ -625,25 +687,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       var that = this;
 
       var inputField = $(this.myDomElements[0]).find("input");
-      inputField.autocomplete({
-        minLength: 3,
-        source: function (request, response) {
-          var term = request.term;
-          ServerSearch.search(term, 'name', '_Set_Node').then(function (results) {
-            response(results);
-          })
-        },
-        select: function (event, ui) {
-          inputField.val(ui.item.id);
-          that.id = ui.item.value;
-          return false; // Prevent the widget from inserting the value.
-        },
-        focus: function (event, ui) {
-          inputField.val(ui.item.id);
-          that.id = ui.item.value;
-          return false; // Prevent the widget from inserting the value.
-        }
-      });
+      inputField.autocomplete(getSetAutoComplete(inputField, that));
     };
 
     NodeSetElement.prototype.getPathQuery = function () {
@@ -673,6 +717,32 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       var val = $(el[0]).val();
 
       return new q.NodeTypeConstraint(val);
+    };
+
+    //-----------------------------------
+
+    function EdgeSetElement(parent) {
+      EdgeConstraintElement.call(this, parent);
+    }
+
+    EdgeSetElement.prototype = Object.create(EdgeConstraintElement.prototype);
+
+    EdgeSetElement.prototype.init = function (domParent) {
+      EdgeConstraintElement.prototype.init.call(this, domParent);
+
+      this.addInput(this.myDomElements, "Set");
+
+      var that = this;
+
+      var inputField = $(this.myDomElements[0]).find("input");
+      inputField.autocomplete(getSetAutoComplete(inputField, that));
+    };
+
+    EdgeSetElement.prototype.getPathQuery = function () {
+      var el = this.myDomElements.select("input");
+      var val = $(el[0]).val();
+
+      return new q.EdgeSetPresenceConstraint(val);
     };
 
 //--------------------------------------
@@ -977,6 +1047,19 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       $(this.myDomElements[0]).mouseenter(function () {
 
         var size = that.getSize();
+
+        if (that.children.length <= 0) {
+
+          addAddButton(that, [
+            {
+              text: "Add Set", callback: function () {
+              that.add(new EdgeSetElement(that));
+              d3.select(this).remove();
+            }
+            }
+          ], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+
+        }
 
         addAddButton(that, [{
           text: "Add Node", callback: function () {
