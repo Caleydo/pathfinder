@@ -1,8 +1,8 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search/main', './pathutil', './query/queryview', 'font-awesome', 'bootstrap'],
-  function ($, d3, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView) {
+require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', 'font-awesome', 'bootstrap'],
+  function ($, d3, C, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView) {
 
     'use strict';
 
@@ -165,7 +165,7 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
         //} );
 
         var selectPaths = d3.select('#select_dump');
-        $.getJSON('dump/testpaths.json').then(function(data) {
+        C.getJSON('dump/testpaths.json').then(function(data) {
           var options = selectPaths.selectAll('option').data([{value: '', label: ''}].concat(data));
           options.enter().append('option')
             .attr('value', function(d) { return d.value})
@@ -173,14 +173,14 @@ require(['jquery', 'd3', './listeners', './listview', './setlist', './overviewgr
         });
         selectPaths.on("change", function () {
           if (this.value != '') {
-            $.getJSON(this.value, function (paths) {
+            C.getJSON(this.value, function (paths) {
               reset();
               loadPaths(paths);
             });
           }
         });
 
-        $.getJSON("dump/testpaths1.json", function (paths) {
+        C.getJSON("dump/testpaths1.json", function (paths) {
 
           var i = 0;
 

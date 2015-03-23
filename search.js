@@ -1,25 +1,18 @@
 /**
  * Created by sam on 13.03.2015.
  */
-define(['jquery','jquery-ui'],function($) {
+define(['../caleydo/main', '../caleydo/event'],function(C, events) {
   'use strict';
 
   function ServerSearch() {
-    this._events = $(this);
+    events.EventHandler.call(this);
     this._socket = null;
     this._initialMessage = [];
 
     this.search_cache = {};
   }
-  ServerSearch.prototype.on = function() {
-    return this._events.on.apply(this._events, Array.prototype.slice.call(arguments));
-  };
-  ServerSearch.prototype.off = function() {
-    return this._events.off.apply(this._events, Array.prototype.slice.call(arguments));
-  };
-  ServerSearch.prototype.fire = function() {
-    return this._events.trigger.apply(this._events, Array.prototype.slice.call(arguments));
-  };
+  C.extendClass(ServerSearch, events.EventHandler);
+
   ServerSearch.prototype.onMessage = function(msg) {
     this.fire(msg.type, msg.data);
   };
@@ -88,9 +81,9 @@ define(['jquery','jquery-ui'],function($) {
       this.search_cache[nodeType+'.'+prop] = cache;
     }
     if (cache && query in cache) {
-      return $.when(cache[query]);
+      return C.resolved(cache[query]);
     }
-    return $.getJSON('/api/pathway/search', {q: query, prop: prop, label: nodeType}).then(function (data) {
+    return C.getAPIJSON('/pathway/search', {q: query, prop: prop, label: nodeType}).then(function (data) {
       cache[query] = data.results;
       return data.results;
     });
