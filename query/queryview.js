@@ -180,6 +180,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
           .classed("myDomElements", true);
 
         $(this.myDomElements[0]).mouseenter(function () {
+
+          d3.select("#queryOverlay").selectAll("g.overlayButton")
+            .remove();
+
           if (that.showRemoveButton()) {
             var size = that.getSize();
 
