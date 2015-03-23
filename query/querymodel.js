@@ -318,7 +318,7 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
   };
 
   Not.prototype.serialize = function () {
-    return {'$not': [this.query.serialize()]};
+    return  { '$not':  this.query.serialize() };
   };
 
   function RegionMatcher(query, region, relativeToEnd, regionRelation) {
@@ -367,7 +367,7 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
       return region1.minIndex === region2.minIndex && region1.maxIndex === region2.maxIndex;
     },
 
-    unequal: function equal(region1, region2) {
+    unequal: function unequal(region1, region2) {
       return region1.minIndex !== region2.minIndex && region1.maxIndex !== region2.maxIndex;
     },
 
