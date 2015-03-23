@@ -1025,13 +1025,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 //---------------------------------------------
 
     function EdgeContainer(parent) {
-      BoxContainer.call(this, parent, "white", "black", true);
+      CaptionContainer.call(this, parent, "", "white", "black", true);
     }
 
-    EdgeContainer.prototype = Object.create(BoxContainer.prototype);
+    EdgeContainer.prototype = Object.create(CaptionContainer.prototype);
 
     EdgeContainer.prototype.init = function (domParent) {
-      BoxContainer.prototype.init.call(this, domParent);
+      CaptionContainer.prototype.init.call(this, domParent);
 
       var that = this;
 
@@ -1099,16 +1099,17 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
     };
 
     EdgeContainer.prototype.update = function () {
-      BoxContainer.prototype.update.call(this);
+      CaptionContainer.prototype.update.call(this);
 
       var size = this.getSize();
+      var that = this;
       this.myDomElements.selectAll("line.edgeLine")
         .transition()
         .attr({
           x1: 5,
-          y1: size.height / 2,
+          y1: that.children.length === 0 ? size.height / 2 : 8,
           x2: size.width - 5,
-          y2: size.height / 2
+          y2: that.children.length === 0 ? size.height / 2 : 8
         });
     };
 
