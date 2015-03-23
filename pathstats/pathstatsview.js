@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil'],
-  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil) {
+define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners'],
+  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
     var NodeTypeWrapper = statData.NodeTypeWrapper;
@@ -48,6 +48,12 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         .attr("y", 0)
         .attr("width", 90)
         .attr("height", 20);
+
+      var that = this;
+
+      listeners.add(function(query) {
+        that.updateView();
+      }, listeners.updateType.QUERY_UPDATE);
     };
 
     PathStatsView.prototype.setPaths = function (paths) {
@@ -69,7 +75,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         //
         //});
 
-        pathUtil.forEachNodeSet(node, function(setType, setId) {
+        pathUtil.forEachNodeSet(node, function (setType, setId) {
           addNodeSet(setType, setId, path, node);
         });
 
@@ -121,7 +127,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       path.edges.forEach(function (edge) {
 
-        pathUtil.forEachEdgeSet(edge, function(setType, setId) {
+        pathUtil.forEachEdgeSet(edge, function (setType, setId) {
           addEdgeSet(setType, setId, path, edge);
         });
 
@@ -218,6 +224,9 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
             .attr({
               display: hierarchyElements.displayFunction,
               transform: hierarchyElements.transformFunction
+            })
+            .style("opacity", function (d) {
+              return d.isFiltered() ? 0.5 : 1;
             });
         });
 

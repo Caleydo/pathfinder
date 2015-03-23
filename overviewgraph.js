@@ -1,4 +1,4 @@
-define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsorting'], function ($, d3, webcola, listeners, selectionUtil, pathSorting) {
+define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsorting', './query/pathquery'], function ($, d3, webcola, listeners, selectionUtil, pathSorting, pathQuery) {
     'use strict';
 
     var w = 800;
@@ -176,6 +176,8 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
           }
         });
 
+        listeners.add(that.updateFilters, listeners.updateType.QUERY_UPDATE);
+
       },
 
       addPathsToGraph: function (paths) {
@@ -341,6 +343,21 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
 
       },
 
+      updateFilters: function () {
+        var svg = d3.select("#pathgraph");
+        svg.selectAll("g.node")
+          .transition()
+          .style("opacity", function (d) {
+            return pathQuery.isNodeFiltered(d.id) ? 0.5 : 1;
+          });
+
+        svg.selectAll("g.edge")
+          .transition()
+          .style("opacity", function (d) {
+            return pathQuery.isEdgeFiltered(d.edge.id) ? 0.5 : 1;
+          });
+      },
+
       render: function (paths) {
         this.paths = paths;
         //if (paths.length > 0) {
@@ -414,7 +431,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
           //}, {axis: "x", left: 0, right: 1, gap: 100, equality:true},
           //  {axis: "x", left: 1, right: 2, gap: 100, equality:true}
           //])
-          .start(10, 30, 100);
+          .start();
 
         //var allGroups = svg.selectAll(".group")
         //  .data(that.graph.groups);
@@ -435,7 +452,10 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
         var edge = allEdges
           .enter()
           .append("g")
-          .attr("class", "edge");
+          .attr("class", "edge")
+          .style("opacity", function (d) {
+            return pathQuery.isEdgeFiltered(d.edge.id) ? 0.5 : 1;
+          });
 
         var edgeLines = edge.append("line");
         //.attr("marker-end", "url(#arrowRight)");
@@ -453,9 +473,12 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
           .attr("class", function (d) {
             return "node " + (d.fixed ? ("fixed") : "");
           })
-          .on("dblclick", function(d) {
+          .on("dblclick", function (d) {
             pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getNodePresenceStrategy([d.id]));
             listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+          })
+          .style("opacity", function (d) {
+            return pathQuery.isNodeFiltered(d.id) ? 0.5 : 1;
           });
 
         selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
