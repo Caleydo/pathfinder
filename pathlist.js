@@ -1,5 +1,5 @@
-define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil', './pathsorting', './pathutil', './query/pathquery'],
-  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery) {
+define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil', './pathsorting', './pathutil', './query/pathquery', './datastore'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
@@ -271,7 +271,23 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       var that = this;
       this.listUpdateListener = function (updatedObject) {
         that.updatePathList();
-      }
+      };
+
+      this.removeFilterChangedListener = function (remove) {
+        if (remove) {
+          that.updatePathWrappersToFilter();
+        } else {
+          that.addAllPaths();
+        }
+      };
+
+      this.queryChangedListener = function (query) {
+        if (pathQuery.isRemoveFilteredPaths()) {
+          that.updatePathWrappersToFilter();
+        } else {
+          that.updatePathList();
+        }
+      };
 
       this.sortUpdateListener = function (currentComparator) {
         //sortingManager.sort(that.pathWrappers, that.parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers), sortStrategyChain);
@@ -280,7 +296,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
         that.updateDataBinding();
 
-        that.parent.selectAll("g.pathContainer")
+        that.parent.selectAll("g.pathContainer").data(that.pathWrappers, getPathKey)
           .sort(currentComparator)
           .transition()
           .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
@@ -353,8 +369,79 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       init: function () {
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.add(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
-        listeners.add(this.listUpdateListener, listeners.updateType.QUERY_UPDATE);
+        listeners.add(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
+        listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.add(this.sortUpdateListener, pathSorting.updateType);
+      },
+
+      updatePathWrappersToFilter: function () {
+        var pathWrappersToRemove = [];
+
+        var that = this;
+
+        this.pathWrappers.forEach(function (pathWrapper) {
+          if (pathQuery.isPathFiltered(pathWrapper.path.id)) {
+            pathWrappersToRemove.push(pathWrapper);
+          }
+        });
+
+        pathWrappersToRemove.forEach(function (pathWrapper) {
+          var index = that.pathWrappers.indexOf(pathWrapper);
+          if (index !== -1) {
+            that.pathWrappers.splice(index, 1);
+          }
+        });
+
+        var pathsToAdd = [];
+        var that = this;
+
+        dataStore.paths.forEach(function (path) {
+          if (!pathQuery.isPathFiltered(path.id)) {
+            var pathPresent = false;
+            for (var i = 0; i < that.pathWrappers.length; i++) {
+              var pathWrapper = that.pathWrappers[i];
+              if (pathWrapper.path.id === path.id) {
+                pathPresent = true;
+              }
+            }
+
+            if (!pathPresent) {
+              pathsToAdd.push(path);
+            }
+          }
+        });
+
+        pathsToAdd.forEach(function (path) {
+          that.addPath(path);
+        });
+
+        this.render(this.parent);
+      },
+
+      addAllPaths: function () {
+        var pathsToAdd = [];
+        var that = this;
+
+        dataStore.paths.forEach(function (path) {
+          var pathPresent = false;
+          for (var i = 0; i < that.pathWrappers.length; i++) {
+            var pathWrapper = that.pathWrappers[i];
+            if (pathWrapper.path.id === path.id) {
+              pathPresent = true;
+            }
+          }
+
+          if (!pathPresent) {
+            pathsToAdd.push(path);
+          }
+
+        });
+
+        pathsToAdd.forEach(function (path) {
+          that.addPath(path);
+        });
+
+        this.render(this.parent);
       },
 
       updatePathList: function () {
@@ -452,7 +539,8 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       destroy: function () {
         this.removePaths();
         listeners.remove(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
-        listeners.remove(this.listUpdateListener, listeners.updateType.QUERY_UPDATE);
+        listeners.add(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
+        listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.remove(this.sortUpdateListener, pathSorting.updateType);
       },
@@ -599,6 +687,11 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
         var allPathContainers = that.parent.selectAll("g.pathContainer")
           .data(that.pathWrappers, getPathKey);
+
+        allPathContainers.exit()
+          .transition()
+          .attr("transform", "translate(0," + 2000 + ")")
+          .remove();
 
         var pathContainer = allPathContainers
           .enter()

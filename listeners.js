@@ -6,7 +6,8 @@ define(function () {
 
     updateType: {
       SET_INFO_UPDATE: "SET_INFO_UPDATE",
-      QUERY_UPDATE : 'QUERY_UPDATE'
+      QUERY_UPDATE : 'QUERY_UPDATE',
+      REMOVE_FILTERED_PATHS_UPDATE: 'REMOVE_FILTERED_PATHS_UPDATE'
     },
 
     add: function (listener, type) {

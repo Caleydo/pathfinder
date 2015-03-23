@@ -30,6 +30,8 @@ define(['../listeners', './querymodel', '../datastore', '../pathutil'], function
     }
   }
 
+  var removeFilteredPaths = false;
+
 
   return {
 
@@ -45,6 +47,15 @@ define(['../listeners', './querymodel', '../datastore', '../pathutil'], function
       currentQuery = query;
       this.update();
       listeners.notify(listeners.updateType.QUERY_UPDATE, query);
+    },
+
+    setRemoveFilteredPaths: function(remove) {
+      removeFilteredPaths = remove;
+      listeners.notify(listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE, remove);
+    },
+
+    isRemoveFilteredPaths: function() {
+      return removeFilteredPaths;
     },
 
     update: function () {

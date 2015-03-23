@@ -1573,6 +1573,11 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
         }
       );
 
+      $('#remove_filtered_paths').click(function () {
+          pathQuery.setRemoveFilteredPaths($('#remove_filtered_paths').prop("checked"));
+        }
+      );
+
       ServerSearch.on('query_done', function () {
         $('#query_interface button[type="submit"] i').attr('class', 'fa fa-search');
       });
