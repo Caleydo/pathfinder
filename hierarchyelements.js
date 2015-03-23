@@ -28,6 +28,9 @@ define(function () {
     },
     canBeShown: function () {
       return true;
+    },
+    isFiltered: function () {
+      return false;
     }
   };
 
@@ -64,4 +67,5 @@ define(function () {
     }
   }
 
-});
+})
+;

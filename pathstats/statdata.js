@@ -1,4 +1,4 @@
-define(['../hierarchyelements', '../listeners', '../pathsorting'], function(hierarchyElements, listeners, pathSorting) {
+define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/pathquery'], function (hierarchyElements, listeners, pathSorting, pathQuery) {
 
   var HierarchyElement = hierarchyElements.HierarchyElement;
 
@@ -50,6 +50,10 @@ define(['../hierarchyelements', '../listeners', '../pathsorting'], function(hier
 
   NodeWrapper.prototype.getLabel = function () {
     return this.node.properties["name"];
+  };
+
+  NodeWrapper.prototype.isFiltered = function () {
+    return pathQuery.isNodeFiltered(this.node.id);
   };
 
   function NodeTypeWrapper(parentElement, type) {
@@ -106,6 +110,10 @@ define(['../hierarchyelements', '../listeners', '../pathsorting'], function(hier
     if (this.edgeIds.indexOf(edge.id) === -1) {
       this.edgeIds.push(edge.id);
     }
+  };
+
+  SetWrapper.prototype.isFiltered = function () {
+    return pathQuery.isNodeSetFiltered(this.setId) && pathQuery.isEdgeSetFiltered(this.setId);
   };
 
   SetWrapper.prototype.onDoubleClick = function () {
