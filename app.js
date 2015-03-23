@@ -6,6 +6,10 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setl
 
     'use strict';
 
+    var config = {};
+    C.getAPIJSON('/pathway/config.json').then(function (data) {
+      config = data;
+    });
     //var jsonPaths = require('./testpaths1.json');
 
     var currentPathId = 0;

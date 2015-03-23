@@ -1,0 +1,54 @@
+{
+  "settings": {
+     "port": 7474,
+	 "node_label": "Author",
+	 "set_label": "Publication",
+	 "directions": {
+		"CoAuthor" : "out",
+		"AuthoredBy": "both"
+	 },
+	 "inline": {
+		"inline": "AuthoredBy",
+		"type": "CoAuthor",
+		"undirectional": false,
+		"flag": "_isCoAuthorEdge",
+		"aggregate": "publications",
+		"toaggregate": "id"
+	}
+  },
+  "nodes": [
+    {
+      "name": "Author",
+      "node_label": "Author",
+      "properties": {
+        "id": "id",
+        "name": "string",
+        "publications": { "type": "set", "set": "publications"}
+      }
+    }
+  ],
+
+  "edges": [
+    {
+      "label": "CoAuthor",
+      "properties": {
+        "_isCoAuthorEdge": { "type": "flag", "set": "publications"},
+        "publications": { "type": "set", "set": "publications"}
+      }
+    }
+  ],
+
+  "sets": [
+    {
+      "id": "publications",
+      "name": "Publications",
+      "node_label": "Publication",
+      "inline": {
+        "source": "AuthoredBy",
+        "target": "CoAuthor"
+      },
+      "flag_property": "_isCoAuthorEdge",
+      "set_property": "publications"
+    }
+  ]
+}
