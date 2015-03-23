@@ -1,20 +1,22 @@
 {
   "settings": {
-     "port": 7474,
-	 "node_label": "_Network_Node",
-	 "set_label": "_Set_Node",
-	 "directions": {
-		"Edge" : "out",
-		"ConsistsOfEdge": "both"
-	 },
-	 "inline": {
-		"inline": "ConsistsOfEdge",
-		"type": "Edge",
-		"undirectional": false,
-		"flag": "_isSetEdge",
-		"aggregate": "pathways",
-		"toaggregate": "id"
-	}
+    "port": 7474,
+    "node_label": "_Network_Node",
+    "set_label": "_Set_Node",
+    "directions": {
+      "Edge": "out",
+      "ConsistsOfEdge": "both"
+    },
+    "inline": {
+      "inline": "ConsistsOfEdge",
+      "type": "Edge",
+      "undirectional": false,
+      "flag": "_isSetEdge",
+      "aggregate": {
+        "_Set_Node": "pathways"
+      },
+      "toaggregate": "id"
+    }
   },
   "nodes": [
     {
@@ -23,22 +25,29 @@
       "properties": {
         "id": "id",
         "name": "string",
-        "pathways": { "type": "set", "set": "publication"}
+        "pathways": {
+          "type": "set",
+          "set": "publication"
+        }
       }
     }
   ],
-
   "edges": [
     {
       "label": "Edge",
       "properties": {
         "_isNetworkEdge": "flag_network",
-        "_isSetEdge": { "type": "flag", "set": "publication"},
-        "pathways": { "type": "set", "set": "publication"}
+        "_isSetEdge": {
+          "type": "flag",
+          "set": "publication"
+        },
+        "pathways": {
+          "type": "set",
+          "set": "publication"
+        }
       }
     }
   ],
-
   "sets": [
     {
       "id": "publication",

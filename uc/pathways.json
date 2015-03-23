@@ -1,20 +1,22 @@
 {
   "settings": {
-     "port": 7475,
-	 "node_label": "_Network_Node",
-	 "set_label": "_Set_Node",
-	 "directions": {
-		"Edge" : "out",
-		"ConsistsOfEdge": "both"
-	 },
-	 "inline": {
-		"inline": "ConsistsOfEdge",
-		"type": "Edge",
-		"undirectional": false,
-		"flag": "_isSetEdge",
-		"aggregate": "pathways",
-		"toaggregate": "id"
-	}
+    "port": 7475,
+    "node_label": "_Network_Node",
+    "set_label": "_Set_Node",
+    "directions": {
+      "Edge": "out",
+      "ConsistsOfEdge": "both"
+    },
+    "inline": {
+      "inline": "ConsistsOfEdge",
+      "type": "Edge",
+      "undirectional": false,
+      "flag": "_isSetEdge",
+      "aggregate": {
+        "_Set_Node": "pathways"
+      },
+      "toaggregate": "id"
+    }
   },
   "nodes": [
     {
@@ -24,7 +26,10 @@
         "id": "id",
         "idType": "string",
         "name": "string",
-        "pathways": { "type": "set", "set": "pathways"}
+        "pathways": {
+          "type": "set",
+          "set": "pathways"
+        }
       }
     },
     {
@@ -34,22 +39,29 @@
         "id": "id",
         "idType": "string",
         "name": "string",
-        "pathways": { "type": "set", "set": "pathways"}
+        "pathways": {
+          "type": "set",
+          "set": "pathways"
+        }
       }
     }
   ],
-
   "edges": [
     {
       "label": "Edge",
       "properties": {
         "_isNetworkEdge": "flag_network",
-        "_isSetEdge": { "type": "flag", "set": "pathways"},
-        "pathways": { "type": "set", "set": "pathways"}
+        "_isSetEdge": {
+          "type": "flag",
+          "set": "pathways"
+        },
+        "pathways": {
+          "type": "set",
+          "set": "pathways"
+        }
       }
     }
   ],
-
   "sets": [
     {
       "id": "pathways",
