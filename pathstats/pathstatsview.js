@@ -64,18 +64,27 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         addNode(node, path, pathUtil.getNodeType(node));
 
 
-        for (var key in node.properties) {
-          if (pathUtil.isNodeSetProperty(key)) {
-            var property = node.properties[key];
-            if (property instanceof Array) {
-              property.forEach(function (setId) {
-                addNodeSet(key, setId, path, node);
-              });
-            } else {
-              addNodeSet(key, property, path, node);
-            }
-          }
-        }
+        //var nodeSetTypes = pathUtil.getNodeSetTypes(node);
+        //nodeSetTypes.forEach(function(setType) {
+        //
+        //});
+
+        pathUtil.forEachNodeSet(node, function(setType, setId) {
+          addNodeSet(setType, setId, path, node);
+        });
+
+        //for (var key in node.properties) {
+        //  if (pathUtil.isNodeSetProperty(key)) {
+        //    var property = node.properties[key];
+        //    if (property instanceof Array) {
+        //      property.forEach(function (setId) {
+        //        addNodeSet(key, setId, path, node);
+        //      });
+        //    } else {
+        //      addNodeSet(key, property, path, node);
+        //    }
+        //  }
+        //}
 
 
       });
@@ -111,18 +120,26 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       }
 
       path.edges.forEach(function (edge) {
-        for (var key in edge.properties) {
-          if (pathUtil.isEdgeSetProperty(key)) {
-            var property = edge.properties[key];
-            if (property instanceof Array) {
-              property.forEach(function (setId) {
-                addEdgeSet(key, setId, path, edge);
-              });
-            } else {
-              addEdgeSet(key, property, path, edge);
-            }
-          }
-        }
+
+        pathUtil.forEachEdgeSet(edge, function(setType, setId) {
+          addEdgeSet(setType, setId, path, edge);
+        });
+
+        //for (var key in edge.properties) {
+        //
+        //
+        //
+        //  //if (pathUtil.isEdgeSetProperty(key)) {
+        //  //  var property = edge.properties[key];
+        //  //  if (property instanceof Array) {
+        //  //    property.forEach(function (setId) {
+        //  //      addEdgeSet(key, setId, path, edge);
+        //  //    });
+        //  //  } else {
+        //  //    addEdgeSet(key, property, path, edge);
+        //  //  }
+        //  //}
+        //}
       });
     };
 

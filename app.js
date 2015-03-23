@@ -1,8 +1,8 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', 'font-awesome', 'bootstrap'],
-  function ($, d3, C, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView) {
+require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', 'font-awesome', 'bootstrap'],
+  function ($, d3, C, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery) {
 
     'use strict';
 
@@ -11,23 +11,21 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setl
     var currentPathId = 0;
 
 
-
-
     $(document).ready(function () {
 
         var $progress = $('header .progress-bar');
         ServerSearch.on({
-          query_start: function() {
+          query_start: function () {
             reset();
-            $progress.css('width','0%');
+            $progress.css('width', '0%');
           },
           query_path: function (event, data) {
             addPath(data.path);
             var k = data.query.k;
             var i = data.i;
-            d3.select($progress[0]).transition().duration(100).style('width',d3.round(i/k*100,0)+'%');
+            d3.select($progress[0]).transition().duration(100).style('width', d3.round(i / k * 100, 0) + '%');
           },
-          query_done: function() {
+          query_done: function () {
             $progress.parent();
           }
         });
@@ -165,11 +163,15 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setl
         //} );
 
         var selectPaths = d3.select('#select_dump');
-        C.getJSON('dump/testpaths.json').then(function(data) {
+        C.getJSON('dump/testpaths.json').then(function (data) {
           var options = selectPaths.selectAll('option').data([{value: '', label: ''}].concat(data));
           options.enter().append('option')
-            .attr('value', function(d) { return d.value})
-            .text(function(d) { return d.label;});
+            .attr('value', function (d) {
+              return d.value
+            })
+            .text(function (d) {
+              return d.label;
+            });
         });
         selectPaths.on("change", function () {
           if (this.value != '') {
@@ -206,6 +208,7 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setl
         function reset() {
           dataStore.paths = [];
           currentPathId = 0;
+          pathQuery.resetPaths();
           listView.reset();
           overviewGraph.reset();
           pathStatsView.reset();
@@ -214,6 +217,7 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setl
         function addPath(path) {
           path.id = currentPathId++;
           dataStore.paths.push(path);
+          pathQuery.addPath(path);
 
           fetchSetInfos([path]);
 
@@ -230,8 +234,10 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setl
           reset();
 
           for (var i = 0; i < paths.length; i++) {
-            paths[i].id = i;
+            paths[i].id = currentPathId++;
           }
+          dataStore.paths = paths;
+          pathQuery.update();
 
           //listeners.clear(listeners.updateType.PATH_SELECTION);
           //listeners.clear(listeners.updateType.SET_INFO_UPDATE);
@@ -260,33 +266,38 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setl
 
           paths.forEach(function (path) {
             path.nodes.forEach(function (node) {
-              for (var key in node.properties) {
-                if (pathUtil.isNodeSetProperty(key)) {
-                  var property = node.properties[key];
-                  if (property instanceof Array) {
-                    property.forEach(function (setId) {
-                      addSet(key, setId);
-                    });
-                  } else {
-                    addSet(key, property);
-                  }
-                }
-              }
+
+              pathUtil.forEachNodeSet(node, addSet);
+              //for (var key in node.properties) {
+              //  if (pathUtil.isNodeSetProperty(key)) {
+              //    var property = node.properties[key];
+              //    if (property instanceof Array) {
+              //      property.forEach(function (setId) {
+              //        addSet(key, setId);
+              //      });
+              //    } else {
+              //      addSet(key, property);
+              //    }
+              //  }
+              //}
             });
 
             path.edges.forEach(function (edge) {
-              for (var key in edge.properties) {
-                if (pathUtil.isEdgeSetProperty(key)) {
-                  var property = edge.properties[key];
-                  if (property instanceof Array) {
-                    property.forEach(function (setId) {
-                      addSet(key, setId);
-                    });
-                  } else {
-                    addSet(key, property);
-                  }
-                }
-              }
+
+              pathUtil.forEachNodeSet(edge, addSet);
+
+              //for (var key in edge.properties) {
+              //  if (pathUtil.isEdgeSetProperty(key)) {
+              //    var property = edge.properties[key];
+              //    if (property instanceof Array) {
+              //      property.forEach(function (setId) {
+              //        addSet(key, setId);
+              //      });
+              //    } else {
+              //      addSet(key, property);
+              //    }
+              //  }
+              //}
             });
           });
 

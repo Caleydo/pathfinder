@@ -1,9 +1,8 @@
-define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil', './pathsorting', './pathutil'],
-  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil) {
+define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil', './pathsorting', './pathutil', './query/pathquery'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
-
 
 
     var nodeStart = 90;
@@ -44,7 +43,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       canBeShown: function () {
         return showNodeSets || (!showNodeSets && this.relIndices.length > 0);
       }
-    }
+    };
 
     function SetType(type) {
       this.id = currentSetTypeId++;
@@ -110,37 +109,19 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
         for (var i = 0; i < path.nodes.length; i++) {
           var node = path.nodes[i];
-          for (var key in node.properties) {
-            if (pathUtil.isNodeSetProperty(key)) {
-              var property = node.properties[key];
-              if (property instanceof Array) {
-                property.forEach(function (setId) {
-                  addSetForNode(key, setId, i);
-                });
-              } else {
-                var currentSet = addSet(key, property);
-                addSetForNode(key, property, i);
-              }
-            }
-          }
+
+          pathUtil.forEachNodeSet(node, function (setType, setId) {
+            addSetForNode(setType, setId, i);
+          });
         }
         ;
 
         for (var i = 0; i < path.edges.length; i++) {
           var edge = path.edges[i];
 
-          for (var key in edge.properties) {
-            if (pathUtil.isEdgeSetProperty(key)) {
-              var property = edge.properties[key];
-              if (property instanceof Array) {
-                edge.properties[key].forEach(function (setId) {
-                  addSetForEdge(key, setId, i);
-                });
-              } else {
-                addSetForEdge(key, property, i);
-              }
-            }
-          }
+          pathUtil.forEachEdgeSet(edge, function (setType, setId) {
+            addSetForEdge(setType, setId, i);
+          });
         }
 
         function addSetForNode(type, setId, nodeIndex) {
@@ -188,8 +169,6 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         this.setTypes = setTypeList;
       }
     };
-
-
 
 
 //var allPaths = [];
@@ -374,6 +353,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       init: function () {
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.add(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        listeners.add(this.listUpdateListener, listeners.updateType.QUERY_UPDATE);
         listeners.add(this.sortUpdateListener, pathSorting.updateType);
       },
 
@@ -403,7 +383,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
         that.parent.selectAll("g.pathContainer")
           .transition()
-          .attr("transform", getPathContainerTransformFunction(this.pathWrappers));
+          .attr("transform", getPathContainerTransformFunction(this.pathWrappers))
+          .style("opacity", function (d) {
+            if (pathQuery.isPathFiltered(d.path.id)) {
+              return 0.5;
+            }
+            return 1;
+          });
 
 
         that.parent.selectAll("g.pathContainer")
@@ -466,6 +452,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       destroy: function () {
         this.removePaths();
         listeners.remove(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        listeners.remove(this.listUpdateListener, listeners.updateType.QUERY_UPDATE);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.remove(this.sortUpdateListener, pathSorting.updateType);
       },
@@ -611,11 +598,17 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
 
         var allPathContainers = that.parent.selectAll("g.pathContainer")
-          .data(that.pathWrappers, getPathKey)
+          .data(that.pathWrappers, getPathKey);
 
         var pathContainer = allPathContainers
           .enter()
-          .append("g");
+          .append("g")
+          .style("opacity", function (d) {
+            if (pathQuery.isPathFiltered(d.path.id)) {
+              return 0.5;
+            }
+            return 1;
+          });
 
 
         pathContainer.attr("class", "pathContainer")
@@ -644,9 +637,9 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           .attr("y", 0)
           .attr("width", "100%")
           .attr("height", pathHeight);
-          //.on("click", function(d) {
-          //  console.log(d.path.id);
-          //});
+        //.on("click", function(d) {
+        //  console.log(d.path.id);
+        //});
 
         var l = selectionUtil.addDefaultListener(pathContainer, "g.path", function (d) {
             return d.path.id;
@@ -1017,363 +1010,9 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
       }
 
-      //renderPaths: function (parent) {
-      //
-      //  var that = this;
-      //
-      //
-      //  var pathContainer = parent.selectAll("g.pathContainer")
-      //    .data(that.pathWrappers, getPathKey)
-      //    .enter()
-      //    .append("g");
-      //
-      //  pathContainer.attr("class", "pathContainer")
-      //    .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
-      //  //.attr("visibility", visible ? "visible" : "hidden");
-      //
-      //  var p = pathContainer.append("g")
-      //    .attr("class", "path")
-      //    .on("click", function (d) {
-      //      listeners.notify(d.path, listeners.updateType.PATH_SELECTION);
-      //    });
-      //
-      //  p.append("rect")
-      //    .attr("class", "filler")
-      //    .attr("x", nodeStart)
-      //    .attr("y", 0)
-      //    .attr("width", "100%")
-      //    .attr("height", pathHeight);
-      //
-      //  var nodeGroup = p.append("g")
-      //    .attr("class", "nodeGroup");
-      //
-      //  var node = nodeGroup.selectAll("g.node")
-      //    .data(function (pathWrapper) {
-      //      return pathWrapper.path.nodes;
-      //    })
-      //    .enter()
-      //    .append("g")
-      //    .attr("class", "node")
-      //
-      //    .on("dblclick", function (d) {
-      //      sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
-      //      sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
-      //    });
-      //  var l = selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
-      //      return d.id;
-      //    },
-      //    "node"
-      //  );
-      //  selectionListeners.push(l);
-      //
-      //
-      //  node.append("rect")
-      //    .attr("x", function (d, i) {
-      //      return nodeStart + (i * nodeWidth) + (i * edgeSize);
-      //    })
-      //    .attr("y", vSpacing)
-      //    .attr("rx", 5).attr("ry", 5)
-      //    .attr("width", nodeWidth)
-      //    .attr("height", nodeHeight);
-      //  //.attr("fill", "rgb(200,200,200)")
-      //  //.attr("stroke", "rgb(30,30,30)");
-      //
-      //  node.append("text")
-      //    .text(function (d) {
-      //      var text = d.properties["name"];
-      //      return getClampedText(text, 7);
-      //    })
-      //    .attr("x", function (d, i) {
-      //      return nodeStart + (i * nodeWidth) + (i * edgeSize) + nodeWidth / 2;
-      //    })
-      //    .attr("y", vSpacing + nodeHeight - 5)
-      //    .append("title")
-      //    .text(function (d) {
-      //      return d.properties["name"];
-      //    });
-      //  ;
-      //
-      //  var edgeGroup = p.append("g")
-      //    .attr("class", "edgeGroup");
-      //
-      //  var edge = edgeGroup.selectAll("g.edge")
-      //    .data(function (pathWrapper, i) {
-      //      return pathWrapper.path.edges.map(function (edge) {
-      //        return {edge: edge, pathIndex: i};
-      //      });
-      //    })
-      //    .enter()
-      //    .append("g")
-      //    .attr("class", "edge");
-      //
-      //  edge.append("line")
-      //    .attr("x1", function (d, i) {
-      //      if (isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)) {
-      //        return ( nodeStart + (i + 1) * nodeWidth) + (i * edgeSize);
-      //      } else {
-      //        return ( nodeStart + (i + 1) * nodeWidth) + ((i + 1) * edgeSize);
-      //      }
-      //    })
-      //    .attr("y1", vSpacing + nodeHeight / 2)
-      //    .attr("x2", function (d, i) {
-      //      if (isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)) {
-      //        return ( nodeStart + (i + 1) * nodeWidth) + ((i + 1) * edgeSize) - arrowWidth;
-      //      } else {
-      //        return ( nodeStart + (i + 1) * nodeWidth) + (i * edgeSize) + arrowWidth;
-      //      }
-      //    })
-      //    .attr("y2", vSpacing + nodeHeight / 2)
-      //    .attr("marker-end", "url(#arrowRight)");
-      //
-      //  var setGroup = pathContainer.append("g")
-      //    .attr("class", "setGroup");
-      //
-      //  var setType = setGroup.selectAll("g.setType")
-      //      .data(function (pathWrapper, i) {
-      //        return pathWrapper.setTypes.map(function (mySetType) {
-      //          return {setType: mySetType, pathIndex: i};
-      //        });
-      //      })
-      //      .enter()
-      //      .append("g")
-      //      .classed("setType", true)
-      //      .attr({
-      //        display: function (d) {
-      //
-      //          if (d.setType.canBeShown()) {
-      //            return "inline";
-      //          }
-      //          return "none";
-      //        },
-      //        transform: getSetTypeTransformFunction(that.pathWrappers)
-      //      }
-      //    )
-      //    ;
-      //
-      //  setType.append("text")
-      //    .attr("class", "collapseIconSmall")
-      //    .attr("x", 5)
-      //    .attr("y", setHeight)
-      //    .text(function (d) {
-      //      return d.setType.collapsed ? "\uf0da" : "\uf0dd";
-      //    })
-      //    .on("click", function (d) {
-      //      d.setType.collapsed = !d.setType.collapsed;
-      //      d3.select(this).text(d.setType.collapsed ? "\uf0da" : "\uf0dd");
-      //      that.updatePathList(parent);
-      //      //updateSetList(parent);
-      //    });
-      //
-      //  setType.append("text")
-      //    .text(function (d) {
-      //      //var text = d[0].id;
-      //      //return getClampedText(text, 15);
-      //      return d.setType.type;
-      //    })
-      //    .attr("x", 10)
-      //    .attr("y", setHeight)
-      //    .attr("fill", function (d) {
-      //      return setInfo.getSetTypeInfo(d.setType.type).color;
-      //    })
-      //    .attr("clip-path", "url(#SetLabelClipPath)");
-      //
-      //  var setTypeSummaryContainer = setType.append("g")
-      //    .classed("setTypeSummary", true)
-      //    .attr("display", function (d) {
-      //      return d.setType.collapsed ? "inline" : "none";
-      //    });
-      //
-      //  setTypeSummaryContainer.each(function (d, i) {
-      //      d3.select(this).selectAll("circle")
-      //        .data(function () {
-      //          return d.setType.nodeIndices.map(function (index) {
-      //            return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
-      //          });
-      //        })
-      //        .enter()
-      //        .append("circle")
-      //        .attr({
-      //          cx: function (d) {
-      //            return nodeStart + (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
-      //          },
-      //          cy: setHeight / 2,
-      //          r: 4,
-      //          fill: function (d) {
-      //            return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-      //          }
-      //        });
-      //
-      //
-      //      d3.select(this).selectAll("line")
-      //        .data(function () {
-      //          return d.setType.relIndices.map(function (index) {
-      //            return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
-      //          });
-      //        })
-      //        .enter()
-      //        .append("line")
-      //        .attr({
-      //          x1: function (d) {
-      //            return nodeStart + (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
-      //          }
-      //          ,
-      //          y1: setHeight / 2,
-      //          x2: function (d) {
-      //            return nodeStart + ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
-      //          },
-      //          y2: setHeight / 2,
-      //          stroke: function (d) {
-      //            return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-      //          }
-      //        });
-      //    }
-      //  )
-      //  ;
-      //
-      //
-      //  setType.each(function (d, i) {
-      //    var set = d3.select(this)
-      //      .selectAll("g.set")
-      //      .data(function () {
-      //        return d.setType.sets.map(function (myset) {
-      //          return {set: myset, pathIndex: d.pathIndex, setTypeIndex: i};
-      //        });
-      //      })
-      //      .enter()
-      //      .append("g")
-      //      .classed("set", true)
-      //      .attr({
-      //        display: function (d) {
-      //          if (d.set.canBeShown()) {
-      //            return "inline";
-      //          }
-      //          return "none";
-      //        },
-      //        transform: getSetTransformFunction(that.pathWrappers)
-      //      })
-      //      .on("dblclick", function (d) {
-      //        sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
-      //        sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
-      //      });
-      //
-      //    set.append("rect")
-      //      .attr("class", "filler")
-      //      .attr("x", 0)
-      //      .attr("y", 0)
-      //      .attr("width", "100%")
-      //      .attr("height", setHeight)
-      //
-      //    set.append("text")
-      //      .text(function (d) {
-      //        //var text = d[0].id;
-      //        //return getClampedText(text, 15);
-      //
-      //        var info = setInfo.get(d.set.id);
-      //        if (typeof info === "undefined") {
-      //          return d.set.id;
-      //        }
-      //        return info.properties["name"];
-      //      })
-      //      .attr("x", setTypeIndent)
-      //      .attr("y", setHeight)
-      //      .attr("fill", function (d) {
-      //        return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-      //      })
-      //      .attr("clip-path", "url(#SetLabelClipPath)");
-      //
-      //    set.append("title")
-      //      .text(function (d) {
-      //        var info = setInfo.get(d.set.id);
-      //        if (typeof info === "undefined") {
-      //          return d.set.id;
-      //        }
-      //        return info.properties["name"];
-      //      });
-      //
-      //    set.each(function (d, i) {
-      //      d3.select(this).selectAll("circle")
-      //        .data(function () {
-      //          return d.set.nodeIndices.map(function (index) {
-      //            return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, nodeIndex: index};
-      //          });
-      //        })
-      //        .enter()
-      //        .append("circle")
-      //        .attr({
-      //          cx: function (d) {
-      //            return nodeStart + (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
-      //          },
-      //          cy: function (d) {
-      //            return setHeight / 2;
-      //          },
-      //          r: 4,
-      //          fill: function (d) {
-      //            return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-      //          }
-      //        })
-      //    });
-      //
-      //
-      //    set.each(function (d, i) {
-      //
-      //      d3.select(this).selectAll("line").
-      //        data(function (d, i) {
-      //          return d.set.relIndices.map(function (index) {
-      //            return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, relIndex: index};
-      //          });
-      //        })
-      //        .enter()
-      //        .append("line")
-      //        .attr("x1", function (d) {
-      //          return nodeStart + (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
-      //        })
-      //        .attr("y1", function (d) {
-      //          return setHeight / 2;
-      //          //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
-      //        })
-      //        .attr("x2", function (d) {
-      //          return nodeStart + ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
-      //        })
-      //        .attr("y2", function (d) {
-      //          return setHeight / 2;
-      //          //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
-      //        })
-      //        .attr("stroke", function (d) {
-      //          return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-      //        });
-      //
-      //
-      //    });
-      //
-      //
-      //  });
-      //
-      //
-      //  var l = selectionUtil.addDefaultListener(setType, "g.set", function (d) {
-      //      return d.set.id;
-      //    },
-      //    "set"
-      //  );
-      //  selectionListeners.push(l);
-      //
-      //  //function getSetPositionY(pathIndex, setTypeIndex, setIndex) {
-      //  //  var pathWrapper = that.pathWrappers[pathIndex];
-      //  //
-      //  //  var numSets = 0;
-      //  //  for (var typeIndex = 0; typeIndex < setTypeIndex; typeIndex++) {
-      //  //    var setType = pathWrapper.setTypes[typeIndex];
-      //  //    numSets += setType.sets.length;
-      //  //  }
-      //  //
-      //  //  return 2 * vSpacing + nodeHeight + (numSets + setIndex + setTypeIndex + 1) * setHeight;
-      //  //}
-      //
-      //
-      //}
-
-    }
+    };
 
 
     return PathList;
   }
-)
+);

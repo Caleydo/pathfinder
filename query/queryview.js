@@ -1568,7 +1568,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
       $('#filter_query').click(function () {
           var query = that.container.getPathQuery();
 
-          pathQuery.set(query);
+          pathQuery.setQuery(query);
           return false;
         }
       );
