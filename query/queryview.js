@@ -1588,10 +1588,11 @@ define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listene
 
         var k = +$('#at_most_k').val();
         var maxDepth = +$('#longest_path').val();
+        var justNetworkEdges = $('#just_network_edges').is(':checked');
         var query = that.container.getPathQuery();
 
         $('#query_interface button[type="submit"] i').attr('class', 'fa fa-spinner fa-pulse');
-        ServerSearch.loadQuery(query, k, maxDepth);
+        ServerSearch.loadQuery(query, k, maxDepth, justNetworkEdges);
 
         return false;
       });
