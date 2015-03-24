@@ -1,21 +1,19 @@
-define(function () {
+define(["./config"], function (config) {
 
   return {
-    isNodeSetProperty: function (key) {
-      return key !== "id" && key !== "idType" && key !== "name";
+    isNodeSetProperty: function (node, key) {
+
+      return config.isNodeSetProperty(node, key);
+
+      //return key !== "id" && key !== "idType" && key !== "name";
     },
-    isEdgeSetProperty: function (key) {
-      return key.charAt(0) !== '_';
+    isEdgeSetProperty: function (edge, key) {
+      return config.isEdgeSetProperty(edge, key);
+      //return key.charAt(0) !== '_';
     },
+
     getNodeType: function (node) {
-      for (var i = 0; i < node.labels.length; i++) {
-        var currentLabel = node.labels[i];
-        if (currentLabel.charAt(0) !== "_") {
-          //Assume first valid data label to be node type
-          return currentLabel;
-        }
-      }
-      return "Unknown";
+      return config.getNodeType(node);
     },
 
     getNodeSetTypes: function (node) {
@@ -24,7 +22,7 @@ define(function () {
       var that = this;
 
       Object.keys(node.properties).forEach(function (key) {
-        if (that.isNodeSetProperty(key)) {
+        if (that.isNodeSetProperty(node, key)) {
           setTypes.add(key);
         }
       });
@@ -38,7 +36,7 @@ define(function () {
       var that = this;
 
       Object.keys(edge.properties).forEach(function (key) {
-        if (that.isEdgeSetProperty(key)) {
+        if (that.isEdgeSetProperty(edge, key)) {
           setTypes.add(key);
         }
       });
@@ -50,7 +48,7 @@ define(function () {
       var that = this;
 
       Object.keys(node.properties).forEach(function (key) {
-        if (that.isNodeSetProperty(key)) {
+        if (that.isNodeSetProperty(node, key)) {
           that.forEachNodeSetOfType(node, key, callBack);
         }
       });
@@ -71,7 +69,7 @@ define(function () {
       var that = this;
 
       Object.keys(edge.properties).forEach(function (key) {
-        if (that.isEdgeSetProperty(key)) {
+        if (that.isEdgeSetProperty(edge, key)) {
           that.forEachEdgeSetOfType(edge, key, callBack);
         }
       });

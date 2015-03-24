@@ -1,4 +1,5 @@
-define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsorting', './query/pathquery'], function ($, d3, webcola, listeners, selectionUtil, pathSorting, pathQuery) {
+define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsorting', './query/pathquery', './config'],
+  function ($, d3, webcola, listeners, selectionUtil, pathSorting, pathQuery, config) {
     'use strict';
 
     var w = 800;
@@ -653,7 +654,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
 
         var nodeTexts = node.append("text")
           .text(function (d) {
-            var text = d.properties["name"];
+            var text = d.properties[config.getNodeNameProperty(d)];
             if (text.length > 7) {
               text = text.substring(0, 7);
             }

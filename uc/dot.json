@@ -53,6 +53,9 @@
       "id": "targetclass",
       "name": "Target Class",
       "node_label": "_Set_Node",
+      "properties": {
+        "name": "name"
+      },
       "inline": {
         "source": "ConsistsOfEdge",
         "target": "Edge"

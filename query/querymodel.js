@@ -113,10 +113,11 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
 
   NodeSetPresenceConstraint.prototype = Object.create(Constraint.prototype);
   NodeSetPresenceConstraint.prototype.match = function (node) {
+
     var propertyKeys = Object.keys(node.properties);
     for (var j = 0; j < propertyKeys.length; j++) {
       var key = propertyKeys[j];
-      if (pathUtil.isNodeSetProperty(key)) {
+      if (pathUtil.isNodeSetProperty(node, key)) {
         var property = node.properties[key];
         if (property instanceof Array) {
           for (var k = 0; k < property.length; k++) {

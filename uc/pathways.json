@@ -25,7 +25,7 @@
       "properties": {
         "id": "id",
         "idType": "string",
-        "name": "string",
+        "name": "name",
         "pathways": {
           "type": "set",
           "set": "pathways"
@@ -38,7 +38,7 @@
       "properties": {
         "id": "id",
         "idType": "string",
-        "name": "string",
+        "name": "name",
         "pathways": {
           "type": "set",
           "set": "pathways"
@@ -67,6 +67,9 @@
       "id": "pathways",
       "name": "Pathways",
       "node_label": "_Set_Node",
+      "properties": {
+        "name": "name"
+      },
       "inline": {
         "source": "ConsistsOfEdge",
         "target": "Edge"

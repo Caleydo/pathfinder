@@ -1,5 +1,5 @@
-define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil', './pathsorting', './pathutil', './query/pathquery', './datastore'],
-  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore) {
+define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil', './pathsorting', './pathutil', './query/pathquery', './datastore', './config'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
@@ -230,7 +230,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             return d.set.id;
           }
 
-          var text = info.properties["name"];
+          var text = info.properties[config.getSetNameProperty(info)];
           //return getClampedText(text, 15);
           return text;
         });
@@ -242,7 +242,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           if (typeof info === "undefined") {
             return d.set.id;
           }
-          return info.properties["name"];
+          return info.properties[config.getSetNameProperty(info)];
         });
     }
 
@@ -793,7 +793,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
         node.append("text")
           .text(function (d) {
-            var text = d.properties["name"];
+            var text = d.properties[config.getNodeNameProperty(d)];
             return getClampedText(text, 7);
           })
           .attr("x", function (d, i) {
@@ -802,7 +802,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           .attr("y", vSpacing + nodeHeight - 5)
           .append("title")
           .text(function (d) {
-            return d.properties["name"];
+            return d.properties[config.getNodeNameProperty(d)];
           });
         ;
 
@@ -1008,7 +1008,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
               if (typeof info === "undefined") {
                 return d.set.id;
               }
-              return info.properties["name"];
+              return info.properties[config.getSetNameProperty(info)];
             })
             .attr("x", setTypeIndent)
             .attr("y", setHeight)
@@ -1023,7 +1023,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
               if (typeof info === "undefined") {
                 return d.set.id;
               }
-              return info.properties["name"];
+              return info.properties[config.getSetNameProperty(info)];
             });
 
           set.each(function (d, i) {

@@ -1,5 +1,5 @@
-define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', './selectionutil', './pathUtil'],
-  function ($, d3, listeners, pathList, sorting, setInfo, selectionUtil, pathUtil) {
+define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', './selectionutil', './pathUtil', './config'],
+  function ($, d3, listeners, pathList, sorting, setInfo, selectionUtil, pathUtil, config) {
     'use strict';
 
 
@@ -84,7 +84,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
             return d;
           }
 
-          var text = info.properties["name"];
+          var text = info.properties[config.getSetNameProperty(info)];
           return getClampedText(text, 14);
           //return text;
         });
@@ -96,7 +96,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           if (typeof info === "undefined") {
             return d;
           }
-          return info.properties["name"];
+          return info.properties[config.getSetNameProperty(info)];
         });
 
       svg.selectAll("g.set text")
@@ -108,7 +108,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
             return d[0].id;
           }
 
-          var text = info.properties["name"];
+          var text = info.properties[config.getSetNameProperty(info)];
           //return getClampedText(text, 15);
           return text;
         });
@@ -120,7 +120,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           if (typeof info === "undefined") {
             return d[0].id;
           }
-          return info.properties["name"];
+          return info.properties[config.getSetNameProperty(info)];
         });
     }
 
@@ -342,7 +342,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
           var edge = path.edges[currentEdgeIndex];
           var addedSet = false;
           for (var key in edge.properties) {
-            if (pathUtil.isEdgeSetProperty(key)) {
+            if (pathUtil.isEdgeSetProperty(edge, key)) {
               var property = edge.properties[key];
               if (property instanceof Array) {
                 property.forEach(function (val) {
@@ -523,7 +523,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
             if (typeof info === "undefined") {
               return d;
             }
-            var text = getClampedText(info.properties["name"], 14);
+            var text = getClampedText(info.properties[config.getSetNameProperty(info)], 14);
 
             return text;
           })
@@ -537,7 +537,7 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
             if (typeof info === "undefined") {
               return d;
             }
-            return info.properties["name"];
+            return info.properties[config.getSetNameProperty(info)];
           });
 
         //setComboContainer.attr("class", "setComboContainer")

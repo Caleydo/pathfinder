@@ -124,37 +124,50 @@ define(['./sorting', './pathutil', './query/querymodel', './listeners'], functio
       function getSetOccurrences(pathWrapper, setId) {
         var numSetOccurrences = 0;
         pathWrapper.path.edges.forEach(function (edge) {
-          for (var key in edge.properties) {
-            if (pathUtil.isEdgeSetProperty(key)) {
-              var property = edge.properties[key];
-              if (property instanceof Array) {
-                for (var i = 0; i < property.length; i++) {
-                  if (property[i] === setId) {
-                    numSetOccurrences++
-                  }
-                }
-              } else if (property === setId) {
-                numSetOccurrences++;
-              }
+
+          pathUtil.forEachEdgeSet(edge, function(type, sId) {
+            if (sId === setId) {
+              numSetOccurrences++;
             }
-          }
+          });
+
+          //for (var key in edge.properties) {
+          //  if (pathUtil.isEdgeSetProperty(key)) {
+          //    var property = edge.properties[key];
+          //    if (property instanceof Array) {
+          //      for (var i = 0; i < property.length; i++) {
+          //        if (property[i] === setId) {
+          //          numSetOccurrences++
+          //        }
+          //      }
+          //    } else if (property === setId) {
+          //      numSetOccurrences++;
+          //    }
+          //  }
+          //}
         });
 
         pathWrapper.path.nodes.forEach(function (node) {
-          for (var key in node.properties) {
-            if (pathUtil.isNodeSetProperty(key)) {
-              var property = node.properties[key];
-              if (property instanceof Array) {
-                for (var i = 0; i < property.length; i++) {
-                  if (property[i] === setId) {
-                    numSetOccurrences++
-                  }
-                }
-              } else if (property === setId) {
-                numSetOccurrences++;
-              }
+
+          pathUtil.forEachNodeSet(node, function(type, sId) {
+            if (sId === setId) {
+              numSetOccurrences++;
             }
-          }
+          });
+          //for (var key in node.properties) {
+          //  if (pathUtil.isNodeSetProperty(key)) {
+          //    var property = node.properties[key];
+          //    if (property instanceof Array) {
+          //      for (var i = 0; i < property.length; i++) {
+          //        if (property[i] === setId) {
+          //          numSetOccurrences++
+          //        }
+          //      }
+          //    } else if (property === setId) {
+          //      numSetOccurrences++;
+          //    }
+          //  }
+          //}
 
         });
 

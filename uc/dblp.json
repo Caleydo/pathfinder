@@ -25,7 +25,7 @@
       "node_label": "Author",
       "properties": {
         "id": "id",
-        "name": "string",
+        "name": "name",
         "tvcg_papers": {
           "type": "set",
           "set": "tvcg"
@@ -61,6 +61,11 @@
       "id": "tvcg",
       "name": "TVCG",
       "node_label": "TVCG",
+
+      "properties": {
+        "title": "name"
+      },
+
       "inline": {
         "source": "AuthoredBy",
         "target": "CoAuthor"
@@ -72,6 +77,11 @@
       "id": "chi",
       "name": "CHI",
       "node_label": "CHI",
+
+      "properties": {
+        "title": "name"
+      },
+
       "inline": {
         "source": "AuthoredBy",
         "target": "CoAuthor"

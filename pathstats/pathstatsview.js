@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners', '../query/pathquery', '../sorting', '../setinfo'],
-  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo) {
+define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners', '../query/pathquery', '../sorting', '../setinfo', '../config'],
+  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo, config) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
     var NodeTypeWrapper = statData.NodeTypeWrapper;
@@ -327,6 +327,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       //  .text(function (d) {
       //    return d.pathIds.length
       //  });
+      //updateSets(setInfo);
 
       this.updateViewSize();
     };
@@ -346,22 +347,22 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
             return d.setId;
           }
 
-          var text = info.properties["name"];
+          var text = info.properties[config.getSetNameProperty(info)];
           //return getClampedText(text, 15);
           return text;
         });
 
-      //var titles = svg.selectAll("g.set_stat text title");
-      //
-      //titles
-      //  .text(function (d) {
-      //    var info = setInfo.get(d.setId);
-      //
-      //    if (typeof info === "undefined") {
-      //      return d.setId;
-      //    }
-      //    return info.properties["name"];
-      //  });
+      var titles = svg.selectAll("g.set_stat text title");
+
+      titles
+        .text(function (d) {
+          var info = setInfo.get(d.setId);
+
+          if (typeof info === "undefined") {
+            return d.setId;
+          }
+          return info.properties[config.getSetNameProperty(info)];
+        });
     }
 
     PathStatsView.prototype.getMinSize = function () {
@@ -547,7 +548,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
             if (typeof info === "undefined") {
               return stat.setId;
             }
-            return info.properties["name"];
+            return info.properties[config.getSetNameProperty(info)];
           }
 
           return stat.getLabel();
@@ -573,6 +574,8 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
             return stat.pathIds.length;
           });
       }
+
+
 
     };
 
