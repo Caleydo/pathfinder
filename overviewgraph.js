@@ -98,7 +98,6 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
 
       init: function () {
 
-        var that = this;
 
         var svg = d3.select("#pathgraph").append("svg")
         svg.attr("width", w)
@@ -124,6 +123,95 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
           .linkDistance(100)
           .charge(-1000)
           .size([w, h]);
+
+        var that = this;
+
+        var tick = function () {
+
+          that.graph.nodes.forEach(function (node) {
+
+            if (node.fixed) {
+              node.x++;
+            }
+
+
+            if (node.x + nodeWidth / 2 > w) {
+              node.x = w - nodeWidth / 2;
+            }
+            if (node.y + nodeHeight / 2 > h) {
+              node.y = h - nodeHeight / 2;
+            }
+            if (node.x - nodeWidth / 2 < 0) {
+              node.x = nodeWidth / 2;
+            }
+            if (node.y - nodeHeight / 2 < 0) {
+              node.y = nodeHeight / 2;
+            }
+          });
+
+          //allGroups.selectAll("rect").attr("x", function (d) {
+          //  return d.bounds.x;
+          //})
+          //  .attr("y", function (d) {
+          //    return d.bounds.y;
+          //  })
+          //  .attr("width", function (d) {
+          //    return d.bounds.width();
+          //  })
+          //  .attr("height", function (d) {
+          //    return d.bounds.height();
+          //  });
+
+          var nodeGroup = d3.select("#pathgraph svg g.nodeGroup");
+
+          var allNodeRects = nodeGroup.selectAll("g.node rect").data(that.graph.nodes, function (node) {
+            return node.id;
+          });
+
+          allNodeRects
+            .attr("x", function (d) {
+              return d.x - nodeWidth / 2;
+              //}
+            })
+            .attr("y", function (d) {
+              return d.y - nodeHeight / 2;
+
+            });
+
+          var allNodeTexts = nodeGroup.selectAll("g.node text").data(that.graph.nodes, function (node) {
+            return node.id;
+          });
+
+          allNodeTexts
+            .attr("x", function (d) {
+              return d.x;
+            })
+            .attr("y", function (d) {
+              return d.y + 5;
+            });
+
+          var edgeGroup = d3.select("#pathgraph svg g.edgeGroup");
+
+          var allEdges = edgeGroup.selectAll("g.edge line").data(that.graph.edges, function (edge) {
+            return edge.edge.id;
+          });
+
+          allEdges
+            .attr("x1", function (d) {
+              return calcIntersectionX(d.source, d.target, nodeWidth, nodeHeight);
+            })
+            .attr("y1", function (d) {
+              return calcIntersectionY(d.source, d.target, nodeWidth, nodeHeight);
+            })
+            .attr("x2", function (d) {
+              return calcIntersectionX(d.target, d.source, nodeWidth, nodeHeight);
+            })
+            .attr("y2", function (d) {
+              return calcIntersectionY(d.target, d.source, nodeWidth, nodeHeight);
+            });
+        };
+
+        this.force.on("tick", tick);
 
         //webcola.d3adaptor()
         //.convergenceThreshold(0.1)
@@ -176,7 +264,20 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
           }
         });
 
-        listeners.add(that.updateFilters, listeners.updateType.QUERY_UPDATE);
+        listeners.add(function (query) {
+          if (pathQuery.isRemoveFilteredPaths()) {
+            that.updateGraphToFilteredPaths();
+          } else {
+            that.updateFilter();
+          }
+        }, listeners.updateType.QUERY_UPDATE);
+        listeners.add(function (remove) {
+          if (remove) {
+            that.updateGraphToFilteredPaths();
+          } else {
+            that.updateGraphToAllPaths();
+          }
+        }, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
 
       },
 
@@ -238,7 +339,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
         var nodeStep = (w - 2 * (sideSpacing + nodeWidth / 2)) / (path.nodes.length - 1);
         var posX = sideSpacing + nodeWidth / 2;
         var posY = h / 2;
-        var svg = d3.select("#pathgraph");
+        var svg = d3.select("#pathgraph svg");
 
         this.graph.nodes.forEach(function (node) {
           //if (node.fixed === true) {
@@ -329,10 +430,14 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
         //svg.selectAll(".group")
         //  .data(that.graph.groups);
         svg.selectAll("g.edgeGroup").selectAll("g.edge")
-          .data(that.graph.edges);
+          .data(that.graph.edges, function (edge) {
+            return edge.edge.id;
+          });
 
         svg.selectAll("g.nodeGroup").selectAll("g.node")
-          .data(that.graph.nodes)
+          .data(that.graph.nodes, function (node) {
+            return node.id;
+          })
           .classed("fixed", function (d) {
             return d.fixed
           });
@@ -343,8 +448,55 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
 
       },
 
-      updateFilters: function () {
-        var svg = d3.select("#pathgraph");
+      updateGraphToFilteredPaths: function () {
+
+        this.graph = {nodes: [], edges: [], groups: []};
+        this.nodeIndexMap = {};
+        this.edgeMap = {};
+        this.nodeIndex = 0;
+        var that = this;
+
+        this.paths.forEach(function (path) {
+          if (!pathQuery.isPathFiltered(path.id)) {
+            that.addPathsToGraph([path]);
+          }
+        });
+
+
+        //var nodesToRemove = [];
+        //var edgesToRemove = [];
+        //
+        //this.graph.nodes.forEach(function (node) {
+        //  if (pathQuery.isNodeFiltered(node.id)) {
+        //    nodesToRemove.add(node);
+        //  }
+        //});
+        //
+        //this.graph.edges.forEach(function (edge) {
+        //  if (pathQuery.isEdgeFiltered(edge.edge.id)) {
+        //    edgesToRemove.add(node);
+        //  }
+        //});
+
+        this.renderGraph(d3.select("#pathgraph svg"));
+      },
+
+      updateGraphToAllPaths: function () {
+        this.graph = {nodes: [], edges: [], groups: []};
+        this.nodeIndexMap = {};
+        this.edgeMap = {};
+        this.nodeIndex = 0;
+        var that = this;
+
+        that.addPathsToGraph(this.paths);
+
+        this.renderGraph(d3.select("#pathgraph svg"));
+      },
+
+
+      updateFilter: function () {
+
+        var svg = d3.select("#pathgraph svg");
         svg.selectAll("g.node")
           .transition()
           .style("opacity", function (d) {
@@ -356,6 +508,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
           .style("opacity", function (d) {
             return pathQuery.isEdgeFiltered(d.edge.id) ? 0.5 : 1;
           });
+
       },
 
       render: function (paths) {
@@ -446,8 +599,11 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
 
         var allEdges = edgeGroup.selectAll("g.edge")
           .data(that.graph.edges, function (edge) {
-            return edge.edge.id
+            return edge.edge.id;
           });
+
+        allEdges.exit()
+          .remove();
 
         var edge = allEdges
           .enter()
@@ -464,8 +620,11 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
 
         var allNodes = nodeGroup.selectAll("g.node")
           .data(that.graph.nodes, function (node) {
-            return node.id
+            return node.id;
           });
+
+        allNodes.exit()
+          .remove();
 
         var node = allNodes
           .enter()
@@ -502,82 +661,12 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsort
           });
 
 
-        var tick = function () {
-
-          that.graph.nodes.forEach(function (node) {
-
-            if (node.fixed) {
-              node.x++;
-            }
-
-
-            if (node.x + nodeWidth / 2 > w) {
-              node.x = w - nodeWidth / 2;
-            }
-            if (node.y + nodeHeight / 2 > h) {
-              node.y = h - nodeHeight / 2;
-            }
-            if (node.x - nodeWidth / 2 < 0) {
-              node.x = nodeWidth / 2;
-            }
-            if (node.y - nodeHeight / 2 < 0) {
-              node.y = nodeHeight / 2;
-            }
-          });
-
-          //allGroups.selectAll("rect").attr("x", function (d) {
-          //  return d.bounds.x;
-          //})
-          //  .attr("y", function (d) {
-          //    return d.bounds.y;
-          //  })
-          //  .attr("width", function (d) {
-          //    return d.bounds.width();
-          //  })
-          //  .attr("height", function (d) {
-          //    return d.bounds.height();
-          //  });
-
-          allNodes.selectAll("rect")
-            .attr("x", function (d) {
-              return d.x - nodeWidth / 2;
-              //}
-            })
-            .attr("y", function (d) {
-              return d.y - nodeHeight / 2;
-
-            });
-
-          allNodes.selectAll("text")
-            .attr("x", function (d) {
-              return d.x;
-            })
-            .attr("y", function (d) {
-              return d.y + 5;
-            });
-
-          allEdges.selectAll("line")
-            .attr("x1", function (d) {
-              return calcIntersectionX(d.source, d.target, nodeWidth, nodeHeight);
-            })
-            .attr("y1", function (d) {
-              return calcIntersectionY(d.source, d.target, nodeWidth, nodeHeight);
-            })
-            .attr("x2", function (d) {
-              return calcIntersectionX(d.target, d.source, nodeWidth, nodeHeight);
-            })
-            .attr("y2", function (d) {
-              return calcIntersectionY(d.target, d.source, nodeWidth, nodeHeight);
-            });
-        }
-
-        that.force.on("tick", tick);
-
-
       }
 
 
     }
+
+
   }
 )
 ;

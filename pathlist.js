@@ -265,6 +265,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
 
     function PathList() {
+      this.paths = [];
       this.pathWrappers = [];
       this.updateListeners = [];
       this.selectionListeners = [];
@@ -279,11 +280,13 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         } else {
           that.addAllPaths();
         }
+        that.notifyUpdateListeners();
       };
 
       this.queryChangedListener = function (query) {
         if (pathQuery.isRemoveFilteredPaths()) {
           that.updatePathWrappersToFilter();
+          that.notifyUpdateListeners();
         } else {
           that.updatePathList();
         }
@@ -307,7 +310,9 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       wrapPaths: function (paths) {
         var that = this;
         paths.forEach(function (path) {
-          that.pathWrappers.push(new PathWrapper(path));
+          if (!(pathQuery.isPathFiltered(path.id) && pathQuery.isRemoveFilteredPaths())) {
+            that.pathWrappers.push(new PathWrapper(path));
+          }
         });
       },
 
@@ -395,7 +400,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         var pathsToAdd = [];
         var that = this;
 
-        dataStore.paths.forEach(function (path) {
+        this.paths.forEach(function (path) {
           if (!pathQuery.isPathFiltered(path.id)) {
             var pathPresent = false;
             for (var i = 0; i < that.pathWrappers.length; i++) {
@@ -412,7 +417,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         });
 
         pathsToAdd.forEach(function (path) {
-          that.addPath(path);
+          that.pathWrappers.push(new PathWrapper(path));
         });
 
         this.render(this.parent);
@@ -422,7 +427,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         var pathsToAdd = [];
         var that = this;
 
-        dataStore.paths.forEach(function (path) {
+        this.paths.forEach(function (path) {
           var pathPresent = false;
           for (var i = 0; i < that.pathWrappers.length; i++) {
             var pathWrapper = that.pathWrappers[i];
@@ -438,7 +443,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         });
 
         pathsToAdd.forEach(function (path) {
-          that.addPath(path);
+          that.pathWrappers.push(new PathWrapper(path));
         });
 
         this.render(this.parent);
@@ -539,8 +544,8 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       destroy: function () {
         this.removePaths();
         listeners.remove(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
-        listeners.add(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
-        listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
+        listeners.remove(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
+        listeners.remove(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.remove(this.sortUpdateListener, pathSorting.updateType);
       },
@@ -566,6 +571,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
       removePaths: function () {
         this.removeGuiElements(this.parent);
+        this.paths = [];
         this.pathWrappers = [];
       }
       ,
@@ -583,11 +589,15 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
       setPaths: function (paths) {
         this.pathWrappers = [];
+        this.paths = paths;
         this.wrapPaths(paths);
       },
 
       addPath: function (path) {
-        this.pathWrappers.push(new PathWrapper(path));
+        this.paths.push(path);
+        if (!(pathQuery.isPathFiltered(path.id) && pathQuery.isRemoveFilteredPaths())) {
+          this.pathWrappers.push(new PathWrapper(path));
+        }
       }
       ,
 
@@ -987,7 +997,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
             .attr("x", 0)
             .attr("y", 0)
             .attr("width", "100%")
-            .attr("height", setHeight)
+            .attr("height", setHeight);
 
           set.append("text")
             .text(function (d) {
@@ -1036,7 +1046,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
                 fill: function (d) {
                   return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
                 }
-              })
+              });
 
             d3.select(this).selectAll("line").
               data(function (d, i) {

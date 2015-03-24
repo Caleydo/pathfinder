@@ -416,7 +416,6 @@ define(['jquery', 'd3', './listeners', './pathlist', './sorting', './setinfo', '
       render: function (parent) {
         this.parent = parent;
         this.renderSetCombinations();
-zzzzzzzzzztt
       },
 
       renderSetCombinations: function () {
