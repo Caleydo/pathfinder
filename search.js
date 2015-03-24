@@ -52,11 +52,12 @@ define(['../caleydo/main', '../caleydo/event'],function(C, events) {
     }
   };
 
-  ServerSearch.prototype.loadQuery = function(query, k, maxDepth) {
+  ServerSearch.prototype.loadQuery = function(query, k, maxDepth, just_network_edges) {
     var msg = {
       k : k || 10,
       maxDepth : maxDepth || 10,
-      query : query ? query.serialize() : null
+      query : query ? query.serialize() : null,
+      just_network_edges : just_network_edges || false
     };
     this.send('query', msg);
   };
