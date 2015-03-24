@@ -126,6 +126,10 @@ define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/path
       //});
     };
 
+    NodeTypeWrapper.prototype.getLabel = function() {
+      return this.type;
+    }
+
     NodeTypeWrapper.prototype.removePath = function (path) {
       var index = this.pathIds.indexOf(path.id);
       if (index !== -1) {
@@ -198,6 +202,7 @@ define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/path
       //this.edgeIds = [];
     }
 
+
     SetTypeWrapper.prototype = Object.create(BaseHierarchyElement.prototype);
 
     SetTypeWrapper.prototype.addNode = function (setId, node, path) {
@@ -214,6 +219,10 @@ define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/path
       }
       setWrapper.addNode(node, path);
     };
+
+    SetTypeWrapper.prototype.getLabel = function() {
+      return config.getSetTypeFromSetPropertyName(this.type);
+    }
 
     SetTypeWrapper.prototype.removeSet = function (setId) {
       var setWrapper = this.setWrapperDict[setId.toString()];

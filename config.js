@@ -11,14 +11,14 @@ define(function () {
     setConfig: function (c) {
       config = c;
 
-      config.nodes.forEach(function(nodeConfig) {
+      config.nodes.forEach(function (nodeConfig) {
 
-        Object.keys(nodeConfig.properties).forEach(function(key) {
+        Object.keys(nodeConfig.properties).forEach(function (key) {
           var prop = nodeConfig.properties[key];
           var propType = prop.type;
-          if(typeof propType !== "undefined" && propType === "set") {
+          if (typeof propType !== "undefined" && propType === "set") {
             var sets = nodeSets[nodeConfig["node_label"]];
-            if(typeof sets === "undefined") {
+            if (typeof sets === "undefined") {
               sets = {};
               nodeSets[nodeConfig["node_label"]] = sets;
             }
@@ -28,14 +28,14 @@ define(function () {
 
       });
 
-      config.edges.forEach(function(edgeConfig) {
+      config.edges.forEach(function (edgeConfig) {
 
-        Object.keys(edgeConfig.properties).forEach(function(key) {
+        Object.keys(edgeConfig.properties).forEach(function (key) {
           var prop = edgeConfig.properties[key];
           var propType = prop.type;
-          if(typeof propType !== "undefined" && propType === "set") {
+          if (typeof propType !== "undefined" && propType === "set") {
             var sets = edgeSets[edgeConfig["label"]];
-            if(typeof sets === "undefined") {
+            if (typeof sets === "undefined") {
               sets = {};
               edgeSets[edgeConfig["label"]] = sets;
             }
@@ -46,27 +46,59 @@ define(function () {
       });
     },
 
-    isNodeSetProperty: function(node, property) {
+    isNodeSetProperty: function (node, property) {
       var type = this.getNodeType(node);
       var sets = nodeSets[type];
-      if(typeof sets !== "undefined") {
+      if (typeof sets !== "undefined") {
         var set = sets[property];
-        if(typeof set !== "undefined") {
+        if (typeof set !== "undefined") {
           return true;
         }
       }
       return false;
     },
 
-    isEdgeSetProperty: function(edge, property) {
-      var sets = edgeSets[edge.type];
-      if(typeof sets !== "undefined") {
+    getSetTypeFromSetPropertyName: function (id) {
+      for (var i = 0; i < config.sets.length; i++) {
+        var setConfig = config.sets[i];
+        if (setConfig["set_property"] === id) {
+          return setConfig["name"];
+        }
+      }
+    },
+
+
+    getSetTypeFromNodeSetProperty: function (node, property) {
+      var type = this.getNodeType(node);
+      var sets = nodeSets[type];
+      if (typeof sets !== "undefined") {
         var set = sets[property];
-        if(typeof set !== "undefined") {
+        if (typeof set !== "undefined") {
+          return getSetTypeFromSetTypeId(set.set);
+        }
+      }
+    },
+
+    isEdgeSetProperty: function (edge, property) {
+      var sets = edgeSets[edge.type];
+      if (typeof sets !== "undefined") {
+        var set = sets[property];
+        if (typeof set !== "undefined") {
           return true;
         }
       }
       return false;
+    },
+
+    getSetTypeFromEdgeSetProperty: function (edge, property) {
+      var sets = nodeSets[edge.type];
+      if (typeof sets !== "undefined") {
+        var set = sets[property];
+        if (typeof set !== "undefined") {
+
+          return getSetTypeFromSetTypeId(set.set);
+        }
+      }
     },
 
     getConfig: function () {

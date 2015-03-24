@@ -476,7 +476,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       var typeLabel = statType.append("text")
         .text(function (typeWrapper) {
-          return typeWrapper.type;
+          return typeWrapper.getLabel();
         })
         .attr({
           x: COLLAPSE_BUTTON_SPACING,

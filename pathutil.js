@@ -23,7 +23,7 @@ define(["./config"], function (config) {
 
       Object.keys(node.properties).forEach(function (key) {
         if (that.isNodeSetProperty(node, key)) {
-          setTypes.add(key);
+          setTypes.push(key);
         }
       });
 
@@ -37,7 +37,7 @@ define(["./config"], function (config) {
 
       Object.keys(edge.properties).forEach(function (key) {
         if (that.isEdgeSetProperty(edge, key)) {
-          setTypes.add(key);
+          setTypes.push(key);
         }
       });
 

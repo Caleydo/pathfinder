@@ -903,7 +903,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
           .text(function (d) {
             //var text = d[0].id;
             //return getClampedText(text, 15);
-            return d.setType.type;
+            return config.getSetTypeFromSetPropertyName(d.setType.type);
           })
           .attr("x", 10)
           .attr("y", setHeight)
