@@ -30,7 +30,7 @@ define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/path
 
   function NodeWrapper(parentElement, node) {
     BaseHierarchyElement.call(this, parentElement);
-    this.id = currentNodeWrapperId++;
+    this.id = node.id;
     this.node = node;
     this.pathIds = [];
   }
@@ -40,6 +40,13 @@ define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/path
   NodeWrapper.prototype.addPath = function (path) {
     if (this.pathIds.indexOf(path.id) === -1) {
       this.pathIds.push(path.id);
+    }
+  };
+
+  NodeWrapper.prototype.removePath = function(path) {
+    var index = this.pathIds.indexOf(path.id);
+    if (index !== -1) {
+      this.pathIds.splice(index, 1);
     }
   };
 
@@ -57,7 +64,7 @@ define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/path
   };
 
   function NodeTypeWrapper(parentElement, type) {
-    this.id = currentNodeTypeWrapperId++;
+    this.id = type;
     BaseHierarchyElement.call(this, parentElement);
     this.type = type;
     this.nodeWrapperDict = {};
@@ -81,13 +88,61 @@ define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/path
     nodeWrapper.addPath(path);
   };
 
+  NodeTypeWrapper.prototype.removeNode = function (node) {
+    var nodeWrapper = this.nodeWrapperDict[node.id.toString()];
+    if (typeof nodeWrapper === "undefined") {
+      return;
+    }
+    delete this.nodeWrapperDict[node.id.toString()];
+
+    var index = this.childDomElements.indexOf(nodeWrapper);
+    if (index !== -1) {
+      this.childDomElements.splice(index, 1);
+    }
+
+    //var pathsToRemove = [];
+    //var that = this;
+    //
+    //this.pathIds.forEach(function (pathId) {
+    //  var removePath = true;
+    //  for (var i = 0; i < that.childDomElements.length; i++) {
+    //    var pathWrapper = that.childDomElements[i];
+    //    if (pathWrapper.pathIds.indexOf(pathId) !== -1) {
+    //      removePath = false;
+    //    }
+    //  }
+    //
+    //  if (removePath) {
+    //    pathsToRemove.push(pathId);
+    //  }
+    //});
+    //
+    //pathsToRemove.forEach(function(pathId) {
+    //  var index = that.pathIds.indexOf(pathId);
+    //  if (index !== -1) {
+    //    that.pathIds.splice(index, 1);
+    //  }
+    //});
+  };
+
+  NodeTypeWrapper.prototype.removePath = function(path) {
+    var index = this.pathIds.indexOf(path.id);
+    if (index !== -1) {
+      this.pathIds.splice(index, 1);
+    }
+
+    this.childDomElements.forEach(function(child) {
+      child.removePath(path);
+    });
+  };
+
   function SetWrapper(parentElement, setId) {
-    this.id = currentSetWrapperId++;
+    this.id = setId;
     BaseHierarchyElement.call(this, parentElement);
     this.setId = setId;
     this.pathIds = [];
-    this.nodeIds = [];
-    this.edgeIds = [];
+    //this.nodeIds = [];
+    //this.edgeIds = [];
   }
 
   SetWrapper.prototype = Object.create(BaseHierarchyElement.prototype);
@@ -97,8 +152,15 @@ define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/path
       this.pathIds.push(path.id);
     }
 
-    if (this.nodeIds.indexOf(node.id) === -1) {
-      this.nodeIds.push(node.id);
+    //if (this.nodeIds.indexOf(node.id) === -1) {
+    //  this.nodeIds.push(node.id);
+    //}
+  };
+
+  SetWrapper.prototype.removePath = function(path) {
+    var index = this.pathIds.indexOf(path.id);
+    if (index !== -1) {
+      this.pathIds.splice(index, 1);
     }
   };
 
@@ -107,9 +169,9 @@ define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/path
       this.pathIds.push(path.id);
     }
 
-    if (this.edgeIds.indexOf(edge.id) === -1) {
-      this.edgeIds.push(edge.id);
-    }
+    //if (this.edgeIds.indexOf(edge.id) === -1) {
+    //  this.edgeIds.push(edge.id);
+    //}
   };
 
   SetWrapper.prototype.isFiltered = function () {
@@ -126,13 +188,13 @@ define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/path
   };
 
   function SetTypeWrapper(parentElement, type) {
-    this.id = currentSetTypeWrapperId++;
+    this.id = type;
     BaseHierarchyElement.call(this, parentElement);
     this.type = type;
     this.setWrapperDict = {};
     this.pathIds = [];
-    this.nodeIds = [];
-    this.edgeIds = [];
+    //this.nodeIds = [];
+    //this.edgeIds = [];
   }
 
   SetTypeWrapper.prototype = Object.create(BaseHierarchyElement.prototype);
@@ -150,6 +212,54 @@ define(['../hierarchyelements', '../listeners', '../pathsorting', '../query/path
       this.childDomElements.push(setWrapper);
     }
     setWrapper.addNode(node, path);
+  };
+
+  SetTypeWrapper.prototype.removeSet = function (setId) {
+    var setWrapper = this.setWrapperDict[setId.toString()];
+    if (typeof setWrapper === "undefined") {
+      return;
+    }
+    delete this.setWrapperDict[setId.toString()];
+
+    var index = this.childDomElements.indexOf(setWrapper);
+    if (index !== -1) {
+      this.childDomElements.splice(index, 1);
+    }
+
+    //var pathsToRemove = [];
+    //var that = this;
+    //
+    //this.pathIds.forEach(function (pathId) {
+    //  var removePath = true;
+    //  for (var i = 0; i < that.childDomElements.length; i++) {
+    //    var pathWrapper = that.childDomElements[i];
+    //    if (pathWrapper.pathIds.indexOf(pathId) !== -1) {
+    //      removePath = false;
+    //    }
+    //  }
+    //
+    //  if (removePath) {
+    //    pathsToRemove.push(pathId);
+    //  }
+    //});
+    //
+    //pathsToRemove.forEach(function(pathId) {
+    //  var index = that.pathIds.indexOf(pathId);
+    //  if (index !== -1) {
+    //    that.pathIds.splice(index, 1);
+    //  }
+    //});
+  };
+
+  SetTypeWrapper.prototype.removePath = function(path) {
+    var index = this.pathIds.indexOf(path.id);
+    if (index !== -1) {
+      this.pathIds.splice(index, 1);
+    }
+
+    this.childDomElements.forEach(function(child) {
+      child.removePath(path);
+    });
   };
 
   SetTypeWrapper.prototype.addEdge = function (setId, edge, path) {

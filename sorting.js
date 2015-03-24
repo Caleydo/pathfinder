@@ -93,9 +93,23 @@ define(function() {
     }
   }
 
+  function chainComparators(comparators) {
+    return function (a, b) {
+
+      for (var i = 0; i < comparators.length; i++) {
+        var res = comparators[i](a, b);
+        if (res !== 0) {
+          return res;
+        }
+      }
+      return 0;
+    }
+  }
+
   return { SortingStrategy: SortingStrategy,
     SortingManager: SortingManager,
-    IdSortingStrategy: IdSortingStrategy
+    IdSortingStrategy: IdSortingStrategy,
+    chainComparators: chainComparators
   }
 
 
