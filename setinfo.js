@@ -56,7 +56,7 @@ define(['d3', './listeners'], function (d3, listeners) {
       }).then(function (data) {
         //integrate the map
         Object.keys(data).map(function(id) {
-          var key = id.substr(5);
+          var key = id;
           that.setInfos[key] = data[id];
           delete that.currentlyLoading[key];
         });

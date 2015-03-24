@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners', '../query/pathquery', '../sorting'],
-  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting) {
+define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners', '../query/pathquery', '../sorting', '../setinfo'],
+  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
     var NodeTypeWrapper = statData.NodeTypeWrapper;
@@ -58,6 +58,9 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           that.updateView();
         }
       }, listeners.updateType.QUERY_UPDATE);
+
+      listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
+
       listeners.add(function (remove) {
         if (remove) {
           that.updateToFilteredPaths();
@@ -328,6 +331,39 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       this.updateViewSize();
     };
 
+    function updateSets(setInfo) {
+
+      var svg = d3.select("#pathstats svg");
+
+      var setStats = svg.selectAll("g.set_stat text")
+
+      svg.selectAll("g.set_stat text")
+        .text(function (d) {
+          var info = setInfo.get(d.setId);
+
+          if (typeof info === "undefined") {
+            //return getClampedText(d[0].id, 15);
+            return d.setId;
+          }
+
+          var text = info.properties["name"];
+          //return getClampedText(text, 15);
+          return text;
+        });
+
+      //var titles = svg.selectAll("g.set_stat text title");
+      //
+      //titles
+      //  .text(function (d) {
+      //    var info = setInfo.get(d.setId);
+      //
+      //    if (typeof info === "undefined") {
+      //      return d.setId;
+      //    }
+      //    return info.properties["name"];
+      //  });
+    }
+
     PathStatsView.prototype.getMinSize = function () {
       var totalHeight = 0;
       this.nodeTypeWrappers.childDomElements.forEach(function (nodeTypeWrapper) {
@@ -470,6 +506,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         .enter()
         .append("g")
         .classed("stats", true)
+        .classed(idType + "_stat", true)
         .attr({
           display: hierarchyElements.displayFunction,
           transform: "translate(0," + Math.max($(this.parentSelector)[0].offsetHeight, that.getMinSize().height) + ")"
@@ -503,6 +540,16 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       setLabel.append("title")
         .text(function (stat) {
+
+          if (idType === "set") {
+            var info = setInfo.get(stat.setId);
+
+            if (typeof info === "undefined") {
+              return stat.setId;
+            }
+            return info.properties["name"];
+          }
+
           return stat.getLabel();
         });
 
