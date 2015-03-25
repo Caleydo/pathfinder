@@ -84,6 +84,13 @@ define(["./config"], function (config) {
       } else {
         callBack(setType, property);
       }
+    },
+
+    getClampedText: function (text, maxLength) {
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength);
+      }
+      return text;
     }
   }
 });
