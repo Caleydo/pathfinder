@@ -1,5 +1,5 @@
 define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../../setinfo', '../../selectionutil', '../../pathUtil', '../../config', './aggregatesorting', './aggregate'],
-  function ($, d3, listeners, pathList, sorting, setInfo, selectionUtil, pathUtil, config, aggregateSorting, aggregate) {
+  function ($, d3, listeners, pathList, sorting, setInfo, selectionUtil, pathUtil, config, aggregateSorting, a) {
     'use strict';
 
 
@@ -14,12 +14,12 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
     var sortingManager = aggregateSorting.sortingManager;
 
     function SetCombination(setIds, pathUpdateListener) {
-      aggregate.Aggregate.call(this, pathUpdateListener);
+      a.Aggregate.call(this, pathUpdateListener);
       this.setIds = setIds;
       this.collapsed = true;
     }
 
-    SetCombination.prototype = Object.create(aggregate.Aggregate.prototype);
+    SetCombination.prototype = Object.create(a.Aggregate.prototype);
 
 
     function SetNodePresenceSortingStrategy(setIds) {
@@ -142,7 +142,7 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
     }
 
     function SetComboList() {
-      aggregate.AggregateList.call(this);
+      a.AggregateList.call(this);
 
       var that = this;
 
@@ -160,7 +160,7 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
       }
     }
 
-    SetComboList.prototype = Object.create(aggregate.AggregateList.prototype);
+    SetComboList.prototype = Object.create(a.AggregateList.prototype);
 
 
     SetComboList.prototype.updateDataBinding = function () {

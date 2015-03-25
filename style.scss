@@ -93,6 +93,33 @@ g.node.path_selected {
   }
 }
 
+g.typeNode {
+  text {
+    text-anchor: middle;
+    font-family: sans-serif;
+    cursor: default;
+    font-size: 11px;
+    fill: rgb(30, 30, 30);
+  }
+
+  ellipse {
+    fill: rgb(200, 200, 200);
+    stroke: rgb(30, 30, 30);
+  }
+}
+
+g.typeNode.hovered {
+  ellipse {
+    fill: rgb(255, 200, 0);
+  }
+}
+
+g.typeNode.selected {
+  ellipse {
+    fill: rgb(255, 100, 0);
+  }
+}
+
 g.setNode {
   text {
     text-anchor: middle;

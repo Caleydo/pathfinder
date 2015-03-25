@@ -55,24 +55,26 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
 
       $("#aggregationType").on("change", function () {
         if (this.value == '0' && !(that.aggregateList instanceof NoAggregationList)) {
-          that.aggregateList.destroy();
-          that.aggregateList = new NoAggregationList();
-          that.aggregateList.init();
-          that.aggregateList.addUpdateListener(function (list) {
-            that.updateViewSize();
-          });
-          that.render(that.paths);
+          changeAggregation(NoAggregationList);
         }
         if (this.value == '1' && !(that.aggregateList instanceof SetComboList)) {
-          that.aggregateList.destroy();
-          that.aggregateList = new SetComboList();
-          that.aggregateList.init();
-          that.aggregateList.addUpdateListener(function (list) {
-            that.updateViewSize();
-          });
-          that.render(that.paths);
+          changeAggregation(SetComboList);
+        }
+        if (this.value == '2' && !(that.aggregateList instanceof NodeTypeComboList)) {
+         changeAggregation(NodeTypeComboList);
         }
       });
+
+      function changeAggregation(constructor) {
+        that.aggregateList.destroy();
+        aggregateSorting.sortingManager.reset();
+        that.aggregateList = new constructor();
+        that.aggregateList.init();
+        that.aggregateList.addUpdateListener(function (list) {
+          that.updateViewSize();
+        });
+        that.render(that.paths);
+      }
 
 
       $("#pathSortingOptions").on("change", function () {

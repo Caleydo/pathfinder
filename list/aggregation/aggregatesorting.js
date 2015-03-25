@@ -16,6 +16,11 @@ define(['../../sorting', '../../pathutil', '../../query/querymodel', '../../list
 
     var sortingManager = new sorting.SortingManager(true);
 
+    sortingManager.reset = function () {
+      this.currentStrategyChain = [sortingStrategies.numPaths, sortingStrategies.aggregateId];
+      this.currentComparator = sorting.getComparatorFromStrategyChain(this.currentStrategyChain);
+    };
+
     var sortingStrategies = {
       aggregateId: new sorting.IdSortingStrategy(sortingManager, function (aggregate) {
         return aggregate.id

@@ -17,7 +17,7 @@ define(function() {
     compare: function (a, b) {
       return 0;
     }
-  }
+  };
 
   function IdSortingStrategy(sortingManager, idAccessor) {
     SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID);
@@ -34,7 +34,7 @@ define(function() {
   function SortingManager(ascending, strategyChain) {
     this.ascending = ascending || true;
     this.currentStrategyChain = strategyChain || [new SortingStrategy(SortingStrategy.prototype.STRATEGY_TYPES.UNKNOWN)];
-    this.currentComparator = getChainComparator(this.currentStrategyChain);
+    this.currentComparator = getComparatorFromStrategyChain(this.currentStrategyChain);
   }
 
   SortingManager.prototype = {
@@ -45,7 +45,7 @@ define(function() {
 
     setStrategyChain: function (chain) {
       this.currentStrategyChain = chain;
-      this.currentComparator = getChainComparator(this.currentStrategyChain)
+      this.currentComparator = getComparatorFromStrategyChain(this.currentStrategyChain)
     },
 
     // Replaces the first occurrence of an existing strategy of the same strategy type in the chain, or adds it to the
@@ -64,23 +64,16 @@ define(function() {
         this.currentStrategyChain.unshift(strategy);
       }
       this.setStrategyChain(this.currentStrategyChain);
+    },
+
+    reset: function() {
+      this.currentStrategyChain = [new SortingStrategy(SortingStrategy.prototype.STRATEGY_TYPES.UNKNOWN)];
+      this.currentComparator = getComparatorFromStrategyChain(this.currentStrategyChain);
     }
 
-    //sort: function ( data, parent, selector, transformFunction, strategyChain) {
-    //  this.setStrategyChain(strategyChain || this.currentStrategyChain);
-    //
-    //  data.sort(this.currentComparator);
-    //
-    //  parent.selectAll(selector)
-    //    .data(data, function(d) {return d.path.id});
-    //  parent.selectAll(selector)
-    //    .sort(this.currentComparator)
-    //    .transition()
-    //    .attr("transform", transformFunction);
-    //}
-  }
+  };
 
-  function getChainComparator(strategies) {
+  function getComparatorFromStrategyChain(strategies) {
     return function (a, b) {
 
       for (var i = 0; i < strategies.length; i++) {
@@ -109,7 +102,8 @@ define(function() {
   return { SortingStrategy: SortingStrategy,
     SortingManager: SortingManager,
     IdSortingStrategy: IdSortingStrategy,
-    chainComparators: chainComparators
+    chainComparators: chainComparators,
+    getComparatorFromStrategyChain: getComparatorFromStrategyChain
   }
 
 

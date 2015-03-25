@@ -64,13 +64,15 @@ define(['d3', '../caleydo/main'], function (d3, C) {
     selections: {
       node: new Selection(),
       set: new Selection(),
-      path: new Selection()
+      path: new Selection(),
+      nodeType: new Selection()
     },
 
     listeners: {
       node: [],
       set: [],
-      path: []
+      path: [],
+      nodeType: []
     },
 
     notify: function (idType, selectionType) {
