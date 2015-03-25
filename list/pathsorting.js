@@ -1,4 +1,4 @@
-define(['./sorting', './pathutil', './query/querymodel', './listeners'], function (sorting, pathUtil, q, listeners) {
+define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], function (sorting, pathUtil, q, listeners) {
     var SortingStrategy = sorting.SortingStrategy;
 
     //TODO: fetch amount of sets from server
@@ -15,7 +15,7 @@ define(['./sorting', './pathutil', './query/querymodel', './listeners'], functio
         return d3.ascending(a.path.edges.length, b.path.edges.length);
       }
       return d3.descending(a.path.edges.length, b.path.edges.length);
-    }
+    };
 
 
     function SetCountEdgeWeightSortingStrategy() {
@@ -54,7 +54,7 @@ define(['./sorting', './pathutil', './query/querymodel', './listeners'], functio
         return d3.ascending(weightA, weightB);
       }
       return d3.descending(weightA, weightB);
-    }
+    };
 
     function NodePresenceSortingStrategy(nodeIds) {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE);
@@ -119,13 +119,13 @@ define(['./sorting', './pathutil', './query/querymodel', './listeners'], functio
           return d3.descending(setScoreA, setScoreB);
         }
         return d3.ascending(setScoreA, setScoreB);
-      }
+      };
 
       function getSetOccurrences(pathWrapper, setId) {
         var numSetOccurrences = 0;
         pathWrapper.path.edges.forEach(function (edge) {
 
-          pathUtil.forEachEdgeSet(edge, function(type, sId) {
+          pathUtil.forEachEdgeSet(edge, function (type, sId) {
             if (sId === setId) {
               numSetOccurrences++;
             }
@@ -149,25 +149,11 @@ define(['./sorting', './pathutil', './query/querymodel', './listeners'], functio
 
         pathWrapper.path.nodes.forEach(function (node) {
 
-          pathUtil.forEachNodeSet(node, function(type, sId) {
+          pathUtil.forEachNodeSet(node, function (type, sId) {
             if (sId === setId) {
               numSetOccurrences++;
             }
           });
-          //for (var key in node.properties) {
-          //  if (pathUtil.isNodeSetProperty(key)) {
-          //    var property = node.properties[key];
-          //    if (property instanceof Array) {
-          //      for (var i = 0; i < property.length; i++) {
-          //        if (property[i] === setId) {
-          //          numSetOccurrences++
-          //        }
-          //      }
-          //    } else if (property === setId) {
-          //      numSetOccurrences++;
-          //    }
-          //  }
-          //}
 
         });
 

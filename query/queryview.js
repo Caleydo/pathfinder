@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../view', './querymodel', '../pathsorting', '../listeners', '../listoverlay', '../search', './pathquery', 'jquery-ui'],
+define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../listeners', '../listoverlay', '../search', './pathquery', 'jquery-ui'],
   function ($, d3, View, q, pathSorting, listeners, ListOverlay, ServerSearch, pathQuery) {
 
     var listOverlay = new ListOverlay();

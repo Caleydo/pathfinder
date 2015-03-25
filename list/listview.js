@@ -1,8 +1,8 @@
 /**
  * Created by Christian on 23.02.2015.
  */
-define(['jquery', 'd3', './pathlist', './setlist', './view'],
-  function ($, d3, pathList, setList, view) {
+define(['jquery', 'd3', './pathlist', 'list/aggregation/setlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting'],
+  function ($, d3, pathList, setList, view, pathSorting, listeners, aggregateSorting) {
 
     var listView = new view("#pathlist");
 
@@ -17,6 +17,18 @@ define(['jquery', 'd3', './pathlist', './setlist', './view'],
 
 
     ListView.prototype.init = function () {
+      var that = this;
+      return new Promise(function (resolve, reject) {
+        $('#listViewWidgets').load('list/view.html', function () {
+          that.initImpl();
+          resolve(true);
+        });
+        // or
+        // reject ("Error!");
+      });
+    };
+
+    ListView.prototype.initImpl = function () {
       view.prototype.init.call(this);
       this.currentView = this.pathList;
       this.currentView.init();
@@ -40,31 +52,46 @@ define(['jquery', 'd3', './pathlist', './setlist', './view'],
         .attr("width", 90)
         .attr("height", 20);
 
-      var viewTypeDiv = d3.select("#listView").insert("div", ":first-child");
+
       var that = this;
 
-      var pathListWidgetDiv = viewTypeDiv.append("div");
+      $("#pathListViewType").click(function () {
 
-      pathListWidgetDiv.append("input")
-        .attr({
-          type: "radio",
-          name: "viewTypeGroup",
-          value: "Path List"
-        })
-        .property("checked", true)
-        .on("click", function () {
+        if (that.currentView != that.pathList) {
+          that.currentView.destroy();
+          that.currentView = that.pathList;
+          that.currentView.init();
+          that.render(that.paths);
+        }
 
-          if (that.currentView != that.pathList) {
-            that.currentView.destroy();
-            that.currentView = that.pathList;
-            that.currentView.init();
-            that.render(that.paths);
-          }
+      });
 
-        });
-      pathListWidgetDiv.append("label").text("Path List");
+      $("#pathSortingOptions").on("change", function () {
+        if (this.value == '0') {
+          pathSorting.sortingManager.setStrategyChain([pathSorting.sortingStrategies.setCountEdgeWeight, pathSorting.sortingStrategies.pathId]);
+          listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+        }
+        if (this.value == '1') {
+          pathSorting.sortingManager.setStrategyChain([pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.pathId]);
+          listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+        }
+      });
 
-      this.pathList.appendWidgets(pathListWidgetDiv);
+      $("#reversePathSorting").on("click", function () {
+        pathSorting.sortingManager.ascending = !this.checked;
+        listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+      });
+
+
+      $("#hideNonRelSets").on("click", function () {
+        listeners.notify("UPDATE_NODE_SET_VISIBILITY", !this.checked);
+      });
+
+      $("#reverseAggregateSorting").on("click", function () {
+        aggregateSorting.sortingManager.ascending = !this.checked;
+        listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
+      });
+
       this.pathList.addUpdateListener(function (list) {
         that.updateViewSize();
       });
@@ -72,15 +99,7 @@ define(['jquery', 'd3', './pathlist', './setlist', './view'],
         that.updateViewSize();
       });
 
-      var setListWidgetDiv = viewTypeDiv.append("div");
-
-      setListWidgetDiv.append("input")
-        .attr({
-          type: "radio",
-          name: "viewTypeGroup",
-          value: "Set Combination List"
-        })
-        .on("click", function () {
+      $("#aggregateViewType").click(function () {
 
           if (that.currentView != that.setList) {
             that.currentView.destroy();
@@ -90,12 +109,8 @@ define(['jquery', 'd3', './pathlist', './setlist', './view'],
           }
 
         });
-      ;
-      setListWidgetDiv.append("label").text("Set Combination List");
 
-      that.setList.appendWidgets(setListWidgetDiv);
-
-    }
+    };
 
     ListView.prototype.getMinSize = function () {
       if (typeof this.currentView === "undefined") {
@@ -103,7 +118,7 @@ define(['jquery', 'd3', './pathlist', './setlist', './view'],
       }
 
       return this.currentView.getSize();
-    }
+    };
 
 
     ListView.prototype.render = function (paths) {
@@ -112,7 +127,7 @@ define(['jquery', 'd3', './pathlist', './setlist', './view'],
       this.currentView.setPaths(paths);
       this.currentView.render(svg);
       this.updateViewSize();
-    }
+    };
 
 
     ListView.prototype.addPath = function (path) {
@@ -121,13 +136,13 @@ define(['jquery', 'd3', './pathlist', './setlist', './view'],
       var svg = d3.select("#pathlist svg");
       this.currentView.render(svg);
       this.updateViewSize();
-    }
+    };
 
     ListView.prototype.reset = function () {
       //var svg = d3.select("#pathlist svg");
       this.currentView.removePaths();
       this.paths = [];
-    }
+    };
 
 
     return new ListView();

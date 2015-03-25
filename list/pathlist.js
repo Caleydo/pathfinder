@@ -1,4 +1,4 @@
-define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionutil', './pathsorting', './pathutil', './query/pathquery', './datastore', './config'],
+define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectionutil', './pathsorting', '../pathutil', '../query/pathquery', '../datastore', '../config'],
   function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config) {
     'use strict';
 
@@ -270,6 +270,12 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
       this.updateListeners = [];
       this.selectionListeners = [];
       var that = this;
+
+      this.setVisibilityUpdateListener = function (showSets) {
+        showNodeSets = showSets;
+        that.updatePathList();
+      };
+
       this.listUpdateListener = function (updatedObject) {
         that.updatePathList();
       };
@@ -325,55 +331,11 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
         this.updateListeners.forEach(function (l) {
           l(that);
         })
-      },
-
-      appendWidgets: function (widgetParent) {
-
-        var pathlist = this;
-
-
-        var selectSortingStrategy = $('<select>').appendTo(widgetParent)[0];
-        $(selectSortingStrategy).append($("<option value='0'>Set Count Edge Weight</option>"));
-        $(selectSortingStrategy).append($("<option value='1'>Path Length</option>"));
-        $(selectSortingStrategy).on("change", function () {
-          if (this.value == '0') {
-            sortingManager.setStrategyChain([sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
-            listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
-
-            //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers), [sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
-          }
-          if (this.value == '1') {
-            sortingManager.setStrategyChain([sortingStrategies.pathLength, sortingStrategies.pathId]);
-            listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
-            //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers), [sortingStrategies.pathLength, sortingStrategies.pathId]);
-          }
-        });
-
-        widgetParent.append("label").text("Reverse");
-
-        var sortButton = $('<input>').appendTo(widgetParent)[0];
-        $(sortButton).attr("type", "checkbox");
-        $(sortButton).on("click", function () {
-          var that = this;
-          sortingManager.ascending = !this.checked;
-          listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
-          //sortingManager.sort(pathlist.pathWrappers, svg, "g.pathContainer", getPathContainerTransformFunction(pathlist.pathWrappers));
-        });
-
-        widgetParent.append("label").text("Hide non-relationship sets");
-
-        var hideNodeOnlySetsButton = $('<input>').appendTo(widgetParent)[0];
-        $(hideNodeOnlySetsButton).attr("type", "checkbox")
-          .prop("checked", true);
-        $(hideNodeOnlySetsButton).on("click", function () {
-          showNodeSets = !this.checked;
-          listeners.notify(pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY, showNodeSets);
-        });
       }
       ,
       init: function () {
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
-        listeners.add(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        listeners.add(this.setVisibilityUpdateListener, "UPDATE_NODE_SET_VISIBILITY");
         listeners.add(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.add(this.sortUpdateListener, pathSorting.updateType);
@@ -543,7 +505,7 @@ define(['jquery', 'd3', './listeners', './sorting', './setinfo', './selectionuti
 
       destroy: function () {
         this.removePaths();
-        listeners.remove(this.listUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        listeners.remove(this.setVisibilityUpdateListener, "UPDATE_NODE_SET_VISIBILITY");
         listeners.remove(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         listeners.remove(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);

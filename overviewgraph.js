@@ -1,4 +1,4 @@
-define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './pathsorting', './query/pathquery', './config'],
+define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './list/pathsorting', './query/pathquery', './config'],
   function ($, d3, webcola, listeners, selectionUtil, pathSorting, pathQuery, config) {
     'use strict';
 

@@ -1,8 +1,8 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setlist', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', './config', 'font-awesome', 'bootstrap'],
-  function ($, d3, C, listeners, listView, setList, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config) {
+require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', './config', 'font-awesome', 'bootstrap'],
+  function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config) {
 
     'use strict';
 
@@ -60,25 +60,29 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './listview', './setl
 
           queryView.init();
           overviewGraph.init();
-          listView.init();
-          pathStatsView.init();
+          listView.init().then(function() {
 
-          //C.getJSON("dump/testpaths1.json", function (paths) {
-          //
-          //  var i = 0;
-          //
-          //  var interval = setInterval(function () {
-          //
-          //    if (i >= paths.length) {
-          //      clearInterval(interval);
-          //      return;
-          //    }
-          //    addPath(paths[i]);
-          //    i++;
-          //
-          //  }, 100);
-          //
-          //});
+            pathStatsView.init();
+            C.getJSON("dump/testpaths1.json", function (paths) {
+
+              var i = 0;
+
+              var interval = setInterval(function () {
+
+                if (i >= paths.length) {
+                  clearInterval(interval);
+                  return;
+                }
+                addPath(paths[i]);
+                i++;
+
+              }, 100);
+
+            });
+          }) ;
+
+
+
 
           //paths.forEach(function (path) {
           //
