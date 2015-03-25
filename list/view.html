@@ -1,17 +1,25 @@
 <div>
   <div>
-    <input type="radio" name="viewTypeGroup" id="pathListViewType" value="Path List" checked/>
-    <label>Path List</label>
+
+    <label>Path Aggregation</label>
+    <select id="aggregationType">
+      <option value="0">None</option>
+      <option value="1">Relationship Sets</option>
+    </select>
+
+
+    <input type="checkbox" id="hideNonRelSets" checked/>
+    <label>Hide non-relationship sets</label>
+
+  </div>
+  <div>
+    <label>Path Sorting</label>
     <select id="pathSortingOptions">
       <option value="0">Set Count Edge Weight</option>
       <option value="1">Path Length</option>
     </select>
-    <label>Reverse</label>
     <input type="checkbox" id="reversePathSorting"/>
-    <label>Hide non-relationship sets</label>
-    <input type="checkbox" id="hideNonRelSets" checked/>
+    <label>Reverse</label><br>
+    <label>Aggregation Sorting</label><input type="checkbox" id="reverseAggregateSorting"/><label>Reverse</label>
   </div>
-  <div><input type="radio" name="viewTypeGroup" id="aggregateViewType" value="Set Combination List"/><label>Set
-    Combination
-    List</label><label>Reverse</label><input type="checkbox" id="reverseAggregateSorting"/></div>
 </div>

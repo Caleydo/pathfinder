@@ -1,4 +1,4 @@
-define(['jquery', '../../../../bower_components/d3/d3', '../../listeners', '../pathlist', '../../sorting', '../../setinfo', '../../selectionutil', '../../pathUtil', '../../config', './aggregatesorting', './aggregate'],
+define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../../setinfo', '../../selectionutil', '../../pathUtil', '../../config', './aggregatesorting', './aggregate'],
   function ($, d3, listeners, PathList, sorting, setInfo, selectionUtil, pathUtil, config, aggregateSorting, aggregate) {
     'use strict';
 
@@ -19,9 +19,16 @@ define(['jquery', '../../../../bower_components/d3/d3', '../../listeners', '../p
       this.pathList.init();
     };
 
+    NoAggregationList.prototype.addUpdateListener = function (l) {
+      this.pathList.addUpdateListener(l);
+    }
 
     NoAggregationList.prototype.destroy = function () {
       this.pathList.destroy();
+    };
+
+    NoAggregationList.prototype.removePaths = function () {
+      this.pathList.removePaths();
     };
 
     NoAggregationList.prototype.addPath = function (path) {

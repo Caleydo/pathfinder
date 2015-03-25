@@ -1,4 +1,4 @@
-define(['jquery', '../../../../bower_components/d3/d3', '../../listeners', '../pathlist', '../../sorting', '../../setinfo', '../../selectionutil', '../../pathUtil', '../../config', './aggregatesorting', './aggregate'],
+define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../../setinfo', '../../selectionutil', '../../pathUtil', '../../config', './aggregatesorting', './aggregate'],
   function ($, d3, listeners, pathList, sorting, setInfo, selectionUtil, pathUtil, config, aggregateSorting, aggregate) {
     'use strict';
 
@@ -230,9 +230,7 @@ define(['jquery', '../../../../bower_components/d3/d3', '../../listeners', '../p
       listeners.add(this.sortUpdateListener, aggregateSorting.updateType);
     };
 
-
-    SetComboList.prototype.destroy = function () {
-
+    SetComboList.prototype.removePaths = function () {
       this.clearAggregates();
 
       this.parent.selectAll("g.setComboContainer")
@@ -242,6 +240,12 @@ define(['jquery', '../../../../bower_components/d3/d3', '../../listeners', '../p
       //parent.select("#SetLabelClipPath").remove();
       selectionUtil.removeListeners(this.selectionListeners);
       this.selectionListeners = [];
+    };
+
+
+    SetComboList.prototype.destroy = function () {
+      this.removePaths();
+      this.updateListeners = [];
       listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
     };
 
@@ -308,7 +312,7 @@ define(['jquery', '../../../../bower_components/d3/d3', '../../listeners', '../p
           }
         }
         var setCombo = new SetCombination(combination, function (list) {
-          that.updateSetList;
+          that.updateSetList();
         });
         setCombo.addPath(path);
         that.aggregates.push(setCombo);

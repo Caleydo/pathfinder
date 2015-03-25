@@ -505,6 +505,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
       destroy: function () {
         this.removePaths();
+        this.updateListeners = [];
         listeners.remove(this.setVisibilityUpdateListener, "UPDATE_NODE_SET_VISIBILITY");
         listeners.remove(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         listeners.remove(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);

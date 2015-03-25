@@ -1,16 +1,15 @@
 /**
  * Created by Christian on 23.02.2015.
  */
-define(['jquery', 'd3', './pathlist', 'list/aggregation/setlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting'],
-  function ($, d3, pathList, setList, view, pathSorting, listeners, aggregateSorting) {
+define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist', './aggregation/setcombinations', './aggregation/nodetypecombinations'],
+  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList) {
 
     var listView = new view("#pathlist");
 
     function ListView() {
       view.call(this, "#pathlist");
       this.paths = [];
-      this.pathList = new pathList();
-      this.setList = new setList();
+      this.aggregateList = new NoAggregationList();
     }
 
     ListView.prototype = Object.create(view.prototype);
@@ -30,8 +29,6 @@ define(['jquery', 'd3', './pathlist', 'list/aggregation/setlist', '../view', './
 
     ListView.prototype.initImpl = function () {
       view.prototype.init.call(this);
-      this.currentView = this.pathList;
-      this.currentView.init();
       var svg = d3.select("#pathlist svg");
       svg.append("marker")
         .attr("id", "arrowRight")
@@ -55,16 +52,28 @@ define(['jquery', 'd3', './pathlist', 'list/aggregation/setlist', '../view', './
 
       var that = this;
 
-      $("#pathListViewType").click(function () {
 
-        if (that.currentView != that.pathList) {
-          that.currentView.destroy();
-          that.currentView = that.pathList;
-          that.currentView.init();
+      $("#aggregationType").on("change", function () {
+        if (this.value == '0' && !(that.aggregateList instanceof NoAggregationList)) {
+          that.aggregateList.destroy();
+          that.aggregateList = new NoAggregationList();
+          that.aggregateList.init();
+          that.aggregateList.addUpdateListener(function (list) {
+            that.updateViewSize();
+          });
           that.render(that.paths);
         }
-
+        if (this.value == '1' && !(that.aggregateList instanceof SetComboList)) {
+          that.aggregateList.destroy();
+          that.aggregateList = new SetComboList();
+          that.aggregateList.init();
+          that.aggregateList.addUpdateListener(function (list) {
+            that.updateViewSize();
+          });
+          that.render(that.paths);
+        }
       });
+
 
       $("#pathSortingOptions").on("change", function () {
         if (this.value == '0') {
@@ -82,7 +91,6 @@ define(['jquery', 'd3', './pathlist', 'list/aggregation/setlist', '../view', './
         listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
       });
 
-
       $("#hideNonRelSets").on("click", function () {
         listeners.notify("UPDATE_NODE_SET_VISIBILITY", !this.checked);
       });
@@ -92,55 +100,42 @@ define(['jquery', 'd3', './pathlist', 'list/aggregation/setlist', '../view', './
         listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
       });
 
-      this.pathList.addUpdateListener(function (list) {
+      this.aggregateList.init();
+      this.aggregateList.addUpdateListener(function (list) {
         that.updateViewSize();
       });
-      this.setList.addUpdateListener(function (list) {
-        that.updateViewSize();
-      });
-
-      $("#aggregateViewType").click(function () {
-
-          if (that.currentView != that.setList) {
-            that.currentView.destroy();
-            that.currentView = that.setList;
-            that.currentView.init();
-            that.render(that.paths);
-          }
-
-        });
 
     };
 
     ListView.prototype.getMinSize = function () {
-      if (typeof this.currentView === "undefined") {
+      if (typeof this.aggregateList === "undefined") {
         return view.prototype.getMinSize.call(this);
       }
 
-      return this.currentView.getSize();
+      return this.aggregateList.getSize();
     };
 
 
     ListView.prototype.render = function (paths) {
       this.paths = paths;
       var svg = d3.select("#pathlist svg");
-      this.currentView.setPaths(paths);
-      this.currentView.render(svg);
+      this.aggregateList.setPaths(paths);
+      this.aggregateList.render(svg);
       this.updateViewSize();
     };
 
 
     ListView.prototype.addPath = function (path) {
       this.paths.push(path);
-      this.currentView.addPath(path);
+      this.aggregateList.addPath(path);
       var svg = d3.select("#pathlist svg");
-      this.currentView.render(svg);
+      this.aggregateList.render(svg);
       this.updateViewSize();
     };
 
     ListView.prototype.reset = function () {
       //var svg = d3.select("#pathlist svg");
-      this.currentView.removePaths();
+      this.aggregateList.removePaths();
       this.paths = [];
     };
 
