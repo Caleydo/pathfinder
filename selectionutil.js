@@ -65,14 +65,16 @@ define(['d3', '../caleydo/main'], function (d3, C) {
       node: new Selection(),
       set: new Selection(),
       path: new Selection(),
-      nodeType: new Selection()
+      nodeType: new Selection(),
+      nodeTypeInCombo: new Selection()
     },
 
     listeners: {
       node: [],
       set: [],
       path: [],
-      nodeType: []
+      nodeType: [],
+      nodeTypeInCombo: []
     },
 
     notify: function (idType, selectionType) {
@@ -110,19 +112,19 @@ define(['d3', '../caleydo/main'], function (d3, C) {
 
       var that = this;
       var elements = parent.selectAll(selector)
-        .on("mouseover", function (d) {
-          that.selections[idType].setSelection(idAccessor(d), "hovered");
+        .on("mouseover", function (d, i) {
+          that.selections[idType].setSelection(idAccessor(d, i), "hovered");
           that.notify(idType, "hovered");
         })
-        .on("mouseout", function (d) {
-          that.selections[idType].removeFromSelection(idAccessor(d), "hovered");
+        .on("mouseout", function (d, i) {
+          that.selections[idType].removeFromSelection(idAccessor(d, i), "hovered");
           that.notify(idType, "hovered");
         })
-        .on("click", function (d) {
+        .on("click", function (d, i) {
           if (d3.event.ctrlKey) {
-            that.selections[idType].addToSelection(idAccessor(d), "selected");
+            that.selections[idType].addToSelection(idAccessor(d, i), "selected");
           } else {
-            that.selections[idType].setSelection(idAccessor(d), "selected");
+            that.selections[idType].setSelection(idAccessor(d, i), "selected");
           }
           that.notify(idType, "selected");
         });
@@ -130,8 +132,8 @@ define(['d3', '../caleydo/main'], function (d3, C) {
 
       var listener = function (selectionType) {
         parent.selectAll(selector)
-          .each(function (d) {
-            var id = idAccessor(d);
+          .each(function (d, j) {
+            var id = idAccessor(d, j);
             var selectedIds = (that.selections[idType])[selectionType];
             var selected = false;
             for (var i = 0; i < selectedIds.length; i++) {

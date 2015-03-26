@@ -9,9 +9,23 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
   var TYPE_NODE_RADIUS_Y = 15;
   var NODE_TYPE_COMBO_HEIGHT = 2 * TYPE_NODE_RADIUS_Y + 2 * V_SPACING;
 
+  var TYPE_PATH_HEIGHT = 5;
+  var TYPE_PATH_NODE_WIDTH = 80;
+
   function NodeTypeCombination(typeCombo, pathUpdateListener) {
     Aggregate.call(this, pathUpdateListener);
-    this.typeCombo = typeCombo;
+
+    var colors = ["gray", "rgb(200,200,200)"];
+    var colorIndex = 0;
+    this.typeCombo = [];
+    var that = this;
+
+    typeCombo.forEach(function (type) {
+      colorIndex = colorIndex === 0 ? 1 : 0;
+      that.typeCombo.push({type: type, color: colors[colorIndex]});
+    });
+
+    this.typePaths = [];
   }
 
   NodeTypeCombination.prototype = Object.create(Aggregate.prototype);
@@ -22,7 +36,7 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
     }
 
     for (var i = 0; i < combo.length; i++) {
-      if (this.typeCombo[i] !== combo[i]) {
+      if (this.typeCombo[i].type !== combo[i]) {
         return false;
       }
     }
@@ -32,9 +46,48 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
   NodeTypeCombination.prototype.getSize = function () {
     return {
       width: this.typeCombo.length * 2 * TYPE_NODE_RADIUS_X + (this.typeCombo.length.length - 1) * TYPE_NODE_SPACING,
-      height: NODE_TYPE_COMBO_HEIGHT
+      height: this.typePaths.length * TYPE_PATH_HEIGHT + NODE_TYPE_COMBO_HEIGHT
     };
   };
+
+  NodeTypeCombination.prototype.addPath = function (path, typePath) {
+    Aggregate.prototype.addPath.call(this, path);
+    var myTypePath = [];
+
+    var colors = ["gray", "rgb(200,200,200)"];
+    var colorIndex = 0;
+    var typeIndex = -1;
+    var prevType = 0;
+
+    for (var i = 0; i < typePath.length; i++) {
+
+      var type = typePath[i];
+      if (type !== prevType) {
+        typeIndex++;
+        prevType = type;
+        colorIndex = colorIndex === 0 ? 1 : 0;
+      }
+      //var typeIndex = this.getTypeComboIndex(type, i);
+
+      myTypePath.push({type: type, color: colors[colorIndex], typeIndex: typeIndex});
+    }
+
+    this.typePaths.push(myTypePath);
+    this.typePaths.sort(function (a, b) {
+      return d3.ascending(a.length, b.length);
+    });
+
+
+  };
+
+  NodeTypeCombination.prototype.getTypeComboIndex = function (type, minIndex) {
+    for (var i = minIndex; i < this.typeCombo.length; i++) {
+      if (this.typeCombo[i].type === type) {
+        return i;
+      }
+    }
+    return -1;
+  }
 
   function NodeTypeCombinationList() {
     AggregateList.call(this);
@@ -47,6 +100,7 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
 
     var prevNodeType = 0;
     var combo = [];
+    var typePath = [];
 
     path.nodes.forEach(function (node) {
       var type = config.getNodeType(node);
@@ -54,6 +108,7 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
         combo.push(type);
         prevNodeType = type;
       }
+      typePath.push(type);
     });
 
     var added = false;
@@ -61,7 +116,7 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
     for (var i = 0; i < this.aggregates.length; i++) {
       var combination = this.aggregates[i];
       if (combination.isCombo(combo)) {
-        combination.addPath(path);
+        combination.addPath(path, typePath);
         added = true;
       }
     }
@@ -100,48 +155,108 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
 
     parent.each(function (nodeTypeCombination) {
 
-      var allTypeNodes = d3.select(this).selectAll("g.typeNode")
-        .data(nodeTypeCombination.typeCombo);
+        var allTypeNodes = d3.select(this).selectAll("g.typeNode")
+          .data(nodeTypeCombination.typeCombo);
 
 
-      var node = allTypeNodes
-        .enter()
-        .append("g")
-        .classed("typeNode", true)
-        .on("dblclick", function (d) {
-          //sortingManager.addOrReplace(sortingStrategies.getSetNodePrensenceSortingStrategy([d]));
-          //listeners.notify(aggregateSorting.updateType, sortingManager.currentComparator);
+        var node = allTypeNodes
+          .enter()
+          .append("g")
+          .classed("typeNode", true)
+          .on("dblclick", function (d) {
+            //sortingManager.addOrReplace(sortingStrategies.getSetNodePrensenceSortingStrategy([d]));
+            //listeners.notify(aggregateSorting.updateType, sortingManager.currentComparator);
+          });
+
+        var l = selectionUtil.addDefaultListener(d3.select(this), "g.typeNode", function (d) {
+            return d.type;
+          },
+          "nodeType"
+        );
+
+        var l = selectionUtil.addDefaultListener(d3.select(this), "g.typeNode", function (d, i) {
+            return "" + nodeTypeCombination.id + "_" + i;
+          },
+          "nodeTypeInCombo"
+        );
+
+
+
+
+        that.selectionListeners.push(l);
+
+        node.append("ellipse")
+          .attr("cx", function (d, i) {
+            return TYPE_NODE_RADIUS_X + (i * ((2 * TYPE_NODE_RADIUS_X) + TYPE_NODE_SPACING));
+          })
+          .attr("cy", V_SPACING + TYPE_NODE_RADIUS_Y)
+          .attr("rx", TYPE_NODE_RADIUS_X)
+          .attr("ry", TYPE_NODE_RADIUS_Y)
+          .attr("fill", function (d) {
+            return d.color;
+          });
+
+        node.append("text")
+          .text(function (d) {
+            return d.type;
+          })
+          .attr("x", function (d, i) {
+            return (i * ((2 * TYPE_NODE_RADIUS_X) + TYPE_NODE_SPACING)) + TYPE_NODE_RADIUS_X;
+          })
+          .attr("y", V_SPACING + TYPE_NODE_RADIUS_Y + 4);
+        node.append("title")
+          .text(function (d) {
+            return d.type;
+          });
+
+        var allTypePaths = d3.select(this).selectAll("g.typePath")
+          .data(nodeTypeCombination.typePaths);
+
+        allTypePaths.exit()
+          .remove();
+
+        var typePath = allTypePaths
+          .enter()
+          .append("g")
+          .classed("typePath", true);
+
+        allTypePaths.attr("transform", function (d, i) {
+          return "translate(0," + (NODE_TYPE_COMBO_HEIGHT + (i * TYPE_PATH_HEIGHT)) + ")";
         });
 
-      var l = selectionUtil.addDefaultListener(d3.select(this), "g.typeNode", function (d) {
-          return d;
-        },
-        "nodeType"
-      );
-      that.selectionListeners.push(l);
+        var allTypeRects = typePath.selectAll("rect.nodeType")
+          .data(function (d) {
+            return d;
+          });
 
-      node.append("ellipse")
-        .attr("cx", function (d, i) {
-          return TYPE_NODE_RADIUS_X + (i * ((2 * TYPE_NODE_RADIUS_X) + TYPE_NODE_SPACING));
-        })
-        .attr("cy", V_SPACING + TYPE_NODE_RADIUS_Y)
-        .attr("rx", TYPE_NODE_RADIUS_X)
-        .attr("ry", TYPE_NODE_RADIUS_Y);
+        allTypeRects.exit()
+          .remove();
 
-      node.append("text")
-        .text(function (d) {
-          return d;
-        })
-        .attr("x", function (d, i) {
-          return (i * ((2 * TYPE_NODE_RADIUS_X) + TYPE_NODE_SPACING)) + TYPE_NODE_RADIUS_X;
-        })
-        .attr("y", V_SPACING + TYPE_NODE_RADIUS_Y + 4);
-      node.append("title")
-        .text(function (d) {
-          return d;
-        });
+        allTypeRects.enter()
+          .append("rect")
+          .classed("nodeType", true)
+          .attr({
+            x: function (d, i) {
+              return i * TYPE_PATH_NODE_WIDTH;
+            },
+            y: 0,
+            width: TYPE_PATH_NODE_WIDTH,
+            height: TYPE_PATH_HEIGHT,
+            fill: function (d) {
+              return d.color;
+            }
+          });
 
-    });
+        var l = selectionUtil.addDefaultListener(d3.select(this), "rect.nodeType", function (d) {
+            return "" + nodeTypeCombination.id + "_" + d.typeIndex;
+          },
+          "nodeTypeInCombo"
+        );
+        that.selectionListeners.push(l);
+
+      }
+    )
+    ;
 
 
   };
@@ -149,4 +264,5 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
 
   return NodeTypeCombinationList;
 
-});
+})
+;

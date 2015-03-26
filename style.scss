@@ -103,21 +103,29 @@ g.typeNode {
   }
 
   ellipse {
-    fill: rgb(200, 200, 200);
+    //    fill: rgb(200, 200, 200);
     stroke: rgb(30, 30, 30);
   }
 }
 
-g.typeNode.hovered {
+.typeNode.hovered {
   ellipse {
     fill: rgb(255, 200, 0);
   }
 }
 
-g.typeNode.selected {
+.typeNode.selected {
   ellipse {
     fill: rgb(255, 100, 0);
   }
+}
+
+rect.nodeType.hovered {
+  fill: rgb(255, 200, 0);
+}
+
+rect.nodeType.selected {
+  fill: rgb(255, 100, 0);
 }
 
 g.setNode {

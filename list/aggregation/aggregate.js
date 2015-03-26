@@ -35,7 +35,7 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
 
       for (var index = 0; index < i; index++) {
 
-        posY += AGGREGATE_CONTAINER_SPACING + d.getSize().height;
+        posY += AGGREGATE_CONTAINER_SPACING + aggregates[index].getSize().height;
 
         if (!aggregates[index].collapsed) {
           posY += aggregates[index].pathList.getSize().height;
