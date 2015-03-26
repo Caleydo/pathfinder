@@ -66,7 +66,7 @@ define(['d3', '../caleydo/main'], function (d3, C) {
       set: new Selection(),
       path: new Selection(),
       nodeType: new Selection(),
-      nodeTypeInCombo: new Selection()
+      nodeInCombo: new Selection()
     },
 
     listeners: {
@@ -74,7 +74,7 @@ define(['d3', '../caleydo/main'], function (d3, C) {
       set: [],
       path: [],
       nodeType: [],
-      nodeTypeInCombo: []
+      nodeInCombo: []
     },
 
     notify: function (idType, selectionType) {
@@ -112,15 +112,15 @@ define(['d3', '../caleydo/main'], function (d3, C) {
 
       var that = this;
       var elements = parent.selectAll(selector)
-        .on("mouseover", function (d, i) {
+        .on("mouseover."+idType, function (d, i) {
           that.selections[idType].setSelection(idAccessor(d, i), "hovered");
           that.notify(idType, "hovered");
         })
-        .on("mouseout", function (d, i) {
+        .on("mouseout."+idType, function (d, i) {
           that.selections[idType].removeFromSelection(idAccessor(d, i), "hovered");
           that.notify(idType, "hovered");
         })
-        .on("click", function (d, i) {
+        .on("click."+idType, function (d, i) {
           if (d3.event.ctrlKey) {
             that.selections[idType].addToSelection(idAccessor(d, i), "selected");
           } else {

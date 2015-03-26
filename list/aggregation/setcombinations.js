@@ -12,18 +12,17 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
     var sortingManager = aggregateSorting.sortingManager;
 
     function SetCombination(setIds, pathUpdateListener) {
-      a.Aggregate.call(this, pathUpdateListener);
-      this.setIds = setIds;
+      a.CombinationAggregate.call(this, setIds, pathUpdateListener);
     }
 
-    SetCombination.prototype = Object.create(a.Aggregate.prototype);
+    SetCombination.prototype = Object.create(a.CombinationAggregate.prototype);
 
-    SetCombination.prototype.getSize = function(){
-      return {
-        width:  this.setIds.length * 2 * setNodeRadiusX + (this.setIds.length - 1) * setNodeSpacing,
-        height: setComboHeight
-      };
-    };
+    //SetCombination.prototype.getSize = function(){
+    //  return {
+    //    width:  this.combo.length * 2 * setNodeRadiusX + (this.combo.length - 1) * setNodeSpacing,
+    //    height: setComboHeight
+    //  };
+    //};
 
 
     function SetNodePresenceSortingStrategy(setIds) {
@@ -32,13 +31,13 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
         var numNodesA = 0;
         var numNodesB = 0;
         setIds.forEach(function (setId) {
-          a.setIds.forEach(function (id) {
+          a.combo.forEach(function (id) {
             if (id === setId) {
               numNodesA++;
             }
           });
 
-          b.setIds.forEach(function (id) {
+          b.combo.forEach(function (id) {
             if (id === setId) {
               numNodesB++;
             }
@@ -90,17 +89,16 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
 
 
     function SetComboList() {
-      a.AggregateList.call(this);
+      a.CombinationAggregateList.call(this);
 
       var that = this;
     }
 
-    SetComboList.prototype = Object.create(a.AggregateList.prototype);
-
+    SetComboList.prototype = Object.create(a.CombinationAggregateList.prototype);
 
 
     SetComboList.prototype.init = function () {
-      a.AggregateList.prototype.init.call(this);
+      a.CombinationAggregateList.prototype.init.call(this);
       listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
     };
 
@@ -115,7 +113,7 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
 
       parent.selectAll("g.setNode")
         .data(function () {
-          return aggregate.setIds;
+          return aggregate.combo;
         });
 
     };
@@ -125,14 +123,14 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
       var that = this;
 
       paths.forEach(function (path) {
-        nextEdge(path, 0, []);
+        nextEdge(path, 0, [], []);
       });
 
-      function nextEdge(path, currentEdgeIndex, currentSetCombination) {
+      function nextEdge(path, currentEdgeIndex, currentSetCombination, currentPathCombination) {
 
 
         if (currentEdgeIndex >= path.edges.length) {
-          addToSetCombinations(currentSetCombination, path);
+          addToSetCombinations(currentSetCombination, path, currentPathCombination);
           return;
         }
 
@@ -143,41 +141,43 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
             var property = edge.properties[key];
             if (property instanceof Array) {
               property.forEach(function (val) {
-                addSetToCombo(path, currentEdgeIndex, currentSetCombination, val)
+                addSetToCombo(path, currentEdgeIndex, currentSetCombination, val, currentPathCombination)
               });
             } else {
-              addSetToCombo(path, currentEdgeIndex, currentSetCombination, property);
+              addSetToCombo(path, currentEdgeIndex, currentSetCombination, property, currentPathCombination);
             }
             addedSet = true;
           }
         }
         if (!addedSet) {
-          addSetToCombo(path, currentEdgeIndex, currentSetCombination, "__No_Set__");
+          addSetToCombo(path, currentEdgeIndex, currentSetCombination, "__No_Set__", currentPathCombination);
         }
 
       }
 
-      function addSetToCombo(path, currentEdgeIndex, currentSetCombination, mySet) {
+      function addSetToCombo(path, currentEdgeIndex, currentSetCombination, mySet, currentPathCombination) {
         var combo = currentSetCombination;
+        var pathCombo = currentPathCombination.slice(0)
+        pathCombo.push(mySet);
         if (currentSetCombination.length === 0 || (currentSetCombination.length > 0 && currentSetCombination[currentSetCombination.length - 1] !== mySet)) {
           combo = currentSetCombination.slice(0);
           combo.push(mySet);
         }
-        nextEdge(path, currentEdgeIndex + 1, combo);
+        nextEdge(path, currentEdgeIndex + 1, combo, pathCombo);
       }
 
-      function addToSetCombinations(combination, path) {
+      function addToSetCombinations(combination, path, pathCombination) {
         for (var i = 0; i < that.aggregates.length; i++) {
           var c = that.aggregates[i];
-          if (c.setIds.length === combination.length) {
+          if (c.combo.length === combination.length) {
             var numEqualSets = 0;
-            for (var j = 0; j < c.setIds.length; j++) {
-              if (c.setIds[j] === combination[j]) {
+            for (var j = 0; j < c.combo.length; j++) {
+              if (c.combo[j].id === combination[j]) {
                 numEqualSets++;
               }
             }
             if (numEqualSets === combination.length) {
-              c.addPath(path);
+              c.addPath(path, pathCombination);
               return;
             }
           }
@@ -185,7 +185,7 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
         var setCombo = new SetCombination(combination, function (list) {
           that.updateSetList();
         });
-        setCombo.addPath(path);
+        setCombo.addPath(path, pathCombination);
         that.aggregates.push(setCombo);
       }
     };
@@ -199,69 +199,85 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
       this.addToSetCombinations(paths);
     };
 
-
-    SetComboList.prototype.renderAggregate= function (parent) {
-      var that = this;
-
-      parent.each(function (setCombo) {
-        var allNodes = d3.select(this).selectAll("g.setNode")
-          .data(function (combination) {
-            return combination.setIds;
-          });
-
-        var node = allNodes
-          .enter()
-          .append("g")
-          .attr("class", "setNode")
-          .on("dblclick", function (d) {
-            sortingManager.addOrReplace(sortingStrategies.getSetNodePrensenceSortingStrategy([d]));
-            listeners.notify(aggregateSorting.updateType, sortingManager.currentComparator);
-          });
-
-        var l = selectionUtil.addDefaultListener(d3.select(this), "g.setNode", function (d) {
-            return d;
-          },
-          "set"
-        );
-        that.selectionListeners.push(l);
-
-        node.append("ellipse")
-          .attr("cx", function (d, i) {
-            return setNodeRadiusX + (i * ((2 * setNodeRadiusX) + setNodeSpacing));
-          })
-          .attr("cy", vSpacing + setNodeRadiusY)
-          .attr("rx", setNodeRadiusX)
-          .attr("ry", setNodeRadiusY);
-        //.attr("fill", "rgb(200,200,200)")
-        //.attr("stroke", "rgb(30,30,30)");
-
-        node.append("text")
-          .text(function (d) {
-
-            var info = setInfo.get(d);
-
-
-            if (typeof info === "undefined") {
-              return d;
-            }
-            var text = pathUtil.getClampedText(info.properties[config.getSetNameProperty(info)], 14);
-
-            return text;
-          })
-          .attr("x", function (d, i) {
-            return (i * ((2 * setNodeRadiusX) + setNodeSpacing)) + setNodeRadiusX;
-          })
-          .attr("y", vSpacing + setNodeRadiusY + 4);
-        node.append("title")
-          .text(function (d) {
-            var info = setInfo.get(d);
-            if (typeof info === "undefined") {
-              return d;
-            }
-            return info.properties[config.getSetNameProperty(info)];
-          });
-      });
+    SetComboList.prototype.getComboNodeIDType = function () {
+      return "set";
     };
+
+    SetComboList.prototype.getComboNodeText = function (d) {
+      var info = setInfo.get(d.id);
+      if (typeof info === "undefined") {
+        return d.id;
+      }
+      var text = info.properties[config.getSetNameProperty(info)];
+
+      return text;
+    };
+
+
+    //SetComboList.prototype.renderAggregate = function (parent) {
+    //  var that = this;
+    //
+    //  parent.each(function (setCombo) {
+    //    var allNodes = d3.select(this).selectAll("g.setNode")
+    //      .data(function (combination) {
+    //        return combination.combo;
+    //      });
+    //
+    //    var node = allNodes
+    //      .enter()
+    //      .append("g")
+    //      .attr("class", "setNode")
+    //      .on("dblclick", function (d) {
+    //        sortingManager.addOrReplace(sortingStrategies.getSetNodePrensenceSortingStrategy([d]));
+    //        listeners.notify(aggregateSorting.updateType, sortingManager.currentComparator);
+    //      });
+    //
+    //    var l = selectionUtil.addDefaultListener(d3.select(this), "g.setNode", function (d) {
+    //        return d.id;
+    //      },
+    //      "set"
+    //    );
+    //    that.selectionListeners.push(l);
+    //
+    //    node.append("ellipse")
+    //      .attr("cx", function (d, i) {
+    //        return setNodeRadiusX + (i * ((2 * setNodeRadiusX) + setNodeSpacing));
+    //      })
+    //      .attr("cy", vSpacing + setNodeRadiusY)
+    //      .attr("rx", setNodeRadiusX)
+    //      .attr("ry", setNodeRadiusY);
+    //    //.attr("fill", "rgb(200,200,200)")
+    //    //.attr("stroke", "rgb(30,30,30)");
+    //
+    //    node.append("text")
+    //      .text(function (d) {
+    //
+    //        var info = setInfo.get(d.id);
+    //
+    //
+    //        if (typeof info === "undefined") {
+    //          return d.id;
+    //        }
+    //        var text = pathUtil.getClampedText(info.properties[config.getSetNameProperty(info)], 14);
+    //
+    //        return text;
+    //      })
+    //      .attr("x", function (d, i) {
+    //        return (i * ((2 * setNodeRadiusX) + setNodeSpacing)) + setNodeRadiusX;
+    //      })
+    //      .attr("y", vSpacing + setNodeRadiusY + 4);
+    //    node.append("title")
+    //      .text(function (d) {
+    //        var info = setInfo.get(d.id);
+    //        if (typeof info === "undefined") {
+    //          return d.id;
+    //        }
+    //        return info.properties[config.getSetNameProperty(info)];
+    //      });
+    //
+    //    that.renderComboPath(d3.select(this), setCombo);
+    //  });
+    //};
 
 
     return SetComboList;

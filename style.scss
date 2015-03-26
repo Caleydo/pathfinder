@@ -93,7 +93,7 @@ g.node.path_selected {
   }
 }
 
-g.typeNode {
+g.comboNode {
   text {
     text-anchor: middle;
     font-family: sans-serif;
@@ -104,17 +104,17 @@ g.typeNode {
 
   ellipse {
     //    fill: rgb(200, 200, 200);
-    stroke: rgb(30, 30, 30);
+//    stroke: rgb(30, 30, 30);
   }
 }
 
-.typeNode.hovered {
+.comboNode.hovered {
   ellipse {
     fill: rgb(255, 200, 0);
   }
 }
 
-.typeNode.selected {
+.comboNode.selected {
   ellipse {
     fill: rgb(255, 100, 0);
   }
