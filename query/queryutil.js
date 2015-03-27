@@ -3,18 +3,19 @@ define(['d3', './queryview', '../listoverlay'], function (d3, queryView, ListOve
   var listOverlay = new ListOverlay();
 
   return {
-    createAddNodeFilterButton: function (parent, svg, constraintType, text, x, y) {
+    createAddNodeFilterButton: function (parent, svg, constraintType, text, x, y, small) {
       $(parent[0]).mouseenter(function () {
         var button = parent.append("g")
           .classed("overlayButton", true)
+          .classed("smallButton", small)
           .attr({
             transform: "translate(" + x + "," + y + ")"
           });
 
         //button.append("rect")
         //  .attr({
-        //    x: x,
-        //    y: y,
+        //    x: 0,
+        //    y: 0,
         //    width: 16,
         //    height: 16
         //  });
@@ -22,7 +23,7 @@ define(['d3', './queryview', '../listoverlay'], function (d3, queryView, ListOve
         button.append("text")
           .attr({
             x: 7,
-            y: 16
+            y: small ? 10 :16
           })
           .text("\uf0b0");
 

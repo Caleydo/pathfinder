@@ -188,21 +188,6 @@ g.nodeTypeStats {
   }
 }
 
-g.overlayButton {
-  text {
-    font-family: FontAwesome;
-    font-size: 16px;
-    cursor: pointer;
-    text-anchor: middle;
-  }
-
-  rect {
-    fill: rgb(255, 255, 255);
-    stroke: rgb(30, 30, 30);
-    stroke-width: 1px;
-
-  }
-}
 
 g.statTypes {
 
@@ -241,6 +226,27 @@ g.set, g.setType {
   line {
     //    stroke: rgb(150,150,150);
     stroke-width: 2px;
+  }
+}
+
+g.overlayButton {
+  text {
+    font-family: FontAwesome;
+    font-size: 16px;
+    cursor: pointer;
+    text-anchor: middle;
+  }
+
+  rect {
+    fill: rgb(255, 255, 255);
+    stroke: rgb(30, 30, 30);
+    stroke-width: 1px;
+
+  }
+}
+g.overlayButton.smallButton {
+  text {
+    font-size: 10px;
   }
 }
 

@@ -457,7 +457,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                     .attr("display", "inline");
                 }
 
-                d3.select(this).selectAll("g.set")
+                d3.select(this).selectAll("g.setCont")
                   .each(function (setData) {
                     if (d.setType.collapsed || (!setData.set.canBeShown())) {
                       d3.select(this)
@@ -477,7 +477,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                     .attr("display", "none");
                 }
 
-                d3.select(this).selectAll("g.set")
+                d3.select(this).selectAll("g.setCont")
                   .each(function (setData) {
                     if (!d.setType.collapsed && setData.set.canBeShown()) {
                       d3.select(this)
@@ -493,7 +493,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
             d3.select(this).selectAll("g.setType")
               .each(function () {
-                d3.select(this).selectAll("g.set")
+                d3.select(this).selectAll("g.setCont")
                   .transition()
                   .attr("transform", getSetTransformFunction(that.pathWrappers));
               });
@@ -624,7 +624,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             });
 
             var set = d3.select(this)
-              .selectAll("g.set")
+              .selectAll("g.setCont")
               .data(function () {
                 return d.setType.sets.map(function (myset) {
                   return {set: myset, pathIndex: d.pathIndex, setTypeIndex: i};
@@ -790,8 +790,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           });
 
 
-
-
         //.on("click.filter", function(d){
         //  if (d3.event.altKey) {
         //    queryView.addNodeFilter("name",  d.properties[config.getNodeNameProperty(d)]);
@@ -836,8 +834,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .text(function (d) {
             return d.properties[config.getNodeNameProperty(d)];
           });
-        ;
-
 
 
         var setGroup = pathContainer.append("g")
@@ -957,8 +953,9 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
 
         setType.each(function (d, i) {
-          var set = d3.select(this)
-            .selectAll("g.set")
+
+          var sc = d3.select(this)
+            .selectAll("g.setCont")
             .data(function () {
               return d.setType.sets.map(function (myset) {
                 return {set: myset, pathIndex: d.pathIndex, setTypeIndex: i};
@@ -966,7 +963,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             })
             .enter()
             .append("g")
-            .classed("set", true)
+            .classed("setCont", true)
             .attr({
               display: function (d) {
                 if (d.set.canBeShown()) {
@@ -975,7 +972,24 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                 return "none";
               },
               transform: getSetTransformFunction(that.pathWrappers)
-            })
+            });
+
+          sc.each(function (d, i) {
+            queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, nodeStart, 0, true);
+          });
+
+          var set = sc
+            .append("g")
+            .classed("set", true)
+            //.attr({
+            //  display: function (d) {
+            //    if (d.set.canBeShown()) {
+            //      return "inline";
+            //    }
+            //    return "none";
+            //  },
+            //  transform: getSetTransformFunction(that.pathWrappers)
+            //})
             .on("dblclick", function (d) {
               sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
               listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
