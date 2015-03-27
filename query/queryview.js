@@ -153,7 +153,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       container.children.push(currentElement);
       $(container.childDomElements[0]).append($(currentElement.rootElement[0]));
       if (typeof  ElementConstructor !== "undefined") {
-        container.add(new ElementConstructor(container))
+        var el = new ElementConstructor(container)
+        container.add(el);
+        return el;
       } else {
         container.updateParent();
       }
@@ -508,6 +510,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         }).append("xhtml:div")
         .style("font", "10px 'Arial'")
         .html('<input type="text" placeholder="' + initialText + '" required="required" size="5px" width="5px" class="queryConstraint">');
+    };
+
+    ConstraintElement.prototype.setText = function (text) {
+      $(this.myDomElements[0]).find("input").val(text);
     };
 
     ConstraintElement.prototype.getSize = function () {
@@ -1566,7 +1572,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
 
       $('#filter_query').click(function () {
+          //that.addNodeFilter("type", "Compound", true);
+
           var query = that.container.getPathQuery();
+
 
           pathQuery.setQuery(query);
           return false;
@@ -1596,6 +1605,74 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
         return false;
       });
+    };
+
+    QueryView.prototype.findPathContainers = function (parent, pathContainers) {
+
+      if (parent instanceof ElementContainer) {
+
+        var that = this;
+        parent.children.forEach(function (child) {
+          if (child instanceof PathContainer) {
+            pathContainers.push(child);
+          } else {
+            that.findPathContainers(child, pathContainers);
+          }
+        });
+      }
+
+    };
+
+    QueryView.prototype.addNodeFilter = function (constraintType, text, isNot) {
+
+      var pathContainers = [];
+      this.findPathContainers(this.container, pathContainers);
+
+      pathContainers.forEach(function (pathContainer) {
+        var refElement = pathContainer.children[1];
+        var unorderedContainer = 0;
+        if (refElement instanceof SequenceFiller) {
+          var unorderedContainer = new UnorderedContainer(refElement.parent);
+          refElement.parent.replace(refElement, unorderedContainer);
+          addNodeConstraint(unorderedContainer);
+        } else {
+          var unorderedContainer = replaceWithContainer(refElement, AndContainer, false, UnorderedContainer);
+          addNodeConstraint(unorderedContainer);
+
+        }
+
+        if(isNot) {
+          replaceWithContainer(unorderedContainer, NotContainer, false);
+        }
+
+      });
+
+      function addNodeConstraint(unorderedContainer) {
+        var nodeContainer = new NodeContainer(unorderedContainer)
+        unorderedContainer.add(nodeContainer);
+
+        var constraintElement = 0;
+
+        switch (constraintType) {
+          case "name":
+            constraintElement = new NodeNameElement(nodeContainer);
+            break;
+          case "type":
+            constraintElement = new NodeTypeElement(nodeContainer);
+            break;
+          case "set":
+            constraintElement = new NodeSetElement(nodeContainer);
+            break;
+          default: return;
+        }
+
+        nodeContainer.add(constraintElement);
+        constraintElement.setText(text);
+      }
+
+      var query = this.container.getPathQuery();
+      pathQuery.setQuery(query);
+
     };
 
     QueryView.prototype.updateViewSize = function () {

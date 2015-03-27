@@ -50,13 +50,7 @@ g.listItem {
 
 }
 
-g.listItem.hovered {
-  rect {
-    fill: rgb(150, 200, 255);
-    stroke: rgb(255, 255, 255);
-  }
 
-}
 
 //g.node.fixed {
 //  rect {
@@ -322,6 +316,14 @@ g.set.selected {
 #arrowRight {
   stroke: rgb(80, 80, 80);
   fill: rgb(80, 80, 80);
+}
+
+g.listItem.hovered {
+  rect {
+    fill: rgb(150, 200, 255);
+    stroke: rgb(255, 255, 255);
+  }
+
 }
 
 #listView {

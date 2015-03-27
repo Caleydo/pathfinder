@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectionutil', './pathsorting', '../pathutil', '../query/pathquery', '../datastore', '../config'],
-  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config) {
+define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectionutil', './pathsorting', '../pathutil', '../query/pathquery', '../datastore', '../config', '../listoverlay', '../query/queryview', '../query/queryUtil'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config, ListOverlay, queryView, queryUtil) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
@@ -20,6 +20,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
     var sortingManager = pathSorting.sortingManager;
     var sortingStrategies = pathSorting.sortingStrategies;
+
 
     var pathListUpdateTypes = {
       UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY"
@@ -714,61 +715,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         );
         that.selectionListeners.push(l);
 
-        var nodeGroup = p.append("g")
-          .attr("class", "nodeGroup");
-
-        var allNodes = allPathContainers.selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.node")
-          .data(function (pathWrapper) {
-            return pathWrapper.path.nodes;
-          });
-
-        //var node = nodeGroup.selectAll("g.node")
-        //  .data(function (pathWrapper) {
-        //    return pathWrapper.path.nodes;
-        //  })
-        var node = allNodes.enter()
-          .append("g")
-          .attr("class", "node")
-
-          .on("dblclick", function (d) {
-            sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
-            listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
-            //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
-          });
-        var l = selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
-            return d.id;
-          },
-          "node"
-        );
-        that.selectionListeners.push(l);
-
-
-        node.append("rect")
-          .attr("x", function (d, i) {
-            return nodeStart + (i * nodeWidth) + (i * edgeSize);
-          })
-          .attr("y", vSpacing)
-          .attr("rx", 5).attr("ry", 5)
-          .attr("width", nodeWidth)
-          .attr("height", nodeHeight);
-        //.attr("fill", "rgb(200,200,200)")
-        //.attr("stroke", "rgb(30,30,30)");
-
-        node.append("text")
-          .text(function (d) {
-            var text = d.properties[config.getNodeNameProperty(d)];
-            return getClampedText(text, 7);
-          })
-          .attr("x", function (d, i) {
-            return nodeStart + (i * nodeWidth) + (i * edgeSize) + nodeWidth / 2;
-          })
-          .attr("y", vSpacing + nodeHeight - 5)
-          .append("title")
-          .text(function (d) {
-            return d.properties[config.getNodeNameProperty(d)];
-          });
-        ;
-
         var edgeGroup = p.append("g")
           .attr("class", "edgeGroup");
 
@@ -812,6 +758,87 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .attr("display", function (d) {
             return d.edge.properties["_isNetworkEdge"] ? "inline" : "none";
           });
+
+        var nodeGroup = p.append("g")
+          .attr("class", "nodeGroup");
+
+        var allNodes = allPathContainers.selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.node")
+          .data(function (pathWrapper) {
+            return pathWrapper.path.nodes;
+          });
+
+        //var node = nodeGroup.selectAll("g.node")
+        //  .data(function (pathWrapper) {
+        //    return pathWrapper.path.nodes;
+        //  })
+        var nc = allNodes.enter()
+          .append("g")
+          .classed("nodeCont", true);
+
+        nc.each(function (d, i) {
+          queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "name", d.properties[config.getNodeNameProperty(d)], nodeStart + (i * nodeWidth) + (i * edgeSize) + nodeWidth, vSpacing);
+        });
+
+        var node = nc
+          .append("g")
+          .attr("class", "node")
+
+          .on("dblclick", function (d) {
+            sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
+            listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
+            //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
+          });
+
+
+
+
+        //.on("click.filter", function(d){
+        //  if (d3.event.altKey) {
+        //    queryView.addNodeFilter("name",  d.properties[config.getNodeNameProperty(d)]);
+        //  }
+        //});
+        //.on("mouseover", function (d) {
+        //  var o = new ListOverlay();
+        //  o.show(d3.select(this), [{
+        //    text: "something quite long", callback: function () {
+        //    }
+        //  }], 0, 0)
+        //});
+        var l = selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
+            return d.id;
+          },
+          "node"
+        );
+        that.selectionListeners.push(l);
+
+
+        node.append("rect")
+          .attr("x", function (d, i) {
+            return nodeStart + (i * nodeWidth) + (i * edgeSize);
+          })
+          .attr("y", vSpacing)
+          .attr("rx", 5).attr("ry", 5)
+          .attr("width", nodeWidth)
+          .attr("height", nodeHeight);
+        //.attr("fill", "rgb(200,200,200)")
+        //.attr("stroke", "rgb(30,30,30)");
+
+        node.append("text")
+          .text(function (d) {
+            var text = d.properties[config.getNodeNameProperty(d)];
+            return getClampedText(text, 7);
+          })
+          .attr("x", function (d, i) {
+            return nodeStart + (i * nodeWidth) + (i * edgeSize) + nodeWidth / 2;
+          })
+          .attr("y", vSpacing + nodeHeight - 5)
+          .append("title")
+          .text(function (d) {
+            return d.properties[config.getNodeNameProperty(d)];
+          });
+        ;
+
+
 
         var setGroup = pathContainer.append("g")
           .attr("class", "setGroup");
