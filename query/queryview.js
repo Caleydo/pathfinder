@@ -1641,7 +1641,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
         }
 
-        if(isNot) {
+        if (isNot) {
           replaceWithContainer(unorderedContainer, NotContainer, false);
         }
 
@@ -1663,7 +1663,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           case "set":
             constraintElement = new NodeSetElement(nodeContainer);
             break;
-          default: return;
+          default:
+            return;
         }
 
         nodeContainer.add(constraintElement);
@@ -1679,7 +1680,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
       var minSize = this.getMinSize();
       var viewParent = $("#pathQueryView");
-      if (viewParent.height() < minSize.height && viewParent.height() < 300) {
+      if (viewParent.height() < minSize.height && viewParent.height() < 300 || viewParent.height() > minSize.height + 10) {
         viewParent.height(Math.min(minSize.height + 10, 300));
       }
       View.prototype.updateViewSize.call(this);
