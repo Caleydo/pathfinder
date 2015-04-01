@@ -24,7 +24,7 @@
       "node_label": "_Network_Node",
       "properties": {
         "id": "id",
-        "name": "string",
+        "name": "name",
         "pathways": {
           "type": "set",
           "set": "targetclass"

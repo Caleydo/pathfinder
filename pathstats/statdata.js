@@ -1,5 +1,5 @@
-define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config'],
-  function (hierarchyElements, listeners, pathSorting, pathQuery, config) {
+define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config', '../setinfo'],
+  function (hierarchyElements, listeners, pathSorting, pathQuery, config, setInfo) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
 
@@ -189,7 +189,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     };
 
     SetWrapper.prototype.getLabel = function () {
-      return this.setId;
+      return setInfo.getSetLabel(this.setId);
     };
 
     function SetTypeWrapper(parentElement, type) {

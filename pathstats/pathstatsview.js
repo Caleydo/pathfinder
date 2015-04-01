@@ -340,28 +340,14 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       svg.selectAll("g.set_stat text")
         .text(function (d) {
-          var info = setInfo.get(d.setId);
-
-          if (typeof info === "undefined") {
-            //return getClampedText(d[0].id, 15);
-            return d.setId;
-          }
-
-          var text = info.properties[config.getSetNameProperty(info)];
-          //return getClampedText(text, 15);
-          return text;
+          return setInfo.getSetLabel(d.setId);
         });
 
       var titles = svg.selectAll("g.set_stat text title");
 
       titles
         .text(function (d) {
-          var info = setInfo.get(d.setId);
-
-          if (typeof info === "undefined") {
-            return d.setId;
-          }
-          return info.properties[config.getSetNameProperty(info)];
+          return setInfo.getSetLabel(d.setId);
         });
     }
 

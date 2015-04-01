@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 24.02.2015.
  */
-define(['d3', './listeners'], function (d3, listeners) {
+define(['d3', './listeners', './config'], function (d3, listeners, config) {
 
   var scale = d3.scale.category10();
   var numTypes = -1;
@@ -29,6 +29,14 @@ define(['d3', './listeners'], function (d3, listeners) {
 
     get: function (setId) {
       return this.setInfos[setId];
+    },
+
+    getSetLabel: function(setId) {
+      var info = this.get(setId);
+      if (typeof info === "undefined") {
+        return setId;
+      }
+      return info.properties[config.getSetNameProperty(info)];
     },
 
     fetch: function (setIds) {

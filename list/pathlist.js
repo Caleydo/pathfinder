@@ -224,26 +224,12 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
       svg.selectAll("g.pathContainer g.setGroup g.set text")
         .text(function (d) {
-          var info = setInfo.get(d.set.id);
-
-          if (typeof info === "undefined") {
-            //return getClampedText(d[0].id, 15);
-            return d.set.id;
-          }
-
-          var text = info.properties[config.getSetNameProperty(info)];
-          //return getClampedText(text, 15);
-          return text;
+          return setInfo.getSetLabel(d.set.id);
         });
 
       svg.selectAll("g.pathContainer g.setGroup g.set title")
         .text(function (d) {
-          var info = setInfo.get(d.set.id);
-
-          if (typeof info === "undefined") {
-            return d.set.id;
-          }
-          return info.properties[config.getSetNameProperty(info)];
+          return setInfo.getSetLabel(d.set.id);
         });
     }
 
@@ -1005,14 +991,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
           set.append("text")
             .text(function (d) {
-              //var text = d[0].id;
-              //return getClampedText(text, 15);
-
-              var info = setInfo.get(d.set.id);
-              if (typeof info === "undefined") {
-                return d.set.id;
-              }
-              return info.properties[config.getSetNameProperty(info)];
+              return setInfo.getSetLabel(d.set.id);
             })
             .attr("x", setTypeIndent)
             .attr("y", setHeight)
@@ -1023,11 +1002,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
           set.append("title")
             .text(function (d) {
-              var info = setInfo.get(d.set.id);
-              if (typeof info === "undefined") {
-                return d.set.id;
-              }
-              return info.properties[config.getSetNameProperty(info)];
+              return setInfo.getSetLabel(d.set.id);
             });
 
           set.each(function (d, i) {
