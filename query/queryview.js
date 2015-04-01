@@ -109,6 +109,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
             if (parent.children.length === 2) {
               parent.insert(1, new SequenceFiller(parent));
             }
+          } else if (parent instanceof SequenceContainer) {
+            parent.correctSequence();
           } else {
 
             while (typeof parent !== "undefined" && ((parent instanceof AndContainer || parent instanceof OrContainer && parent.children.length <= 1)
@@ -534,25 +536,29 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       var that = this;
 
       $(domParent[0]).mouseenter(function () {
-        var size = that.getSize();
-
-        addBooleanButtons(that, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [
-            {
-              text: "Add Set", callback: function () {
-              replaceWithContainer(that, AndContainer, true, EdgeSetElement);
-            }
-            }],
-          [{
-            text: "Add Set", callback: function () {
-              replaceWithContainer(that, OrContainer, false, EdgeSetElement);
-            }
-          }], function () {
-            replaceWithContainer(that, NotContainer, false);
-          }
-        );
-
+        addEdgeConstraintBooleanButtons(that);
       });
     };
+
+    function addEdgeConstraintBooleanButtons(element) {
+      var size = element.getSize();
+
+      addBooleanButtons(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [
+          {
+            text: "Add Set", callback: function () {
+            replaceWithContainer(element, AndContainer, true, EdgeSetElement);
+          }
+          }],
+        [{
+          text: "Add Set", callback: function () {
+            replaceWithContainer(element, OrContainer, false, EdgeSetElement);
+          }
+        }], function () {
+          replaceWithContainer(element, NotContainer, false);
+        }
+      );
+
+    }
 
     //-------------------------------------------
 
@@ -568,44 +574,47 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       var that = this;
 
       $(domParent[0]).mouseenter(function () {
-        var size = that.getSize();
-
-        addBooleanButtons(that, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [{
-            text: "Add Node Name", callback: function () {
-              replaceWithContainer(that, AndContainer, true, NodeNameElement);
-            }
-          },
-            {
-              text: "Add Set", callback: function () {
-              replaceWithContainer(that, AndContainer, true, NodeSetElement);
-            }
-            },
-            {
-              text: "Add Node Type", callback: function () {
-              replaceWithContainer(that, AndContainer, true, NodeTypeElement);
-            }
-            }],
-          [{
-            text: "Add Node Name", callback: function () {
-              replaceWithContainer(that, OrContainer, false, NodeNameElement);
-            }
-          },
-            {
-              text: "Add Set", callback: function () {
-              replaceWithContainer(that, OrContainer, false, NodeSetElement);
-            }
-            },
-            {
-              text: "Add Node Type", callback: function () {
-              replaceWithContainer(that, OrContainer, false, NodeTypeElement);
-            }
-            }], function () {
-            replaceWithContainer(that, NotContainer, false);
-          }
-        );
-
+        addNodeConstraintBooleanButtons(that);
       });
     };
+
+    function addNodeConstraintBooleanButtons(element) {
+      var size = element.getSize();
+
+      addBooleanButtons(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [{
+          text: "Add Node Name", callback: function () {
+            replaceWithContainer(element, AndContainer, true, NodeNameElement);
+          }
+        },
+          {
+            text: "Add Set", callback: function () {
+            replaceWithContainer(element, AndContainer, true, NodeSetElement);
+          }
+          },
+          {
+            text: "Add Node Type", callback: function () {
+            replaceWithContainer(element, AndContainer, true, NodeTypeElement);
+          }
+          }],
+        [{
+          text: "Add Node Name", callback: function () {
+            replaceWithContainer(element, OrContainer, false, NodeNameElement);
+          }
+        },
+          {
+            text: "Add Set", callback: function () {
+            replaceWithContainer(element, OrContainer, false, NodeSetElement);
+          }
+          },
+          {
+            text: "Add Node Type", callback: function () {
+            replaceWithContainer(element, OrContainer, false, NodeTypeElement);
+          }
+          }], function () {
+          replaceWithContainer(element, NotContainer, false);
+        }
+      );
+    }
 
 //----------------------------------------
 
@@ -757,13 +766,57 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
 //--------------------------------------
 
-    function AndContainer(parent, horizontal) {
-      CaptionContainer.call(this, parent, "AND", "#fed9a6", "black", horizontal || false);
+    function BooleanContainer(parent, caption, fillColor, borderColor, horizontal) {
+      CaptionContainer.call(this, parent, caption, fillColor, borderColor, horizontal || false);
       //ElementContainer.call(this, parent, horizontal || false);
       //this.vPadding = 0;
     }
 
-    AndContainer.prototype = Object.create(CaptionContainer.prototype);
+    BooleanContainer.prototype = Object.create(CaptionContainer.prototype);
+
+    BooleanContainer.prototype.init = function (domParent) {
+      CaptionContainer.prototype.init.call(this, domParent);
+
+
+      var that = this;
+
+      $(this.myDomElements[0]).mouseenter(function () {
+
+        var closestParentContainer = findClosestParentContainer();
+
+        if (closestParentContainer instanceof NodeContainer) {
+          addNodeConstraintBooleanButtons(that);
+        } else if (closestParentContainer instanceof EdgeContainer) {
+          addEdgeConstraintBooleanButtons(that);
+        } else if (closestParentContainer instanceof PathContainer) {
+          addContainerBooleanButtons(that);
+        }
+      });
+
+
+      function findClosestParentContainer() {
+
+        var parent = that.parent;
+        while (typeof parent !== "undefined") {
+          if (parent instanceof NodeContainer || parent instanceof  EdgeContainer || parent instanceof PathContainer) {
+            return parent;
+          }
+          parent = parent.parent;
+        }
+      }
+
+
+    };
+
+//--------------------------------------
+
+    function AndContainer(parent, horizontal) {
+      BooleanContainer.call(this, parent, "AND", "#fed9a6", "black", horizontal || false);
+      //ElementContainer.call(this, parent, horizontal || false);
+      //this.vPadding = 0;
+    }
+
+    AndContainer.prototype = Object.create(BooleanContainer.prototype);
 
     AndContainer.prototype.getMinSize = function () {
       return {width: 40, height: 20};
@@ -781,12 +834,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     //----------------------------------------
 
     function NotContainer(parent, horizontal) {
-      CaptionContainer.call(this, parent, "NOT", "#fbb4ae", "black", horizontal || false);
+      BooleanContainer.call(this, parent, "NOT", "#fbb4ae", "black", horizontal || false);
       //ElementContainer.call(this, parent, horizontal || false);
       //this.vPadding = 0;
     }
 
-    NotContainer.prototype = Object.create(CaptionContainer.prototype);
+    NotContainer.prototype = Object.create(BooleanContainer.prototype);
 
     NotContainer.prototype.getMinSize = function () {
       return {width: 40, height: 20};
@@ -803,12 +856,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     //--------------------------
 
     function OrContainer(parent, horizontal) {
-      CaptionContainer.call(this, parent, "OR", "#b3cde3", "black", horizontal || false);
+      BooleanContainer.call(this, parent, "OR", "#b3cde3", "black", horizontal || false);
       //ElementContainer.call(this, parent, horizontal || false);
       //this.vPadding = 0;
     }
 
-    OrContainer.prototype = Object.create(CaptionContainer.prototype);
+    OrContainer.prototype = Object.create(BooleanContainer.prototype);
 
 
     OrContainer.prototype.getMinSize = function () {
@@ -1142,7 +1195,6 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       $(this.myDomElements[0]).mouseenter(function () {
 
         var size = that.getSize();
-
         if (that.children.length <= 0) {
           addAddButton(that, [{
             text: "Add Node", callback: function () {
@@ -1155,35 +1207,41 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
         }
 
-        addBooleanButtons(that, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5,
-          [{
-            text: "Add Unordered", callback: function () {
-              replaceWithContainer(that, AndContainer, false, UnorderedContainer);
-            }
-          },
-            {
-              text: "Add Sequence", callback: function () {
-              replaceWithContainer(that, AndContainer, false, SequenceContainer);
-            }
-            }],
-          [{
-            text: "Add Unordered", callback: function () {
-              replaceWithContainer(that, OrContainer, false, UnorderedContainer);
-            }
-          },
-            {
-              text: "Add Sequence", callback: function () {
-              replaceWithContainer(that, OrContainer, false, SequenceContainer);
-            }
-            }],
-          function () {
-            replaceWithContainer(that, NotContainer, false);
-          }
-        );
+        addContainerBooleanButtons(that);
 
       });
 
     };
+
+    function addContainerBooleanButtons(element) {
+      var size = element.getSize();
+
+      addBooleanButtons(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5,
+        [{
+          text: "Add Unordered", callback: function () {
+            replaceWithContainer(element, AndContainer, false, UnorderedContainer);
+          }
+        },
+          {
+            text: "Add Sequence", callback: function () {
+            replaceWithContainer(element, AndContainer, false, SequenceContainer);
+          }
+          }],
+        [{
+          text: "Add Unordered", callback: function () {
+            replaceWithContainer(element, OrContainer, false, UnorderedContainer);
+          }
+        },
+          {
+            text: "Add Sequence", callback: function () {
+            replaceWithContainer(element, OrContainer, false, SequenceContainer);
+          }
+          }],
+        function () {
+          replaceWithContainer(element, NotContainer, false);
+        }
+      );
+    }
 
     UnorderedContainer.prototype.getPathQuery = function () {
       if (this.children.length == 0) {
@@ -1379,31 +1437,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       $(this.myDomElements[0]).mouseenter(function () {
         var size = that.getSize();
 
-        addBooleanButtons(that, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5,
-          [{
-            text: "Add Unordered", callback: function () {
-              replaceWithContainer(that, AndContainer, false, UnorderedContainer);
-            }
-          }],
-          [{
-            text: "Add Unordered", callback: function () {
-              replaceWithContainer(that, OrContainer, false, UnorderedContainer);
-            }
-          },
-            {
-              text: "Add Sequence", callback: function () {
-              replaceWithContainer(that, OrContainer, false, SequenceContainer);
-            }
-            }],
-          function () {
-            replaceWithContainer(that, NotContainer, false);
-          }
-        );
+        addContainerBooleanButtons(that);
 
       });
     };
 
-    SequenceContainer.prototype.update = function () {
+    SequenceContainer.prototype.correctSequence = function () {
 
       var sequenceOk = false;
 
@@ -1429,10 +1468,39 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           prevChild = child;
         }
       }
+    };
 
-      CaptionContainer.prototype.update.call(this);
-    }
-    ;
+    //SequenceContainer.prototype.update = function () {
+    //
+    //  var sequenceOk = false;
+    //
+    //  while (!sequenceOk) {
+    //    var prevChild = 0;
+    //    sequenceOk = true;
+    //    for (var i = 0; i < this.children.length; i++) {
+    //      var child = this.children[i];
+    //      if (prevChild != 0) {
+    //        if ((prevChild instanceof EdgeContainer && child instanceof EdgeContainer) ||
+    //          (prevChild instanceof NodeContainer && child instanceof NodeContainer)) {
+    //          this.insert(i, new SequenceFiller(this));
+    //          sequenceOk = false;
+    //          break;
+    //        }
+    //
+    //        if ((prevChild instanceof SequenceFiller && child instanceof SequenceFiller)) {
+    //          this.removeChild(i);
+    //          sequenceOk = false;
+    //          break;
+    //        }
+    //      }
+    //      prevChild = child;
+    //    }
+    //  }
+    //
+    //
+    //  CaptionContainer.prototype.update.call(this);
+    //}
+    //;
 
     SequenceContainer.prototype.getPathQuery = function () {
       if (this.children.length === 0) {
