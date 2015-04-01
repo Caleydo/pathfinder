@@ -17,23 +17,15 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
 
     $(document).ready(function () {
 
-        var $progress = $('header .progress-bar');
+        var $progress = $('.progress-bar');
         ServerSearch.on({
           query_start: function () {
             reset();
-            $progress.css('width', '0%');
           },
           query_path: function (event, data) {
             addPath(data.path);
-            var k = data.query.k;
-            var i = data.i;
-            d3.select($progress[0]).transition().duration(100).style('width', d3.round(i / k * 100, 0) + '%');
-          },
-          query_done: function () {
-            $progress.parent();
           }
         });
-
 
         var selectPaths = d3.select('#select_dump');
         C.getJSON('dump/testpaths.json').then(function (data) {

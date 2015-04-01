@@ -3,7 +3,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './list/pat
     'use strict';
 
     var w = 800;
-    var h = 800;
+    var h = 700;
 
     var sideSpacing = 10;
     //var arrowWidth = 7;

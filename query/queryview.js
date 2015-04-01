@@ -1560,6 +1560,22 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     };
     QueryView.prototype.initImpl = function () {
       View.prototype.init.call(this);
+
+      var $progress = $('.progress-bar');
+      ServerSearch.on({
+        query_start: function () {
+          $progress.css('width', '0%');
+        },
+        query_path: function (event, data) {
+          var k = data.query.k;
+          var i = data.i;
+          d3.select($progress[0]).transition().duration(100).style('width', d3.round(i / k * 100, 0) + '%');
+        },
+        query_done: function () {
+          $progress.parent();
+        }
+      });
+
       var svg = d3.select(this.parentSelector + " svg");
 
       this.container = new ElementContainer();

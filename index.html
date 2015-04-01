@@ -12,46 +12,55 @@
 <body>
 <!--search interface-->
 
-<header>
-  <div class="progress progress-info progress-striped" style="margin-bottom: 9px; height: 0.5em;">
-    <div class="progress-bar" style="width: 0%"></div>
+
+<div id="leftCol">
+
+  <header>
+
+    <h1 style="display:inline">Caleydo Pathfinder</h1>
+    <select id="select_dump" style="display:block"></select>
+  </header>
+
+
+  <section id="query_interface">
+
+  </section>
+
+  <div id="overviewRow">
+
+    <section id="pathGraphView">
+      <div class="outer">
+        <div class="inner">
+          <div class="span4" id="pathgraph">
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="pathStatsView">
+      <div class="outer">
+        <div class="inner">
+          <div class="span4" id="pathstats">
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
-  <h1 style="display:inline">Caleydo Pathfinder</h1>
-</header>
 
-<select id="select_dump"></select>
-<section id="query_interface">
+</div>
 
-</section>
-
-
-<section id="listView">
-  <div id="listViewWidgets"></div>
-  <div class="outer">
-    <div class="inner">
-      <div class="span4" id="pathlist">
+<div id="rightCol">
+  <section id="listView">
+    <div id="listViewWidgets"></div>
+    <div class="outer">
+      <div class="inner">
+        <div class="span4" id="pathlist">
+        </div>
       </div>
     </div>
-  </div>
-</section>
-
-<section id="pathStatsView">
-  <div class="outer">
-    <div class="inner">
-      <div class="span4" id="pathstats">
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="pathGraphView">
-  <div class="outer">
-    <div class="inner">
-      <div class="span4" id="pathgraph">
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
+</div>
 
 </body>
 </html>

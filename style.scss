@@ -50,8 +50,6 @@ g.listItem {
 
 }
 
-
-
 //g.node.fixed {
 //  rect {
 //    fill: rgb(200, 100, 50);
@@ -98,7 +96,7 @@ g.comboNode {
 
   ellipse {
     //    fill: rgb(200, 200, 200);
-//    stroke: rgb(30, 30, 30);
+    //    stroke: rgb(30, 30, 30);
   }
 }
 
@@ -188,7 +186,6 @@ g.nodeTypeStats {
   }
 }
 
-
 g.statTypes {
 
   text {
@@ -244,6 +241,7 @@ g.overlayButton {
 
   }
 }
+
 g.overlayButton.smallButton {
   text {
     font-size: 10px;
@@ -337,13 +335,13 @@ g.listItem.hovered {
   display: -webkit-flex;
   display: flex;
   flex-direction: column;
-  float: left;
-  width: 45vw;
-  height: 100vh;
+  //  float: right;
 
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+  width: 100%;
+  height: 100vh;
+  //  -webkit-box-sizing: border-box;
+  //  -moz-box-sizing: border-box;
+  //  box-sizing: border-box;
 }
 
 .outer {
@@ -356,35 +354,79 @@ g.listItem.hovered {
   overflow: auto;
 }
 
-//.inner {
-//  width: 50vw;
-//  height:100vh;
-//}
+
+#leftCol {
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  float: left;
+//  display: inline-block;
+  width: 49%;
+  height: 100vh;
+//  overflow: auto;
+  vertical-align: top;
+}
+
+#rightCol {
+
+  display: inline-block;
+  width: 50%;
+  height: 100vh;
+  overflow: auto;
+  vertical-align: top;
+  float: right;
+}
+
+#overviewRow {
+//  overflow: auto;
+  display:flex;
+
+  -webkit-flex: 1;
+  flex: 1;
+}
+
+header {
+  padding: 5px;
+}
+
 #pathlist, #pathgraph, #pathstats, #pathQuery {
   display: block;
   width: 100%;
   height: 100%;
 }
 
+
 #pathGraphView {
+//  padding: 5px;
   display: inline-block;
-  width: 40vw;
-  height: auto;
+  width: 74%;
+//  height: 500px;
   overflow: auto;
+  vertical-align: top;
 }
 
 #pathQueryView {
   display: inline-block;
   width: 100%;
-  height: 100px;
+  height: 120px;
   overflow: auto;
+  vertical-align: top;
+}
+
+#query_interface {
+  padding: 5px;
+  display: inline-block;
+  width: 100%;
+  vertical-align: top;
 }
 
 #pathStatsView {
+  padding: 5px;
   display: inline-block;
-  width: 13vw;
-  height: 100vh;
+  width: 25%;
+//  height: 100%;
   overflow: auto;
+  vertical-align: top;
   //  display: block;
   //  width: 100%;
   //  height: 100%;
