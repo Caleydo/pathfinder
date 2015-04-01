@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners', '../query/pathquery', '../sorting', '../setinfo', '../config'],
-  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo, config) {
+define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners', '../query/pathquery', '../sorting', '../setinfo', '../config', '../query/queryutil'],
+  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo, config, queryUtil) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
     var NodeTypeWrapper = statData.NodeTypeWrapper;
@@ -438,7 +438,16 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           transform: "translate(0," + Math.max($(this.parentSelector)[0].offsetHeight, that.getMinSize().height) + ")"
         });
 
-      statType.append("rect")
+      var typeCont = statType.append("g")
+        .classed("statTypeCont", true);
+
+      typeCont.each(function (d, i) {
+        if (d.supportsNodeFilter()) {
+          queryUtil.createAddNodeFilterButton(d3.select(this), d3.select("#pathstats svg"), d.getNodeConstraintType(), d.getFilterText(), BAR_START_X - 20, 0, true);
+        }
+      });
+
+      typeCont.append("rect")
         .classed("filler", true)
         .attr({
           x: 0,
@@ -447,7 +456,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           height: HIERARCHY_ELEMENT_HEIGHT
         });
 
-      statType.append("text")
+      typeCont.append("text")
         .attr("class", "collapseIconSmall")
         .attr("x", 5)
         .attr("y", HIERARCHY_ELEMENT_HEIGHT)
@@ -460,7 +469,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           that.updateView();
         });
 
-      var typeLabel = statType.append("text")
+      var typeLabel = typeCont.append("text")
         .text(function (typeWrapper) {
           return typeWrapper.getLabel();
         })
@@ -476,10 +485,11 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           return typeWrapper.type;
         });
 
-      addPathOccurrenceBar(statType);
+      addPathOccurrenceBar(typeCont);
 
       var statGroup = statType.append("g")
         .classed("statGroup", true);
+
 
       var allStats = allStatTypes.selectAll("g.statGroup").selectAll("g.stats")
         .data(function (typeWrapper) {
@@ -501,6 +511,13 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         .on("dblclick", function (d) {
           d.onDoubleClick();
         });
+
+      stats.each(function (d, i) {
+        if (d.supportsNodeFilter()) {
+          queryUtil.createAddNodeFilterButton(d3.select(this), d3.select("#pathstats svg"), d.getNodeConstraintType(), d.getFilterText(), BAR_START_X - 20, 0, true);
+        }
+      });
+
 
       stats.append("rect")
         .classed("filler", true)
@@ -560,7 +577,6 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
             return stat.pathIds.length;
           });
       }
-
 
 
     };

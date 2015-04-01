@@ -967,15 +967,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           var set = sc
             .append("g")
             .classed("set", true)
-            //.attr({
-            //  display: function (d) {
-            //    if (d.set.canBeShown()) {
-            //      return "inline";
-            //    }
-            //    return "none";
-            //  },
-            //  transform: getSetTransformFunction(that.pathWrappers)
-            //})
             .on("dblclick", function (d) {
               sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
               listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
@@ -1072,23 +1063,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         pathContainer.selectAll("rect.pathContainerBackground").transition()
           .duration(800)
           .style("opacity", 0);
-
-        //allPathContainers.transition()
-        //  .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
-
-
-        //function getSetPositionY(pathIndex, setTypeIndex, setIndex) {
-        //  var pathWrapper = that.pathWrappers[pathIndex];
-        //
-        //  var numSets = 0;
-        //  for (var typeIndex = 0; typeIndex < setTypeIndex; typeIndex++) {
-        //    var setType = pathWrapper.setTypes[typeIndex];
-        //    numSets += setType.sets.length;
-        //  }
-        //
-        //  return 2 * vSpacing + nodeHeight + (numSets + setIndex + setTypeIndex + 1) * setHeight;
-        //}
-
 
       }
 

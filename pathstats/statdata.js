@@ -3,11 +3,6 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
 
-    var currentNodeWrapperId = 0;
-    var currentNodeTypeWrapperId = 0;
-    var currentSetWrapperId = 0;
-    var currentSetTypeWrapperId = 0;
-
     var LEVEL1_HIERARCHY_ELEMENT_HEIGHT = 18;
     var HIERARCHY_ELEMENT_HEIGHT = 12;
 
@@ -60,6 +55,18 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       return this.node.properties[config.getNodeNameProperty(this.node)];
     };
 
+    NodeWrapper.prototype.supportsNodeFilter = function() {
+      return true;
+    };
+
+    NodeWrapper.prototype.getNodeConstraintType = function() {
+      return "name";
+    };
+
+    NodeWrapper.prototype.getFilterText = function() {
+      return this.getLabel();
+    };
+
     NodeWrapper.prototype.isFiltered = function () {
       return pathQuery.isNodeFiltered(this.node.id);
     };
@@ -100,35 +107,23 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       if (index !== -1) {
         this.childDomElements.splice(index, 1);
       }
-
-      //var pathsToRemove = [];
-      //var that = this;
-      //
-      //this.pathIds.forEach(function (pathId) {
-      //  var removePath = true;
-      //  for (var i = 0; i < that.childDomElements.length; i++) {
-      //    var pathWrapper = that.childDomElements[i];
-      //    if (pathWrapper.pathIds.indexOf(pathId) !== -1) {
-      //      removePath = false;
-      //    }
-      //  }
-      //
-      //  if (removePath) {
-      //    pathsToRemove.push(pathId);
-      //  }
-      //});
-      //
-      //pathsToRemove.forEach(function(pathId) {
-      //  var index = that.pathIds.indexOf(pathId);
-      //  if (index !== -1) {
-      //    that.pathIds.splice(index, 1);
-      //  }
-      //});
     };
 
     NodeTypeWrapper.prototype.getLabel = function() {
       return this.type;
-    }
+    };
+
+    NodeTypeWrapper.prototype.supportsNodeFilter = function() {
+      return true;
+    };
+
+    NodeTypeWrapper.prototype.getNodeConstraintType = function() {
+      return "type";
+    };
+
+    NodeTypeWrapper.prototype.getFilterText = function() {
+      return this.type;
+    };
 
     NodeTypeWrapper.prototype.removePath = function (path) {
       var index = this.pathIds.indexOf(path.id);
@@ -192,6 +187,18 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       return setInfo.getSetLabel(this.setId);
     };
 
+    SetWrapper.prototype.supportsNodeFilter = function() {
+      return true;
+    };
+
+    SetWrapper.prototype.getNodeConstraintType = function() {
+      return "set";
+    };
+
+    SetWrapper.prototype.getFilterText = function() {
+      return this.setId;
+    };
+
     function SetTypeWrapper(parentElement, type) {
       this.id = type;
       BaseHierarchyElement.call(this, parentElement);
@@ -222,7 +229,11 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
 
     SetTypeWrapper.prototype.getLabel = function() {
       return config.getSetTypeFromSetPropertyName(this.type);
-    }
+    };
+
+    SetTypeWrapper.prototype.supportsNodeFilter = function() {
+      return false;
+    };
 
     SetTypeWrapper.prototype.removeSet = function (setId) {
       var setWrapper = this.setWrapperDict[setId.toString()];
@@ -295,4 +306,4 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       Level1HierarchyElement: Level1HierarchyElement
     }
 
-  })
+  });

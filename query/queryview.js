@@ -811,7 +811,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 //--------------------------------------
 
     function AndContainer(parent, horizontal) {
-      BooleanContainer.call(this, parent, "AND", "#fed9a6", "black", horizontal || false);
+      BooleanContainer.call(this, parent, "AND", "#fed9a6", "black", true);
       //ElementContainer.call(this, parent, horizontal || false);
       //this.vPadding = 0;
     }
