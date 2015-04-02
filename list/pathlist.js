@@ -23,7 +23,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
 
     var pathListUpdateTypes = {
-      UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY"
+      UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY",
+      COLLAPSE_SET_TYPE: "COLLAPSE_SETYPE"
     }
 
     var showNodeSets = false;
@@ -297,6 +298,17 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .transition()
           .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
       }
+
+      this.collapseSetTypeListener = function(setType) {
+        that.pathWrappers.forEach(function(pathWrapper) {
+          pathWrapper.setTypes.forEach(function(t) {
+            if(t.type === setType.type) {
+              t.collapsed = setType.collapsed;
+            }
+          });
+        });
+        that.updatePathList();
+      }
     }
 
     PathList.prototype = {
@@ -322,7 +334,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       ,
       init: function () {
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
-        listeners.add(this.setVisibilityUpdateListener, "UPDATE_NODE_SET_VISIBILITY");
+        listeners.add(this.collapseSetTypeListener, pathListUpdateTypes.COLLAPSE_SET_TYPE);
+        listeners.add(this.setVisibilityUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
         listeners.add(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.add(this.sortUpdateListener, pathSorting.updateType);
@@ -493,7 +506,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       destroy: function () {
         this.removePaths();
         this.updateListeners = [];
-        listeners.remove(this.setVisibilityUpdateListener, "UPDATE_NODE_SET_VISIBILITY");
+        listeners.remove(this.collapseSetTypeListener, pathListUpdateTypes.COLLAPSE_SET_TYPE);
+        listeners.remove(this.setVisibilityUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
         listeners.remove(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         listeners.remove(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
@@ -865,9 +879,16 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             return d.setType.collapsed ? "\uf0da" : "\uf0dd";
           })
           .on("click", function (d) {
-            d.setType.collapsed = !d.setType.collapsed;
-            d3.select(this).text(d.setType.collapsed ? "\uf0da" : "\uf0dd");
-            that.updatePathList();
+            var collapsed = !d.setType.collapsed;
+            if (d3.event.ctrlKey) {
+              listeners.notify(pathListUpdateTypes.COLLAPSE_SET_TYPE, {type: d.setType.type, collapsed: collapsed});
+            } else {
+              d.setType.collapsed = collapsed;
+              d3.select(this).text(d.setType.collapsed ? "\uf0da" : "\uf0dd");
+
+              that.updatePathList();
+
+            }
             //updateSetList(parent);
           });
 
