@@ -287,15 +287,27 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.setVisibilityUpdateListener = function (showSets) {
         showNodeSets = showSets;
 
+        if(typeof that.parent === "undefined") {
+          return;
+        }
+
         that.updateMaxSets();
         that.updatePathList();
       };
 
       this.listUpdateListener = function (updatedObject) {
+        if(typeof that.parent === "undefined") {
+          return;
+        }
+
         that.updatePathList();
       };
 
       this.removeFilterChangedListener = function (remove) {
+        if(typeof that.parent === "undefined") {
+          return;
+        }
+
         if (remove) {
           that.updatePathWrappersToFilter();
         } else {
@@ -305,7 +317,11 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       };
 
       this.queryChangedListener = function (query) {
-        if (pathQuery.isRemoveFilteredPaths()) {
+        if(typeof that.parent === "undefined") {
+          return;
+        }
+
+        if (pathQuery.isRemoveFilteredPaths() || pathQuery.isRemoteQuery()) {
           that.updatePathWrappersToFilter();
           that.notifyUpdateListeners();
         } else {
@@ -315,6 +331,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
       this.sortUpdateListener = function (currentComparator) {
         //sortingManager.sort(that.pathWrappers, that.parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers), sortStrategyChain);
+
+        if(typeof that.parent === "undefined") {
+          return;
+        }
 
         that.pathWrappers.sort(currentComparator);
 
@@ -327,6 +347,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       };
 
       this.collapseSetTypeListener = function (setType) {
+        if(typeof that.parent === "undefined") {
+          return;
+        }
+
         that.pathWrappers.forEach(function (pathWrapper) {
           pathWrapper.setTypes.forEach(function (t) {
             if (t.type === setType.type) {
@@ -372,6 +396,16 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         var pathWrappersToRemove = [];
 
         var that = this;
+
+        if(pathQuery.isRemoteQuery()) {
+          for(var i = 0; i < this.paths.length; i++) {
+            var path = this.paths[i];
+            if (pathQuery.isPathFiltered(path.id)) {
+              this.paths.splice(i, 1);
+              i--;
+            }
+          }
+        }
 
         this.pathWrappers.forEach(function (pathWrapper) {
           if (pathQuery.isPathFiltered(pathWrapper.path.id)) {
@@ -690,6 +724,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       ,
 
       updateDataBinding: function () {
+        if(typeof this.parent === "undefined"){
+          return;
+        }
+
         var pathContainers = this.parent.selectAll("g.pathContainer")
           .data(this.pathWrappers, getPathKey);
 

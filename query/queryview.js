@@ -1660,8 +1660,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
           var query = that.container.getPathQuery();
 
-
-          pathQuery.setQuery(query);
+          pathQuery.setQuery(query, false);
           return false;
         }
       );
@@ -1683,6 +1682,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         var maxDepth = +$('#longest_path').val();
         var justNetworkEdges = $('#just_network_edges').is(':checked');
         var query = that.container.getPathQuery();
+
+        pathQuery.setQuery(query, true);
 
         $('#query_interface button[type="submit"] i').attr('class', 'fa fa-spinner fa-pulse');
         ServerSearch.loadQuery(query, k, maxDepth, justNetworkEdges);
@@ -1756,7 +1757,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       }
 
       var query = this.container.getPathQuery();
-      pathQuery.setQuery(query);
+      pathQuery.setQuery(query, false);
 
     };
 

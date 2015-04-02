@@ -1,6 +1,7 @@
 define(['../listeners', './querymodel', '../datastore', '../pathutil'], function (listeners, q, dataStore, pathUtil) {
 
   var currentQuery = new q.PathQuery();
+  var isRemoteQuery = false;
 
   var remainingPathIds = {};
 
@@ -43,10 +44,15 @@ define(['../listeners', './querymodel', '../datastore', '../pathutil'], function
       return currentQuery;
     },
 
-    setQuery: function (query) {
+    isRemoteQuery: function() {
+      return isRemoteQuery;
+    },
+
+    setQuery: function (query, isRemQuery) {
       currentQuery = query;
+      isRemoteQuery = isRemQuery || false;
       this.update();
-      listeners.notify(listeners.updateType.QUERY_UPDATE, query);
+      listeners.notify(listeners.updateType.QUERY_UPDATE, this);
     },
 
     setRemoveFilteredPaths: function(remove) {
@@ -61,7 +67,7 @@ define(['../listeners', './querymodel', '../datastore', '../pathutil'], function
     update: function () {
       this.resetPaths();
 
-      dataStore.paths.forEach(function (path) {
+      dataStore.getPaths().forEach(function (path) {
         filterPath(path);
       });
     },

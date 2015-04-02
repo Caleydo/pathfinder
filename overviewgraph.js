@@ -266,7 +266,7 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './list/pat
         });
 
         listeners.add(function (query) {
-          if (pathQuery.isRemoveFilteredPaths()) {
+          if (pathQuery.isRemoveFilteredPaths() || pathQuery.isRemoteQuery()) {
             that.updateGraphToFilteredPaths();
           } else {
             that.updateFilter();
@@ -457,27 +457,21 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './list/pat
         this.nodeIndex = 0;
         var that = this;
 
+        if(pathQuery.isRemoteQuery()) {
+          for(var i = 0; i < this.paths.length; i++) {
+            var path = this.paths[i];
+            if (pathQuery.isPathFiltered(path.id)) {
+              this.paths.splice(i, 1);
+              i--;
+            }
+          }
+        }
+
         this.paths.forEach(function (path) {
           if (!pathQuery.isPathFiltered(path.id)) {
             that.addPathsToGraph([path]);
           }
         });
-
-
-        //var nodesToRemove = [];
-        //var edgesToRemove = [];
-        //
-        //this.graph.nodes.forEach(function (node) {
-        //  if (pathQuery.isNodeFiltered(node.id)) {
-        //    nodesToRemove.add(node);
-        //  }
-        //});
-        //
-        //this.graph.edges.forEach(function (edge) {
-        //  if (pathQuery.isEdgeFiltered(edge.edge.id)) {
-        //    edgesToRemove.add(node);
-        //  }
-        //});
 
         this.renderGraph(d3.select("#pathgraph svg"));
       },

@@ -52,7 +52,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       var that = this;
 
       listeners.add(function (query) {
-        if (pathQuery.isRemoveFilteredPaths()) {
+        if (pathQuery.isRemoveFilteredPaths() || pathQuery.isRemoteQuery()) {
           that.updateToFilteredPaths();
         } else {
           that.updateView();
@@ -73,6 +73,16 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
     PathStatsView.prototype.updateToFilteredPaths = function () {
       var that = this;
+
+      if(pathQuery.isRemoteQuery()) {
+        for(var i = 0; i < this.paths.length; i++) {
+          var path = this.paths[i];
+          if (pathQuery.isPathFiltered(path.id)) {
+            this.paths.splice(i, 1);
+            i--;
+          }
+        }
+      }
 
       this.nodeTypeWrappers.childDomElements.forEach(function (nodeTypeWrapper) {
         var nodesToRemove = [];

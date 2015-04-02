@@ -233,16 +233,18 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
 
     //sortingManager.setStrategyChain([sortingStrategies.getPathQueryStrategy(pathQuery), sortingStrategies.pathId]);
 
-    listeners.add(function (query) {
-      sortingManager.addOrReplace(sortingStrategies.getPathQueryStrategy(query));
-      listeners.notify("UPDATE_PATH_SORTING", sortingManager.currentComparator);
-    }, listeners.updateType.QUERY_UPDATE);
-
 
     sortingManager.setStrategyChain([sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
 
 
     return {
+      init: function () {
+        listeners.add(function (query) {
+          sortingManager.addOrReplace(sortingStrategies.getPathQueryStrategy(query.getQuery()));
+          listeners.notify("UPDATE_PATH_SORTING", sortingManager.currentComparator);
+        }, listeners.updateType.QUERY_UPDATE);
+      },
+
       sortingManager: sortingManager,
       sortingStrategies: sortingStrategies,
       updateType: "UPDATE_PATH_SORTING"
