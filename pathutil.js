@@ -56,6 +56,9 @@ define(["./config"], function (config) {
 
     forEachNodeSetOfType: function (node, setType, callBack) {
       var property = node.properties[setType];
+      if(typeof property === "undefined") {
+        return;
+      }
       if (property instanceof Array) {
         property.forEach(function (setId) {
           callBack(setType, setId);
@@ -77,6 +80,9 @@ define(["./config"], function (config) {
 
     forEachEdgeSetOfType: function (edge, setType, callBack) {
       var property = edge.properties[setType];
+      if(typeof property === "undefined") {
+        return;
+      }
       if (property instanceof Array) {
         property.forEach(function (setId) {
           callBack(setType, setId);

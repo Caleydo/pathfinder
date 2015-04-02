@@ -222,7 +222,7 @@ g.set, g.setType {
 
   line {
     //    stroke: rgb(150,150,150);
-    stroke-width: 2px;
+//    stroke-width: 1px;
   }
 }
 
@@ -279,7 +279,7 @@ g.set.hovered {
 
   line {
     stroke: rgb(255, 200, 0);
-    stroke-width: 2px;
+//    stroke-width: 2px;
   }
 
   rect.filler {
@@ -298,7 +298,7 @@ g.set.selected {
 
   line {
     stroke: rgb(255, 100, 0);
-    stroke-width: 2px;
+//    stroke-width: 2px;
   }
 
   rect.filler {

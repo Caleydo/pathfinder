@@ -14,6 +14,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
     var edgeSize = 50;
     var arrowWidth = 7;
     var setHeight = 10;
+    var setTypeHeight = 14;
     var pathSpacing = 15;
 
     var currentSetTypeId = 0;
@@ -25,7 +26,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
     var pathListUpdateTypes = {
       UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY",
       COLLAPSE_SET_TYPE: "COLLAPSE_SETYPE"
-    }
+    };
 
     var showNodeSets = false;
 
@@ -59,7 +60,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
     SetType.prototype = {
       getHeight: function () {
-        var height = setHeight;
+        var height = setTypeHeight;
         if (!this.collapsed) {
           this.sets.forEach(function (setRep) {
             if (setRep.canBeShown()) {
@@ -164,13 +165,35 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           return mySet;
         }
 
-        setTypeList.forEach(function (setType) {
-          delete setType.setDict;
-        });
+        //setTypeList.forEach(function (setType) {
+        //  delete setType.setDict;
+        //});
 
         this.setTypes = setTypeList;
       }
     };
+
+    function getNodeSetCount(node, setTypeWrapper) {
+      var numSets = 0;
+
+      pathUtil.forEachNodeSetOfType(node, setTypeWrapper.type, function (type, setId) {
+        if (setTypeWrapper.setDict[setId].canBeShown()) {
+          numSets++;
+        }
+      });
+      return numSets;
+    }
+
+    function getEdgeSetCount(edge, setTypeWrapper) {
+      var numSets = 0;
+
+      pathUtil.forEachEdgeSetOfType(edge, setTypeWrapper.type, function (type, setId) {
+        if (setTypeWrapper.setDict[setId].canBeShown()) {
+          numSets++;
+        }
+      });
+      return numSets;
+    }
 
 
 //var allPaths = [];
@@ -206,7 +229,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       return function (d, i) {
         var setType = pathWrappers[d.pathIndex].setTypes[d.setTypeIndex];
 
-        var posY = setHeight;
+        var posY = setTypeHeight;
         for (var setIndex = 0; setIndex < i; setIndex++) {
           var set = setType.sets[setIndex];
           if (set.canBeShown()) {
@@ -257,10 +280,14 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.pathWrappers = [];
       this.updateListeners = [];
       this.selectionListeners = [];
+      this.maxNumNodeSets = 0;
+      this.maxNumEdgeSets = 0;
       var that = this;
 
       this.setVisibilityUpdateListener = function (showSets) {
         showNodeSets = showSets;
+
+        that.updateMaxSets();
         that.updatePathList();
       };
 
@@ -297,12 +324,12 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .sort(currentComparator)
           .transition()
           .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
-      }
+      };
 
-      this.collapseSetTypeListener = function(setType) {
-        that.pathWrappers.forEach(function(pathWrapper) {
-          pathWrapper.setTypes.forEach(function(t) {
-            if(t.type === setType.type) {
+      this.collapseSetTypeListener = function (setType) {
+        that.pathWrappers.forEach(function (pathWrapper) {
+          pathWrapper.setTypes.forEach(function (t) {
+            if (t.type === setType.type) {
               t.collapsed = setType.collapsed;
             }
           });
@@ -382,7 +409,27 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           that.pathWrappers.push(new PathWrapper(path));
         });
 
+        this.updateMaxSets();
+
         this.render(this.parent);
+      },
+
+      getNodeSetScale: function () {
+        return d3.scale.linear().domain([1, this.maxNumNodeSets]).range([2, 7]);
+      },
+
+      getEdgeSetScale: function () {
+        return d3.scale.linear().domain([1, this.maxNumEdgeSets]).range([1, 6]);
+      },
+
+      updateMaxSets: function () {
+        this.maxNumEdgeSets = 0;
+        this.maxNumNodeSets = 0;
+
+        var that = this;
+        this.pathWrappers.forEach(function (pathWrapper) {
+          that.updateMaxSetsForPathWrapper(pathWrapper);
+        });
       },
 
       addAllPaths: function () {
@@ -405,7 +452,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         });
 
         pathsToAdd.forEach(function (path) {
-          that.pathWrappers.push(new PathWrapper(path));
+          that.addPathAsPathWrapper(path);
         });
 
         this.render(this.parent);
@@ -435,7 +482,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         var that = this;
 
-        that.parent.selectAll("g.pathContainer")
+        var nodeSetScale = this.getNodeSetScale();
+        var edgeSetScale = this.getEdgeSetScale();
+
+        var pathContainers = that.parent.selectAll("g.pathContainer").data(that.pathWrappers, getPathKey)
           .transition()
           .attr("transform", getPathContainerTransformFunction(this.pathWrappers))
           .style("opacity", function (d) {
@@ -446,15 +496,45 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           });
 
 
-        that.parent.selectAll("g.pathContainer")
+        pathContainers
           .each(function () {
             d3.select(this).selectAll("g.setType")
               .transition()
               .each("start", function (d) {
+                var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary");
+
                 if (d.setType.collapsed) {
-                  d3.select(this).selectAll("g.setTypeSummary")
+                  setTypeSummaryContainer
                     .attr("display", "inline");
+
                 }
+
+                d3.select(this).selectAll("text.collapseIconSmall")
+                  .text(function (d) {
+                    return d.setType.collapsed ? "\uf0da" : "\uf0dd";
+                  });
+
+                setTypeSummaryContainer.each(function (d, i) {
+                  d3.select(this).selectAll("circle")
+                    .attr({
+                      r: function (d) {
+
+                        var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                          that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+
+                        return nodeSetScale(numSets);
+                      }
+                    });
+
+                  d3.select(this).selectAll("line")
+                    .attr({
+                      "stroke-width": function (d) {
+                        var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
+                          that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+                        return edgeSetScale(numSets);
+                      }
+                    })
+                });
 
                 d3.select(this).selectAll("g.setCont")
                   .each(function (setData) {
@@ -537,6 +617,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         this.removeGuiElements(this.parent);
         this.paths = [];
         this.pathWrappers = [];
+        this.maxNumEdgeSets = 0;
+        this.maxNumNodeSets = 0;
       }
       ,
 
@@ -557,11 +639,38 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         this.wrapPaths(paths);
       },
 
+      updateMaxSetsForPathWrapper: function (pathWrapper) {
+        var that = this;
+
+        pathWrapper.setTypes.forEach(function (setTypeWrapper) {
+          pathWrapper.path.nodes.forEach(function (node) {
+            var numNodeSets = getNodeSetCount(node, setTypeWrapper);
+            if (numNodeSets > that.maxNumNodeSets) {
+              that.maxNumNodeSets = numNodeSets;
+            }
+          });
+
+          pathWrapper.path.edges.forEach(function (edge) {
+            var numEdgeSets = getEdgeSetCount(edge, setTypeWrapper);
+            if (numEdgeSets > that.maxNumEdgeSets) {
+              that.maxNumEdgeSets = numEdgeSets;
+            }
+          });
+        });
+      },
+
+      addPathAsPathWrapper: function (path) {
+        if (!(pathQuery.isPathFiltered(path.id) && pathQuery.isRemoveFilteredPaths())) {
+          var pathWrapper = new PathWrapper(path);
+          this.pathWrappers.push(pathWrapper);
+          this.updateMaxSetsForPathWrapper(pathWrapper);
+        }
+
+      },
+
       addPath: function (path) {
         this.paths.push(path);
-        if (!(pathQuery.isPathFiltered(path.id) && pathQuery.isRemoveFilteredPaths())) {
-          this.pathWrappers.push(new PathWrapper(path));
-        }
+        this.addPathAsPathWrapper(path);
       }
       ,
 
@@ -657,6 +766,9 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       renderPaths: function () {
 
         var that = this;
+
+        var nodeSetScale = this.getNodeSetScale();
+        var edgeSetScale = this.getEdgeSetScale();
 
 
         var allPathContainers = that.parent.selectAll("g.pathContainer")
@@ -874,7 +986,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         allSetTypes.selectAll("text.collapseIconSmall")
           .attr("x", 5)
-          .attr("y", setHeight)
+          .attr("y", setTypeHeight)
           .text(function (d) {
             return d.setType.collapsed ? "\uf0da" : "\uf0dd";
           })
@@ -899,7 +1011,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             return config.getSetTypeFromSetPropertyName(d.setType.type);
           })
           .attr("x", 10)
-          .attr("y", setHeight)
+          .attr("y", setTypeHeight)
           .attr("fill", function (d) {
             return setInfo.getSetTypeInfo(d.setType.type).color;
           })
@@ -924,8 +1036,12 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                 cx: function (d) {
                   return nodeStart + (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
                 },
-                cy: setHeight / 2,
-                r: 4,
+                cy: setTypeHeight / 2,
+                r: function (d) {
+                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+                  return nodeSetScale(numSets);
+                },
                 fill: function (d) {
                   return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
                 }
@@ -945,13 +1061,18 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                   return nodeStart + (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
                 }
                 ,
-                y1: setHeight / 2,
+                y1: setTypeHeight / 2,
                 x2: function (d) {
                   return nodeStart + ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
                 },
-                y2: setHeight / 2,
+                y2: setTypeHeight / 2,
                 stroke: function (d) {
                   return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                },
+                "stroke-width": function (d) {
+                  var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
+                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+                  return edgeSetScale(numSets);
                 }
               });
           }
@@ -1033,7 +1154,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                 cy: function (d) {
                   return setHeight / 2;
                 },
-                r: 4,
+                r: 2,
                 fill: function (d) {
                   return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
                 }
@@ -1079,7 +1200,11 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         );
         that.selectionListeners.push(l);
 
+
+
         this.sortUpdateListener(sortingManager.currentComparator);
+
+        this.updatePathList();
 
         pathContainer.selectAll("rect.pathContainerBackground").transition()
           .duration(800)
