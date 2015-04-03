@@ -17,13 +17,6 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
 
     SetCombination.prototype = Object.create(a.CombinationAggregate.prototype);
 
-    //SetCombination.prototype.getSize = function(){
-    //  return {
-    //    width:  this.combo.length * 2 * setNodeRadiusX + (this.combo.length - 1) * setNodeSpacing,
-    //    height: setComboHeight
-    //  };
-    //};
-
 
     function SetNodePresenceSortingStrategy(setIds) {
       sorting.SortingStrategy.call(this, sorting.SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE);
@@ -104,8 +97,7 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
 
 
     SetComboList.prototype.destroy = function () {
-      this.removePaths();
-      this.updateListeners = [];
+      a.CombinationAggregateList.prototype.destroy.call(this);
       listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
     };
 
@@ -183,20 +175,15 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
           }
         }
         var setCombo = new SetCombination(combination, function (list) {
-          that.updateSetList();
+          that.updateAggregateList();
         });
         setCombo.addPath(path, pathCombination);
         that.aggregates.push(setCombo);
       }
     };
 
-    SetComboList.prototype.addPath = function (path) {
+    SetComboList.prototype.addAggregateForPath = function (path) {
       this.addToSetCombinations([path]);
-    };
-
-    SetComboList.prototype.setPaths = function (paths) {
-      this.clearAggregates();
-      this.addToSetCombinations(paths);
     };
 
     SetComboList.prototype.getComboNodeIDType = function () {
@@ -212,72 +199,6 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
 
       return text;
     };
-
-
-    //SetComboList.prototype.renderAggregate = function (parent) {
-    //  var that = this;
-    //
-    //  parent.each(function (setCombo) {
-    //    var allNodes = d3.select(this).selectAll("g.setNode")
-    //      .data(function (combination) {
-    //        return combination.combo;
-    //      });
-    //
-    //    var node = allNodes
-    //      .enter()
-    //      .append("g")
-    //      .attr("class", "setNode")
-    //      .on("dblclick", function (d) {
-    //        sortingManager.addOrReplace(sortingStrategies.getSetNodePrensenceSortingStrategy([d]));
-    //        listeners.notify(aggregateSorting.updateType, sortingManager.currentComparator);
-    //      });
-    //
-    //    var l = selectionUtil.addDefaultListener(d3.select(this), "g.setNode", function (d) {
-    //        return d.id;
-    //      },
-    //      "set"
-    //    );
-    //    that.selectionListeners.push(l);
-    //
-    //    node.append("ellipse")
-    //      .attr("cx", function (d, i) {
-    //        return setNodeRadiusX + (i * ((2 * setNodeRadiusX) + setNodeSpacing));
-    //      })
-    //      .attr("cy", vSpacing + setNodeRadiusY)
-    //      .attr("rx", setNodeRadiusX)
-    //      .attr("ry", setNodeRadiusY);
-    //    //.attr("fill", "rgb(200,200,200)")
-    //    //.attr("stroke", "rgb(30,30,30)");
-    //
-    //    node.append("text")
-    //      .text(function (d) {
-    //
-    //        var info = setInfo.get(d.id);
-    //
-    //
-    //        if (typeof info === "undefined") {
-    //          return d.id;
-    //        }
-    //        var text = pathUtil.getClampedText(info.properties[config.getSetNameProperty(info)], 14);
-    //
-    //        return text;
-    //      })
-    //      .attr("x", function (d, i) {
-    //        return (i * ((2 * setNodeRadiusX) + setNodeSpacing)) + setNodeRadiusX;
-    //      })
-    //      .attr("y", vSpacing + setNodeRadiusY + 4);
-    //    node.append("title")
-    //      .text(function (d) {
-    //        var info = setInfo.get(d.id);
-    //        if (typeof info === "undefined") {
-    //          return d.id;
-    //        }
-    //        return info.properties[config.getSetNameProperty(info)];
-    //      });
-    //
-    //    that.renderComboPath(d3.select(this), setCombo);
-    //  });
-    //};
 
 
     return SetComboList;

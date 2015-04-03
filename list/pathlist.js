@@ -1039,7 +1039,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
               that.updatePathList();
 
             }
-            //updateSetList(parent);
+            //updateAggregateList(parent);
           });
 
         setType.append("text")
