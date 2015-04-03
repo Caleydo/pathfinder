@@ -91,7 +91,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       if (typeof nodeWrapper === "undefined") {
         nodeWrapper = new NodeWrapper(this, node);
         this.nodeWrapperDict[node.id.toString()] = nodeWrapper;
-        this.childDomElements.push(nodeWrapper);
+        this.children.push(nodeWrapper);
       }
       nodeWrapper.addPath(path);
     };
@@ -103,14 +103,24 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       }
       delete this.nodeWrapperDict[node.id.toString()];
 
-      var index = this.childDomElements.indexOf(nodeWrapper);
+      var index = this.children.indexOf(nodeWrapper);
       if (index !== -1) {
-        this.childDomElements.splice(index, 1);
+        this.children.splice(index, 1);
       }
     };
 
     NodeTypeWrapper.prototype.getLabel = function() {
       return this.type;
+    };
+
+    NodeTypeWrapper.prototype.isFiltered = function() {
+      for(var i = 0; i < this.children.length; i++) {
+        if(!this.children[i].isFiltered()) {
+          return false;
+        }
+      }
+
+      return true;
     };
 
     NodeTypeWrapper.prototype.supportsNodeFilter = function() {
@@ -131,7 +141,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
         this.pathIds.splice(index, 1);
       }
 
-      this.childDomElements.forEach(function (child) {
+      this.children.forEach(function (child) {
         child.removePath(path);
       });
     };
@@ -222,7 +232,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       if (typeof setWrapper === "undefined") {
         setWrapper = new SetWrapper(this, setId);
         this.setWrapperDict[setId.toString()] = setWrapper;
-        this.childDomElements.push(setWrapper);
+        this.children.push(setWrapper);
       }
       setWrapper.addNode(node, path);
     };
@@ -235,6 +245,16 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       return false;
     };
 
+    SetTypeWrapper.prototype.isFiltered = function() {
+      for(var i = 0; i < this.children.length; i++) {
+        if(!this.children[i].isFiltered()) {
+          return false;
+        }
+      }
+
+      return true;
+    };
+
     SetTypeWrapper.prototype.removeSet = function (setId) {
       var setWrapper = this.setWrapperDict[setId.toString()];
       if (typeof setWrapper === "undefined") {
@@ -242,9 +262,9 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       }
       delete this.setWrapperDict[setId.toString()];
 
-      var index = this.childDomElements.indexOf(setWrapper);
+      var index = this.children.indexOf(setWrapper);
       if (index !== -1) {
-        this.childDomElements.splice(index, 1);
+        this.children.splice(index, 1);
       }
 
       //var pathsToRemove = [];
@@ -252,8 +272,8 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       //
       //this.pathIds.forEach(function (pathId) {
       //  var removePath = true;
-      //  for (var i = 0; i < that.childDomElements.length; i++) {
-      //    var pathWrapper = that.childDomElements[i];
+      //  for (var i = 0; i < that.children.length; i++) {
+      //    var pathWrapper = that.children[i];
       //    if (pathWrapper.pathIds.indexOf(pathId) !== -1) {
       //      removePath = false;
       //    }
@@ -278,7 +298,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
         this.pathIds.splice(index, 1);
       }
 
-      this.childDomElements.forEach(function (child) {
+      this.children.forEach(function (child) {
         child.removePath(path);
       });
     };
@@ -293,7 +313,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       if (typeof setWrapper === "undefined") {
         setWrapper = new SetWrapper(this, setId);
         this.setWrapperDict[setId.toString()] = setWrapper;
-        this.childDomElements.push(setWrapper);
+        this.children.push(setWrapper);
       }
       setWrapper.addEdge(edge, path);
     };

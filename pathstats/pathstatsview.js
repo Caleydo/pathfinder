@@ -23,8 +23,8 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       this.dataRoot = new HierarchyElement();
       this.nodeTypeWrappers = new Level1HierarchyElement(this.dataRoot);
       this.setTypeWrappers = new Level1HierarchyElement(this.dataRoot);
-      this.dataRoot.childDomElements.push(this.nodeTypeWrappers);
-      this.dataRoot.childDomElements.push(this.setTypeWrappers);
+      this.dataRoot.children.push(this.nodeTypeWrappers);
+      this.dataRoot.children.push(this.setTypeWrappers);
 
 
       this.selectionListeners = [];
@@ -74,8 +74,8 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
     PathStatsView.prototype.updateToFilteredPaths = function () {
       var that = this;
 
-      if(pathQuery.isRemoteQuery()) {
-        for(var i = 0; i < this.paths.length; i++) {
+      if (pathQuery.isRemoteQuery()) {
+        for (var i = 0; i < this.paths.length; i++) {
           var path = this.paths[i];
           if (pathQuery.isPathFiltered(path.id)) {
             this.paths.splice(i, 1);
@@ -84,33 +84,50 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         }
       }
 
-      this.nodeTypeWrappers.childDomElements.forEach(function (nodeTypeWrapper) {
+      for (var i = 0; i < this.nodeTypeWrappers.children.length; i++) {
+        var nodeTypeWrapper = this.nodeTypeWrappers.children[i];
+
         var nodesToRemove = [];
 
-        nodeTypeWrapper.childDomElements.forEach(function (nodeWrapper) {
-          if (pathQuery.isNodeFiltered(nodeWrapper.node.id)) {
+        nodeTypeWrapper.children.forEach(function (nodeWrapper) {
+          if (nodeWrapper.isFiltered()) {
             nodesToRemove.push(nodeWrapper);
           }
         });
+        if (nodesToRemove.length === nodeTypeWrapper.children.length) {
+          this.nodeTypeWrappers.children.splice(i, 1);
+          delete this.nodeTypeDict[nodeTypeWrapper.type];
+          i--;
+        } else {
 
-        nodesToRemove.forEach(function (nodeWrapper) {
-          nodeWrapper.parentElement.removeNode(nodeWrapper.node);
-        });
-      });
+          nodesToRemove.forEach(function (nodeWrapper) {
+            nodeWrapper.parentElement.removeNode(nodeWrapper.node);
+          });
+        }
+      }
 
-      this.setTypeWrappers.childDomElements.forEach(function (setTypeWrapper) {
+      for (var i = 0; i < this.setTypeWrappers.children.length; i++) {
+        var setTypeWrapper = this.setTypeWrappers.children[i];
+
         var setsToRemove = [];
 
-        setTypeWrapper.childDomElements.forEach(function (setWrapper) {
-          if (pathQuery.isNodeFiltered(setWrapper.setId)) {
+        setTypeWrapper.children.forEach(function (setWrapper) {
+          if (setWrapper.isFiltered()) {
             setsToRemove.push(setWrapper);
           }
         });
 
-        setsToRemove.forEach(function (setWrapper) {
-          setWrapper.parentElement.removeSet(setWrapper.setId);
-        });
-      });
+        if (setsToRemove.length === setTypeWrapper.children.length) {
+          this.setTypeWrappers.children.splice(i, 1);
+          delete this.setTypeDict[setTypeWrapper.type];
+          i--;
+        } else {
+
+          setsToRemove.forEach(function (setWrapper) {
+            setWrapper.parentElement.removeSet(setWrapper.setId);
+          });
+        }
+      }
 
       selectionUtil.removeListeners(this.selectionListeners);
       this.selectionListeners = [];
@@ -119,10 +136,10 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         if (!pathQuery.isPathFiltered(path.id)) {
           that.addPathElements(path);
         } else {
-          that.nodeTypeWrappers.childDomElements.forEach(function (nodeTypeWrapper) {
+          that.nodeTypeWrappers.children.forEach(function (nodeTypeWrapper) {
             nodeTypeWrapper.removePath(path);
           });
-          that.setTypeWrappers.childDomElements.forEach(function (setTypeWrapper) {
+          that.setTypeWrappers.children.forEach(function (setTypeWrapper) {
             setTypeWrapper.removePath(path);
           });
         }
@@ -164,7 +181,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         if (typeof nodeType === "undefined") {
           nodeType = new NodeTypeWrapper(that.nodeTypeWrappers, type);
           that.nodeTypeDict[type] = nodeType;
-          that.nodeTypeWrappers.childDomElements.push(nodeType);
+          that.nodeTypeWrappers.children.push(nodeType);
         }
         nodeType.addNode(node, path);
       }
@@ -174,7 +191,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         if (typeof setType === "undefined") {
           setType = new SetTypeWrapper(that.setTypeWrappers, type);
           that.setTypeDict[type] = setType;
-          that.setTypeWrappers.childDomElements.push(setType);
+          that.setTypeWrappers.children.push(setType);
         }
         setType.addNode(setId, node, path);
       }
@@ -184,7 +201,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         if (typeof setType === "undefined") {
           setType = new SetTypeWrapper(that.setTypeWrappers, type);
           that.setTypeDict[type] = setType;
-          that.setTypeWrappers.childDomElements.push(setType);
+          that.setTypeWrappers.children.push(setType);
         }
         setType.addEdge(setId, edge, path);
       }
@@ -210,8 +227,8 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       this.dataRoot = new HierarchyElement();
       this.nodeTypeWrappers = new Level1HierarchyElement(this.dataRoot);
       this.setTypeWrappers = new Level1HierarchyElement(this.dataRoot);
-      this.dataRoot.childDomElements.push(this.nodeTypeWrappers);
-      this.dataRoot.childDomElements.push(this.setTypeWrappers);
+      this.dataRoot.children.push(this.nodeTypeWrappers);
+      this.dataRoot.children.push(this.setTypeWrappers);
       selectionUtil.removeListeners(this.selectionListeners);
       this.selectionListeners = [];
       //currentNodeTypeWrapperId = 0;
@@ -229,9 +246,9 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
     };
 
     PathStatsView.prototype.getBarScale = function () {
-      var scaleDomain = [0, Math.max(this.nodeTypeWrappers.childDomElements.length <= 0 ? 0 : (d3.max(this.nodeTypeWrappers.childDomElements, function (d) {
+      var scaleDomain = [0, Math.max(this.nodeTypeWrappers.children.length <= 0 ? 0 : (d3.max(this.nodeTypeWrappers.children, function (d) {
         return d.pathIds.length;
-      })), this.setTypeWrappers.childDomElements.length <= 0 ? 0 : d3.max(this.setTypeWrappers.childDomElements, function (d) {
+      })), this.setTypeWrappers.children.length <= 0 ? 0 : d3.max(this.setTypeWrappers.children, function (d) {
         return d.pathIds.length;
       }))];
 
@@ -258,19 +275,19 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       }]);
 
       statTypeGroups.each(function (d) {
-        d.childDomElements.sort(comparator);
+        d.children.sort(comparator);
         var allStatTypes = d3.select(this).selectAll("g.statTypes")
-          .data(d.childDomElements, getKey);
+          .data(d.children, getKey);
 
         d3.select(this).selectAll("g.statTypes rect.pathOccurrences")
-          .data(d.childDomElements, getKey)
+          .data(d.children, getKey)
           .transition()
           .attr("width", function (d) {
             return scaleX(d.pathIds.length)
           });
 
         d3.select(this).selectAll("g.statTypes rect.pathOccurrences title")
-          .data(d.childDomElements, getKey)
+          .data(d.children, getKey)
           .text(function (d) {
             return d.pathIds.length
           });
@@ -286,24 +303,30 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
         allStatTypes.each(function (typeWrapper) {
 
-          typeWrapper.childDomElements.sort(comparator);
+          typeWrapper.children.sort(comparator);
 
 
           var stats = d3.select(this).selectAll("g.stats")
-            .data(typeWrapper.childDomElements, getKey);
+            .data(typeWrapper.children, getKey);
 
 
           stats.selectAll("rect.pathOccurrences")
-            .data(typeWrapper.childDomElements, getKey)
+            .data(typeWrapper.children, getKey)
             .transition()
             .attr("width", function (d) {
               return scaleX(d.pathIds.length)
             });
 
           stats.selectAll("rect.pathOccurrences title")
-            .data(typeWrapper.childDomElements, getKey)
+            .data(typeWrapper.children, getKey)
             .text(function (d) {
               return d.pathIds.length
+            });
+
+          d3.select(this).selectAll("g.statTypeCont")
+            .transition()
+            .style("opacity", function (d) {
+              return d.isFiltered() ? 0.5 : 1;
             });
 
           d3.select(this).selectAll("g.stats")
@@ -327,17 +350,6 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         );
       });
 
-
-      //var bars = d3.select("#pathstats svg").selectAll("rect.pathOccurrences")
-      //  .transition()
-      //  .attr("width", function (d) {
-      //    return scaleX(d.pathIds.length)
-      //  });
-      //bars.selectAll("title")
-      //  .text(function (d) {
-      //    return d.pathIds.length
-      //  });
-      //updateSets(setInfo);
 
       this.updateViewSize();
     };
@@ -363,13 +375,13 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
     PathStatsView.prototype.getMinSize = function () {
       var totalHeight = 0;
-      this.nodeTypeWrappers.childDomElements.forEach(function (nodeTypeWrapper) {
+      this.nodeTypeWrappers.children.forEach(function (nodeTypeWrapper) {
         if (nodeTypeWrapper.canBeShown()) {
           totalHeight += nodeTypeWrapper.getHeight();
         }
       });
 
-      this.setTypeWrappers.childDomElements.forEach(function (setTypeWrapper) {
+      this.setTypeWrappers.children.forEach(function (setTypeWrapper) {
         if (setTypeWrapper.canBeShown()) {
           totalHeight += setTypeWrapper.getHeight();
         }
@@ -383,7 +395,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       var that = this;
 
-      var allLevel1HierarchyElements = d3.select("#pathstats svg").selectAll("g.level1HierarchyElement").data(this.dataRoot.childDomElements);
+      var allLevel1HierarchyElements = d3.select("#pathstats svg").selectAll("g.level1HierarchyElement").data(this.dataRoot.children);
 
       allLevel1HierarchyElements.enter()
         .append("g")
@@ -411,11 +423,11 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
               });
           }
         });
-      this.renderStats("g.nodeTypeGroup", this.nodeTypeWrappers.childDomElements, function (d) {
+      this.renderStats("g.nodeTypeGroup", this.nodeTypeWrappers.children, function (d) {
         return d.node.id;
       }, "node");
       //this.renderStats();
-      this.renderStats("g.setTypeGroup", this.setTypeWrappers.childDomElements, function (d) {
+      this.renderStats("g.setTypeGroup", this.setTypeWrappers.children, function (d) {
         return d.setId;
       }, "set");
 
@@ -503,7 +515,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       var allStats = allStatTypes.selectAll("g.statGroup").selectAll("g.stats")
         .data(function (typeWrapper) {
-          return typeWrapper.childDomElements;
+          return typeWrapper.children;
         }, getKey);
 
       allStats.exit()
