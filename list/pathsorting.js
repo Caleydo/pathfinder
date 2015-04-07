@@ -63,13 +63,13 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
         var numNodesB = 0;
         nodeIds.forEach(function (nodeId) {
           a.path.nodes.forEach(function (node) {
-            if (node.id === nodeId) {
+            if (node.id.toString() === nodeId.toString()) {
               numNodesA++;
             }
           });
 
           b.path.nodes.forEach(function (node) {
-            if (node.id === nodeId) {
+            if (node.id.toString() === nodeId.toString()) {
               numNodesB++;
             }
           });

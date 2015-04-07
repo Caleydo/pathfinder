@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', './overviewgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', 'font-awesome', 'bootstrap'],
+require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', './pathgraph/pathgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', 'font-awesome', 'bootstrap'],
   function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting) {
 
     'use strict';
@@ -56,22 +56,22 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
           listView.init().then(function () {
 
             pathStatsView.init();
-            C.getJSON("dump/testpaths1.json", function (paths) {
-
-              var i = 0;
-
-              var interval = setInterval(function () {
-
-                if (i >= paths.length) {
-                  clearInterval(interval);
-                  return;
-                }
-                addPath(paths[i]);
-                i++;
-
-              }, 100);
-
-            });
+            //C.getJSON("dump/testpaths1.json", function (paths) {
+            //
+            //  var i = 0;
+            //
+            //  var interval = setInterval(function () {
+            //
+            //    if (i >= paths.length) {
+            //      clearInterval(interval);
+            //      return;
+            //    }
+            //    addPath(paths[i]);
+            //    i++;
+            //
+            //  }, 100);
+            //
+            //});
           });
 
 

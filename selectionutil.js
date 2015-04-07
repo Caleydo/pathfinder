@@ -137,7 +137,7 @@ define(['d3', '../caleydo/main'], function (d3, C) {
             var selectedIds = (that.selections[idType])[selectionType];
             var selected = false;
             for (var i = 0; i < selectedIds.length; i++) {
-              if (selectedIds[i] === id) {
+              if (selectedIds[i].toString() === id.toString()) {
                 d3.select(this).classed(selectionType, true);
                 selected = true;
                 break;

@@ -19,6 +19,14 @@ rect.filler {
 //  line-height: 5px;
 //}
 
+#pathlist g.node {
+
+  text {
+    text-anchor: middle;
+  }
+
+}
+
 g.node {
   rect {
     fill: rgb(200, 200, 200);
@@ -26,7 +34,6 @@ g.node {
   }
 
   text {
-    text-anchor: middle;
     font-family: sans-serif;
     cursor: default;
     font-size: 11px;
@@ -34,6 +41,8 @@ g.node {
   }
 
 }
+
+
 
 g.listItem {
   rect {
@@ -308,6 +317,12 @@ g.set.selected {
   circle {
     fill: rgb(255, 100, 0);
   }
+}
+
+.edgePath path {
+  stroke: #333;
+  fill: #333;
+  stroke-width: 1.5px;
 }
 
 .collapseIcon {
