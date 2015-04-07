@@ -42,8 +42,6 @@ g.node {
 
 }
 
-
-
 g.listItem {
   rect {
     fill: rgb(255, 255, 255);
@@ -231,7 +229,7 @@ g.set, g.setType {
 
   line {
     //    stroke: rgb(150,150,150);
-//    stroke-width: 1px;
+    //    stroke-width: 1px;
   }
 }
 
@@ -288,7 +286,7 @@ g.set.hovered {
 
   line {
     stroke: rgb(255, 200, 0);
-//    stroke-width: 2px;
+    //    stroke-width: 2px;
   }
 
   rect.filler {
@@ -307,7 +305,7 @@ g.set.selected {
 
   line {
     stroke: rgb(255, 100, 0);
-//    stroke-width: 2px;
+    //    stroke-width: 2px;
   }
 
   rect.filler {
@@ -322,13 +320,27 @@ g.set.selected {
 .edgePath path {
   stroke: rgb(80, 80, 80);
   fill: rgb(80, 80, 80);
-//  fill: rgb(200, 200, 200);
+  //  fill: rgb(200, 200, 200);
   stroke-width: 1.5px;
 }
-.edgePath path.filtered{
+
+.edgePath path.filtered {
   stroke: rgb(200, 200, 200);
   fill: rgb(200, 200, 200);
   stroke-width: 1.5px;
+}
+
+.edgePath path.path_hovered {
+  stroke: rgb(255, 200, 0);
+  fill: rgb(255, 200, 0);
+//  stroke-width: 3px;
+}
+
+.edgePath path.path_selected {
+  stroke: rgb(255, 100, 0);
+  fill: rgb(255, 100, 0);
+//  stroke-width: 3px;
+
 }
 
 .collapseIcon {
@@ -375,16 +387,15 @@ g.listItem.hovered {
   overflow: auto;
 }
 
-
 #leftCol {
   display: -webkit-flex;
   display: flex;
   flex-direction: column;
   float: left;
-//  display: inline-block;
+  //  display: inline-block;
   width: 49%;
   height: 100vh;
-//  overflow: auto;
+  //  overflow: auto;
   vertical-align: top;
 }
 
@@ -399,8 +410,8 @@ g.listItem.hovered {
 }
 
 #overviewRow {
-//  overflow: auto;
-  display:flex;
+  //  overflow: auto;
+  display: flex;
 
   -webkit-flex: 1;
   flex: 1;
@@ -416,12 +427,11 @@ header {
   height: 100%;
 }
 
-
 #pathGraphView {
-//  padding: 5px;
+  //  padding: 5px;
   display: inline-block;
   width: 74%;
-//  height: 500px;
+  //  height: 500px;
   overflow: auto;
   vertical-align: top;
 }
@@ -445,7 +455,7 @@ header {
   padding: 5px;
   display: inline-block;
   width: 25%;
-//  height: 100%;
+  //  height: 100%;
   overflow: auto;
   vertical-align: top;
   //  display: block;

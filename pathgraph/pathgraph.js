@@ -12,18 +12,24 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
 
     function PathGraphView() {
       View.call(this, "#pathgraph");
-      this.grabHSpace = false;
-      this.grabVSpace = false;
+      this.grabHSpace = true;
+      this.grabVSpace = true;
 
       this.paths = [];
       this.graph = new dagreD3.graphlib.Graph().setGraph({
-        rankdir: "LR"
+        rankdir: "LR",
+        marginx: 5,
+        marginy: 5
       });
     }
 
     PathGraphView.prototype = Object.create(View.prototype);
 
     PathGraphView.prototype.getMinSize = function () {
+      if (this.graph.nodes().length === 0) {
+        return {width: 200, height: 200};
+      }
+
       return {width: Math.max(this.graph.graph().width, 200), height: Math.max(this.graph.graph().height, 200)};
     };
 
@@ -31,6 +37,11 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
       View.prototype.init.call(this);
       d3.select(this.parentSelector + " svg").append("g")
         .attr("class", "graph");
+
+      $(window).on('resize.center', function (e) {
+        that.centerGraph();
+      });
+
 
       //this.force = d3.layout.force()
       //  .linkDistance(100)
@@ -134,23 +145,35 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
       //.jaccardLinkLengths(100);
 
       selectionUtil.addListener("path", function (selectionType) {
-        //var selectedIds = (selectionUtil.selections["path"])[selectionType];
-        //var selected = false;
-        //
-        //var selectedNodes = [];
-        //var selectedEdges = [];
-        //var lastPath = {};
-        //selectedIds.forEach(function (pathId) {
-        //
-        //  for (var i = 0; i < that.paths.length; i++) {
-        //    lastPath = that.paths[i];
-        //    if (lastPath.id === pathId) {
-        //      selectedNodes = selectedNodes.concat(lastPath.nodes);
-        //      selectedEdges = selectedEdges.concat(lastPath.edges);
-        //      break;
-        //    }
-        //  }
-        //});
+        var selectedIds = (selectionUtil.selections["path"])[selectionType];
+        var selected = false;
+
+        var selectedNodes = {};
+        var selectedEdges = {};
+        selectedIds.forEach(function (pathId) {
+
+          for (var i = 0; i < that.paths.length; i++) {
+            var path = that.paths[i];
+            if (path.id === pathId) {
+              path.nodes.forEach(function (node) {
+                selectedNodes[node.id.toString()] = true;
+              });
+            }
+          }
+        });
+
+        var svg = d3.select("#pathgraph svg");
+        svg.selectAll("g.node")
+          .classed("path_" + selectionType, function (d) {
+            return (typeof selectedNodes[d] !== "undefined");
+          });
+
+        svg.selectAll("g.edgePath path")
+          .classed("path_" + selectionType, function (d) {
+            return (typeof selectedNodes[d.v] !== "undefined") && (typeof selectedNodes[d.w] !== "undefined");
+          });
+
+
         //
         //svg.selectAll("g.nodeGroup").selectAll("g.node")
         //  .classed("path_" + selectionType, function (d) {
@@ -241,129 +264,22 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
       );
     };
 
-    PathGraphView.prototype.fixPath = function (path) {
-
-      //if (typeof path.nodes === "undefined") {
-      //  return;
-      //}
-      //
-      //var that = this;
-      //var nodeStep = (w - 2 * (sideSpacing + nodeWidth / 2)) / (path.nodes.length - 1);
-      //var posX = sideSpacing + nodeWidth / 2;
-      //var posY = h / 2;
-      //var svg = d3.select("#pathgraph svg");
-      //
-      //this.graph.nodes.forEach(function (node) {
-      //  //if (node.fixed === true) {
-      //  delete node.parent;
-      //  //}
-      //  //delete node.x;
-      //  //delete node.y;
-      //  //delete node.px;
-      //  //delete node.py;
-      //  node.fixed = false;
-      //});
-      //
-      ////var nodeRangeDict = {};
-      //
-      //
-      ////for (var i = 0; i <= 100; i++) {
-      ////
-      ////  var scale = i / 100;
-      //
-      //var fixedNodes = [];
-      //
-      ////var pathAlignmentConstraint = {
-      ////  type: "alignment",
-      ////  axis: "y",
-      ////  offsets: []
-      ////};
-      ////
-      ////var constraints = [pathAlignmentConstraint];
-      //
-      //
-      //path.nodes.forEach(function (fixedNode) {
-      //
-      //  for (var i = 0; i < that.graph.nodes.length; i++) {
-      //
-      //    var node = that.graph.nodes[i];
-      //    if (node.id == fixedNode.id) {
-      //
-      //      //if (i === 0) {
-      //      //  nodeRangeDict[node.id.toString()] = {startX: node.x, endX: posX, startY: node.y, endY: posY};
-      //      //  node.fixed = true;
-      //      //  posX += nodeStep;
-      //      //} else {
-      //      //
-      //      //  var ranges = nodeRangeDict[node.id.toString()];
-      //      //
-      //      //  var vX = ranges.startX + scale * (ranges.endX - ranges.startX);
-      //      //  node.x = vX;
-      //      //  node.px = vX;
-      //      //  //delete node.px;
-      //      //  var vY = ranges.startY + scale * (ranges.endY - ranges.startY);
-      //      //  node.y = vY;
-      //      //  node.py = vY;
-      //
-      //      node.x = posX;
-      //      node.px = posX;
-      //      //delete node.px;
-      //      node.y = posY;
-      //      node.py = posY;
-      //      node.fixed = true;
-      //      posX += nodeStep;
-      //
-      //      fixedNodes.push(i);
-      //      //pathAlignmentConstraint.offsets.push({
-      //      //  node: i, offset: 0
-      //      //});
-      //
-      //      //if(fixedNodes.length >=2) {
-      //      //  constraints.push({axis: "x", left: fixedNodes[fixedNodes.length-2], right: fixedNodes[fixedNodes.length-1], gap: 300, equality:true})
-      //      //}
-      //      //delete node.py;
-      //
-      //    }
-      //  }
-      //});
-      ////tick();
-      ////}
-      ////this.graph.groups = [
-      ////  {"leaves": fixedNodes}];
-      //
-      //
-      //this.force
-      //  .nodes(that.graph.nodes)
-      //  .links(that.graph.edges)
-      //  //.groups(that.graph.groups)
-      //  //.constraints(constraints)
-      //  .start();
-      //
-      ////svg.selectAll(".group")
-      ////  .data(that.graph.groups);
-      //svg.selectAll("g.edgeGroup").selectAll("g.edge")
-      //  .data(that.graph.edges, function (edge) {
-      //    return edge.edge.id;
-      //  });
-      //
-      //svg.selectAll("g.nodeGroup").selectAll("g.node")
-      //  .data(that.graph.nodes, function (node) {
-      //    return node.id;
-      //  })
-      //  .classed("fixed", function (d) {
-      //    return d.fixed
-      //  });
-      ////nodeGroup.selectAll("g.node")
-      //
-      ////for(var i = 0; i < 200; i++) tick();
-      ////force.stop();
-
+    PathGraphView.prototype.centerGraph = function () {
+      var svg = d3.select("#pathgraph svg");
+      var svgWidth = $(svg[0]).width();
+      var svgHeight = $(svg[0]).height();
+      var graphWidth = this.graph.graph().width;
+      var graphHeight = this.graph.graph().height;
+      svg.select("g.graph").attr("transform", "translate(" + ((svgWidth - graphWidth) / 2) + ", " + ((svgHeight - graphHeight) / 2) + ")");
     };
+
 
     PathGraphView.prototype.updateGraphToFilteredPaths = function () {
 
       this.graph = new dagreD3.graphlib.Graph().setGraph({
-        rankdir: "LR"
+        rankdir: "LR",
+        marginx: 5,
+        marginy: 5
       });
 
       var that = this;
@@ -391,7 +307,9 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
       var that = this;
 
       this.graph = new dagreD3.graphlib.Graph().setGraph({
-        rankdir: "LR"
+        rankdir: "LR",
+        marginx: 5,
+        marginy: 5
       });
 
       that.addPathsToGraph(this.paths);
@@ -410,12 +328,12 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
         });
 
       svg.selectAll("g.edgePath path")
-        .classed("filtered", function(d) {
-          return pathQuery.isNodeFiltered(d.v) ||  pathQuery.isNodeFiltered(d.w);
-        })
-        //.style("opacity", function (d) {
-        //  return pathQuery.isNodeFiltered(d.v) ||  pathQuery.isNodeFiltered(d.w) ? 0.5 : 1;
-        //});
+        .classed("filtered", function (d) {
+          return pathQuery.isNodeFiltered(d.v) || pathQuery.isNodeFiltered(d.w);
+        });
+      //.style("opacity", function (d) {
+      //  return pathQuery.isNodeFiltered(d.v) ||  pathQuery.isNodeFiltered(d.w) ? 0.5 : 1;
+      //});
 
       //svg.selectAll("g.edge")
       //  .transition()
@@ -455,7 +373,9 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
 
       this.paths = [];
       this.graph = new dagreD3.graphlib.Graph().setGraph({
-        rankdir: "LR"
+        rankdir: "LR",
+        marginx: 5,
+        marginy: 5
       });
     };
 
@@ -499,7 +419,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
       this.updateFilter();
 
       this.updateViewSize();
-      //inner.attr("transform", "translate(" + ((svg.attr("width") - this.graph.graph().width) / 2) + ", " + ((svg.attr("height") - this.graph.graph().height) / 2) + ")");
+      this.centerGraph();
 //        svg.attr('height', g.graph().height * initialScale + 40);
 
 
