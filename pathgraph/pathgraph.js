@@ -15,10 +15,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
       this.grabHSpace = false;
       this.grabVSpace = false;
 
-      this.nodeIndex = 0;
       this.paths = [];
-      this.nodeIndexMap = {};
-      this.edgeMap = {};
       this.graph = new dagreD3.graphlib.Graph().setGraph({
         rankdir: "LR"
       });
@@ -27,7 +24,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
     PathGraphView.prototype = Object.create(View.prototype);
 
     PathGraphView.prototype.getMinSize = function () {
-      return {width: this.graph.graph().width, height: this.graph.graph().height};
+      return {width: Math.max(this.graph.graph().width, 200), height: Math.max(this.graph.graph().height, 200)};
     };
 
     PathGraphView.prototype.init = function () {
@@ -198,11 +195,6 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
 
     PathGraphView.prototype.addPathsToGraph = function (paths) {
 
-      var nodeMap = {};
-      var nodeList = [];
-
-      var edgeMap = {};
-      var edgeList = [];
       var that = this;
 
 
@@ -370,53 +362,61 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
 
     PathGraphView.prototype.updateGraphToFilteredPaths = function () {
 
-      //this.graph = {nodes: [], edges: [], groups: []};
-      //this.nodeIndexMap = {};
-      //this.edgeMap = {};
-      //this.nodeIndex = 0;
-      //var that = this;
-      //
-      //if(pathQuery.isRemoteQuery()) {
-      //  for(var i = 0; i < this.paths.length; i++) {
-      //    var path = this.paths[i];
-      //    if (pathQuery.isPathFiltered(path.id)) {
-      //      this.paths.splice(i, 1);
-      //      i--;
-      //    }
-      //  }
-      //}
-      //
-      //this.paths.forEach(function (path) {
-      //  if (!pathQuery.isPathFiltered(path.id)) {
-      //    that.addPathsToGraph([path]);
-      //  }
-      //});
-      //
-      //this.renderGraph(d3.select("#pathgraph svg"));
+      this.graph = new dagreD3.graphlib.Graph().setGraph({
+        rankdir: "LR"
+      });
+
+      var that = this;
+
+      if (pathQuery.isRemoteQuery()) {
+        for (var i = 0; i < this.paths.length; i++) {
+          var path = this.paths[i];
+          if (pathQuery.isPathFiltered(path.id)) {
+            this.paths.splice(i, 1);
+            i--;
+          }
+        }
+      }
+
+      this.paths.forEach(function (path) {
+        if (!pathQuery.isPathFiltered(path.id)) {
+          that.addPathsToGraph([path]);
+        }
+      });
+
+      this.renderGraph(d3.select("#pathgraph svg"));
     };
 
     PathGraphView.prototype.updateGraphToAllPaths = function () {
-      //this.graph = {nodes: [], edges: [], groups: []};
-      //this.nodeIndexMap = {};
-      //this.edgeMap = {};
-      //this.nodeIndex = 0;
-      //var that = this;
-      //
-      //that.addPathsToGraph(this.paths);
-      //
-      //this.renderGraph(d3.select("#pathgraph svg"));
+      var that = this;
+
+      this.graph = new dagreD3.graphlib.Graph().setGraph({
+        rankdir: "LR"
+      });
+
+      that.addPathsToGraph(this.paths);
+
+      this.renderGraph(d3.select("#pathgraph svg"));
     };
 
 
     PathGraphView.prototype.updateFilter = function () {
 
-      //var svg = d3.select("#pathgraph svg");
-      //svg.selectAll("g.node")
-      //  .transition()
-      //  .style("opacity", function (d) {
-      //    return pathQuery.isNodeFiltered(d.id) ? 0.5 : 1;
-      //  });
-      //
+      var svg = d3.select("#pathgraph svg");
+      svg.selectAll("g.node")
+        .transition()
+        .style("opacity", function (d) {
+          return pathQuery.isNodeFiltered(d) ? 0.5 : 1;
+        });
+
+      svg.selectAll("g.edgePath path")
+        .classed("filtered", function(d) {
+          return pathQuery.isNodeFiltered(d.v) ||  pathQuery.isNodeFiltered(d.w);
+        })
+        //.style("opacity", function (d) {
+        //  return pathQuery.isNodeFiltered(d.v) ||  pathQuery.isNodeFiltered(d.w) ? 0.5 : 1;
+        //});
+
       //svg.selectAll("g.edge")
       //  .transition()
       //  .style("opacity", function (d) {
@@ -426,14 +426,14 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
     };
 
     PathGraphView.prototype.render = function (paths) {
-      //this.paths = paths;
-      ////if (paths.length > 0) {
-      //
-      //var svg = d3.select("#pathgraph svg");
-      //this.addPathsToGraph(paths);
-      //
-      //this.renderGraph(svg);
-      //}
+      this.paths = paths;
+      //if (paths.length > 0) {
+
+      var svg = d3.select("#pathgraph svg");
+      this.addPathsToGraph(paths);
+
+      this.renderGraph(svg);
+
     };
 
     PathGraphView.prototype.addPath = function (path) {
@@ -447,20 +447,16 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
     PathGraphView.prototype.reset = function () {
       var svg = d3.select("#pathgraph svg");
 
-      svg.selectAll("g.edgeGroup")
+      svg.selectAll("g.graph")
         .remove();
-      svg.selectAll("g.nodeGroup")
-        .remove();
+
       svg.append("g")
-        .attr("class", "edgeGroup");
-      svg.append("g")
-        .attr("class", "nodeGroup");
+        .attr("class", "graph");
 
       this.paths = [];
-      //this.graph = {nodes: [], edges: [], groups: []};
-      this.nodeIndexMap = {};
-      this.edgeMap = {};
-      this.nodeIndex = 0;
+      this.graph = new dagreD3.graphlib.Graph().setGraph({
+        rankdir: "LR"
+      });
     };
 
     PathGraphView.prototype.renderGraph = function (svg) {
@@ -499,6 +495,8 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
 //          .translate([(svg.attr("width") - g.graph().width * initialScale) / 2, 20])
 //          .scale(initialScale)
 //          .event(svg);
+
+      this.updateFilter();
 
       this.updateViewSize();
       //inner.attr("transform", "translate(" + ((svg.attr("width") - this.graph.graph().width) / 2) + ", " + ((svg.attr("height") - this.graph.graph().height) / 2) + ")");
@@ -589,7 +587,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
         .on("dblclick", function (d) {
           pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getNodePresenceStrategy([d]));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-        })
+        });
       selectionUtil.addDefaultListener(inner, "g.node", function (d) {
           return d;
         },
@@ -611,7 +609,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
       //  });
 
 
-    }
+    };
 
 
     return new PathGraphView();

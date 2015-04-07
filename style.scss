@@ -320,8 +320,14 @@ g.set.selected {
 }
 
 .edgePath path {
-  stroke: #333;
-  fill: #333;
+  stroke: rgb(80, 80, 80);
+  fill: rgb(80, 80, 80);
+//  fill: rgb(200, 200, 200);
+  stroke-width: 1.5px;
+}
+.edgePath path.filtered{
+  stroke: rgb(200, 200, 200);
+  fill: rgb(200, 200, 200);
   stroke-width: 1.5px;
 }
 
