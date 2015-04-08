@@ -14,6 +14,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       View.call(this, "#pathgraph");
       this.grabHSpace = true;
       this.grabVSpace = true;
+      this.nodeSelectionListener = 0;
 
       this.paths = [];
       this.graph = new dagre.graphlib.Graph().setGraph({
@@ -55,15 +56,17 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         var selected = false;
 
         var selectedNodes = {};
-        var selectedPaths = [];
+        var selectedEdges = {};
         selectedIds.forEach(function (pathId) {
 
           for (var i = 0; i < that.paths.length; i++) {
             var path = that.paths[i];
             if (path.id === pathId) {
-              selectedPaths.push(path);
               path.nodes.forEach(function (node) {
                 selectedNodes[node.id.toString()] = true;
+              });
+              path.edges.forEach(function (edge) {
+                selectedEdges[edge.id.toString()] = true;
               });
             }
           }
@@ -77,9 +80,9 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
         svg.selectAll("g.edgePath path")
           .classed("path_" + selectionType, function (d) {
+            var edge = that.graph.edge(d);
 
-
-            return (typeof selectedNodes[d.v] !== "undefined") && (typeof selectedNodes[d.w] !== "undefined");
+            return (typeof selectedEdges[edge.label] !== "undefined");
           });
 
 
@@ -195,7 +198,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           return pathQuery.isNodeFiltered(d) ? 0.5 : 1;
         });
 
-      svg.selectAll("g.edgePath path")
+      svg.selectAll("g.edgePath path.lines")
         .classed("filtered", function (d) {
           return pathQuery.isNodeFiltered(d.v) || pathQuery.isNodeFiltered(d.w);
         });
@@ -345,7 +348,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
         });
 
-      selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
+      selectionUtil.removeListeners(that.nodeSelectionListener, "node");
+      that.nodeSelectionListener = selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
           return d;
         },
         "node"
