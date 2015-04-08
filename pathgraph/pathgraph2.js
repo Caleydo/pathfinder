@@ -10,18 +10,38 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
     var nodeWidth = 50;
     var nodeHeight = 20;
 
-    function PathGraphView() {
-      View.call(this, "#pathgraph");
-      this.grabHSpace = true;
-      this.grabVSpace = true;
-      this.nodeSelectionListener = 0;
+    function getEdgeKey(d) {
+      return d.edge.label;
+    }
 
-      this.paths = [];
-      this.graph = new dagre.graphlib.Graph().setGraph({
+    function EdgeWrapper(v, w, edge) {
+      this.v = v;
+      this.w = w;
+      this.edge = edge;
+    }
+
+    EdgeWrapper.prototype = {};
+
+    function newGraph() {
+      return new dagre.graphlib.Graph().setGraph({
         rankdir: "LR",
         marginx: 5,
         marginy: 5
+        //nodesep: 100,
+        //edgesep: 50
       });
+    }
+
+    function PathGraphView() {
+      View.call(this, "#pathgraph");
+      this.grabHSpace = true;
+      this.grabVSpace = false;
+      this.nodeSelectionListener = 0;
+      //unfortunately we need edge wrappers that contain all information
+      this.edgeWrappers = [];
+
+      this.paths = [];
+      this.graph = newGraph();
     }
 
     PathGraphView.prototype = Object.create(View.prototype);
@@ -80,9 +100,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
         svg.selectAll("g.edgePath path")
           .classed("path_" + selectionType, function (d) {
-            var edge = that.graph.edge(d);
-
-            return (typeof selectedEdges[edge.label] !== "undefined");
+            return (typeof selectedEdges[d.edge.label] !== "undefined");
           });
 
 
@@ -136,6 +154,9 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
     };
 
     PathGraphView.prototype.centerGraph = function () {
+      if (this.graph.nodes().length === 0) {
+        return;
+      }
       var svg = d3.select("#pathgraph svg");
       var svgWidth = $(svg[0]).width();
       var svgHeight = $(svg[0]).height();
@@ -147,11 +168,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
     PathGraphView.prototype.updateGraphToFilteredPaths = function () {
 
-      this.graph = new dagre.graphlib.Graph().setGraph({
-        rankdir: "LR",
-        marginx: 5,
-        marginy: 5
-      });
+      this.graph = newGraph();
 
       var that = this;
 
@@ -177,11 +194,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
     PathGraphView.prototype.updateGraphToAllPaths = function () {
       var that = this;
 
-      this.graph = new dagre.graphlib.Graph().setGraph({
-        rankdir: "LR",
-        marginx: 5,
-        marginy: 5
-      });
+      this.graph = newGraph();
 
       that.addPathsToGraph(this.paths);
 
@@ -198,7 +211,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           return pathQuery.isNodeFiltered(d) ? 0.5 : 1;
         });
 
-      svg.selectAll("g.edgePath path.lines")
+      svg.selectAll("g.edgePath path")
         .classed("filtered", function (d) {
           return pathQuery.isNodeFiltered(d.v) || pathQuery.isNodeFiltered(d.w);
         });
@@ -240,11 +253,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .classed("nodeGroup", true);
 
       this.paths = [];
-      this.graph = new dagre.graphlib.Graph().setGraph({
-        rankdir: "LR",
-        marginx: 5,
-        marginy: 5
-      });
+      this.graph = newGraph();
     };
 
     PathGraphView.prototype.renderGraph = function (svg) {
@@ -254,24 +263,17 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
       dagre.layout(this.graph);
 
-      // Set some general styles
-      //this.graph.nodes().forEach(function (v) {
-      //  var node = that.graph.node(v);
-      //  node.rx = node.ry = 5;
-      //});
-
-// Add some custom colors based on state
-//        g.node('CLOSED').style = "fill: #f77";
-//        g.node('ESTAB').style = "fill: #7f7";
-
-      var inner = svg.select("g.graph");
       var edgeGroup = svg.select("g.edgeGroup");
 
+      this.edgeWrappers = [];
+
+      that.graph.edges().forEach(function (e) {
+        that.edgeWrappers.push(new EdgeWrapper(e.v, e.w, that.graph.edge(e)));
+      });
+
+
       var allEdges = edgeGroup.selectAll("g.edgePath")
-        .data(that.graph.edges(), function (edge) {
-          var e = that.graph.edge(edge);
-          return e.label;
-        });
+        .data(that.edgeWrappers, getEdgeKey);
 
       allEdges.exit()
         .remove();
@@ -295,7 +297,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .classed("lines", true)
         .attr({
           "marker-end": function (d) {
-            return "url(#arrowhead" + that.graph.edge(d).label + ")"
+            return "url(#arrowhead" + d.edge.label + ")"
           }
         });
 
@@ -304,7 +306,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       edge.append("defs")
         .append("marker")
         .attr("id", function (d) {
-          return "arrowhead" + that.graph.edge(d).label;
+          return "arrowhead" + d.edge.label;
         })
         .attr("viewBox", "0 0 10 10")
         .attr("refX", "9")
@@ -319,11 +321,13 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       //<path d="M31.694915254237287,300L80,15L130,15L180,15L205,15"></path>
       //<path class="path" d="M23.52980132450331,307L64,16L113,16L162,16L197,16" marker-end="url(#arrowhead1177)" style="fill: none;"></path>
 
-      allEdges.selectAll("path.lines").attr({
-        d: function (d) {
-          return line(that.graph.edge(d).points);
-        }
-      });
+      allEdges.selectAll("path.lines")
+        .data(that.edgeWrappers, getEdgeKey)
+        .attr({
+          d: function (d) {
+            return line(d.edge.points);
+          }
+        });
       //var edgeLines = edge.append("line");
       //.
       //attr("marker-end", "url(#arrowRight)");

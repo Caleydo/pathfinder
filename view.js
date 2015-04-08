@@ -34,10 +34,18 @@ define(['jquery', 'd3'],
         var svg = d3.select(this.parentSelector + " svg");
         //var parent = $(this.parentSelector)[0];
         //var pw = $(this.parentSelector)[0].offsetWidth;
-       var p =  $(this.parentSelector);
+        var p = $(this.parentSelector);
         var p2 = $(this.parentSelector)[0];
+        var height = 0;
+        if ($(this.parentSelector)[0].offsetHeight > minSize.height && this.grabVSpace) {
+          height = "100%";
+        } else {
+          height = minSize.height;
+        }
+
+
         svg.attr("width", $(this.parentSelector)[0].offsetWidth > minSize.width && this.grabHSpace ? "100%" : minSize.width);
-        svg.attr("height", $(this.parentSelector)[0].offsetHeight > minSize.height && this.grabVSpace ? "100%" : minSize.height);
+        svg.attr("height", height);
       }
 
     };
