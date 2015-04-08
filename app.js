@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', './pathgraph/pathgraph', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', 'font-awesome', 'bootstrap'],
+require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', 'font-awesome', 'bootstrap'],
   function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting) {
 
     'use strict';

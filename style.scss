@@ -19,13 +19,13 @@ rect.filler {
 //  line-height: 5px;
 //}
 
-#pathlist g.node {
-
-  text {
-    text-anchor: middle;
-  }
-
-}
+//#pathlist g.node {
+//
+//  text {
+//    text-anchor: middle;
+//  }
+//
+//}
 
 g.node {
   rect {
@@ -35,6 +35,7 @@ g.node {
 
   text {
     font-family: sans-serif;
+    text-anchor: middle;
     cursor: default;
     font-size: 11px;
     fill: rgb(30, 30, 30);

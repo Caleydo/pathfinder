@@ -28,6 +28,10 @@
           "deps": ["d3"],
           "exports": "cola"
         },
+        "dagre": {
+          "deps": ["lodash", "graphlib"],
+          "exports": "dagre"
+        },
         "dagre-d3": {
           "deps": ["d3","lodash", "graphlib", "dagre"],
           "exports": "dagre-d3"
