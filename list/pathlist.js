@@ -1086,7 +1086,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           })
           .attr("x", 10)
           .attr("y", setTypeHeight)
-          .attr("fill", function (d) {
+          .style("fill", function (d) {
             return setInfo.getSetTypeInfo(d.setType.type).color;
           })
           .attr("clip-path", "url(#SetLabelClipPath)");
@@ -1202,7 +1202,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             })
             .attr("x", setTypeIndent)
             .attr("y", setHeight)
-            .attr("fill", function (d) {
+            .style("fill", function (d) {
               return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
             })
             .attr("clip-path", "url(#SetLabelClipPath)");

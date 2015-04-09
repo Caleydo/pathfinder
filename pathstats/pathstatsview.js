@@ -507,7 +507,17 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           return typeWrapper.type;
         });
 
-      addPathOccurrenceBar(typeCont);
+      if (idType === "set") {
+        typeLabel.style("fill", function (d) {
+          return setInfo.getSetTypeInfo(d.type).color;
+        });
+      }
+
+      addPathOccurrenceBar(typeCont, idType === "set" ? function (d) {
+        return setInfo.getSetTypeInfo(d.type).color;
+      } : function (d) {
+        return "gray";
+      });
 
       var statGroup = statType.append("g")
         .classed("statGroup", true);
@@ -563,6 +573,11 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           y: HIERARCHY_ELEMENT_HEIGHT,
           "clip-path": "url(#LabelClipPath)"
         });
+      if (idType === "set") {
+        setLabel.style("fill", function (d) {
+          return setInfo.getSetTypeInfo(d.parentElement.type).color;
+        });
+      }
 
       setLabel.append("title")
         .text(function (stat) {
@@ -579,9 +594,13 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           return stat.getLabel();
         });
 
-      addPathOccurrenceBar(stats);
+      addPathOccurrenceBar(stats, idType === "set" ? function (d) {
+        return setInfo.getSetTypeInfo(d.parentElement.type).color;
+      } : function (d) {
+        return "gray";
+      });
 
-      function addPathOccurrenceBar(parent) {
+      function addPathOccurrenceBar(parent, barColor) {
         var setPathOccurrenceBar = parent.append("rect")
           .classed("pathOccurrences", true)
           .attr({
@@ -591,7 +610,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
               return scaleX(stat.pathIds.length);
             },
             height: HIERARCHY_ELEMENT_HEIGHT - 4,
-            fill: "gray"
+            fill: barColor
           });
 
         setPathOccurrenceBar.append("title")
