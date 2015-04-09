@@ -26,8 +26,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       return new dagre.graphlib.Graph().setGraph({
         rankdir: "LR",
         marginx: 5,
-        marginy: 5
-        //nodesep: 100,
+        marginy: 10,
+        nodesep: 30
         //edgesep: 50
       });
     }
@@ -103,6 +103,23 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             return (typeof selectedEdges[d.edge.label] !== "undefined");
           });
 
+        //if (selectionType === "selected") {
+        //  that.graph.edges().forEach(function (e) {
+        //    var edge = that.graph.edge(e);
+        //    if (typeof selectedEdges[edge.label] !== "undefined") {
+        //      that.setEdge(e.v, e.w, edge.label, edge, 1000);
+        //    } else {
+        //      that.setEdge(e.v, e.w, edge.label, edge, 1);
+        //    }
+        //  });
+        //  console.log("-----------------------------------------");
+        //  that.graph.edges().forEach(function (e) {
+        //    console.log("Edge " + e.v + " -> " + e.w + ": " + JSON.stringify(that.graph.edge(e)));
+        //  });
+        //
+        //
+        //  that.renderGraph(svg);
+        //}
 
       });
 
@@ -121,6 +138,16 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         }
       }, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
     };
+
+    //PathGraphView.prototype.setEdge = function (v, w, label, edge, weight) {
+    //
+    //  this.graph.setEdge(v, w, {
+    //    label: label,
+    //    edge: edge,
+    //    weight: weight
+    //  });
+    //
+    //}
 
     PathGraphView.prototype.addPathsToGraph = function (paths) {
 
@@ -206,10 +233,13 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
       var svg = d3.select("#pathgraph svg");
       svg.selectAll("g.node")
-        .transition()
-        .style("opacity", function (d) {
-          return pathQuery.isNodeFiltered(d) ? 0.5 : 1;
+        .classed("filtered", function (d) {
+          return pathQuery.isNodeFiltered(d);
         });
+      //.transition()
+      //.style("opacity", function (d) {
+      //  return pathQuery.isNodeFiltered(d) ? 0.5 : 1;
+      //});
 
       svg.selectAll("g.edgePath path")
         .classed("filtered", function (d) {
@@ -298,7 +328,11 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .attr({
           "marker-end": function (d) {
             return "url(#arrowhead" + d.edge.label + ")"
+          },
+          d: function (d) {
+            return line(d.edge.points);
           }
+
         });
 
       //<marker id="arrowhead1177" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"></path></marker>
@@ -323,6 +357,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
       allEdges.selectAll("path.lines")
         .data(that.edgeWrappers, getEdgeKey)
+        .transition()
         .attr({
           d: function (d) {
             return line(d.edge.points);
@@ -347,6 +382,10 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .enter()
         .append("g")
         .classed("node", true)
+        .attr("transform", function (d) {
+          var n = that.graph.node(d);
+          return "translate(" + n.x + ", " + n.y + ")";
+        })
         .on("dblclick", function (d) {
           pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getNodePresenceStrategy([d]));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
@@ -359,7 +398,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         "node"
       );
 
-      allNodes
+      allNodes.transition()
         .attr("transform", function (d) {
           var n = that.graph.node(d);
           return "translate(" + n.x + ", " + n.y + ")";

@@ -65,6 +65,17 @@ g.listItem {
 //  }
 //}
 
+g.node.filtered {
+  rect {
+    fill: rgb(230, 230, 230);
+    stroke: rgb(180, 180, 180);
+  }
+
+  text {
+    fill: rgb(180, 180, 180);
+  }
+}
+
 g.node.hovered {
   rect {
     fill: rgb(255, 200, 0);
@@ -326,8 +337,8 @@ g.set.selected {
 }
 
 .edgePath path.filtered {
-  stroke: rgb(200, 200, 200);
-  fill: rgb(200, 200, 200);
+  stroke: rgb(180, 180, 180);
+  fill: rgb(180, 180, 180);
   stroke-width: 1.5px;
 }
 
