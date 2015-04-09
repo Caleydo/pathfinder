@@ -78,6 +78,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
     function PathWrapper(path) {
       this.path = path;
+      this.rank = "?."
       this.addPathSets(path);
     }
 
@@ -287,7 +288,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.setVisibilityUpdateListener = function (showSets) {
         showNodeSets = showSets;
 
-        if(typeof that.parent === "undefined") {
+        if (typeof that.parent === "undefined") {
           return;
         }
 
@@ -296,7 +297,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       };
 
       this.listUpdateListener = function (updatedObject) {
-        if(typeof that.parent === "undefined") {
+        if (typeof that.parent === "undefined") {
           return;
         }
 
@@ -304,7 +305,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       };
 
       this.removeFilterChangedListener = function (remove) {
-        if(typeof that.parent === "undefined") {
+        if (typeof that.parent === "undefined") {
           return;
         }
 
@@ -317,7 +318,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       };
 
       this.queryChangedListener = function (query) {
-        if(typeof that.parent === "undefined") {
+        if (typeof that.parent === "undefined") {
           return;
         }
 
@@ -332,11 +333,35 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.sortUpdateListener = function (currentComparator) {
         //sortingManager.sort(that.pathWrappers, that.parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers), sortStrategyChain);
 
-        if(typeof that.parent === "undefined") {
+        if (typeof that.parent === "undefined") {
           return;
         }
 
         that.pathWrappers.sort(currentComparator);
+
+        var rankingStrategyChain = Object.create(pathSorting.sortingManager.currentStrategyChain);
+        rankingStrategyChain.splice(rankingStrategyChain.length - 1, 1);
+
+        var rankComparator = sorting.getComparatorFromStrategyChain(rankingStrategyChain);
+
+        var currentRank = 0;
+        var rankCounter = 0;
+        var prevWrapper = 0;
+        that.pathWrappers.forEach(function (pathWrapper) {
+          rankCounter++;
+          if (prevWrapper === 0) {
+            currentRank = rankCounter;
+          } else {
+            if (rankComparator(prevWrapper, pathWrapper) !== 0) {
+              currentRank = rankCounter;
+            }
+          }
+          pathWrapper.rank = currentRank.toString() + ".";
+          prevWrapper = pathWrapper;
+          //} else {
+          //}
+
+        });
 
         that.updateDataBinding();
 
@@ -344,10 +369,16 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .sort(currentComparator)
           .transition()
           .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
+
+        that.parent.selectAll("text.pathRank")
+          .data(that.pathWrappers, getPathKey)
+          .text(function (d) {
+            return d.rank;
+          });
       };
 
       this.collapseSetTypeListener = function (setType) {
-        if(typeof that.parent === "undefined") {
+        if (typeof that.parent === "undefined") {
           return;
         }
 
@@ -397,8 +428,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         var that = this;
 
-        if(pathQuery.isRemoteQuery()) {
-          for(var i = 0; i < this.paths.length; i++) {
+        if (pathQuery.isRemoteQuery()) {
+          for (var i = 0; i < this.paths.length; i++) {
             var path = this.paths[i];
             if (pathQuery.isPathFiltered(path.id)) {
               this.paths.splice(i, 1);
@@ -724,7 +755,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       ,
 
       updateDataBinding: function () {
-        if(typeof this.parent === "undefined"){
+        if (typeof this.parent === "undefined") {
           return;
         }
 
@@ -850,13 +881,23 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         p.append("rect")
           .attr("class", "filler")
-          .attr("x", nodeStart)
+          .attr("x", 0)
           .attr("y", 0)
           .attr("width", "100%")
           .attr("height", pathHeight);
         //.on("click", function(d) {
         //  console.log(d.path.id);
         //});
+
+        p.append("text")
+          .classed("pathRank", true)
+          .attr({
+            x: 5,
+            y: pathHeight / 2 + 5
+          })
+          .text(function (d) {
+            return d.rank;
+          });
 
         var l = selectionUtil.addDefaultListener(pathContainer, "g.path", function (d) {
             return d.path.id;
@@ -1237,7 +1278,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           "set"
         );
         that.selectionListeners.push(l);
-
 
 
         this.sortUpdateListener(sortingManager.currentComparator);

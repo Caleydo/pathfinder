@@ -86,7 +86,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
     NodePresenceSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
     function PathQuerySortingStrategy(pathQuery) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE);
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER);
       this.pathQuery = pathQuery;
     }
 
@@ -101,7 +101,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
     };
 
     function SetPresenceSortingStrategy(setIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE);
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER);
       this.compare = function (a, b) {
         var setScoreA = 0;
         var setScoreB = 0;
