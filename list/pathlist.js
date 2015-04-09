@@ -394,14 +394,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
     }
 
     PathList.prototype = {
-      wrapPaths: function (paths) {
-        var that = this;
-        paths.forEach(function (path) {
-          if (!(pathQuery.isPathFiltered(path.id) && pathQuery.isRemoveFilteredPaths())) {
-            that.pathWrappers.push(new PathWrapper(path));
-          }
-        });
-      },
 
       addUpdateListener: function (l) {
         this.updateListeners.push(l);
@@ -699,9 +691,12 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       ,
 
       setPaths: function (paths) {
+        var that = this;
         this.pathWrappers = [];
         this.paths = paths;
-        this.wrapPaths(paths);
+        paths.forEach(function(path) {
+          that.addPathAsPathWrapper(path);
+        })
       },
 
       updateMaxSetsForPathWrapper: function (pathWrapper) {
