@@ -264,6 +264,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       //d3.selectAll("g.nodeTypeGroup").data([this.nodeTypeWrappers]);
       var that = this;
       var statTypeGroups = d3.selectAll("g.level1HierarchyElement")
+        .transition()
         .attr({
           transform: hierarchyElements.transformFunction
         });
@@ -342,12 +343,24 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         });
 
         allStatTypes.selectAll("g.statGroup")
-          .attr({
-            display: function (typeWrapper) {
-              return typeWrapper.collapsed ? "none" : "inline";
+          .transition()
+          .each("start", function (typeWrapper) {
+            if (typeWrapper.collapsed) {
+              d3.select(this)
+                .attr({
+                  display: "none"
+                });
             }
-          }
-        );
+          })
+          .each("end", function (typeWrapper) {
+            if (!typeWrapper.collapsed) {
+              d3.select(this)
+                .attr({
+                  display: "inline"
+                });
+            }
+          });
+
       });
 
 
