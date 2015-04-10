@@ -431,6 +431,12 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           return text;
         });
 
+      node.append("title")
+        .text(function (d) {
+          var node = that.graph.node(d).node;
+          return node.properties[config.getNodeNameProperty(node)];
+        });
+
       this.updateFilter();
 
       this.updateViewSize();
