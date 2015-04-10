@@ -31,7 +31,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       button.append("text")
         .attr({
           x: textX,
-          y: textY,
+          y: textY
+        })
+        .style({
           fill: color
         })
         .text(buttonText);

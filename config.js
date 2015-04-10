@@ -90,6 +90,14 @@ define(function () {
       return false;
     },
 
+    getEdgeSetProperties: function(edge) {
+      var sets = edgeSets[edge.type];
+      if (typeof sets !== "undefined") {
+        return Object.keys(sets);
+      }
+      return [];
+    },
+
     getSetTypeFromEdgeSetProperty: function (edge, property) {
       var sets = nodeSets[edge.type];
       if (typeof sets !== "undefined") {
@@ -103,6 +111,20 @@ define(function () {
 
     getConfig: function () {
       return config;
+    },
+
+    isSetEdge: function (edge) {
+      var propertyKeys = Object.keys(edge.properties);
+
+      for(var i = 0; i < propertyKeys.length; i++) {
+        var key = propertyKeys[i];
+        var propType = edge.properties[key].type;
+        if (typeof propType !== "undefined" && propType === "flag") {
+          return true;
+        }
+      }
+
+      return false;
     },
 
     getNodeConfig: function (node) {

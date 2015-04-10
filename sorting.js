@@ -1,10 +1,11 @@
 /**
  * Created by Christian on 23.02.2015.
  */
-define(function() {
+define(['d3'], function(d3) {
 
   function SortingStrategy(type) {
     this.type = type;
+    this.priority = type;
   }
 
   SortingStrategy.prototype = {
@@ -12,7 +13,8 @@ define(function() {
       ID: 0,
       WEIGHT: 1,
       PRESENCE: 2,
-      UNKNOWN: 3
+      FILTER: 3,
+      UNKNOWN: 4
     },
     compare: function (a, b) {
       return 0;
@@ -55,13 +57,16 @@ define(function() {
       var replaced = false;
       for (var i = 0; i < this.currentStrategyChain.length; i++) {
         var currentStrategy = this.currentStrategyChain[i];
-        if (currentStrategy.type == strategy.type) {
+        if (currentStrategy.type === strategy.type) {
           this.currentStrategyChain[i] = strategy;
           replaced = true;
         }
       }
       if (!replaced) {
         this.currentStrategyChain.unshift(strategy);
+        this.currentStrategyChain.sort(function(a, b) {
+          return d3.descending(a.priority, b.priority);
+        });
       }
       this.setStrategyChain(this.currentStrategyChain);
     },

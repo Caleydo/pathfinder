@@ -1,3 +1,23 @@
+$selectionColor: rgb(255, 100, 0);
+$selectionColorSoft: rgba(255, 100, 0, 0.2);
+$hoverColor: rgb(255, 200, 0);
+$hoverColorSoft: rgba(255, 200, 0, 0.2);
+$transparentColor: rgba(0, 0, 0, 0);
+$defaultFillColor: rgb(200, 200, 200);
+$defaultStrokeColor: rgb(80, 80, 80);
+$defaultFillColorFiltered: rgb(230, 230, 230);
+$defaultStrokeColorFiltered: rgb(180, 180, 180);
+$overlayFillColor: rgb(255, 255, 255);
+$overlayStrokeColor: rgb(30, 30, 30);
+$overlayHoverColor: rgb(150, 200, 255);
+
+@mixin textIcon($fontSize) {
+  font-family: FontAwesome, sans-serif;
+  font-size: $fontSize;
+  cursor: pointer;
+  text-anchor: middle;
+}
+
 body {
   margin: 0px;
 }
@@ -7,236 +27,154 @@ text {
   font-family: sans-serif;
   cursor: default;
   font-size: 10px;
-  //    fill: rgb(30, 30, 30);
+  fill: $defaultStrokeColor;
+}
+
+text.collapseIconSmall {
+  @include textIcon(10px);
 }
 
 rect.filler {
-  fill: rgba(0, 0, 0, 0)
-
+  fill: $transparentColor;
 }
-
-//input.queryConstraint {
-//  line-height: 5px;
-//}
 
 g.node {
   rect {
-    fill: rgb(200, 200, 200);
-    stroke: rgb(30, 30, 30);
+    fill: $defaultFillColor;
+    stroke: $defaultStrokeColor;
   }
 
   text {
     text-anchor: middle;
-    font-family: sans-serif;
-    cursor: default;
     font-size: 11px;
-    fill: rgb(30, 30, 30);
   }
-
 }
 
-g.listItem {
+g.node.filtered {
   rect {
-    fill: rgb(255, 255, 255);
-    stroke: rgb(255, 255, 255);
+    fill: $defaultFillColorFiltered;
+    stroke: $defaultStrokeColorFiltered;
   }
 
   text {
-    font-family: sans-serif;
-    cursor: default;
-    font-size: 12px;
-    fill: rgb(30, 30, 30);
+    fill: $defaultStrokeColorFiltered;
   }
-
 }
-
-//g.node.fixed {
-//  rect {
-//    fill: rgb(200, 100, 50);
-//    stroke: rgb(30, 10, 2);
-//  }
-//}
 
 g.node.hovered {
   rect {
-    fill: rgb(255, 200, 0);
-    stroke: rgb(30, 30, 30);
+    fill: $hoverColor;
   }
 }
 
 g.node.path_hovered {
   rect {
-    stroke: rgb(255, 200, 0);
+    stroke: $hoverColor;
     stroke-width: 3px;
   }
 }
 
 g.node.selected {
   rect {
-    fill: rgb(255, 100, 0);
-    stroke: rgb(30, 30, 30);
+    fill: $selectionColor;
   }
 }
 
 g.node.path_selected {
   rect {
-    stroke: rgb(255, 100, 0);
+    stroke: $selectionColor;
     stroke-width: 3px;
   }
+}
+
+g.listItem {
+  rect {
+    fill: $overlayFillColor;
+    stroke: $overlayFillColor;
+  }
+
+  text {
+    font-size: 12px;
+    fill: $overlayStrokeColor;
+  }
+}
+
+g.listItem.hovered {
+  rect {
+    fill: $overlayHoverColor;
+    stroke: $overlayFillColor;
+  }
+
 }
 
 g.comboNode {
   text {
     text-anchor: middle;
-    font-family: sans-serif;
-    cursor: default;
     font-size: 11px;
-    fill: rgb(30, 30, 30);
-  }
-
-  ellipse {
-    //    fill: rgb(200, 200, 200);
-    //    stroke: rgb(30, 30, 30);
+    fill: $defaultStrokeColor;
   }
 }
 
 .comboNode.hovered {
   ellipse {
-    fill: rgb(255, 200, 0);
+    fill: $hoverColor;
   }
 }
 
 .comboNode.selected {
   ellipse {
-    fill: rgb(255, 100, 0);
+    fill: $selectionColor;
   }
 }
 
 rect.nodeType.hovered {
-  fill: rgb(255, 200, 0);
+  fill: $hoverColor;
 }
 
 rect.nodeType.selected {
-  fill: rgb(255, 100, 0);
+  fill: $selectionColor;
 }
 
 g.setNode {
   text {
     text-anchor: middle;
-    font-family: sans-serif;
-    cursor: default;
     font-size: 11px;
-    fill: rgb(30, 30, 30);
+    fill: $defaultStrokeColor;
   }
 
   ellipse {
-    fill: rgb(200, 200, 200);
-    stroke: rgb(30, 30, 30);
+    fill: $defaultFillColor;
+    stroke: $defaultStrokeColor;
   }
 }
 
 g.setNode.hovered {
   ellipse {
-    fill: rgb(255, 200, 0);
+    fill: $hoverColor;
   }
 }
 
 g.setNode.selected {
   ellipse {
-    fill: rgb(255, 100, 0);
+    fill: $selectionColor;
   }
 }
 
 g.edge {
   line {
-    stroke: rgb(80, 80, 80);
+    stroke: $defaultStrokeColor;
     stroke-width: 2px;
-  }
-}
-
-g.edge.path_hovered {
-  line {
-    stroke: rgb(255, 200, 0);
-    stroke-width: 3px;
-  }
-}
-
-g.edge.path_selected {
-  line {
-    stroke: rgb(255, 100, 0);
-    stroke-width: 3px;
-  }
-}
-
-g.nodeTypeStats {
-
-  text {
-    text-anchor: left;
-    font-family: sans-serif;
-    cursor: default;
-    font-size: 10px;
-    //    fill: rgb(30, 30, 30);
-  }
-
-  text.collapseIconSmall {
-    font-family: FontAwesome;
-    font-size: 10px;
-    cursor: pointer;
-    text-anchor: middle;
-  }
-}
-
-g.statTypes {
-
-  text {
-    text-anchor: left;
-    font-family: sans-serif;
-    cursor: default;
-    font-size: 10px;
-    //    fill: rgb(30, 30, 30);
-  }
-
-  text.collapseIconSmall {
-    font-family: FontAwesome;
-    font-size: 10px;
-    cursor: pointer;
-    text-anchor: middle;
-  }
-}
-
-g.set, g.setType {
-  text {
-    text-anchor: left;
-    font-family: sans-serif;
-    cursor: default;
-    font-size: 10px;
-    //    fill: rgb(30, 30, 30);
-  }
-
-  text.collapseIconSmall {
-    font-family: FontAwesome;
-    font-size: 10px;
-    cursor: pointer;
-    text-anchor: middle;
-  }
-
-  line {
-    //    stroke: rgb(150,150,150);
-//    stroke-width: 1px;
   }
 }
 
 g.overlayButton {
   text {
-    font-family: FontAwesome;
-    font-size: 16px;
-    cursor: pointer;
-    text-anchor: middle;
+    @include textIcon(16px);
   }
 
   rect {
-    fill: rgb(255, 255, 255);
-    stroke: rgb(30, 30, 30);
+    fill: $overlayFillColor;
+    stroke: $overlayStrokeColor;
     stroke-width: 1px;
 
   }
@@ -248,66 +186,79 @@ g.overlayButton.smallButton {
   }
 }
 
-g.stats.hovered {
+g.stats.hovered, g.path.hovered {
   rect.filler {
-    fill: rgba(255, 200, 0, 0.2)
+    fill: $hoverColorSoft;
   }
 }
 
-g.stats.selected {
+g.stats.selected, g.path.selected {
   rect.filler {
-    fill: rgba(255, 100, 0, 0.2)
-  }
-}
-
-g.path.hovered {
-  rect.filler {
-    fill: rgba(255, 200, 0, 0.2)
-  }
-}
-
-g.path.selected {
-  rect.filler {
-    fill: rgba(255, 100, 0, 0.2)
+    fill: $selectionColorSoft;
   }
 }
 
 g.set.hovered {
   text {
-    fill: rgb(255, 200, 0);
+    fill: $hoverColor;
   }
 
   line {
-    stroke: rgb(255, 200, 0);
-//    stroke-width: 2px;
+    stroke: $hoverColor;
+    //    stroke-width: 2px;
   }
 
   rect.filler {
-    fill: rgba(255, 200, 0, 0.2)
+    fill: $hoverColorSoft;
   }
 
   circle {
-    fill: rgb(255, 200, 0);
+    fill: $hoverColor;
   }
 }
 
 g.set.selected {
   text {
-    fill: rgb(255, 100, 0);
+    fill: $selectionColor;
   }
 
   line {
-    stroke: rgb(255, 100, 0);
-//    stroke-width: 2px;
+    stroke: $selectionColor;
+    //    stroke-width: 2px;
   }
 
   rect.filler {
-    fill: rgba(255, 100, 0, 0.2)
+    fill: $selectionColorSoft;
   }
 
   circle {
-    fill: rgb(255, 100, 0);
+    fill: $selectionColor;
   }
+}
+
+.edgePath path {
+  stroke: $defaultStrokeColor;
+  fill: $defaultStrokeColor;
+  stroke-width: 1.5px;
+}
+
+.edgePath path.filtered {
+  stroke: $defaultStrokeColorFiltered;
+  fill: $defaultStrokeColorFiltered;
+  stroke-width: 1.5px;
+}
+
+.edgePath path.path_hovered {
+  stroke: $hoverColor;
+  fill: $hoverColor;
+  //  stroke-width: 3px;
+}
+
+.edgePath path.path_selected {
+  stroke: $selectionColor;
+  fill: $selectionColor;
+  //  stroke-width: 3px;
+
 }
 
 .collapseIcon {
@@ -318,16 +269,8 @@ g.set.selected {
 }
 
 #arrowRight {
-  stroke: rgb(80, 80, 80);
-  fill: rgb(80, 80, 80);
-}
-
-g.listItem.hovered {
-  rect {
-    fill: rgb(150, 200, 255);
-    stroke: rgb(255, 255, 255);
-  }
-
+  stroke: $defaultStrokeColor;
+  fill: $defaultStrokeColor;
 }
 
 #listView {
@@ -354,16 +297,15 @@ g.listItem.hovered {
   overflow: auto;
 }
 
-
 #leftCol {
   display: -webkit-flex;
   display: flex;
   flex-direction: column;
   float: left;
-//  display: inline-block;
+  //  display: inline-block;
   width: 49%;
   height: 100vh;
-//  overflow: auto;
+  //  overflow: auto;
   vertical-align: top;
 }
 
@@ -378,8 +320,8 @@ g.listItem.hovered {
 }
 
 #overviewRow {
-//  overflow: auto;
-  display:flex;
+  //  overflow: auto;
+  display: flex;
 
   -webkit-flex: 1;
   flex: 1;
@@ -395,12 +337,11 @@ header {
   height: 100%;
 }
 
-
 #pathGraphView {
-//  padding: 5px;
+  //  padding: 5px;
   display: inline-block;
   width: 74%;
-//  height: 500px;
+  //  height: 500px;
   overflow: auto;
   vertical-align: top;
 }
@@ -424,7 +365,7 @@ header {
   padding: 5px;
   display: inline-block;
   width: 25%;
-//  height: 100%;
+  //  height: 100%;
   overflow: auto;
   vertical-align: top;
   //  display: block;

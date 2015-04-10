@@ -1,5 +1,5 @@
-define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './list/pathsorting', './query/pathquery', './config'],
-  function ($, d3, webcola, listeners, selectionUtil, pathSorting, pathQuery, config) {
+define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil', './list/pathsorting', './query/pathquery', './config'],
+  function ($, d3, webcola, dagreD3, listeners, selectionUtil, pathSorting, pathQuery, config) {
     'use strict';
 
     var w = 800;
@@ -98,7 +98,6 @@ define(['jquery', 'd3', 'webcola', './listeners', './selectionutil', './list/pat
 
 
       init: function () {
-
 
         var svg = d3.select("#pathgraph").append("svg")
         svg.attr("width", w)
