@@ -2,7 +2,7 @@ define(['../../sorting', '../../pathutil', '../../query/querymodel', '../../list
     var SortingStrategy = sorting.SortingStrategy;
 
     function NumPathsSortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT);
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT, "Number of paths");
     }
 
     NumPathsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);

@@ -6,7 +6,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
 
 
     function PathLengthSortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT);
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT, "Path length");
     }
 
     PathLengthSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
@@ -19,7 +19,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
 
 
     function SetCountEdgeWeightSortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID);
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID, "Set count edge weight");
     }
 
     SetCountEdgeWeightSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
@@ -57,7 +57,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
     };
 
     function NodePresenceSortingStrategy(nodeIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE);
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Node selection");
       this.compare = function (a, b) {
         var numNodesA = 0;
         var numNodesB = 0;
@@ -86,7 +86,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
     NodePresenceSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
     function PathQuerySortingStrategy(pathQuery) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER);
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Filter");
       this.pathQuery = pathQuery;
     }
 
@@ -101,7 +101,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
     };
 
     function SetPresenceSortingStrategy(setIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER);
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Set selection");
       this.compare = function (a, b) {
         var setScoreA = 0;
         var setScoreB = 0;

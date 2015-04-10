@@ -1,8 +1,8 @@
 /**
  * Created by Christian on 23.02.2015.
  */
-define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist', './aggregation/setcombinations', './aggregation/nodetypecombinations'],
-  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList) {
+define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist', './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview'],
+  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView) {
 
     var listView = new view("#pathlist");
 
@@ -48,6 +48,10 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
         .attr("y", 0)
         .attr("width", 90)
         .attr("height", 20);
+
+
+      var rankConfigView = new RankConfigView("#pathRankConfig", pathSorting.sortingManager.currentStrategyChain);
+      rankConfigView.init();
 
 
       var that = this;

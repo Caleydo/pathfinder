@@ -3,9 +3,10 @@
  */
 define(['d3'], function(d3) {
 
-  function SortingStrategy(type) {
+  function SortingStrategy(type, label) {
     this.type = type;
     this.priority = type;
+    this.label = label;
   }
 
   SortingStrategy.prototype = {
@@ -22,7 +23,7 @@ define(['d3'], function(d3) {
   };
 
   function IdSortingStrategy(sortingManager, idAccessor) {
-    SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID);
+    SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID, "Id");
     this.compare = function (a, b) {
       if (sortingManager.ascending) {
         return d3.ascending(idAccessor(a), idAccessor(b));
