@@ -78,6 +78,8 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
       aggregateRankConfigView.init();
       d3.select("#aggregateRankConfig svg").style({"vertical-align": "bottom"})
 
+      d3.select("#aggregateWidgets").style({display: "none"});
+
 
       var that = this;
 
@@ -85,12 +87,15 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
       $("#aggregationType").on("change", function () {
         if (this.value == '0' && !(that.aggregateList instanceof NoAggregationList)) {
           changeAggregation(NoAggregationList);
+          d3.select("#aggregateWidgets").style({display: "none"});
         }
         if (this.value == '1' && !(that.aggregateList instanceof SetComboList)) {
           changeAggregation(SetComboList);
+          d3.select("#aggregateWidgets").style({display: "block"});
         }
         if (this.value == '2' && !(that.aggregateList instanceof NodeTypeComboList)) {
           changeAggregation(NodeTypeComboList);
+          d3.select("#aggregateWidgets").style({display: "block"});
         }
       });
 
