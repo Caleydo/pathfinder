@@ -5,10 +5,10 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
   var STRATEGY_SELECTOR_START = 20;
   var RANK_CRITERION_ELEMENT_SPACING = 5;
 
-  function RankCriterionElement(selectableStrategies, selectedStrategyIndex) {
+  function RankCriterionElement(rankConfigView, selectedStrategyIndex) {
     this.priority = 0;
+    this.rankConfigView = rankConfigView;
     this.selectedStrategyIndex = selectedStrategyIndex || 0;
-    this.selectableStrategies = selectableStrategies;
 
   }
 
@@ -62,9 +62,10 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
         .html('<select class="strategySelector"></select>');
 
 
+      var that = this;
       var selector = this.rootDomElement.select("select.strategySelector");
 
-      this.selectableStrategies.forEach(function (strategy, i) {
+      this.rankConfigView.selectableSortingStrategies.forEach(function (strategy, i) {
         selector.append("option")
           .attr({
             value: i
@@ -77,13 +78,20 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
 
       var sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + 100 + 5, 3, 16, 16, "\uf160", 16 / 2, 16 - 3, "rgb(30,30,30)", false);
 
-      sortingOrderButton.on("click", function() {
-        d3.select(this).select("text").text("\uf161")
+      sortingOrderButton.on("click", function () {
+        d3.select(this).select("text").text("\uf161");
       });
 
-      //var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + 100 + 10+16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
+      var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + 100 + 10 + 16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
 
-
+      removeButton.on("click", function () {
+        var index = that.rankConfigView.rankElements.indexOf(that);
+        if (index !== -1) {
+          that.rankConfigView.rankElements.splice(index, 1);
+          that.rootDomElement.remove();
+          that.rankConfigView.update();
+        }
+      });
 
       //selector.attr("width", 50);
       //selector.attr("size", 50);
@@ -115,13 +123,19 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
       that.addRankCriterionElement(strat);
     });
 
+    this.addRankCriterionButton = uiUtil.addOverlayButton(d3.select(this.parentSelector + " svg"), 0, 0, 16, 16, "\uf067", 16 / 2, 16 - 1, "green", true);
+    this.addRankCriterionButton.on("click", function () {
+      that.addRankCriterionElement(that.selectableSortingStrategies[0]);
+      that.update();
+    });
+
     this.update()
 
   };
 
   RankConfigView.prototype.addRankCriterionElement = function (selectedStrategy) {
     var svg = d3.select(this.parentSelector + " svg");
-    var el = new RankCriterionElement(this.selectableSortingStrategies, this.selectableSortingStrategies.indexOf(selectedStrategy));
+    var el = new RankCriterionElement(this, this.selectableSortingStrategies.indexOf(selectedStrategy));
     el.init(svg);
     this.rankElements.push(el);
   };
@@ -133,6 +147,10 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
       });
       element.setPriority(i + 1);
     });
+
+    this.addRankCriterionButton.attr({
+      transform: "translate(" + (this.rankElements.length * (RANK_CRITERION_ELEMENT_WIDTH + RANK_CRITERION_ELEMENT_SPACING)) + ", 3)"
+    })
   };
 
   RankConfigView.prototype.getMinSize = function () {
