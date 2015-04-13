@@ -242,7 +242,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
     //sortingManager.setStrategyChain([sortingStrategies.getPathQueryStrategy(pathQuery), sortingStrategies.pathId]);
 
 
-    sortingManager.setStrategyChain([sortingStrategies.pathQueryStrategy, sortingStrategies.selectionSortingStrategy, sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
+    sortingManager.setStrategyChain([sortingStrategies.pathQueryStrategy, sortingStrategies.selectionSortingStrategy, sortingStrategies.pathLength, sortingStrategies.pathId]);
 
 
     return {

@@ -50,18 +50,33 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
         .attr("height", 20);
 
 
-      var initialSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
-      initialSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
-      var rankConfigView = new RankConfigView("#pathRankConfig",
+      var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
+      initialPathSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
+      var pathRankConfigView = new RankConfigView("#pathRankConfig",
         [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy, pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight]
-        , initialSortingStrategies);
-      rankConfigView.addUpdateListener(function(view) {
+        , initialPathSortingStrategies);
+      pathRankConfigView.addUpdateListener(function(view) {
         var chain = view.getStrategyChain();
         chain.push(pathSorting.sortingStrategies.pathId);
         pathSorting.sortingManager.setStrategyChain(chain);
         listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
       });
-      rankConfigView.init();
+      pathRankConfigView.init();
+      d3.select("#pathRankConfig svg").style({"vertical-align": "bottom"})
+
+      var initialPathSortingStrategies = Object.create(aggregateSorting.sortingManager.currentStrategyChain);
+      initialPathSortingStrategies.splice(aggregateSorting.sortingManager.currentStrategyChain.length - 1, 1);
+      var aggregateRankConfigView = new RankConfigView("#aggregateRankConfig",
+        [aggregateSorting.sortingStrategies.numPaths]
+        , initialPathSortingStrategies);
+      aggregateRankConfigView.addUpdateListener(function(view) {
+        var chain = view.getStrategyChain();
+        chain.push(aggregateSorting.sortingStrategies.aggregateId);
+        aggregateSorting.sortingManager.setStrategyChain(chain);
+        listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
+      });
+      aggregateRankConfigView.init();
+      d3.select("#aggregateRankConfig svg").style({"vertical-align": "bottom"})
 
 
       var that = this;
@@ -91,30 +106,30 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
       }
 
 
-      $("#pathSortingOptions").on("change", function () {
-        if (this.value == '0') {
-          pathSorting.sortingManager.setStrategyChain([pathSorting.sortingStrategies.setCountEdgeWeight, pathSorting.sortingStrategies.pathId]);
-          listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-        }
-        if (this.value == '1') {
-          pathSorting.sortingManager.setStrategyChain([pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.pathId]);
-          listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-        }
-      });
-
-      $("#reversePathSorting").on("click", function () {
-        pathSorting.sortingManager.ascending = !this.checked;
-        listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-      });
+      //$("#pathSortingOptions").on("change", function () {
+      //  if (this.value == '0') {
+      //    pathSorting.sortingManager.setStrategyChain([pathSorting.sortingStrategies.setCountEdgeWeight, pathSorting.sortingStrategies.pathId]);
+      //    listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+      //  }
+      //  if (this.value == '1') {
+      //    pathSorting.sortingManager.setStrategyChain([pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.pathId]);
+      //    listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+      //  }
+      //});
+      //
+      //$("#reversePathSorting").on("click", function () {
+      //  pathSorting.sortingManager.ascending = !this.checked;
+      //  listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+      //});
 
       $("#hideNonRelSets").on("click", function () {
         listeners.notify("UPDATE_NODE_SET_VISIBILITY", !this.checked);
       });
 
-      $("#reverseAggregateSorting").on("click", function () {
-        aggregateSorting.sortingManager.ascending = !this.checked;
-        listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
-      });
+      //$("#reverseAggregateSorting").on("click", function () {
+      //  aggregateSorting.sortingManager.ascending = !this.checked;
+      //  listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
+      //});
 
       this.aggregateList.init();
       this.aggregateList.addUpdateListener(function (list) {

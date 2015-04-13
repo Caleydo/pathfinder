@@ -53,24 +53,24 @@ define(['d3'], function(d3) {
 
     // Replaces the first occurrence of an existing strategy of the same strategy type in the chain, or adds it to the
     // front, if no such strategy exists.
-    addOrReplace: function (strategy) {
-
-      var replaced = false;
-      for (var i = 0; i < this.currentStrategyChain.length; i++) {
-        var currentStrategy = this.currentStrategyChain[i];
-        if (currentStrategy.type === strategy.type) {
-          this.currentStrategyChain[i] = strategy;
-          replaced = true;
-        }
-      }
-      if (!replaced) {
-        this.currentStrategyChain.unshift(strategy);
-        this.currentStrategyChain.sort(function(a, b) {
-          return d3.descending(a.priority, b.priority);
-        });
-      }
-      this.setStrategyChain(this.currentStrategyChain);
-    },
+    //addOrReplace: function (strategy) {
+    //
+    //  var replaced = false;
+    //  for (var i = 0; i < this.currentStrategyChain.length; i++) {
+    //    var currentStrategy = this.currentStrategyChain[i];
+    //    if (currentStrategy.type === strategy.type) {
+    //      this.currentStrategyChain[i] = strategy;
+    //      replaced = true;
+    //    }
+    //  }
+    //  if (!replaced) {
+    //    this.currentStrategyChain.unshift(strategy);
+    //    this.currentStrategyChain.sort(function(a, b) {
+    //      return d3.descending(a.priority, b.priority);
+    //    });
+    //  }
+    //  this.setStrategyChain(this.currentStrategyChain);
+    //},
 
     reset: function() {
       this.currentStrategyChain = [new SortingStrategy(SortingStrategy.prototype.STRATEGY_TYPES.UNKNOWN)];

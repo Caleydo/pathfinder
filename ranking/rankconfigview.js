@@ -1,9 +1,12 @@
 define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) {
 
-  var RANK_CRITERION_ELEMENT_WIDTH = 165;
-  var RANK_CRITERION_ELEMENT_HEIGHT = 22;
-  var STRATEGY_SELECTOR_START = 20;
+
+  var RANK_CRITERION_SELECTOR_WIDTH = 120;
   var RANK_CRITERION_ELEMENT_SPACING = 5;
+  var STRATEGY_SELECTOR_START = 20;
+  var RANK_CRITERION_ELEMENT_WIDTH = STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 2 * RANK_CRITERION_ELEMENT_SPACING + 2 * 16+5;
+  var RANK_CRITERION_ELEMENT_HEIGHT = 22;
+
 
   function RankCriterionElement(rankConfigView, selectedStrategyIndex) {
     this.priority = 0;
@@ -78,14 +81,14 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
         that.rankConfigView.notify();
       });
 
-      $(selector[0]).width(100);
+      $(selector[0]).width(RANK_CRITERION_SELECTOR_WIDTH);
       $(selector[0]).val(this.selectedStrategyIndex);
 
       function orderButtonText() {
         return that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending ? "\uf160" : "\uf161";
       }
 
-      var sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + 100 + 5, 3, 16, 16, orderButtonText(), 16 / 2, 16 - 3, "rgb(30,30,30)", false);
+      var sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 5, 3, 16, 16, orderButtonText(), 16 / 2, 16 - 3, "rgb(30,30,30)", false);
 
       sortingOrderButton.on("click", function () {
         that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending = !that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending;
@@ -93,7 +96,7 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
         that.rankConfigView.notify();
       });
 
-      var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + 100 + 10 + 16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
+      var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 10 + 16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
 
       removeButton.on("click", function () {
         var index = that.rankConfigView.rankElements.indexOf(that);
@@ -110,6 +113,7 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
 
   function RankConfigView(parentSelector, selectableSortingStrategies, initialSortingStrategies) {
     View.call(this, parentSelector);
+    this.grabHSpace = false;
     this.selectableSortingStrategies = selectableSortingStrategies;
     this.initialSortingStrategies = initialSortingStrategies;
     this.updateListeners = [];
@@ -184,12 +188,14 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
 
     this.addRankCriterionButton.attr({
       transform: "translate(" + (this.rankElements.length * (RANK_CRITERION_ELEMENT_WIDTH + RANK_CRITERION_ELEMENT_SPACING)) + ", 3)"
-    })
+    });
+
+    this.updateViewSize();
   };
 
   RankConfigView.prototype.getMinSize = function () {
     return {
-      width: Math.max(200, RANK_CRITERION_ELEMENT_WIDTH * this.rankElements.length + RANK_CRITERION_ELEMENT_SPACING * (this.rankElements.length - 1)),
+      width: Math.max(200, (RANK_CRITERION_ELEMENT_WIDTH + RANK_CRITERION_ELEMENT_SPACING) * this.rankElements.length + 16 + 5),
       height: RANK_CRITERION_ELEMENT_HEIGHT
     };
   };
