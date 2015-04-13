@@ -970,7 +970,9 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .attr("class", "node")
 
           .on("dblclick", function (d) {
-            sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
+            //sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
+            sortingStrategies.selectionSortingStrategy.setNodeIds([d.id]);
+
             listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
             //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
           });
@@ -1184,7 +1186,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             .append("g")
             .classed("set", true)
             .on("dblclick", function (d) {
-              sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
+              //sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
+              sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
               listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
               //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
             });

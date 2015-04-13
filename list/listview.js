@@ -50,7 +50,17 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
         .attr("height", 20);
 
 
-      var rankConfigView = new RankConfigView("#pathRankConfig", pathSorting.sortingManager.currentStrategyChain, pathSorting.sortingStrategies.pathId, pathSorting.sortingManager.currentStrategyChain);
+      var initialSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
+      initialSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
+      var rankConfigView = new RankConfigView("#pathRankConfig",
+        [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy, pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight]
+        , initialSortingStrategies);
+      rankConfigView.addUpdateListener(function(view) {
+        var chain = view.getStrategyChain();
+        chain.push(pathSorting.sortingStrategies.pathId);
+        pathSorting.sortingManager.setStrategyChain(chain);
+        listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+      });
       rankConfigView.init();
 
 

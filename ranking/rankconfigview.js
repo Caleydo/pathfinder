@@ -49,7 +49,7 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
         .style({
           "font-size": "12px"
         })
-        .text(this.priority.toString() + ".")
+        .text(this.priority.toString() + ".");
 
       this.rootDomElement.append("foreignObject")
         .attr({
@@ -73,13 +73,24 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
           .text(strategy.label);
       });
 
+      $(selector[0]).on("change", function () {
+        that.selectedStrategyIndex = this.value;
+        that.rankConfigView.notify();
+      });
+
       $(selector[0]).width(100);
       $(selector[0]).val(this.selectedStrategyIndex);
 
-      var sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + 100 + 5, 3, 16, 16, "\uf160", 16 / 2, 16 - 3, "rgb(30,30,30)", false);
+      function orderButtonText() {
+        return that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending ? "\uf160" : "\uf161";
+      }
+
+      var sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + 100 + 5, 3, 16, 16, orderButtonText(), 16 / 2, 16 - 3, "rgb(30,30,30)", false);
 
       sortingOrderButton.on("click", function () {
-        d3.select(this).select("text").text("\uf161");
+        that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending = !that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending;
+        d3.select(this).select("text").text(orderButtonText());
+        that.rankConfigView.notify();
       });
 
       var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + 100 + 10 + 16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
@@ -90,28 +101,40 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
           that.rankConfigView.rankElements.splice(index, 1);
           that.rootDomElement.remove();
           that.rankConfigView.update();
+          that.rankConfigView.notify();
         }
       });
-
-      //selector.attr("width", 50);
-      //selector.attr("size", 50);
-
-
     }
-
-
   };
 
 
-  function RankConfigView(parentSelector, selectableSortingStrategies, idSortingStrategy, initialSortingStrategies) {
+  function RankConfigView(parentSelector, selectableSortingStrategies, initialSortingStrategies) {
     View.call(this, parentSelector);
     this.selectableSortingStrategies = selectableSortingStrategies;
-    this.idSortingStrategy = idSortingStrategy;
     this.initialSortingStrategies = initialSortingStrategies;
+    this.updateListeners = [];
     this.rankElements = [];
   }
 
   RankConfigView.prototype = Object.create(View.prototype);
+
+  RankConfigView.prototype.addUpdateListener = function (listener) {
+    this.updateListeners.push(listener);
+  };
+
+  RankConfigView.prototype.removeUpdateListener = function (listener) {
+    var index = this.updateListeners.indexOf(listener);
+    if (index !== -1) {
+      this.updateListeners.splice(index, 1);
+    }
+  };
+
+  RankConfigView.prototype.notify = function () {
+    var that = this;
+    this.updateListeners.forEach(function (listener) {
+      listener(that);
+    });
+  };
 
   RankConfigView.prototype.init = function () {
     View.prototype.init.call(this);
@@ -127,10 +150,21 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
     this.addRankCriterionButton.on("click", function () {
       that.addRankCriterionElement(that.selectableSortingStrategies[0]);
       that.update();
+      that.notify();
     });
 
-    this.update()
+    this.update();
+  };
 
+  RankConfigView.prototype.getStrategyChain = function () {
+    var chain = [];
+    var that = this;
+
+    this.rankElements.forEach(function (element) {
+      chain.push(that.selectableSortingStrategies[element.selectedStrategyIndex]);
+    });
+
+    return chain;
   };
 
   RankConfigView.prototype.addRankCriterionElement = function (selectedStrategy) {

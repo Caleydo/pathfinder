@@ -3,15 +3,17 @@ define(['../../sorting', '../../pathutil', '../../query/querymodel', '../../list
 
     function NumPathsSortingStrategy() {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT, "Number of paths");
+      this.ascending = false;
     }
 
     NumPathsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
     NumPathsSortingStrategy.prototype.compare = function (a, b) {
-      //reversed for now
-      if (sortingManager.ascending) {
-        return d3.descending(a.paths.length, b.paths.length);
+
+      if (this.ascending) {
+        return d3.ascending(a.paths.length, b.paths.length);
       }
-      return d3.ascending(a.paths.length, b.paths.length);
+      return d3.descending(a.paths.length, b.paths.length);
+
     };
 
     var sortingManager = new sorting.SortingManager(true);
@@ -22,7 +24,7 @@ define(['../../sorting', '../../pathutil', '../../query/querymodel', '../../list
     };
 
     var sortingStrategies = {
-      aggregateId: new sorting.IdSortingStrategy(sortingManager, function (aggregate) {
+      aggregateId: new sorting.IdSortingStrategy(function (aggregate) {
         return aggregate.id
       }),
       numPaths: new NumPathsSortingStrategy()

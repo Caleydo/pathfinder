@@ -20,30 +20,34 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
 
     function SetNodePresenceSortingStrategy(setIds) {
       sorting.SortingStrategy.call(this, sorting.SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE);
-      this.compare = function (a, b) {
-        var numNodesA = 0;
-        var numNodesB = 0;
-        setIds.forEach(function (setId) {
-          a.combo.forEach(function (id) {
-            if (id === setId) {
-              numNodesA++;
-            }
-          });
+      this.setIds = setIds;
+      this.ascending = false;
+    }
 
-          b.combo.forEach(function (id) {
-            if (id === setId) {
-              numNodesB++;
-            }
-          });
+    SetNodePresenceSortingStrategy.prototype = Object.create(sorting.SortingStrategy);
+    SetNodePresenceSortingStrategy.prototype.compare = function (a, b) {
+      var numNodesA = 0;
+      var numNodesB = 0;
+      this.setIds.forEach(function (setId) {
+        a.combo.forEach(function (id) {
+          if (id === setId) {
+            numNodesA++;
+          }
         });
 
-        //Inverse definition of ascending and descending, as more nodes should be ranked higher
-        if (sortingManager.ascending) {
-          return d3.descending(numNodesA, numNodesB);
-        }
+        b.combo.forEach(function (id) {
+          if (id === setId) {
+            numNodesB++;
+          }
+        });
+      });
+
+      if (this.ascending) {
         return d3.ascending(numNodesA, numNodesB);
       }
-    }
+      return d3.descending(numNodesA, numNodesB);
+
+    };
 
 
     var sortingStrategies = {

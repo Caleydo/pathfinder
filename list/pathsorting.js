@@ -11,7 +11,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
 
     PathLengthSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
     PathLengthSortingStrategy.prototype.compare = function (a, b) {
-      if (sortingManager.ascending) {
+      if (this.ascending) {
         return d3.ascending(a.path.edges.length, b.path.edges.length);
       }
       return d3.descending(a.path.edges.length, b.path.edges.length);
@@ -29,16 +29,9 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
 
         pathWrapper.path.edges.forEach(function (edge) {
             var numSets = 0;
-            for (var key in edge.properties) {
-              if (key.charAt(0) !== '_') {
-                var property = edge.properties[key];
-                if (property instanceof Array) {
-                  numSets += property.length;
-                } else {
-                  numSets++;
-                }
-              }
-            }
+            pathUtil.forEachEdgeSet(edge, function (type, setId) {
+              numSets++;
+            });
 
             totalWeight += (totalNumSets - numSets + 1) / totalNumSets;
           }
@@ -50,7 +43,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
       var weightA = calcWeight(a);
       var weightB = calcWeight(b);
 
-      if (sortingManager.ascending) {
+      if (this.ascending) {
         return d3.ascending(weightA, weightB);
       }
       return d3.descending(weightA, weightB);
@@ -58,68 +51,68 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
 
     function NodePresenceSortingStrategy(nodeIds) {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Node selection");
-      this.compare = function (a, b) {
-        var numNodesA = 0;
-        var numNodesB = 0;
-        nodeIds.forEach(function (nodeId) {
-          a.path.nodes.forEach(function (node) {
-            if (node.id.toString() === nodeId.toString()) {
-              numNodesA++;
-            }
-          });
-
-          b.path.nodes.forEach(function (node) {
-            if (node.id.toString() === nodeId.toString()) {
-              numNodesB++;
-            }
-          });
-        });
-
-        //Inverse definition of ascending and descending, as more nodes should be ranked higher
-        if (sortingManager.ascending) {
-          return d3.descending(numNodesA, numNodesB);
-        }
-        return d3.ascending(numNodesA, numNodesB);
-      }
+      this.nodeIds = nodeIds;
+      this.ascending = false;
     }
 
     NodePresenceSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
-
-    function PathQuerySortingStrategy(pathQuery) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Filter");
-      this.pathQuery = pathQuery;
-    }
-
-    PathQuerySortingStrategy.prototype = Object.create(SortingStrategy.prototype);
-    PathQuerySortingStrategy.prototype.compare = function (a, b) {
-      var scoreA = this.pathQuery.match(a.path) === true ? 1 : 0;
-      var scoreB = this.pathQuery.match(b.path) === true ? 1 : 0;
-      if (sortingManager.ascending) {
-        return d3.descending(scoreA, scoreB);
-      }
-      return d3.ascending(scoreA, scoreB);
+    NodePresenceSortingStrategy.prototype.setNodeIds = function (nodeIds) {
+      this.nodeIds = nodeIds;
     };
+
+    NodePresenceSortingStrategy.prototype.compare = function (a, b) {
+      var numNodesA = 0;
+      var numNodesB = 0;
+      this.nodeIds.forEach(function (nodeId) {
+        a.path.nodes.forEach(function (node) {
+          if (node.id.toString() === nodeId.toString()) {
+            numNodesA++;
+          }
+        });
+
+        b.path.nodes.forEach(function (node) {
+          if (node.id.toString() === nodeId.toString()) {
+            numNodesB++;
+          }
+        });
+      });
+
+      if (this.ascending) {
+        return d3.ascending(numNodesA, numNodesB);
+      }
+      return d3.descending(numNodesA, numNodesB);
+
+    };
+
 
     function SetPresenceSortingStrategy(setIds) {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Set selection");
-      this.compare = function (a, b) {
-        var setScoreA = 0;
-        var setScoreB = 0;
-        setIds.forEach(function (setId) {
+      this.ascending = false;
+      this.setIds = setIds;
 
-          //TODO: this score is somewhat awkward as we add node and set occurrences
-          var setOccurrencesA = getSetOccurrences(a, setId);
-          setScoreA += setOccurrencesA / a.path.nodes.length;
-          var setOccurrencesB = getSetOccurrences(b, setId);
-          setScoreB += setOccurrencesB / b.path.nodes.length;
-        });
+    }
 
-        //Inverse definition of ascending and descending, as higher score should be ranked higher
-        if (sortingManager.ascending) {
-          return d3.descending(setScoreA, setScoreB);
-        }
+    SetPresenceSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+    SetPresenceSortingStrategy.prototype.setSetIds = function (setIds) {
+      this.setIds = setIds;
+    };
+
+    SetPresenceSortingStrategy.prototype.compare = function (a, b) {
+      var setScoreA = 0;
+      var setScoreB = 0;
+      this.setIds.forEach(function (setId) {
+
+        //TODO: this score is somewhat awkward as we add node and set occurrences
+        var setOccurrencesA = getSetOccurrences(a, setId);
+        setScoreA += setOccurrencesA / a.path.nodes.length;
+        var setOccurrencesB = getSetOccurrences(b, setId);
+        setScoreB += setOccurrencesB / b.path.nodes.length;
+      });
+
+      if (this.ascending) {
         return d3.ascending(setScoreA, setScoreB);
-      };
+      }
+      return d3.descending(setScoreA, setScoreB);
 
       function getSetOccurrences(pathWrapper, setId) {
         var numSetOccurrences = 0;
@@ -130,21 +123,6 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
               numSetOccurrences++;
             }
           });
-
-          //for (var key in edge.properties) {
-          //  if (pathUtil.isEdgeSetProperty(key)) {
-          //    var property = edge.properties[key];
-          //    if (property instanceof Array) {
-          //      for (var i = 0; i < property.length; i++) {
-          //        if (property[i] === setId) {
-          //          numSetOccurrences++
-          //        }
-          //      }
-          //    } else if (property === setId) {
-          //      numSetOccurrences++;
-          //    }
-          //  }
-          //}
         });
 
         pathWrapper.path.nodes.forEach(function (node) {
@@ -160,32 +138,74 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
         return numSetOccurrences;
 
       }
+
+    };
+
+    function SelectionSortingStrategy() {
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selection");
+      this.nodePresenceStrategy = new NodePresenceSortingStrategy([]);
+      this.setPresenceStrategy = new SetPresenceSortingStrategy([]);
+      this.currentStrategy = this.nodePresenceStrategy;
+      this.ascending = false;
     }
 
-    SetPresenceSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+    SelectionSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+    SelectionSortingStrategy.prototype.setSetIds = function (setIds) {
+      this.setPresenceStrategy.setSetIds(setIds);
+      this.currentStrategy = this.setPresenceStrategy;
+    };
+
+    SelectionSortingStrategy.prototype.setNodeIds = function (nodeIds) {
+      this.nodePresenceStrategy.setNodeIds(nodeIds);
+      this.currentStrategy = this.nodePresenceStrategy;
+    };
+
+    SelectionSortingStrategy.prototype.compare = function (a, b) {
+      this.currentStrategy.ascending = this.ascending;
+      return this.currentStrategy.compare(a, b);
+    };
+
+
+    function PathQuerySortingStrategy(pathQuery) {
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Filter");
+      this.pathQuery = pathQuery;
+      this.ascending = false;
+    }
+
+    PathQuerySortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+    PathQuerySortingStrategy.prototype.setQuery = function (query) {
+      this.pathQuery = query;
+    };
+
+    PathQuerySortingStrategy.prototype.compare = function (a, b) {
+
+      var scoreA = this.pathQuery.match(a.path) === true ? 1 : 0;
+      var scoreB = this.pathQuery.match(b.path) === true ? 1 : 0;
+      if (this.ascending) {
+        return d3.ascending(scoreA, scoreB);
+      }
+      return d3.descending(scoreA, scoreB);
+
+    };
 
     var sortingManager = new sorting.SortingManager(true);
 
     var sortingStrategies = {
       pathLength: new PathLengthSortingStrategy(),
 
-      pathId: new sorting.IdSortingStrategy(sortingManager, function (pathWrapper) {
+      pathId: new sorting.IdSortingStrategy(function (pathWrapper) {
         return pathWrapper.path.id
       }),
 
       setCountEdgeWeight: new SetCountEdgeWeightSortingStrategy(),
 
-      getNodePresenceStrategy: function (nodeIds) {
-        return new NodePresenceSortingStrategy(nodeIds);
-      },
+      selectionSortingStrategy: new SelectionSortingStrategy(),
 
-      getSetPresenceStrategy: function (setIds) {
-        return new SetPresenceSortingStrategy(setIds);
-      },
+      //nodePresenceStrategy: new NodePresenceSortingStrategy([]),
+      //
+      //setPresenceStrategy: new SetPresenceSortingStrategy([]),
 
-      getPathQueryStrategy: function (pathQuery) {
-        return new PathQuerySortingStrategy(pathQuery);
-      }
+      pathQueryStrategy: new PathQuerySortingStrategy(new q.PathQuery())
 
     };
 
@@ -222,13 +242,14 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
     //sortingManager.setStrategyChain([sortingStrategies.getPathQueryStrategy(pathQuery), sortingStrategies.pathId]);
 
 
-    sortingManager.setStrategyChain([sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
+    sortingManager.setStrategyChain([sortingStrategies.pathQueryStrategy, sortingStrategies.selectionSortingStrategy, sortingStrategies.setCountEdgeWeight, sortingStrategies.pathId]);
 
 
     return {
       init: function () {
         listeners.add(function (query) {
-          sortingManager.addOrReplace(sortingStrategies.getPathQueryStrategy(query.getQuery()));
+          sortingStrategies.pathQueryStrategy.setQuery(query.getQuery());
+          //sortingManager.addOrReplace(sortingStrategies.getPathQueryStrategy(query.getQuery()));
           listeners.notify("UPDATE_PATH_SORTING", sortingManager.currentComparator);
         }, listeners.updateType.QUERY_UPDATE);
       },

@@ -47,7 +47,8 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     };
 
     NodeWrapper.prototype.onDoubleClick = function () {
-      pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getNodePresenceStrategy([this.node.id]));
+      //pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getNodePresenceStrategy([this.node.id]));
+      pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([this.node.id]);
       listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
     };
 
@@ -55,15 +56,15 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       return this.node.properties[config.getNodeNameProperty(this.node)];
     };
 
-    NodeWrapper.prototype.supportsNodeFilter = function() {
+    NodeWrapper.prototype.supportsNodeFilter = function () {
       return true;
     };
 
-    NodeWrapper.prototype.getNodeConstraintType = function() {
+    NodeWrapper.prototype.getNodeConstraintType = function () {
       return "name";
     };
 
-    NodeWrapper.prototype.getFilterText = function() {
+    NodeWrapper.prototype.getFilterText = function () {
       return this.getLabel();
     };
 
@@ -109,13 +110,13 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       }
     };
 
-    NodeTypeWrapper.prototype.getLabel = function() {
+    NodeTypeWrapper.prototype.getLabel = function () {
       return this.type;
     };
 
-    NodeTypeWrapper.prototype.isFiltered = function() {
-      for(var i = 0; i < this.children.length; i++) {
-        if(!this.children[i].isFiltered()) {
+    NodeTypeWrapper.prototype.isFiltered = function () {
+      for (var i = 0; i < this.children.length; i++) {
+        if (!this.children[i].isFiltered()) {
           return false;
         }
       }
@@ -123,15 +124,15 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       return true;
     };
 
-    NodeTypeWrapper.prototype.supportsNodeFilter = function() {
+    NodeTypeWrapper.prototype.supportsNodeFilter = function () {
       return true;
     };
 
-    NodeTypeWrapper.prototype.getNodeConstraintType = function() {
+    NodeTypeWrapper.prototype.getNodeConstraintType = function () {
       return "type";
     };
 
-    NodeTypeWrapper.prototype.getFilterText = function() {
+    NodeTypeWrapper.prototype.getFilterText = function () {
       return this.type;
     };
 
@@ -189,7 +190,8 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     };
 
     SetWrapper.prototype.onDoubleClick = function () {
-      pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getSetPresenceStrategy([this.setId]));
+      //pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getSetPresenceStrategy([this.setId]));
+      pathSorting.sortingStrategies.selectionSortingStrategy.setSetIds([this.setId]);
       listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
     };
 
@@ -197,15 +199,15 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       return setInfo.getSetLabel(this.setId);
     };
 
-    SetWrapper.prototype.supportsNodeFilter = function() {
+    SetWrapper.prototype.supportsNodeFilter = function () {
       return true;
     };
 
-    SetWrapper.prototype.getNodeConstraintType = function() {
+    SetWrapper.prototype.getNodeConstraintType = function () {
       return "set";
     };
 
-    SetWrapper.prototype.getFilterText = function() {
+    SetWrapper.prototype.getFilterText = function () {
       return this.setId;
     };
 
@@ -237,17 +239,17 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       setWrapper.addNode(node, path);
     };
 
-    SetTypeWrapper.prototype.getLabel = function() {
+    SetTypeWrapper.prototype.getLabel = function () {
       return config.getSetTypeFromSetPropertyName(this.type);
     };
 
-    SetTypeWrapper.prototype.supportsNodeFilter = function() {
+    SetTypeWrapper.prototype.supportsNodeFilter = function () {
       return false;
     };
 
-    SetTypeWrapper.prototype.isFiltered = function() {
-      for(var i = 0; i < this.children.length; i++) {
-        if(!this.children[i].isFiltered()) {
+    SetTypeWrapper.prototype.isFiltered = function () {
+      for (var i = 0; i < this.children.length; i++) {
+        if (!this.children[i].isFiltered()) {
           return false;
         }
       }

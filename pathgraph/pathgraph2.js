@@ -387,7 +387,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           return "translate(" + n.x + ", " + n.y + ")";
         })
         .on("dblclick", function (d) {
-          pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getNodePresenceStrategy([d]));
+          pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([d]);
+          //pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getNodePresenceStrategy([d]));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
         });
 
