@@ -71,7 +71,6 @@ define(['../caleydo/main', '../caleydo/event'],function(C, events) {
    * @param query the query to search
    * @param prop the property to look in
    * @param nodeType the node type to look in
-   * @returns {a promise}
    */
   ServerSearch.prototype.search = function(query, prop, nodeType) {
     prop = prop || 'name';
