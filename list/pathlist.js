@@ -78,7 +78,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
     function PathWrapper(path) {
       this.path = path;
-      this.rank = "?."
+      this.rank = "?.";
       this.addPathSets(path);
     }
 

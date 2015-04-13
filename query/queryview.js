@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../listeners', '../listoverlay', '../search', './pathquery', 'jquery-ui'],
-  function ($, d3, View, q, pathSorting, listeners, ListOverlay, ServerSearch, pathQuery) {
+define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../listeners', '../listoverlay', '../search', './pathquery', '../uiutil', 'jquery-ui'],
+  function ($, d3, View, q, pathSorting, listeners, ListOverlay, ServerSearch, pathQuery, uiUtil) {
 
     var listOverlay = new ListOverlay();
 
@@ -12,40 +12,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     var POSITION_LABEL_WIDTH = 40;
     var POSITION_LABEL_HEIGHT = 10;
 
-    function addOverlayButton(parent, x, y, width, height, buttonText, textX, textY, color) {
-
-      var button = d3.select("#queryOverlay").append("g")
-        .classed("overlayButton", true)
-        .attr({
-          transform: "translate(" + (parent.translate.x) + "," + (parent.translate.y) + ")"
-        });
-
-      button.append("rect")
-        .attr({
-          x: x,
-          y: y,
-          width: width,
-          height: height
-        });
-
-      button.append("text")
-        .attr({
-          x: textX,
-          y: textY
-        })
-        .style({
-          fill: color
-        })
-        .text(buttonText);
-
-      ;
-      return button;
-    }
-
 
     function addAddButton(parent, data, x, y) {
 
-      var button = addOverlayButton(parent, x, y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf067", x + DEFAULT_OVERLAY_BUTTON_SIZE / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 1, "green");
+      var button = uiUtil.addOverlayButton(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf067", DEFAULT_OVERLAY_BUTTON_SIZE / 2, DEFAULT_OVERLAY_BUTTON_SIZE - 1, "green", true);
 
       button.on("click", function () {
           listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
@@ -55,7 +25,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     }
 
     function addPositionButton(parent, callBack, x, y) {
-      var button = addOverlayButton(parent, x, y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf13d", x + DEFAULT_OVERLAY_BUTTON_SIZE / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 1, "black");
+      var button = uiUtil.addOverlayButton(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf13d", DEFAULT_OVERLAY_BUTTON_SIZE / 2, DEFAULT_OVERLAY_BUTTON_SIZE - 1, "black", true);
 
       button.on("click", callBack);
       return button;
@@ -63,7 +33,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     function addAndButton(parent, data, x, y) {
 
-      var button = addOverlayButton(parent, x, y, AND_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "AND", x + AND_BUTTON_WIDTH / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 2, "orange");
+      var button = uiUtil.addOverlayButton(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y, AND_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "AND", AND_BUTTON_WIDTH / 2, DEFAULT_OVERLAY_BUTTON_SIZE - 2, "orange", true);
 
       button.on("click", function () {
           listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
@@ -74,7 +44,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     function addNotButton(parent, callBack, x, y) {
 
-      var button = addOverlayButton(parent, x, y, NOT_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "NOT", x + NOT_BUTTON_WIDTH / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 2, "red");
+      var button = uiUtil.addOverlayButton(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y, NOT_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "NOT", NOT_BUTTON_WIDTH / 2, DEFAULT_OVERLAY_BUTTON_SIZE - 2, "red", true);
 
       button.on("click", callBack);
       return button;
@@ -82,7 +52,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     function addOrButton(parent, data, x, y) {
 
-      var button = addOverlayButton(parent, x, y, OR_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "OR", x + OR_BUTTON_WIDTH / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 2, "lightblue");
+      var button = uiUtil.addOverlayButton(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y, OR_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "OR", OR_BUTTON_WIDTH / 2, DEFAULT_OVERLAY_BUTTON_SIZE - 2, "lightblue", true);
 
       button.on("click", function () {
           listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
@@ -99,7 +69,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     function addRemoveButton(element, x, y) {
 
-      var button = addOverlayButton(element, x, y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf00d", x + DEFAULT_OVERLAY_BUTTON_SIZE / 2, y + DEFAULT_OVERLAY_BUTTON_SIZE - 3, "red");
+      var button = uiUtil.addOverlayButton(d3.select("#queryOverlay"), element.translate.x + x, element.translate.y + y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf00d", DEFAULT_OVERLAY_BUTTON_SIZE / 2, DEFAULT_OVERLAY_BUTTON_SIZE - 3, "red", true);
 
       button.on("click", function () {
           var parent = element.parent;

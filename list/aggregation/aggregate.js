@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', '../../selectionutil', '../../pathutil', '../../query/pathquery'],
-  function ($, d3, PathList, a, listeners, selectionUtil, pathUtil, pathQuery) {
+define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', '../../selectionutil', '../../pathutil', '../../query/pathquery', '../../uiutil'],
+  function ($, d3, PathList, a, listeners, selectionUtil, pathUtil, pathQuery, uiUtil) {
 
     var currentAggregateId = 0;
 
@@ -595,7 +595,7 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
 
           node.append("text")
             .text(function (d) {
-              return pathUtil.getClampedText(that.getComboNodeText(d), 14);
+              return uiUtil.getClampedText(that.getComboNodeText(d), 14);
             })
             .attr("x", function (d, i) {
               return (i * ((2 * TYPE_NODE_RADIUS_X) + TYPE_NODE_SPACING)) + TYPE_NODE_RADIUS_X;

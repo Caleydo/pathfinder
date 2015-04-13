@@ -50,7 +50,7 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
         .attr("height", 20);
 
 
-      var rankConfigView = new RankConfigView("#pathRankConfig", pathSorting.sortingManager.currentStrategyChain);
+      var rankConfigView = new RankConfigView("#pathRankConfig", pathSorting.sortingManager.currentStrategyChain, pathSorting.sortingStrategies.pathId, pathSorting.sortingManager.currentStrategyChain);
       rankConfigView.init();
 
 
@@ -65,7 +65,7 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
           changeAggregation(SetComboList);
         }
         if (this.value == '2' && !(that.aggregateList instanceof NodeTypeComboList)) {
-         changeAggregation(NodeTypeComboList);
+          changeAggregation(NodeTypeComboList);
         }
       });
 

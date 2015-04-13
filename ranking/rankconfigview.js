@@ -1,26 +1,33 @@
-define(['jquery', 'd3', '../view'], function ($, d3, View) {
+define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) {
 
-  var RANK_CRITERION_ELEMENT_WIDTH = 190;
+  var RANK_CRITERION_ELEMENT_WIDTH = 165;
   var RANK_CRITERION_ELEMENT_HEIGHT = 22;
   var STRATEGY_SELECTOR_START = 20;
+  var RANK_CRITERION_ELEMENT_SPACING = 5;
 
-  function RankCriterionElement(validStrategies) {
+  function RankCriterionElement(selectableStrategies, selectedStrategyIndex) {
     this.priority = 0;
-    this.validStrategies = validStrategies;
+    this.selectedStrategyIndex = selectedStrategyIndex || 0;
+    this.selectableStrategies = selectableStrategies;
+
   }
 
   RankCriterionElement.prototype = {
 
     setPriority: function (priority) {
       this.priority = priority;
+      if (typeof this.rootDomElement !== "undefined") {
+        this.rootDomElement.select("text.priority")
+          .text(this.priority.toString() + ".")
+      }
     },
 
     init: function (parent) {
 
-      var group = parent.append("g")
+      this.rootDomElement = parent.append("g")
         .classed("rankCriterionElement", true);
 
-      group.append("rect")
+      this.rootDomElement.append("rect")
         .attr({
           x: 0,
           y: 0,
@@ -33,7 +40,8 @@ define(['jquery', 'd3', '../view'], function ($, d3, View) {
           fill: "lightgray"
         });
 
-      group.append("text")
+      this.rootDomElement.append("text")
+        .classed("priority", true)
         .attr({
           x: 5,
           y: RANK_CRITERION_ELEMENT_HEIGHT / 2 + 5
@@ -43,7 +51,7 @@ define(['jquery', 'd3', '../view'], function ($, d3, View) {
         })
         .text(this.priority.toString() + ".")
 
-      group.append("foreignObject")
+      this.rootDomElement.append("foreignObject")
         .attr({
           x: STRATEGY_SELECTOR_START,
           y: 2,
@@ -54,9 +62,9 @@ define(['jquery', 'd3', '../view'], function ($, d3, View) {
         .html('<select class="strategySelector"></select>');
 
 
-      var selector = group.select("select.strategySelector");
+      var selector = this.rootDomElement.select("select.strategySelector");
 
-      this.validStrategies.forEach(function (strategy, i) {
+      this.selectableStrategies.forEach(function (strategy, i) {
         selector.append("option")
           .attr({
             value: i
@@ -65,6 +73,17 @@ define(['jquery', 'd3', '../view'], function ($, d3, View) {
       });
 
       $(selector[0]).width(100);
+      $(selector[0]).val(this.selectedStrategyIndex);
+
+      var sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + 100 + 5, 3, 16, 16, "\uf160", 16 / 2, 16 - 3, "rgb(30,30,30)", false);
+
+      sortingOrderButton.on("click", function() {
+        d3.select(this).select("text").text("\uf161")
+      });
+
+      //var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + 100 + 10+16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
+
+
 
       //selector.attr("width", 50);
       //selector.attr("size", 50);
@@ -76,26 +95,53 @@ define(['jquery', 'd3', '../view'], function ($, d3, View) {
   };
 
 
-  function RankConfigView(parentSelector, sortingStrategies) {
+  function RankConfigView(parentSelector, selectableSortingStrategies, idSortingStrategy, initialSortingStrategies) {
     View.call(this, parentSelector);
-    this.sortingStrategies = sortingStrategies;
+    this.selectableSortingStrategies = selectableSortingStrategies;
+    this.idSortingStrategy = idSortingStrategy;
+    this.initialSortingStrategies = initialSortingStrategies;
+    this.rankElements = [];
   }
 
   RankConfigView.prototype = Object.create(View.prototype);
 
-  RankConfigView.prototype.init = function() {
+  RankConfigView.prototype.init = function () {
     View.prototype.init.call(this);
 
+    var that = this;
+
+
+    this.initialSortingStrategies.forEach(function (strat) {
+      that.addRankCriterionElement(strat);
+    });
+
+    this.update()
+
+  };
+
+  RankConfigView.prototype.addRankCriterionElement = function (selectedStrategy) {
     var svg = d3.select(this.parentSelector + " svg");
-
-    var el = new RankCriterionElement(this.sortingStrategies);
+    var el = new RankCriterionElement(this.selectableSortingStrategies, this.selectableSortingStrategies.indexOf(selectedStrategy));
     el.init(svg);
+    this.rankElements.push(el);
+  };
 
+  RankConfigView.prototype.update = function () {
+    this.rankElements.forEach(function (element, i) {
+      element.rootDomElement.attr({
+        transform: "translate(" + (i * (RANK_CRITERION_ELEMENT_WIDTH + RANK_CRITERION_ELEMENT_SPACING)) + ", 0)"
+      });
+      element.setPriority(i + 1);
+    });
   };
 
   RankConfigView.prototype.getMinSize = function () {
-    return {width: 200, height: RANK_CRITERION_ELEMENT_HEIGHT};
+    return {
+      width: Math.max(200, RANK_CRITERION_ELEMENT_WIDTH * this.rankElements.length + RANK_CRITERION_ELEMENT_SPACING * (this.rankElements.length - 1)),
+      height: RANK_CRITERION_ELEMENT_HEIGHT
+    };
   };
 
   return RankConfigView;
-});
+})
+;

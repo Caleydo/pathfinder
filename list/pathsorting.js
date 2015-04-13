@@ -185,20 +185,8 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
 
       getPathQueryStrategy: function (pathQuery) {
         return new PathQuerySortingStrategy(pathQuery);
-      },
-
-      getChainComparator: function (strategies) {
-        return function (a, b) {
-
-          for (var i = 0; i < strategies.length; i++) {
-            var res = strategies[i].compare(a, b);
-            if (res !== 0) {
-              return res;
-            }
-          }
-          return 0;
-        }
       }
+
     };
 
     //var pathQuery = new pathQueryModel.NodeMatcher(new pathQueryModel.Or(new pathQueryModel.NodeNameConstraint("C00527"), new pathQueryModel.NodeNameConstraint("C00431")));

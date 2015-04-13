@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../../setinfo', '../../selectionutil', '../../pathUtil', '../../config', './aggregatesorting', './aggregate'],
-  function ($, d3, listeners, pathList, sorting, setInfo, selectionUtil, pathUtil, config, aggregateSorting, a) {
+define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../../setinfo', '../../selectionutil', '../../pathUtil', '../../config', './aggregatesorting', './aggregate', '../../uiutil'],
+  function ($, d3, listeners, pathList, sorting, setInfo, selectionUtil, pathUtil, config, aggregateSorting, a, uiUtil) {
     'use strict';
 
 
@@ -66,7 +66,7 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
           }
 
           var text = info.properties[config.getSetNameProperty(info)];
-          return pathUtil.getClampedText(text, 14);
+          return uiUtil.getClampedText(text, 14);
         });
 
       svg.selectAll("g.setNode title")

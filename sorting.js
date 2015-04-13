@@ -48,7 +48,7 @@ define(['d3'], function(d3) {
 
     setStrategyChain: function (chain) {
       this.currentStrategyChain = chain;
-      this.currentComparator = getComparatorFromStrategyChain(this.currentStrategyChain)
+      this.currentComparator = getComparatorFromStrategyChain(this.currentStrategyChain);
     },
 
     // Replaces the first occurrence of an existing strategy of the same strategy type in the chain, or adds it to the
