@@ -50,7 +50,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
     };
 
     function NodePresenceSortingStrategy(nodeIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Node selection");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected nodes");
       this.nodeIds = nodeIds;
       this.ascending = false;
     }
@@ -86,7 +86,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
 
 
     function SetPresenceSortingStrategy(setIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Set selection");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Selected sets");
       this.ascending = false;
       this.setIds = setIds;
 
@@ -142,7 +142,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
     };
 
     function SelectionSortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selection");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected elements");
       this.nodePresenceStrategy = new NodePresenceSortingStrategy([]);
       this.setPresenceStrategy = new SetPresenceSortingStrategy([]);
       this.currentStrategy = this.nodePresenceStrategy;
@@ -167,7 +167,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
 
 
     function PathQuerySortingStrategy(pathQuery) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Filter");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Filtered paths");
       this.pathQuery = pathQuery;
       this.ascending = false;
     }

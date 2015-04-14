@@ -18,43 +18,13 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
     SetCombination.prototype = Object.create(a.CombinationAggregate.prototype);
 
 
-    function SetNodePresenceSortingStrategy(setIds) {
-      sorting.SortingStrategy.call(this, sorting.SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE);
-      this.setIds = setIds;
-      this.ascending = false;
+    function SetNodePresenceSortingStrategy() {
+      a.ComboNodeSelectionSortingStrategy.call(this, "Selected sets");
     }
 
-    SetNodePresenceSortingStrategy.prototype = Object.create(sorting.SortingStrategy);
-    SetNodePresenceSortingStrategy.prototype.compare = function (a, b) {
-      var numNodesA = 0;
-      var numNodesB = 0;
-      this.setIds.forEach(function (setId) {
-        a.combo.forEach(function (id) {
-          if (id === setId) {
-            numNodesA++;
-          }
-        });
+    SetNodePresenceSortingStrategy.prototype = Object.create(a.ComboNodeSelectionSortingStrategy.prototype);
 
-        b.combo.forEach(function (id) {
-          if (id === setId) {
-            numNodesB++;
-          }
-        });
-      });
-
-      if (this.ascending) {
-        return d3.ascending(numNodesA, numNodesB);
-      }
-      return d3.descending(numNodesA, numNodesB);
-
-    };
-
-
-    var sortingStrategies = {
-      getSetNodePrensenceSortingStrategy: function (setIds) {
-        return new SetNodePresenceSortingStrategy(setIds);
-      }
-    };
+    var setNodePresenceSortingStrategy = new SetNodePresenceSortingStrategy();
 
 
     function updateSets(setInfo) {
@@ -202,6 +172,10 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
       var text = info.properties[config.getSetNameProperty(info)];
 
       return text;
+    };
+
+    SetComboList.prototype.getNodeSelectionSortingStrategy = function () {
+      return setNodePresenceSortingStrategy;
     };
 
 

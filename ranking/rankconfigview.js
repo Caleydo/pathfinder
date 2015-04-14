@@ -192,6 +192,23 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
     this.update();
   };
 
+  RankConfigView.prototype.reset = function (selectableSortingStrategies, initialSortingStrategies) {
+    this.rankElements.forEach(function (element) {
+      element.rootDomElement.remove();
+    });
+    this.rankElements = [];
+
+    this.selectableSortingStrategies = selectableSortingStrategies;
+    this.initialSortingStrategies = initialSortingStrategies;
+    var that = this;
+
+    this.initialSortingStrategies.forEach(function (strat) {
+      that.addRankCriterionElement(strat);
+    });
+
+    this.update();
+  };
+
   RankConfigView.prototype.updateSortOrder = function () {
     this.rankElements.forEach(function (element) {
       element.updateSortOrder();

@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', '../../selectionutil', '../../pathutil', '../../query/pathquery', '../../uiutil'],
-  function ($, d3, PathList, a, listeners, selectionUtil, pathUtil, pathQuery, uiUtil) {
+define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', '../../selectionutil', '../../pathutil', '../../query/pathquery', '../../uiutil', '../../sorting'],
+  function ($, d3, PathList, a, listeners, selectionUtil, pathUtil, pathQuery, uiUtil, sorting) {
 
     var currentAggregateId = 0;
 
@@ -59,7 +59,7 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
     function CombinationAggregate(comboIds, pathUpdateListener) {
       Aggregate.call(this, pathUpdateListener);
 
-      var colors = ["gray", "rgb(200,200,200)"];
+      var colors = ["rgb(150,150,150)", "rgb(200,200,200)"];
       var colorIndex = 0;
       this.combo = [];
       var that = this;
@@ -74,12 +74,11 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
 
     CombinationAggregate.prototype = Object.create(Aggregate.prototype);
 
-
     CombinationAggregate.prototype.addPath = function (path, comboPath) {
       Aggregate.prototype.addPath.call(this, path);
       var myTypePath = [];
 
-      var colors = ["gray", "rgb(200,200,200)"];
+      var colors = ["rgb(150,150,150)", "rgb(200,200,200)"];
       var colorIndex = 0;
       var comboIndex = -1;
       var prevId = 0;
@@ -110,6 +109,41 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
         width: this.combo.length * 2 * TYPE_NODE_RADIUS_X + (this.combo.length - 1) * TYPE_NODE_SPACING,
         height: this.comboPaths.length * TYPE_PATH_HEIGHT + NODE_TYPE_COMBO_HEIGHT
       };
+    };
+
+
+    function ComboNodeSelectionSortingStrategy(name) {
+      sorting.SortingStrategy.call(this, sorting.SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, name || "Selected combo nodes");
+      this.ids = [];
+      this.ascending = false;
+    }
+
+    ComboNodeSelectionSortingStrategy.prototype = Object.create(sorting.SortingStrategy);
+    ComboNodeSelectionSortingStrategy.prototype.setIds = function (ids) {
+      this.ids = ids;
+    };
+    ComboNodeSelectionSortingStrategy.prototype.compare = function (a, b) {
+      var numNodesA = 0;
+      var numNodesB = 0;
+      this.ids.forEach(function (setId) {
+        a.combo.forEach(function (c) {
+          if (c.id === setId) {
+            numNodesA++;
+          }
+        });
+
+        b.combo.forEach(function (c) {
+          if (c.id === setId) {
+            numNodesB++;
+          }
+        });
+      });
+
+      if (this.ascending) {
+        return d3.ascending(numNodesA, numNodesB);
+      }
+      return d3.descending(numNodesA, numNodesB);
+
     };
 
 
@@ -481,6 +515,16 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
 
     CombinationAggregateList.prototype = Object.create(AggregateList.prototype);
 
+    CombinationAggregateList.prototype.init = function () {
+      AggregateList.prototype.init.call(this);
+      a.sortingManager.setStrategyChain([this.getNodeSelectionSortingStrategy(), a.sortingStrategies.numPaths, a.sortingStrategies.aggregateId]);
+
+    };
+
+    CombinationAggregateList.prototype.getNodeSelectionSortingStrategy = function () {
+
+    };
+
     CombinationAggregateList.prototype.renderComboPath = function (parent, combination) {
       var allTypePaths = parent.selectAll("g.comboPath")
         .data(combination.comboPaths);
@@ -562,7 +606,9 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
             .classed("comboNode", true)
             .on("dblclick", function (d) {
               //sortingManager.addOrReplace(sortingStrategies.getSetNodePrensenceSortingStrategy([d]));
-              //listeners.notify(aggregateSorting.updateType, sortingManager.currentComparator);
+
+              that.getNodeSelectionSortingStrategy().setIds([d.id]);
+              listeners.notify(a.updateType, a.sortingManager.currentComparator);
             });
 
 
@@ -621,7 +667,8 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
       Aggregate: Aggregate,
       CombinationAggregate: CombinationAggregate,
       CombinationAggregateList: CombinationAggregateList,
-      getKey: getKey
+      getKey: getKey,
+      ComboNodeSelectionSortingStrategy: ComboNodeSelectionSortingStrategy
 
     };
 

@@ -35,9 +35,11 @@ define(['../../sorting', '../../pathutil', '../../query/querymodel', '../../list
 
 
     return {
+      selectableSortingStrategies: [sortingStrategies.numPaths],
       sortingManager: sortingManager,
       sortingStrategies: sortingStrategies,
-      updateType: "UPDATE_AGGREGATE_SORTING"
+      updateType: "UPDATE_AGGREGATE_SORTING",
+      selectableStrategyUpdateType: "UPDATE_SELECTABLE_AGGREGATE_STRATEGIES"
     }
 
   }

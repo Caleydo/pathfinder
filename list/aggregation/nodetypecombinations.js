@@ -22,6 +22,14 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
     return true;
   };
 
+  function NodeTypePresenceSortingStrategy() {
+    a.ComboNodeSelectionSortingStrategy.call(this, "Selected node types");
+  }
+
+  NodeTypePresenceSortingStrategy.prototype = Object.create(a.ComboNodeSelectionSortingStrategy.prototype);
+
+  var nodeTypePresenceSortingStrategy = new NodeTypePresenceSortingStrategy();
+
 
   function NodeTypeCombinationList() {
     a.CombinationAggregateList.call(this);
@@ -70,6 +78,10 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
 
   NodeTypeCombinationList.prototype.getComboNodeText = function (d) {
     return d.id;
+  };
+
+  NodeTypeCombinationList.prototype.getNodeSelectionSortingStrategy = function () {
+    return nodeTypePresenceSortingStrategy;
   };
 
 

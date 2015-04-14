@@ -55,7 +55,7 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
       var pathRankConfigView = new RankConfigView("#pathRankConfig",
         [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy, pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight]
         , initialPathSortingStrategies);
-      pathRankConfigView.addUpdateListener(function(view) {
+      pathRankConfigView.addUpdateListener(function (view) {
         var chain = view.getStrategyChain();
         chain.push(pathSorting.sortingStrategies.pathId);
         pathSorting.sortingManager.setStrategyChain(chain);
@@ -64,12 +64,12 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
       pathRankConfigView.init();
       d3.select("#pathRankConfig svg").style({"vertical-align": "bottom"})
 
-      var initialPathSortingStrategies = Object.create(aggregateSorting.sortingManager.currentStrategyChain);
-      initialPathSortingStrategies.splice(aggregateSorting.sortingManager.currentStrategyChain.length - 1, 1);
+      var initialAggregateSortingStrategies = Object.create(aggregateSorting.sortingManager.currentStrategyChain);
+      initialAggregateSortingStrategies.splice(aggregateSorting.sortingManager.currentStrategyChain.length - 1, 1);
       var aggregateRankConfigView = new RankConfigView("#aggregateRankConfig",
         [aggregateSorting.sortingStrategies.numPaths]
-        , initialPathSortingStrategies);
-      aggregateRankConfigView.addUpdateListener(function(view) {
+        , initialAggregateSortingStrategies);
+      aggregateRankConfigView.addUpdateListener(function (view) {
         var chain = view.getStrategyChain();
         chain.push(aggregateSorting.sortingStrategies.aggregateId);
         aggregateSorting.sortingManager.setStrategyChain(chain);
@@ -92,12 +92,20 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
         if (this.value == '1' && !(that.aggregateList instanceof SetComboList)) {
           changeAggregation(SetComboList);
           d3.select("#aggregateWidgets").style({display: "block"});
+          updateAggregateRankConfigView();
         }
         if (this.value == '2' && !(that.aggregateList instanceof NodeTypeComboList)) {
           changeAggregation(NodeTypeComboList);
           d3.select("#aggregateWidgets").style({display: "block"});
+          updateAggregateRankConfigView();
         }
       });
+
+      function updateAggregateRankConfigView() {
+        var initialAggregateSortingStrategies = Object.create(aggregateSorting.sortingManager.currentStrategyChain);
+        initialAggregateSortingStrategies.splice(aggregateSorting.sortingManager.currentStrategyChain.length - 1, 1);
+        aggregateRankConfigView.reset([that.aggregateList.getNodeSelectionSortingStrategy(), aggregateSorting.sortingStrategies.numPaths], initialAggregateSortingStrategies);
+      }
 
       function changeAggregation(constructor) {
         that.aggregateList.destroy();
