@@ -4,7 +4,7 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
   var RANK_CRITERION_SELECTOR_WIDTH = 120;
   var RANK_CRITERION_ELEMENT_SPACING = 5;
   var STRATEGY_SELECTOR_START = 20;
-  var RANK_CRITERION_ELEMENT_WIDTH = STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 2 * RANK_CRITERION_ELEMENT_SPACING + 2 * 16+5;
+  var RANK_CRITERION_ELEMENT_WIDTH = STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 2 * RANK_CRITERION_ELEMENT_SPACING + 2 * 16 + 5;
   var RANK_CRITERION_ELEMENT_HEIGHT = 22;
 
 
@@ -76,27 +76,30 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
           .text(strategy.label);
       });
 
-      $(selector[0]).on("change", function () {
-        that.selectedStrategyIndex = this.value;
-        that.rankConfigView.notify();
-      });
 
       $(selector[0]).width(RANK_CRITERION_SELECTOR_WIDTH);
       $(selector[0]).val(this.selectedStrategyIndex);
 
-      function orderButtonText() {
-        return that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending ? "\uf160" : "\uf161";
-      }
 
-      var sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 5, 3, 16, 16, orderButtonText(), 16 / 2, 16 - 3, "rgb(30,30,30)", false);
+      var sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 5, 3, 16, 16, that.orderButtonText(), 16 / 2, 16 - 3, "rgb(30,30,30)", false);
 
-      sortingOrderButton.on("click", function () {
-        that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending = !that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending;
-        d3.select(this).select("text").text(orderButtonText());
+      sortingOrderButton
+        .classed("sortOrderButton", true)
+        .on("click", function () {
+          that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending = !that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending;
+          that.rankConfigView.updateSortOrder();
+          that.rankConfigView.notify();
+        });
+
+      $(selector[0]).on("change", function () {
+        that.selectedStrategyIndex = this.value;
+        that.rankConfigView.updateSortOrder();
         that.rankConfigView.notify();
       });
 
       var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 10 + 16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
+
+      removeButton.attr("display", "none");
 
       removeButton.on("click", function () {
         var index = that.rankConfigView.rankElements.indexOf(that);
@@ -107,6 +110,22 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
           that.rankConfigView.notify();
         }
       });
+
+      $(this.rootDomElement[0]).mouseenter(function () {
+        removeButton.attr("display", "inline");
+      });
+
+      $(this.rootDomElement[0]).mouseleave(function () {
+        removeButton.attr("display", "none");
+      });
+    },
+
+    orderButtonText: function () {
+      return this.rankConfigView.selectableSortingStrategies[this.selectedStrategyIndex].ascending ? "\uf160" : "\uf161";
+    },
+
+    updateSortOrder: function () {
+      this.rootDomElement.select("g.sortOrderButton").select("text").text(this.orderButtonText());
     }
   };
 
@@ -150,14 +169,33 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
       that.addRankCriterionElement(strat);
     });
 
-    this.addRankCriterionButton = uiUtil.addOverlayButton(d3.select(this.parentSelector + " svg"), 0, 0, 16, 16, "\uf067", 16 / 2, 16 - 1, "green", true);
-    this.addRankCriterionButton.on("click", function () {
-      that.addRankCriterionElement(that.selectableSortingStrategies[0]);
-      that.update();
-      that.notify();
+    var svg = d3.select(this.parentSelector + " svg");
+
+    this.addRankCriterionButton = uiUtil.addOverlayButton(svg, 0, 0, 16, 16, "\uf067", 16 / 2, 16 - 1, "green", true);
+    this.addRankCriterionButton
+      .attr("display", "none")
+      .on("click", function () {
+        that.addRankCriterionElement(that.selectableSortingStrategies[0]);
+        that.update();
+        that.notify();
+      });
+
+
+    $(svg[0]).mouseenter(function () {
+      that.addRankCriterionButton.attr("display", "inline");
+    });
+
+    $(svg[0]).mouseleave(function () {
+      that.addRankCriterionButton.attr("display", "none");
     });
 
     this.update();
+  };
+
+  RankConfigView.prototype.updateSortOrder = function () {
+    this.rankElements.forEach(function (element) {
+      element.updateSortOrder();
+    });
   };
 
   RankConfigView.prototype.getStrategyChain = function () {
