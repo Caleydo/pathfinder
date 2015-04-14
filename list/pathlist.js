@@ -283,6 +283,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.selectionListeners = [];
       this.maxNumNodeSets = 0;
       this.maxNumEdgeSets = 0;
+      this.pivotNodeId = -1;
+      this.pivotNodeIndex = 0;
       var that = this;
 
       this.setVisibilityUpdateListener = function (showSets) {
@@ -536,6 +538,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         //    return d.set.relIndices.length > 0 ? "inline" : "none";
         //  })
 
+        this.updateDataBinding();
+
 
         var that = this;
 
@@ -551,14 +555,42 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             }
             return 1;
           });
+        that.parent.selectAll("g.pathContainer g.path g.edgeGroup").data(that.pathWrappers)
+          .transition()
+          .attr("transform", function (d) {
+            return that.getPivotNodeAlignedTransform(d)
+          });
+        that.parent.selectAll("g.pathContainer g.path g.nodeGroup").data(that.pathWrappers)
+          .transition()
+          .attr("transform", function (d) {
+            return that.getPivotNodeAlignedTransform(d)
+          });
 
 
         pathContainers
           .each(function () {
+
+            d3.select(this).selectAll("g.setType")
+              .each(function (d) {
+                d3.select(this).selectAll("g.setTypeSummary")
+                  .transition()
+                  .attr("transform", function (d) {
+                    return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
+                  });
+                d3.select(this).selectAll("g.setVisContainer")
+                  .transition()
+                  .attr("transform", function (d) {
+                    return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
+                  });
+              })
+
             d3.select(this).selectAll("g.setType")
               .transition()
               .each("start", function (d) {
-                var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary");
+                var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary")
+                  .attr("transform", function (d) {
+                    return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
+                  });
 
                 if (d.setType.collapsed) {
                   setTypeSummaryContainer
@@ -694,7 +726,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         var that = this;
         this.pathWrappers = [];
         this.paths = paths;
-        paths.forEach(function(path) {
+        paths.forEach(function (path) {
           that.addPathAsPathWrapper(path);
         })
       },
@@ -756,6 +788,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         var pathContainers = this.parent.selectAll("g.pathContainer")
           .data(this.pathWrappers, getPathKey);
+        this.parent.selectAll("g.pathContainer g.pathContent")
+          .data(this.pathWrappers, getPathKey);
 
         pathContainers.each(function (pathWrapper, i) {
 
@@ -772,6 +806,13 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             });
 
           var setTypes = d3.select(this).selectAll("g.setGroup").selectAll("g.setType")
+            .data(function () {
+              return pathWrapper.setTypes.map(function (mySetType) {
+                return {setType: mySetType, pathIndex: i};
+              });
+            });
+
+          d3.select(this).selectAll("g.setGroup").selectAll("g.setTypeSummary")
             .data(function () {
               return pathWrapper.setTypes.map(function (mySetType) {
                 return {setType: mySetType, pathIndex: i};
@@ -804,7 +845,15 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                 });
               });
 
-            set.each(function (d, i) {
+            var setVisContainer = d3.select(this)
+              .selectAll("g.setVisContainer")
+              .data(function () {
+                return d.setType.sets.map(function (myset) {
+                  return {set: myset, pathIndex: d.pathIndex, setTypeIndex: i};
+                });
+              });
+
+            setVisContainer.each(function (d, i) {
               d3.select(this).selectAll("circle")
                 .data(function () {
                   return d.set.nodeIndices.map(function (index) {
@@ -825,6 +874,43 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           });
 
         });
+      },
+
+      setPivotNode: function (id) {
+        var maxNodeIndex = 0;
+        this.pathWrappers.forEach(function (pathWrapper) {
+          for (var i = pathWrapper.path.nodes.length - 1; i >= 0; i--) {
+            if (pathWrapper.path.nodes[i].id === id && i > maxNodeIndex) {
+              maxNodeIndex = i;
+              break;
+            }
+          }
+        });
+
+        this.pivotNodeId = id;
+        this.pivotNodeIndex = maxNodeIndex;
+
+        this.updatePathList();
+      },
+
+      getPivotNodeAlignedTransform: function (pathWrapper) {
+
+        var index = -1;
+        for (var i = 0; i < pathWrapper.path.nodes.length; i++) {
+          if (pathWrapper.path.nodes[i].id === this.pivotNodeId) {
+            index = i;
+            break;
+          }
+        }
+
+        if (index === -1) {
+          return "translate(" + nodeStart + ",0)";
+        }
+
+        var translate = nodeStart + (this.pivotNodeIndex - index) * (nodeWidth + edgeSize);
+
+        return "translate(" + translate + ", 0)";
+
       },
 
       renderPaths: function () {
@@ -902,7 +988,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         that.selectionListeners.push(l);
 
         var edgeGroup = p.append("g")
-          .attr("class", "edgeGroup");
+          .attr("class", "edgeGroup")
+          .attr("transform", function (d) {
+            return that.getPivotNodeAlignedTransform(d)
+          });
 
 
         var allEdges = allPathContainers.selectAll("g.path").selectAll("g.edgeGroup").selectAll("g.edge")
@@ -926,17 +1015,17 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         edge.append("line")
           .attr("x1", function (d, i) {
             if (isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)) {
-              return ( nodeStart + (i + 1) * nodeWidth) + (i * edgeSize);
+              return ( (i + 1) * nodeWidth) + (i * edgeSize);
             } else {
-              return ( nodeStart + (i + 1) * nodeWidth) + ((i + 1) * edgeSize);
+              return ( (i + 1) * nodeWidth) + ((i + 1) * edgeSize);
             }
           })
           .attr("y1", vSpacing + nodeHeight / 2)
           .attr("x2", function (d, i) {
             if (isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)) {
-              return ( nodeStart + (i + 1) * nodeWidth) + ((i + 1) * edgeSize) - arrowWidth;
+              return ( (i + 1) * nodeWidth) + ((i + 1) * edgeSize) - arrowWidth;
             } else {
-              return ( nodeStart + (i + 1) * nodeWidth) + (i * edgeSize) + arrowWidth;
+              return ( (i + 1) * nodeWidth) + (i * edgeSize) + arrowWidth;
             }
           })
           .attr("y2", vSpacing + nodeHeight / 2)
@@ -946,7 +1035,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           });
 
         var nodeGroup = p.append("g")
-          .attr("class", "nodeGroup");
+          .attr("class", "nodeGroup")
+          .attr("transform", function (d) {
+            return that.getPivotNodeAlignedTransform(d)
+          });
 
         var allNodes = allPathContainers.selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.node")
           .data(function (pathWrapper) {
@@ -962,34 +1054,25 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .classed("nodeCont", true);
 
         nc.each(function (d, i) {
-          queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "name", d.properties[config.getNodeNameProperty(d)], nodeStart + (i * nodeWidth) + (i * edgeSize) + nodeWidth, vSpacing);
+          queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "name", d.properties[config.getNodeNameProperty(d)], (i * nodeWidth) + (i * edgeSize) + nodeWidth, vSpacing);
         });
 
         var node = nc
           .append("g")
           .attr("class", "node")
 
-          .on("dblclick", function (d) {
+          .on("dblclick.align", function (d) {
             //sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
             sortingStrategies.selectionSortingStrategy.setNodeIds([d.id]);
 
             listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
+
+            if (d3.event.altKey) {
+              that.setPivotNode(d.id);
+            }
             //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
           });
 
-
-        //.on("click.filter", function(d){
-        //  if (d3.event.altKey) {
-        //    queryView.addNodeFilter("name",  d.properties[config.getNodeNameProperty(d)]);
-        //  }
-        //});
-        //.on("mouseover", function (d) {
-        //  var o = new ListOverlay();
-        //  o.show(d3.select(this), [{
-        //    text: "something quite long", callback: function () {
-        //    }
-        //  }], 0, 0)
-        //});
         var l = selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
             return d.id;
           },
@@ -1000,7 +1083,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         node.append("rect")
           .attr("x", function (d, i) {
-            return nodeStart + (i * nodeWidth) + (i * edgeSize);
+            return (i * nodeWidth) + (i * edgeSize);
           })
           .attr("y", vSpacing)
           .attr("rx", 5).attr("ry", 5)
@@ -1015,7 +1098,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             return getClampedText(text, 7);
           })
           .attr("x", function (d, i) {
-            return nodeStart + (i * nodeWidth) + (i * edgeSize) + nodeWidth / 2;
+            return (i * nodeWidth) + (i * edgeSize) + nodeWidth / 2;
           })
           .attr("y", vSpacing + nodeHeight - 5)
           .append("title")
@@ -1097,6 +1180,9 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .classed("setTypeSummary", true)
           .attr("display", function (d) {
             return d.setType.collapsed ? "inline" : "none";
+          })
+          .attr("transform", function (d) {
+            return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
           });
 
         setTypeSummaryContainer.each(function (d, i) {
@@ -1110,7 +1196,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
               .append("circle")
               .attr({
                 cx: function (d) {
-                  return nodeStart + (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
+                  return (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
                 },
                 cy: setTypeHeight / 2,
                 r: function (d) {
@@ -1134,12 +1220,12 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
               .append("line")
               .attr({
                 x1: function (d) {
-                  return nodeStart + (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
+                  return (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
                 }
                 ,
                 y1: setTypeHeight / 2,
                 x2: function (d) {
-                  return nodeStart + ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
+                  return ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
                 },
                 y2: setTypeHeight / 2,
                 stroke: function (d) {
@@ -1215,7 +1301,13 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
               return setInfo.getSetLabel(d.set.id);
             });
 
-          set.each(function (d, i) {
+          var setVisContainer = set.append("g")
+            .classed("setVisContainer", true)
+            .attr("transform", function (d) {
+              return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
+            });
+
+          setVisContainer.each(function (d, i) {
             d3.select(this).selectAll("circle")
               .data(function () {
                 return d.set.nodeIndices.map(function (index) {
@@ -1226,7 +1318,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
               .append("circle")
               .attr({
                 cx: function (d) {
-                  return nodeStart + (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
+                  return (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
                 },
                 cy: function (d) {
                   return setHeight / 2;
@@ -1246,14 +1338,14 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
               .enter()
               .append("line")
               .attr("x1", function (d) {
-                return nodeStart + (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
+                return (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
               })
               .attr("y1", function (d) {
                 return setHeight / 2;
                 //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
               })
               .attr("x2", function (d) {
-                return nodeStart + ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
+                return ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
               })
               .attr("y2", function (d) {
                 return setHeight / 2;
