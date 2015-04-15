@@ -174,6 +174,25 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       }
     };
 
+    function CrossPathNodeConnection(id, nodeId) {
+      this.id = id;
+      this.nodeId = nodeId;
+      this.nodeAnchors = [];
+    }
+
+    CrossPathNodeConnection.prototype = {
+
+      addNodeAnchor: function (pathIndex, nodeIndex) {
+        if (this.nodeAnchors.length > 0) {
+          this.nodeAnchors[this.nodeAnchors.length - 1].last = false;
+        }
+
+        this.nodeAnchors.push({pathIndex: pathIndex, nodeIndex: nodeIndex, top: true, last: false});
+        this.nodeAnchors.push({pathIndex: pathIndex, nodeIndex: nodeIndex, top: false, last: true});
+      }
+
+    };
+
     function getNodeSetCount(node, setTypeWrapper) {
       var numSets = 0;
 
@@ -199,13 +218,17 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
 //var allPaths = [];
 
+    function getPathContainerTranslateY(pathWrappers, pathIndex) {
+      var posY = 0;
+      for (var index = 0; index < pathIndex; index++) {
+        posY += pathWrappers[index].getHeight() + pathSpacing;
+      }
+      return posY;
+    }
+
     function getPathContainerTransformFunction(pathWrappers) {
       return function (d, i) {
-        var posY = 0;
-        for (var index = 0; index < i; index++) {
-          posY += pathWrappers[index].getHeight() + pathSpacing;
-        }
-        return "translate(0," + posY + ")";
+        return "translate(0," + getPathContainerTranslateY(pathWrappers, i) + ")";
       };
     }
 
@@ -281,6 +304,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.pathWrappers = [];
       this.updateListeners = [];
       this.selectionListeners = [];
+      this.crossConnections = [];
       this.maxNumNodeSets = 0;
       this.maxNumEdgeSets = 0;
       this.pivotNodeId = -1;
@@ -377,6 +401,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .text(function (d) {
             return d.rank;
           });
+
+        that.renderCrossConnections();
       };
 
       this.collapseSetTypeListener = function (setType) {
@@ -470,7 +496,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         this.updateMaxSets();
 
-        this.render(this.parent);
+        this.renderPaths();
       },
 
       getNodeSetScale: function () {
@@ -514,7 +540,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           that.addPathAsPathWrapper(path);
         });
 
-        this.render(this.parent);
+        this.renderPaths();
       },
 
       updatePathList: function () {
@@ -668,9 +694,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
           });
 
+        this.renderCrossConnections();
+
         this.notifyUpdateListeners();
-      }
-      ,
+      },
 
       destroy: function () {
         this.removePaths();
@@ -692,6 +719,9 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         if (typeof this.parent === "undefined")
           return;
 
+        this.parent.selectAll("g.crossConnectionContainer")
+          .remove();
+
         this.parent.selectAll("g.pathContainer")
           .remove();
 
@@ -699,8 +729,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         //parent.select("#SetLabelClipPath").remove();
 
 
-      }
-      ,
+      },
 
       removePaths: function () {
         this.removeGuiElements(this.parent);
@@ -708,19 +737,23 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         this.pathWrappers = [];
         this.maxNumEdgeSets = 0;
         this.maxNumNodeSets = 0;
-      }
-      ,
+        this.crossConnections = [];
+      },
 
 
       render: function (parent) {
-        this.parent = parent;
+        if (typeof this.parent === "undefined") {
+          this.parent = parent;
+          this.parent.append("g")
+            .classed("crossConnectionContainer", true);
+        }
+
 
         if (this.pathWrappers.length > 0) {
 
           this.renderPaths();
         }
-      }
-      ,
+      },
 
       setPaths: function (paths) {
         var that = this;
@@ -763,8 +796,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       addPath: function (path) {
         this.paths.push(path);
         this.addPathAsPathWrapper(path);
-      }
-      ,
+      },
 
       getSize: function () {
         var totalHeight = 0;
@@ -893,8 +925,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         this.updatePathList();
       },
 
-      getPivotNodeAlignedTransform: function (pathWrapper) {
-
+      getPivotNodeAlignedTranslationX: function (pathWrapper) {
         var index = -1;
         for (var i = 0; i < pathWrapper.path.nodes.length; i++) {
           if (pathWrapper.path.nodes[i].id === this.pivotNodeId) {
@@ -904,12 +935,89 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         }
 
         if (index === -1) {
-          return "translate(" + nodeStart + ",0)";
+          return nodeStart;
         }
 
-        var translate = nodeStart + (this.pivotNodeIndex - index) * (nodeWidth + edgeSize);
+        return nodeStart + (this.pivotNodeIndex - index) * (nodeWidth + edgeSize);
+      },
 
-        return "translate(" + translate + ", 0)";
+      getPivotNodeAlignedTransform: function (pathWrapper) {
+
+        return "translate(" + this.getPivotNodeAlignedTranslationX(pathWrapper) + ", 0)";
+
+      },
+
+      renderCrossConnections: function () {
+
+        var that = this;
+        this.crossConnections = [];
+        var connectionId = 0;
+        var previousNodeIndices = {};
+        var currentNodeIndices = {};
+        var previousConnections = {};
+        var currentConnections = {};
+
+        this.pathWrappers.forEach(function (pathWrapper, i) {
+
+          currentConnections = {};
+          currentNodeIndices = {};
+          pathWrapper.path.nodes.forEach(function (node, j) {
+            var connection = previousConnections[node.id.toString()];
+            if (typeof connection !== "undefined") {
+              connection.addNodeAnchor(i, j);
+              currentConnections[node.id.toString()] = connection;
+            } else {
+
+              var previousNodeIndex = previousNodeIndices[node.id.toString()];
+              if (typeof previousNodeIndex !== "undefined") {
+                connection = new CrossPathNodeConnection(connectionId++, node.id);
+                connection.addNodeAnchor(i - 1, previousNodeIndex);
+                connection.addNodeAnchor(i, j);
+                that.crossConnections.push(connection);
+                currentConnections[node.id.toString()] = connection;
+              } else {
+                currentNodeIndices[node.id.toString()] = j;
+              }
+            }
+          });
+
+          previousConnections = currentConnections;
+          previousNodeIndices = currentNodeIndices;
+        });
+
+        var connectionContainer = this.parent.select("g.crossConnectionContainer");
+
+        var line = d3.svg.line()
+          .x(function (d) {
+            var translate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+            return translate + d.nodeIndex * (nodeWidth + edgeSize) + nodeWidth / 2;
+          })
+          .y(function (d) {
+            var translate = getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
+            return d.top ? translate : translate + (d.last ? pathHeight : that.pathWrappers[d.pathIndex].getHeight());
+          })
+          .interpolate("linear");
+
+        var allConnections = connectionContainer.selectAll("path.crossConnection")
+          .data(this.crossConnections, function (d) {
+            return d.id;
+          });
+
+        var connection = allConnections.enter()
+          .append("path")
+          .style({fill: "none"})
+          .classed("crossConnection", true);
+
+
+        allConnections
+          .transition()
+          .attr({
+            d: function (d) {
+              return line(d.nodeAnchors);
+            }
+          });
+
+        allConnections.exit().remove();
 
       },
 

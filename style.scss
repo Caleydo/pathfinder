@@ -248,6 +248,12 @@ g.set.selected {
   stroke-width: 1.5px;
 }
 
+path.crossConnection {
+  stroke: $defaultFillColorFiltered;
+  fill: $defaultFillColorFiltered;
+  stroke-width: 5px;
+}
+
 .edgePath path.path_hovered {
   stroke: $hoverColor;
   fill: $hoverColor;
