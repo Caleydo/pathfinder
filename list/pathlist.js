@@ -53,7 +53,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.type = type;
       this.sets = [];
       this.setDict = {};
-      this.collapsed = false;
+      this.collapsed = true;
       this.nodeIndices = [];
       this.relIndices = [];
     }
@@ -1018,6 +1018,13 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           });
 
         allConnections.exit().remove();
+
+        var l = selectionUtil.addDefaultListener(connectionContainer, "path.crossConnection", function (d) {
+            return d.nodeId;
+          },
+          "node"
+        );
+        that.selectionListeners.push(l);
 
       },
 

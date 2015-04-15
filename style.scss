@@ -250,7 +250,16 @@ g.set.selected {
 
 path.crossConnection {
   stroke: $defaultFillColorFiltered;
-  fill: $defaultFillColorFiltered;
+  stroke-width: 5px;
+}
+
+path.crossConnection.hovered {
+  stroke: $hoverColorSoft;
+  stroke-width: 5px;
+}
+
+path.crossConnection.selected {
+  stroke: $selectionColorSoft;
   stroke-width: 5px;
 }
 
@@ -379,6 +388,6 @@ header {
   //  height: 100%;
 }
 
-#pathRankConfig, #aggregateRankConfig{
+#pathRankConfig, #aggregateRankConfig {
   display: inline-block;
 }
