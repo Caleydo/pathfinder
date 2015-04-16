@@ -436,6 +436,9 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
               });
           }
         });
+      selectionUtil.removeListeners(this.selectionListeners);
+      this.selectionListeners = [];
+
       this.renderStats("g.nodeTypeGroup", this.nodeTypeWrappers.children, function (d) {
         return d.node.id;
       }, "node");

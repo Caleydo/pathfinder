@@ -303,6 +303,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.paths = [];
       this.pathWrappers = [];
       this.updateListeners = [];
+      this.setSelectionListener = 0;
       this.selectionListeners = [];
       this.crossConnections = [];
       this.maxNumNodeSets = 0;
@@ -593,24 +594,27 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           });
 
 
+        var allSetTypes = that.parent.selectAll("g.pathContainer g.setGroup g.setType");
+
+
+        that.renderSets(allSetTypes);
+
         pathContainers
           .each(function () {
 
-            d3.select(this).selectAll("g.setType")
-              .each(function (d) {
-                d3.select(this).selectAll("g.setTypeSummary")
-                  .transition()
-                  .attr("transform", function (d) {
-                    return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
-                  });
-                d3.select(this).selectAll("g.setVisContainer")
-                  .transition()
-                  .attr("transform", function (d) {
-                    return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
-                  });
-              })
+            var setTypes = d3.select(this).selectAll("g.setType");
 
-            d3.select(this).selectAll("g.setType")
+            setTypes.each(function (d) {
+              d3.select(this).selectAll("g.setTypeSummary")
+                .transition()
+                .attr("transform", function (d) {
+                  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
+                });
+
+            });
+
+
+            setTypes
               .transition()
               .each("start", function (d) {
                 var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary")
@@ -651,13 +655,14 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                     })
                 });
 
-                d3.select(this).selectAll("g.setCont")
-                  .each(function (setData) {
-                    if (d.setType.collapsed || (!setData.set.canBeShown())) {
-                      d3.select(this)
-                        .attr("display", "none");
-                    }
-                  });
+
+                //d3.select(this).selectAll("g.setCont")
+                //  .each(function (setData) {
+                //    if (d.setType.collapsed || (!setData.set.canBeShown())) {
+                //      d3.select(this)
+                //        .attr("display", "none");
+                //    }
+                //  });
                 if (!d.setType.canBeShown()) {
                   d3.select(this)
                     .attr("display", "none");
@@ -671,13 +676,13 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                     .attr("display", "none");
                 }
 
-                d3.select(this).selectAll("g.setCont")
-                  .each(function (setData) {
-                    if (!d.setType.collapsed && setData.set.canBeShown()) {
-                      d3.select(this)
-                        .attr("display", "inline");
-                    }
-                  });
+                //d3.select(this).selectAll("g.setCont")
+                //  .each(function (setData) {
+                //    if (!d.setType.collapsed && setData.set.canBeShown()) {
+                //      d3.select(this)
+                //        .attr("display", "inline");
+                //    }
+                //  });
 
                 if (d.setType.canBeShown()) {
                   d3.select(this)
@@ -685,12 +690,12 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                 }
               });
 
-            d3.select(this).selectAll("g.setType")
-              .each(function () {
-                d3.select(this).selectAll("g.setCont")
-                  .transition()
-                  .attr("transform", getSetTransformFunction(that.pathWrappers));
-              });
+            //d3.select(this).selectAll("g.setType")
+            //  .each(function () {
+            //    d3.select(this).selectAll("g.setCont")
+            //      .transition()
+            //      .attr("transform", getSetTransformFunction(that.pathWrappers));
+            //  });
 
           });
 
@@ -714,6 +719,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         selectionUtil.removeListeners(this.selectionListeners);
         this.selectionListeners = [];
+        selectionUtil.removeListeners(this.setSelectionListener);
+        this.setSelectionListener = 0;
         currentSetTypeId = 0;
 
         if (typeof this.parent === "undefined")
@@ -1025,6 +1032,170 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           "node"
         );
         that.selectionListeners.push(l);
+
+      },
+
+      renderSets: function (allSetTypes) {
+        var that = this;
+
+
+
+        allSetTypes.each(function (d) {
+
+          if (d.setType.collapsed) {
+            d3.select(this).selectAll("g.setCont")
+              .remove();
+            return;
+          }
+
+          var allSc = d3.select(this)
+            .selectAll("g.setCont")
+            .data(function () {
+              return d.setType.sets.map(function (myset) {
+                return {
+                  set: myset,
+                  pathIndex: d.pathIndex,
+                  setTypeIndex: that.pathWrappers[d.pathIndex].setTypes.indexOf(d.setType)
+                };
+              });
+            });
+
+          var sc = allSc
+            .enter()
+            .append("g")
+            .classed("setCont", true);
+
+          sc.each(function (d, i) {
+            queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, nodeStart, 0, true);
+          });
+
+          allSc.attr({
+            display: function (d) {
+              if (d.set.canBeShown()) {
+                return "inline";
+              }
+              return "none";
+            },
+            transform: getSetTransformFunction(that.pathWrappers)
+          });
+
+          var set = sc.append("g")
+            .classed("set", true)
+            .on("dblclick", function (d) {
+              //sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
+              sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
+              listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
+              //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
+            });
+
+          set.append("rect")
+            .attr("class", "filler")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", "100%")
+            .attr("height", setHeight);
+
+          set.append("text")
+            .text(function (d) {
+              return setInfo.getSetLabel(d.set.id);
+            })
+            .attr("x", setTypeIndent)
+            .attr("y", setHeight)
+            .style("fill", function (d) {
+              return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+            })
+            .attr("clip-path", "url(#SetLabelClipPath)");
+
+          set.append("title")
+            .text(function (d) {
+              return setInfo.getSetLabel(d.set.id);
+            });
+
+
+          var setVisContainer = set.append("g")
+            .classed("setVisContainer", true);
+
+
+          //allSetVisContainers.attr("transform", function (d) {
+          //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
+          //});
+
+          setVisContainer.each(function (d, i) {
+            var allCircles = d3.select(this).selectAll("circle")
+              .data(function () {
+                return d.set.nodeIndices.map(function (index) {
+                  return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, nodeIndex: index};
+                });
+              });
+
+            allCircles.enter()
+              .append("circle")
+              .attr({
+                cx: function (d) {
+                  return (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
+                },
+                cy: function (d) {
+                  return setHeight / 2;
+                },
+                r: 2,
+                fill: function (d) {
+                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                }
+              });
+
+            allCircles.exit().remove();
+
+            var allLines = d3.select(this).selectAll("line").
+              data(function (d, i) {
+                return d.set.relIndices.map(function (index) {
+                  return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, relIndex: index};
+                });
+              });
+
+            allLines.enter()
+              .append("line")
+              .attr("x1", function (d) {
+                return (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
+              })
+              .attr("y1", function (d) {
+                return setHeight / 2;
+                //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
+              })
+              .attr("x2", function (d) {
+                return ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
+              })
+              .attr("y2", function (d) {
+                return setHeight / 2;
+                //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
+              })
+              .attr("stroke", function (d) {
+                return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+              });
+
+            allLines.exit().remove();
+          });
+
+          d3.select(this).selectAll("g.setVisContainer")
+            .transition()
+            .attr("transform", function (d) {
+              return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
+            });
+
+
+          allSc.exit()
+            .remove();
+
+
+
+        });
+
+        selectionUtil.removeListeners(that.setSelectionListener);
+
+        that.setSelectionListener = selectionUtil.addDefaultListener(allSetTypes, "g.set", function (d) {
+            return d.set.id;
+          },
+          "set"
+        );
 
       },
 
@@ -1356,133 +1527,134 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         )
         ;
 
+        that.renderSets(allSetTypes);
 
-        setType.each(function (d, i) {
-
-          var sc = d3.select(this)
-            .selectAll("g.setCont")
-            .data(function () {
-              return d.setType.sets.map(function (myset) {
-                return {set: myset, pathIndex: d.pathIndex, setTypeIndex: i};
-              });
-            })
-            .enter()
-            .append("g")
-            .classed("setCont", true)
-            .attr({
-              display: function (d) {
-                if (d.set.canBeShown()) {
-                  return "inline";
-                }
-                return "none";
-              },
-              transform: getSetTransformFunction(that.pathWrappers)
-            });
-
-          sc.each(function (d, i) {
-            queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, nodeStart, 0, true);
-          });
-
-          var set = sc
-            .append("g")
-            .classed("set", true)
-            .on("dblclick", function (d) {
-              //sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
-              sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
-              listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
-              //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
-            });
-
-          set.append("rect")
-            .attr("class", "filler")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", "100%")
-            .attr("height", setHeight);
-
-          set.append("text")
-            .text(function (d) {
-              return setInfo.getSetLabel(d.set.id);
-            })
-            .attr("x", setTypeIndent)
-            .attr("y", setHeight)
-            .style("fill", function (d) {
-              return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-            })
-            .attr("clip-path", "url(#SetLabelClipPath)");
-
-          set.append("title")
-            .text(function (d) {
-              return setInfo.getSetLabel(d.set.id);
-            });
-
-          var setVisContainer = set.append("g")
-            .classed("setVisContainer", true)
-            .attr("transform", function (d) {
-              return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
-            });
-
-          setVisContainer.each(function (d, i) {
-            d3.select(this).selectAll("circle")
-              .data(function () {
-                return d.set.nodeIndices.map(function (index) {
-                  return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, nodeIndex: index};
-                });
-              })
-              .enter()
-              .append("circle")
-              .attr({
-                cx: function (d) {
-                  return (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
-                },
-                cy: function (d) {
-                  return setHeight / 2;
-                },
-                r: 2,
-                fill: function (d) {
-                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-                }
-              });
-
-            d3.select(this).selectAll("line").
-              data(function (d, i) {
-                return d.set.relIndices.map(function (index) {
-                  return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, relIndex: index};
-                });
-              })
-              .enter()
-              .append("line")
-              .attr("x1", function (d) {
-                return (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
-              })
-              .attr("y1", function (d) {
-                return setHeight / 2;
-                //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
-              })
-              .attr("x2", function (d) {
-                return ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
-              })
-              .attr("y2", function (d) {
-                return setHeight / 2;
-                //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
-              })
-              .attr("stroke", function (d) {
-                return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-              });
-
-
-          });
-
-
-        });
-
-
-        var l = selectionUtil.addDefaultListener(setType, "g.set", function (d) {
-            return d.set.id;
-          },
-          "set"
-        );
-        that.selectionListeners.push(l);
+        //setType.each(function (d, i) {
+        //
+        //  var sc = d3.select(this)
+        //    .selectAll("g.setCont")
+        //    .data(function () {
+        //      return d.setType.sets.map(function (myset) {
+        //        return {set: myset, pathIndex: d.pathIndex, setTypeIndex: i};
+        //      });
+        //    })
+        //    .enter()
+        //    .append("g")
+        //    .classed("setCont", true)
+        //    .attr({
+        //      display: function (d) {
+        //        if (d.set.canBeShown()) {
+        //          return "inline";
+        //        }
+        //        return "none";
+        //      },
+        //      transform: getSetTransformFunction(that.pathWrappers)
+        //    });
+        //
+        //  sc.each(function (d, i) {
+        //    queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, nodeStart, 0, true);
+        //  });
+        //
+        //  var set = sc
+        //    .append("g")
+        //    .classed("set", true)
+        //    .on("dblclick", function (d) {
+        //      //sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
+        //      sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
+        //      listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
+        //      //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
+        //    });
+        //
+        //  set.append("rect")
+        //    .attr("class", "filler")
+        //    .attr("x", 0)
+        //    .attr("y", 0)
+        //    .attr("width", "100%")
+        //    .attr("height", setHeight);
+        //
+        //  set.append("text")
+        //    .text(function (d) {
+        //      return setInfo.getSetLabel(d.set.id);
+        //    })
+        //    .attr("x", setTypeIndent)
+        //    .attr("y", setHeight)
+        //    .style("fill", function (d) {
+        //      return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+        //    })
+        //    .attr("clip-path", "url(#SetLabelClipPath)");
+        //
+        //  set.append("title")
+        //    .text(function (d) {
+        //      return setInfo.getSetLabel(d.set.id);
+        //    });
+        //
+        //  var setVisContainer = set.append("g")
+        //    .classed("setVisContainer", true)
+        //    .attr("transform", function (d) {
+        //      return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
+        //    });
+        //
+        //  setVisContainer.each(function (d, i) {
+        //    d3.select(this).selectAll("circle")
+        //      .data(function () {
+        //        return d.set.nodeIndices.map(function (index) {
+        //          return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, nodeIndex: index};
+        //        });
+        //      })
+        //      .enter()
+        //      .append("circle")
+        //      .attr({
+        //        cx: function (d) {
+        //          return (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
+        //        },
+        //        cy: function (d) {
+        //          return setHeight / 2;
+        //        },
+        //        r: 2,
+        //        fill: function (d) {
+        //          return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+        //        }
+        //      });
+        //
+        //    d3.select(this).selectAll("line").
+        //      data(function (d, i) {
+        //        return d.set.relIndices.map(function (index) {
+        //          return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, relIndex: index};
+        //        });
+        //      })
+        //      .enter()
+        //      .append("line")
+        //      .attr("x1", function (d) {
+        //        return (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
+        //      })
+        //      .attr("y1", function (d) {
+        //        return setHeight / 2;
+        //        //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
+        //      })
+        //      .attr("x2", function (d) {
+        //        return ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
+        //      })
+        //      .attr("y2", function (d) {
+        //        return setHeight / 2;
+        //        //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
+        //      })
+        //      .attr("stroke", function (d) {
+        //        return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+        //      });
+        //
+        //
+        //  });
+        //
+        //
+        //});
+        //
+        //
+        //var l = selectionUtil.addDefaultListener(setType, "g.set", function (d) {
+        //    return d.set.id;
+        //  },
+        //  "set"
+        //);
+        //that.selectionListeners.push(l);
 
 
         this.sortUpdateListener(sortingManager.currentComparator);

@@ -56,10 +56,6 @@ define(['d3', '../caleydo/main'], function (d3, C) {
   };
 
 
-  function removeListener(l, listeners) {
-
-  }
-
   return {
     selections: {
       node: new Selection(),
@@ -155,9 +151,6 @@ define(['d3', '../caleydo/main'], function (d3, C) {
       //make sure to set correct selection from start
       listener("hovered");
       listener("selected");
-      //this.notify(idType, "hovered");
-      //this.notify(idType, "selected");
-
       //This would be the way to go but reordering elements triggers the node removed event
 
       //C.onDOMNodeRemoved(parent.node(), function (n) {
