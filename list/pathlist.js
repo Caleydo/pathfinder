@@ -96,13 +96,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       },
 
       getWidth: function () {
-        var height = pathHeight;
-        this.setTypes.forEach(function (setType) {
-          if (setType.canBeShown()) {
-            height += setType.getHeight();
-          }
-        });
-
         return nodeStart + this.path.nodes.length * nodeWidth + this.path.edges.length * edgeSize;
       },
 
@@ -254,11 +247,14 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         var setType = pathWrappers[d.pathIndex].setTypes[d.setTypeIndex];
 
         var posY = setTypeHeight;
+        var filteredSets = setType.sets.filter(function (s) {
+          return s.canBeShown();
+        });
         for (var setIndex = 0; setIndex < i; setIndex++) {
-          var set = setType.sets[setIndex];
-          if (set.canBeShown()) {
-            posY += set.getHeight();
-          }
+          var set = filteredSets[setIndex];
+          //if (set.canBeShown()) {
+          posY += set.getHeight();
+          //}
         }
         return "translate(0," + posY + ")";
       }
@@ -824,6 +820,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         if (typeof this.parent === "undefined") {
           return;
         }
+        var that = this;
 
         var pathContainers = this.parent.selectAll("g.pathContainer")
           .data(this.pathWrappers, getPathKey);
@@ -879,24 +876,44 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             var set = d3.select(this)
               .selectAll("g.setCont")
               .data(function () {
-                return d.setType.sets.map(function (myset) {
-                  return {set: myset, pathIndex: d.pathIndex, setTypeIndex: i};
+                var filteredSets = d.setType.sets.filter(function (s) {
+                  return s.canBeShown();
                 });
+
+                return filteredSets.map(function (myset) {
+                  return {
+                    set: myset,
+                    pathIndex: d.pathIndex,
+                    setTypeIndex: that.pathWrappers[d.pathIndex].setTypes.indexOf(d.setType)
+                  };
+                });
+              }, function (d) {
+                return d.set.id;
               });
 
             var setVisContainer = d3.select(this)
               .selectAll("g.setVisContainer")
               .data(function () {
-                return d.setType.sets.map(function (myset) {
-                  return {set: myset, pathIndex: d.pathIndex, setTypeIndex: i};
+                var filteredSets = d.setType.sets.filter(function (s) {
+                  return s.canBeShown();
                 });
+
+                return filteredSets.map(function (myset) {
+                  return {
+                    set: myset,
+                    pathIndex: d.pathIndex,
+                    setTypeIndex: that.pathWrappers[d.pathIndex].setTypes.indexOf(d.setType)
+                  };
+                });
+              }, function (d) {
+                return d.set.id;
               });
 
             setVisContainer.each(function (d, i) {
               d3.select(this).selectAll("circle")
                 .data(function () {
                   return d.set.nodeIndices.map(function (index) {
-                    return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, nodeIndex: index};
+                    return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, nodeIndex: index};
                   });
                 });
 
@@ -904,7 +921,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
               d3.select(this).selectAll("line").
                 data(function (d, i) {
                   return d.set.relIndices.map(function (index) {
-                    return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, relIndex: index};
+                    return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, relIndex: index};
                   });
                 });
             });
@@ -1039,7 +1056,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         var that = this;
 
 
-
         allSetTypes.each(function (d) {
 
           if (d.setType.collapsed) {
@@ -1051,13 +1067,19 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           var allSc = d3.select(this)
             .selectAll("g.setCont")
             .data(function () {
-              return d.setType.sets.map(function (myset) {
+              var filteredSets = d.setType.sets.filter(function (s) {
+                return s.canBeShown();
+              });
+
+              return filteredSets.map(function (myset) {
                 return {
                   set: myset,
                   pathIndex: d.pathIndex,
                   setTypeIndex: that.pathWrappers[d.pathIndex].setTypes.indexOf(d.setType)
                 };
               });
+            }, function (d) {
+              return d.set.id;
             });
 
           var sc = allSc
@@ -1124,7 +1146,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             var allCircles = d3.select(this).selectAll("circle")
               .data(function () {
                 return d.set.nodeIndices.map(function (index) {
-                  return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, nodeIndex: index};
+                  return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, nodeIndex: index};
                 });
               });
 
@@ -1184,7 +1206,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
           allSc.exit()
             .remove();
-
 
 
         });
