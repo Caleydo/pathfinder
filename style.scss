@@ -18,6 +18,8 @@ $overlayHoverColor: rgb(150, 200, 255);
   text-anchor: middle;
 }
 
+svg text::selection { background: none; }
+
 body {
   margin: 0px;
 }
