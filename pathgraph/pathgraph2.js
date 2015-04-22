@@ -25,10 +25,11 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
     function newGraph() {
       return new dagre.graphlib.Graph().setGraph({
         rankdir: "LR",
-        marginx: 5,
+        marginx: 10,
         marginy: 10,
-        nodesep: 30
-        //edgesep: 50
+        nodesep: 30,
+        ranksep: 50
+        //edgesep: 0
       });
     }
 
@@ -328,11 +329,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .attr({
           "marker-end": function (d) {
             return "url(#arrowhead" + d.edge.label + ")"
-          },
-          d: function (d) {
-            return line(d.edge.points);
           }
-
         });
 
       //<marker id="arrowhead1177" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"></path></marker>
@@ -352,6 +349,34 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .append("path")
         .attr("d", "M 0 0 L 10 5 L 0 10 z");
 
+
+      /**
+       * Path generator for bezier link.
+       * @param srcX Source x coordinate.
+       * @param srcY Source y coordinate.
+       * @param tarX Target x coordinate.
+       * @param tarY Target y coordinate.
+       * @returns {*} Path for link.
+       */
+      function drawBezierLink2 (srcX, srcY, tarX, tarY) {
+        var pathSegment = "M" + srcX + "," + srcY;
+
+        var width =50;
+
+        //if (tarX - srcX > 50) {
+          pathSegment = pathSegment.concat(" H" + (tarX - width) + " Q" + ((tarX - width) + width / 3) + "," + (srcY) + " " +
+          ((tarX - width) + width / 2) + "," + (srcY + (tarY - srcY) / 2) + " " +
+          "T" + (tarX) + "," + tarY);
+        //} else {
+        //  pathSegment = pathSegment.concat(" C" + (srcX + width) + "," + (srcY) + " " +
+        //  (tarX - width) + "," + (tarY) + " " +
+        //  (tarX) + "," + (tarY) + " ");
+        //}
+
+        return pathSegment;
+      };
+
+
       //<path d="M31.694915254237287,300L80,15L130,15L180,15L205,15"></path>
       //<path class="path" d="M23.52980132450331,307L64,16L113,16L162,16L197,16" marker-end="url(#arrowhead1177)" style="fill: none;"></path>
 
@@ -360,7 +385,23 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .transition()
         .attr({
           d: function (d) {
-            return line(d.edge.points);
+            //var points = Object.create(d.edge.points);
+            //points.splice(0, 1);
+            //points.splice(points.length - 1, 1);
+            var sourceNode = that.graph.node(d.v);
+            var targetNode = that.graph.node(d.w);
+            //
+            //points.splice(0, 0, {x: sourceNode.x + nodeWidth / 2, y: sourceNode.y});
+            //points.splice(1, 0, {x: sourceNode.x + nodeWidth / 2 + 20, y: sourceNode.y});
+            //
+            //
+            //points.push({x: targetNode.x - nodeWidth / 2 - 20, y: targetNode.y});
+            //points.push({x: targetNode.x - nodeWidth / 2, y: targetNode.y});
+            //
+            //return line(points);
+            //return line(d.edge.points);
+
+            return drawBezierLink2(sourceNode.x+nodeWidth/2, sourceNode.y, targetNode.x-nodeWidth/2, targetNode.y);
           }
         });
       //var edgeLines = edge.append("line");

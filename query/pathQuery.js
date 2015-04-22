@@ -1,4 +1,4 @@
-define(['../listeners', './querymodel', '../datastore', '../pathutil'], function (listeners, q, dataStore, pathUtil) {
+define(['../listeners', './querymodel', '../datastore', '../pathutil', '../config'], function (listeners, q, dataStore, pathUtil, config) {
 
   var currentQuery = new q.PathQuery();
   var isRemoteQuery = false;
@@ -12,26 +12,39 @@ define(['../listeners', './querymodel', '../datastore', '../pathutil'], function
 
   function filterPath(path) {
     if (currentQuery.match(path)) {
-      remainingPathIds[path.id] = true;
+      var allNetWorkEdges = true;
+      if (justNetworkEdges) {
+        for (var i = 0; i < path.edges.length; i++) {
+          if (!config.isNetworkEdge(path.edges[i])) {
+            allNetWorkEdges = false;
+            break;
+          }
+        }
+      }
 
-      path.nodes.forEach(function (node) {
-        remainingNodeIds[node.id] = true;
-        pathUtil.forEachNodeSet(node, function (setType, setId) {
-          remainingNodeSetIds[setId] = true;
-        });
-      });
+      if (!justNetworkEdges || allNetWorkEdges) {
+        remainingPathIds[path.id] = true;
 
-      path.edges.forEach(function (edge) {
-        remainingEdgeIds[edge.id] = true;
-        pathUtil.forEachEdgeSet(edge, function (setType, setId) {
-          remainingEdgeSetIds[setId] = true;
+        path.nodes.forEach(function (node) {
+          remainingNodeIds[node.id] = true;
+          pathUtil.forEachNodeSet(node, function (setType, setId) {
+            remainingNodeSetIds[setId] = true;
+          });
         });
-      });
+
+        path.edges.forEach(function (edge) {
+          remainingEdgeIds[edge.id] = true;
+          pathUtil.forEachEdgeSet(edge, function (setType, setId) {
+            remainingEdgeSetIds[setId] = true;
+          });
+        });
+      }
 
     }
   }
 
   var removeFilteredPaths = false;
+  var justNetworkEdges = false;
 
 
   return {
@@ -44,8 +57,19 @@ define(['../listeners', './querymodel', '../datastore', '../pathutil'], function
       return currentQuery;
     },
 
-    isRemoteQuery: function() {
+    isRemoteQuery: function () {
       return isRemoteQuery;
+    },
+
+    setJustNetworkEdges: function (isJustNetworkEdges) {
+      justNetworkEdges = isJustNetworkEdges;
+      isRemoteQuery = false;
+      this.update();
+      listeners.notify(listeners.updateType.QUERY_UPDATE, this);
+    },
+
+    isJustNetworkEdges: function () {
+      return justNetworkEdges;
     },
 
     setQuery: function (query, isRemQuery) {
@@ -55,12 +79,12 @@ define(['../listeners', './querymodel', '../datastore', '../pathutil'], function
       listeners.notify(listeners.updateType.QUERY_UPDATE, this);
     },
 
-    setRemoveFilteredPaths: function(remove) {
+    setRemoveFilteredPaths: function (remove) {
       removeFilteredPaths = remove;
       listeners.notify(listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE, remove);
     },
 
-    isRemoveFilteredPaths: function() {
+    isRemoveFilteredPaths: function () {
       return removeFilteredPaths;
     },
 

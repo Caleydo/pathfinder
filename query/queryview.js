@@ -1642,6 +1642,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         }
       );
 
+      $('#just_network_edges').click(function() {
+        pathQuery.setJustNetworkEdges($('#just_network_edges').is(':checked'));
+      });
+
       ServerSearch.on('query_done', function () {
         $('#query_interface button[type="submit"] i').attr('class', 'fa fa-search');
       });

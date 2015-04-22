@@ -56,22 +56,22 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
           listView.init().then(function () {
 
             pathStatsView.init();
-            //C.getJSON("dump/testpaths1.json", function (paths) {
-            //
-            //  var i = 0;
-            //
-            //  var interval = setInterval(function () {
-            //
-            //    if (i >= paths.length) {
-            //      clearInterval(interval);
-            //      return;
-            //    }
-            //    addPath(paths[i]);
-            //    i++;
-            //
-            //  }, 100);
-            //
-            //});
+            C.getJSON("dump/testpaths1.json", function (paths) {
+
+              var i = 0;
+
+              var interval = setInterval(function () {
+
+                if (i >= paths.length) {
+                  clearInterval(interval);
+                  return;
+                }
+                addPath(paths[i]);
+                i++;
+
+              }, 100);
+
+            });
           });
 
 
@@ -114,8 +114,9 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
 
           for (var i = 0; i < paths.length; i++) {
             paths[i].id = currentPathId++;
+            dataStore.addPath(paths[i]);
           }
-          dataStore.paths = paths;
+          //dataStore.paths = paths;
           pathQuery.update();
 
 
