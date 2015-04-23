@@ -178,10 +178,12 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       addNodeAnchor: function (pathIndex, nodeIndex) {
         if (this.nodeAnchors.length > 0) {
           this.nodeAnchors[this.nodeAnchors.length - 1].last = false;
+          this.nodeAnchors.push({pathIndex: pathIndex, nodeIndex: nodeIndex, top: true, last: false, first: false});
+          this.nodeAnchors.push({pathIndex: pathIndex, nodeIndex: nodeIndex, top: false, last: true, first: false});
+        } else {
+          this.nodeAnchors.push({pathIndex: pathIndex, nodeIndex: nodeIndex, top: true, last: false, first: true});
+          this.nodeAnchors.push({pathIndex: pathIndex, nodeIndex: nodeIndex, top: false, last: true, first: false});
         }
-
-        this.nodeAnchors.push({pathIndex: pathIndex, nodeIndex: nodeIndex, top: true, last: false});
-        this.nodeAnchors.push({pathIndex: pathIndex, nodeIndex: nodeIndex, top: false, last: true});
       }
 
     };
@@ -303,6 +305,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.setSelectionListener = 0;
       this.selectionListeners = [];
       this.crossConnections = [];
+      this.connectionStubs = [];
       this.maxNumNodeSets = 0;
       this.maxNumEdgeSets = 0;
       this.pivotNodeId = -1;
@@ -745,6 +748,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         this.maxNumEdgeSets = 0;
         this.maxNumNodeSets = 0;
         this.crossConnections = [];
+        this.connectionStubs = [];
       },
 
 
@@ -983,7 +987,11 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         var that = this;
         this.crossConnections = [];
+        this.connectionStubs = [];
         var connectionId = 0;
+        var stubId = 0;
+        var stubCandidates = {};
+        var lastStubs = {};
         var previousNodeIndices = {};
         var currentNodeIndices = {};
         var previousConnections = {};
@@ -993,6 +1001,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
           currentConnections = {};
           currentNodeIndices = {};
+
           pathWrapper.path.nodes.forEach(function (node, j) {
             var connection = previousConnections[node.id.toString()];
             if (typeof connection !== "undefined") {
@@ -1006,11 +1015,55 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                 connection.addNodeAnchor(i - 1, previousNodeIndex);
                 connection.addNodeAnchor(i, j);
                 that.crossConnections.push(connection);
+                delete lastStubs[node.id.toString()];
                 currentConnections[node.id.toString()] = connection;
               } else {
                 currentNodeIndices[node.id.toString()] = j;
+
+                var prevStub = lastStubs[node.id.toString()];
+
+                if (typeof prevStub !== "undefined" && (i - prevStub.pathIndex) > 1) {
+                  prevStub.down = true;
+                  var currentStub = {
+                    id: stubId++,
+                    nodeId: node.id,
+                    pathIndex: i,
+                    nodeIndex: j,
+                    up: true,
+                    down: false
+                  };
+                  that.connectionStubs.push(currentStub);
+                  lastStubs[node.id.toString()] = currentStub;
+                } else {
+
+                  var prevStubCandidate = stubCandidates[node.id.toString()];
+
+                  if (typeof prevStubCandidate !== "undefined" && (i - prevStubCandidate.pathIndex) > 1) {
+                    var prevStub = {
+                      id: stubId++,
+                      nodeId: node.id,
+                      pathIndex: prevStubCandidate.pathIndex,
+                      nodeIndex: prevStubCandidate.nodeIndex,
+                      up: false,
+                      down: true
+                    };
+                    that.connectionStubs.push(prevStub);
+                    var currentStub = {
+                      id: stubId++,
+                      nodeId: node.id,
+                      pathIndex: i,
+                      nodeIndex: j,
+                      up: true,
+                      down: false
+                    };
+                    that.connectionStubs.push(currentStub);
+                    lastStubs[node.id.toString()] = currentStub;
+                  }
+                }
               }
             }
+
+            stubCandidates[node.id.toString()] = {pathIndex: i, nodeIndex: j};
           });
 
           previousConnections = currentConnections;
@@ -1026,7 +1079,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           })
           .y(function (d) {
             var translate = getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
-            return d.top ? translate : translate + (d.last ? pathHeight : that.pathWrappers[d.pathIndex].getHeight());
+            return d.top ? translate + (d.first ? pathHeight / 2 : 0) : translate + (d.last ? pathHeight / 2 : that.pathWrappers[d.pathIndex].getHeight());
           })
           .interpolate("linear");
 
@@ -1052,6 +1105,46 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         allConnections.exit().remove();
 
         var l = selectionUtil.addDefaultListener(connectionContainer, "path.crossConnection", function (d) {
+            return d.nodeId;
+          },
+          "node"
+        );
+        that.selectionListeners.push(l);
+
+        var allStubs = connectionContainer.selectAll("line.stub")
+          .data(this.connectionStubs, function (d) {
+            return d.id;
+          });
+
+        var stub = allStubs.enter()
+          .append("line")
+          .classed("stub", true);
+
+
+        allStubs
+          .transition()
+          .attr({
+            x1: function(d) {
+              var translate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+              return translate + d.nodeIndex * (nodeWidth + edgeSize) + nodeWidth / 2;
+            },
+            y1: function(d) {
+              var translate = getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
+              return translate + (d.up ? 0 : pathHeight / 2);
+            },
+            x2: function(d) {
+              var translate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+              return translate + d.nodeIndex * (nodeWidth + edgeSize) + nodeWidth / 2;
+            },
+            y2: function(d) {
+              var translate = getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
+              return translate + (d.down ? pathHeight : pathHeight / 2);
+            }
+          });
+
+        allStubs.exit().remove();
+
+        var l = selectionUtil.addDefaultListener(connectionContainer, "line.stub", function (d) {
             return d.nodeId;
           },
           "node"
@@ -1368,7 +1461,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .append("g")
           .classed("nodeCont", true)
           .attr("transform", function (d, i) {
-            return "translate(" + ((i * nodeWidth) + (i * edgeSize)) + ","+vSpacing+")";
+            return "translate(" + ((i * nodeWidth) + (i * edgeSize)) + "," + vSpacing + ")";
           });
 
         nc.each(function (d, i) {
@@ -1418,7 +1511,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
               var width = that.listView.getTextWidth(text);
               return nodeWidth / 2 + Math.max(-width / 2, -nodeWidth / 2 + 3);
             },
-            y:  + nodeHeight - 5,
+            y: +nodeHeight - 5,
 
             "clip-path": "url(#pathNodeClipPath)"
           })
