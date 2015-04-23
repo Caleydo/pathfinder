@@ -57,7 +57,29 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
     PathGraphView.prototype.init = function () {
       View.prototype.init.call(this);
-      var graphGroup = d3.select(this.parentSelector + " svg").append("g")
+
+      nodeWidth = config.getNodeWidth();
+      nodeHeight = config.getNodeHeight();
+
+      var svg = d3.select(this.parentSelector + " svg");
+
+      this.textSizeDomElement = svg.append("text")
+        .attr('class', "textSizeElement")
+        .attr("x", 0)
+        .attr("y", 0)
+        .style("font", "10px sans-serif")
+        .style("opacity", 0);
+
+      svg.append("clipPath")
+        .attr("id", "graphNodeClipPath")
+        .append("rect")
+        .attr("x", -nodeWidth / 2 + 3)
+        .attr("y", -nodeHeight / 2)
+        .attr("width", nodeWidth - 6)
+        .attr("height", nodeHeight);
+
+
+      var graphGroup = svg.append("g")
         .attr("class", "graph");
 
       graphGroup.append("g")
@@ -124,6 +146,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
       });
 
+
       listeners.add(function (query) {
         if (pathQuery.isRemoveFilteredPaths() || pathQuery.isRemoteQuery()) {
           that.updateGraphToFilteredPaths();
@@ -138,6 +161,14 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           that.updateGraphToAllPaths();
         }
       }, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
+    };
+
+    PathGraphView.prototype.getTextWidth = function (string) {
+
+      this.textSizeDomElement
+        .text(string);
+
+      return this.textSizeDomElement.node().getBBox().width;
     };
 
     //PathGraphView.prototype.setEdge = function (v, w, label, edge, weight) {
@@ -358,15 +389,15 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
        * @param tarY Target y coordinate.
        * @returns {*} Path for link.
        */
-      function drawBezierLink2 (srcX, srcY, tarX, tarY) {
+      function drawBezierLink2(srcX, srcY, tarX, tarY) {
         var pathSegment = "M" + srcX + "," + srcY;
 
-        var width =50;
+        var width = 50;
 
         //if (tarX - srcX > 50) {
-          pathSegment = pathSegment.concat(" H" + (tarX - width) + " Q" + ((tarX - width) + width / 3) + "," + (srcY) + " " +
-          ((tarX - width) + width / 2) + "," + (srcY + (tarY - srcY) / 2) + " " +
-          "T" + (tarX) + "," + tarY);
+        pathSegment = pathSegment.concat(" H" + (tarX - width) + " Q" + ((tarX - width) + width / 3) + "," + (srcY) + " " +
+        ((tarX - width) + width / 2) + "," + (srcY + (tarY - srcY) / 2) + " " +
+        "T" + (tarX) + "," + tarY);
         //} else {
         //  pathSegment = pathSegment.concat(" C" + (srcX + width) + "," + (srcY) + " " +
         //  (tarX - width) + "," + (tarY) + " " +
@@ -401,7 +432,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             //return line(points);
             //return line(d.edge.points);
 
-            return drawBezierLink2(sourceNode.x+nodeWidth/2, sourceNode.y, targetNode.x-nodeWidth/2, targetNode.y);
+            return drawBezierLink2(sourceNode.x + nodeWidth / 2, sourceNode.y, targetNode.x - nodeWidth / 2, targetNode.y);
           }
         });
       //var edgeLines = edge.append("line");
@@ -462,14 +493,22 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
       var nodeTexts = node.append("text")
         .attr({
-          y: nodeHeight / 2 - 5
+          x: function (d) {
+            var node = that.graph.node(d).node;
+            var text = node.properties[config.getNodeNameProperty(node)];
+            var width = that.getTextWidth(text);
+            return Math.max(-width / 2, -nodeWidth / 2 + 3);
+          },
+          y: nodeHeight / 2 - 5,
+
+          "clip-path": "url(#graphNodeClipPath)"
         })
         .text(function (d) {
           var node = that.graph.node(d).node;
           var text = node.properties[config.getNodeNameProperty(node)];
-          if (text.length > 7) {
-            text = text.substring(0, 7);
-          }
+          //if (text.length > 7) {
+          //  text = text.substring(0, 7);
+          //}
           return text;
         });
 

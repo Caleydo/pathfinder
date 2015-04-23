@@ -1,5 +1,10 @@
 define(function () {
 
+  var DEFAULT_NODE_WIDTH = 50;
+  var DEFAULT_NODE_HEIGHT = 20;
+
+  var DEFAULT_EDGE_SIZE = 50;
+
   var config = {};
   var nodeNamePropertyNames = {};
 
@@ -116,7 +121,7 @@ define(function () {
     isSetEdge: function (edge) {
 
       var edgeConfig = this.getEdgeConfig(edge);
-      if(typeof edgeConfig === "undefined") {
+      if (typeof edgeConfig === "undefined") {
         return false;
       }
 
@@ -127,7 +132,7 @@ define(function () {
         var propType = edgeConfig.properties[key].type;
         if (typeof propType !== "undefined" && propType === "flag") {
           var edgeProperty = edge.properties[key];
-          if(typeof edgeProperty !== "undefined" && edgeProperty === true)
+          if (typeof edgeProperty !== "undefined" && edgeProperty === true)
             return true;
         }
       }
@@ -135,28 +140,41 @@ define(function () {
       return false;
     },
 
-    isNetworkEdge: function(edge) {
+    isNetworkEdge: function (edge) {
       var edgeConfig = this.getEdgeConfig(edge);
-      if(typeof edgeConfig === "undefined") {
+      if (typeof edgeConfig === "undefined") {
         return false;
       }
 
       var propertyKeys = Object.keys(edgeConfig.properties);
-
-
 
       for (var i = 0; i < propertyKeys.length; i++) {
         var key = propertyKeys[i];
         var property = edgeConfig.properties[key];
         if (typeof property !== "undefined" && property === "flag_network") {
           var edgeProperty = edge.properties[key];
-          if(typeof edgeProperty !== "undefined" && edgeProperty === true)
-          return true;
+          if (typeof edgeProperty !== "undefined" && edgeProperty === true)
+            return true;
 
         }
       }
 
       return false;
+    },
+
+    getNodeWidth: function () {
+      var nodeWidth = config.settings["node_width"];
+      return (typeof nodeWidth === "undefined") ? DEFAULT_NODE_WIDTH : nodeWidth;
+    },
+
+    getNodeHeight: function () {
+      var nodeHeight = config.settings["node_height"];
+      return (typeof nodeWidth === "undefined") ? DEFAULT_NODE_HEIGHT : nodeHeight;
+    },
+
+    getEdgeSize: function () {
+      var edgeSize = config.settings["edge_size"];
+      return (typeof edgeSize === "undefined") ? DEFAULT_EDGE_SIZE : edgeSize;
     },
 
     getNodeConfig: function (node) {

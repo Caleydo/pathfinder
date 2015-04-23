@@ -3,8 +3,8 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
   var CombinationAggregate = a.CombinationAggregate;
 
 
-  function NodeTypeCombination(typeCombo, pathUpdateListener) {
-    CombinationAggregate.call(this, typeCombo, pathUpdateListener);
+  function NodeTypeCombination(typeCombo, pathUpdateListener, listView) {
+    CombinationAggregate.call(this, typeCombo, pathUpdateListener, listView);
   }
 
   NodeTypeCombination.prototype = Object.create(CombinationAggregate.prototype);
@@ -31,8 +31,8 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
   var nodeTypePresenceSortingStrategy = new NodeTypePresenceSortingStrategy();
 
 
-  function NodeTypeCombinationList() {
-    a.CombinationAggregateList.call(this);
+  function NodeTypeCombinationList(listView) {
+    a.CombinationAggregateList.call(this, listView);
   }
 
   NodeTypeCombinationList.prototype = Object.create(a.CombinationAggregateList.prototype);
@@ -67,7 +67,7 @@ define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../sel
     if (!added) {
       this.aggregates.push(new NodeTypeCombination(combo, function (list) {
         that.updateAggregateList();
-      }));
+      }, that.listView));
     }
   };
 

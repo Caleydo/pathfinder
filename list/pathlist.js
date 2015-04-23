@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectionutil', './pathsorting', '../pathutil', '../query/pathquery', '../datastore', '../config', '../listoverlay', '../query/queryview', '../query/queryUtil'],
-  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config, ListOverlay, queryView, queryUtil) {
+define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectionutil', './pathsorting', '../pathutil', '../query/pathquery', '../datastore', '../config', '../listoverlay', '../query/queryview', '../query/queryUtil', './listview'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config, ListOverlay, queryView, queryUtil, listView) {
     'use strict';
 
     //var jsonPaths = require('./testpaths1.json');
@@ -295,7 +295,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
     }
 
 
-    function PathList() {
+    function PathList(listView) {
+      this.listView = listView;
       this.paths = [];
       this.pathWrappers = [];
       this.updateListeners = [];
@@ -432,6 +433,9 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       }
       ,
       init: function () {
+        nodeWidth = config.getNodeWidth();
+        nodeHeight = config.getNodeHeight();
+        edgeSize = config.getEdgeSize();
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.add(this.collapseSetTypeListener, pathListUpdateTypes.COLLAPSE_SET_TYPE);
         listeners.add(this.setVisibilityUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
@@ -830,6 +834,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         pathContainers.each(function (pathWrapper, i) {
 
           d3.select(this).selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.node")
+            .data(function () {
+              return pathWrapper.path.nodes;
+            });
+          d3.select(this).selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.nodeCont")
             .data(function () {
               return pathWrapper.path.nodes;
             });
@@ -1347,7 +1355,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             return that.getPivotNodeAlignedTransform(d)
           });
 
-        var allNodes = allPathContainers.selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.node")
+        var allNodes = allPathContainers.selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.nodeCont")
           .data(function (pathWrapper) {
             return pathWrapper.path.nodes;
           });
@@ -1358,10 +1366,13 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         //  })
         var nc = allNodes.enter()
           .append("g")
-          .classed("nodeCont", true);
+          .classed("nodeCont", true)
+          .attr("transform", function (d, i) {
+            return "translate(" + ((i * nodeWidth) + (i * edgeSize)) + ","+vSpacing+")";
+          });
 
         nc.each(function (d, i) {
-          queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "name", d.properties[config.getNodeNameProperty(d)], (i * nodeWidth) + (i * edgeSize) + nodeWidth, vSpacing);
+          queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "name", d.properties[config.getNodeNameProperty(d)], nodeWidth, 0);
         });
 
         var node = nc
@@ -1389,10 +1400,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
 
         node.append("rect")
-          .attr("x", function (d, i) {
-            return (i * nodeWidth) + (i * edgeSize);
-          })
-          .attr("y", vSpacing)
+          .attr("x", 0)
+          .attr("y", 0)
           .attr("rx", 5).attr("ry", 5)
           .attr("width", nodeWidth)
           .attr("height", nodeHeight);
@@ -1401,13 +1410,18 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         node.append("text")
           .text(function (d) {
-            var text = d.properties[config.getNodeNameProperty(d)];
-            return getClampedText(text, 7);
+            return d.properties[config.getNodeNameProperty(d)];
           })
-          .attr("x", function (d, i) {
-            return (i * nodeWidth) + (i * edgeSize) + nodeWidth / 2;
+          .attr({
+            x: function (d) {
+              var text = d.properties[config.getNodeNameProperty(d)];
+              var width = that.listView.getTextWidth(text);
+              return nodeWidth / 2 + Math.max(-width / 2, -nodeWidth / 2 + 3);
+            },
+            y:  + nodeHeight - 5,
+
+            "clip-path": "url(#pathNodeClipPath)"
           })
-          .attr("y", vSpacing + nodeHeight - 5)
           .append("title")
           .text(function (d) {
             return d.properties[config.getNodeNameProperty(d)];
