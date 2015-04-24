@@ -303,6 +303,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.pathWrappers = [];
       this.updateListeners = [];
       this.setSelectionListener = 0;
+      this.connectionSelectionListener = 0;
+      this.stubSelectionListener = 0;
       this.selectionListeners = [];
       this.crossConnections = [];
       this.connectionStubs = [];
@@ -724,6 +726,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         this.selectionListeners = [];
         selectionUtil.removeListeners(this.setSelectionListener);
         this.setSelectionListener = 0;
+        selectionUtil.removeListeners(this.connectionSelectionListener);
+        this.connectionSelectionListener = 0;
+        selectionUtil.removeListeners(this.stubSelectionListener);
+        this.stubSelectionListener = 0;
         currentSetTypeId = 0;
 
         if (typeof this.parent === "undefined")
@@ -1104,12 +1110,13 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         allConnections.exit().remove();
 
-        var l = selectionUtil.addDefaultListener(connectionContainer, "path.crossConnection", function (d) {
+        selectionUtil.removeListeners(that.connectionSelectionListener);
+
+        that.connectionSelectionListener = selectionUtil.addDefaultListener(connectionContainer, "path.crossConnection", function (d) {
             return d.nodeId;
           },
           "node"
         );
-        that.selectionListeners.push(l);
 
         var allStubs = connectionContainer.selectAll("line.stub")
           .data(this.connectionStubs, function (d) {
@@ -1124,19 +1131,19 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         allStubs
           .transition()
           .attr({
-            x1: function(d) {
+            x1: function (d) {
               var translate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
               return translate + d.nodeIndex * (nodeWidth + edgeSize) + nodeWidth / 2;
             },
-            y1: function(d) {
+            y1: function (d) {
               var translate = getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
               return translate + (d.up ? 0 : pathHeight / 2);
             },
-            x2: function(d) {
+            x2: function (d) {
               var translate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
               return translate + d.nodeIndex * (nodeWidth + edgeSize) + nodeWidth / 2;
             },
-            y2: function(d) {
+            y2: function (d) {
               var translate = getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
               return translate + (d.down ? pathHeight : pathHeight / 2);
             }
@@ -1144,12 +1151,13 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         allStubs.exit().remove();
 
-        var l = selectionUtil.addDefaultListener(connectionContainer, "line.stub", function (d) {
+        selectionUtil.removeListeners(that.stubSelectionListener);
+
+        that.stubSelectionListener = selectionUtil.addDefaultListener(connectionContainer, "line.stub", function (d) {
             return d.nodeId;
           },
           "node"
         );
-        that.selectionListeners.push(l);
 
       },
 
