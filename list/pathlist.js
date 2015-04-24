@@ -78,6 +78,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
     function PathWrapper(path) {
       this.path = path;
+      this.nodePositions = d3.range(0, path.nodes.length - 1);
       this.rank = "?.";
       this.addPathSets(path);
     }
@@ -171,11 +172,20 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.id = id;
       this.nodeId = nodeId;
       this.nodeAnchors = [];
+      this.nodeLocations = [];
+      this.maxNodeIndex = -1;
     }
 
     CrossPathNodeConnection.prototype = {
 
       addNodeAnchor: function (pathIndex, nodeIndex) {
+
+        if (this.maxNodeIndex < nodeIndex) {
+          this.maxNodeIndex = nodeIndex;
+        }
+
+        this.nodeLocations.push({pathIndex: pathIndex, nodeIndex: nodeIndex});
+
         if (this.nodeAnchors.length > 0) {
           this.nodeAnchors[this.nodeAnchors.length - 1].last = false;
           this.nodeAnchors.push({pathIndex: pathIndex, nodeIndex: nodeIndex, top: true, last: false, first: false});
@@ -359,14 +369,40 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         }
       };
 
-      this.sortUpdateListener = function (currentComparator) {
+      this.sortUpdateListener = function (comparator) {
         //sortingManager.sort(that.pathWrappers, that.parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers), sortStrategyChain);
 
         if (typeof that.parent === "undefined") {
           return;
         }
 
-        that.pathWrappers.sort(currentComparator);
+        //that.sortPaths(comparator);
+
+        that.renderPaths();
+      };
+
+      this.collapseSetTypeListener = function (setType) {
+        if (typeof that.parent === "undefined") {
+          return;
+        }
+
+        that.pathWrappers.forEach(function (pathWrapper) {
+          pathWrapper.setTypes.forEach(function (t) {
+            if (t.type === setType.type) {
+              t.collapsed = setType.collapsed;
+            }
+          });
+        });
+        that.updatePathList();
+      }
+    }
+
+    PathList.prototype = {
+
+      sortPaths: function (comparator) {
+        var that = this;
+
+        that.pathWrappers.sort(comparator);
 
         var rankingStrategyChain = Object.create(pathSorting.sortingManager.currentStrategyChain);
         rankingStrategyChain.splice(rankingStrategyChain.length - 1, 1);
@@ -392,39 +428,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         });
 
-        that.updateDataBinding();
 
-        that.parent.selectAll("g.pathContainer").data(that.pathWrappers, getPathKey)
-          .sort(currentComparator)
-          .transition()
-          .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
-
-        that.parent.selectAll("text.pathRank")
-          .data(that.pathWrappers, getPathKey)
-          .text(function (d) {
-            return d.rank;
-          });
-
-        that.renderCrossConnections();
-      };
-
-      this.collapseSetTypeListener = function (setType) {
-        if (typeof that.parent === "undefined") {
-          return;
-        }
-
-        that.pathWrappers.forEach(function (pathWrapper) {
-          pathWrapper.setTypes.forEach(function (t) {
-            if (t.type === setType.type) {
-              t.collapsed = setType.collapsed;
-            }
-          });
-        });
-        that.updatePathList();
-      }
-    }
-
-    PathList.prototype = {
+      },
 
       addUpdateListener: function (l) {
         this.updateListeners.push(l);
@@ -551,24 +556,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
       updatePathList: function () {
 
-        //var setComboContainer = parent.selectAll("g.pathContainer g.setType")
-        //  .transition()
-
-
-        //d3.select(this).attr("display", function (d) {
-        //  if (showNodeSets) {
-        //    return "inline";
-        //  }
-        //  return d.setType.relIndices.length > 0 ? "inline" : "none";
-        //});
-
-        //d3.select(this).selectAll("g.set")
-        //  .attr("display", function (d) {
-        //    if (showNodeSets) {
-        //      return "inline";
-        //    }
-        //    return d.set.relIndices.length > 0 ? "inline" : "none";
-        //  })
 
         this.updateDataBinding();
 
@@ -845,11 +832,15 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
           d3.select(this).selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.node")
             .data(function () {
-              return pathWrapper.path.nodes;
+              return pathWrapper.path.nodes.map(function (node) {
+                return {node: node, pathIndex: i};
+              });
             });
           d3.select(this).selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.nodeCont")
             .data(function () {
-              return pathWrapper.path.nodes;
+              return pathWrapper.path.nodes.map(function (node) {
+                return {node: node, pathIndex: i};
+              });
             });
 
           d3.select(this).selectAll("g.path").selectAll("g.edgeGroup").selectAll("g.edge")
@@ -989,8 +980,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
       },
 
-      renderCrossConnections: function () {
-
+      calcCrossConnections: function () {
         var that = this;
         this.crossConnections = [];
         this.connectionStubs = [];
@@ -1075,13 +1065,93 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           previousConnections = currentConnections;
           previousNodeIndices = currentNodeIndices;
         });
+      },
 
+      calcNodePositions: function () {
+        var that = this;
+        var straightenedConnections = {};
+
+        //Calc node alignment
+
+        //sort connections by lowest max node index
+        this.crossConnections.sort(function (a, b) {
+          return d3.ascending(a.maxNodeIndex, b.maxNodeIndex);
+        });
+
+        that.pathWrappers.forEach(function (pathWrapper) {
+          pathWrapper.nodePositions = d3.range(0, pathWrapper.path.nodes.length);
+        });
+
+        this.crossConnections.forEach(function (connection) {
+          var maxPosition = -1;
+          var maxNodeLocation = 0;
+          connection.nodeLocations.forEach(function (nodeLocation) {
+            var position = that.pathWrappers[nodeLocation.pathIndex].nodePositions[nodeLocation.nodeIndex];
+            if (position > maxPosition) {
+              maxPosition = position;
+              maxNodeLocation = nodeLocation;
+            }
+          });
+
+          connection.nodeLocations.forEach(function (nodeLocation) {
+            shiftNodes(nodeLocation, maxNodeLocation, connection.nodeId);
+          });
+
+          var connections = straightenedConnections[connection.nodeId.toString()];
+          if (typeof connections === "undefined") {
+            connections = [];
+            straightenedConnections[connection.nodeId.toString()] = connections;
+          }
+          connections.push(connection);
+
+        });
+
+        function shiftNodes(nodeLocation, maxNodeLocation, currentNodeId) {
+          var currentPathWrapper = that.pathWrappers[nodeLocation.pathIndex];
+          var refPosition = that.pathWrappers[maxNodeLocation.pathIndex].nodePositions[maxNodeLocation.nodeIndex];
+          var currentPosition = currentPathWrapper.nodePositions[nodeLocation.nodeIndex];
+
+          if (refPosition === currentPosition) {
+            return;
+          }
+
+
+          //Always shift for pivot node
+          if (that.pivotNodeId !== currentNodeId) {
+
+            //If there is any straightened connection for one of the nodes after the current node, do not shift in this path
+            for (var i = nodeLocation.nodeIndex + 1; i < currentPathWrapper.nodePositions.length; i++) {
+              var connections = straightenedConnections[currentPathWrapper.path.nodes[i].id.toString()];
+
+              if (typeof connections !== "undefined") {
+                for (var j = 0; j < connections.length; j++) {
+                  var connection = connections[j];
+                  if (connection.nodeLocations[0].pathIndex <= nodeLocation.pathIndex && connection.nodeLocations[connection.nodeLocations.length - 1].pathIndex >= nodeLocation.pathIndex) {
+                    return;
+                  }
+                }
+              }
+            }
+          }
+
+          var shift = refPosition - currentPosition;
+
+          for (var i = nodeLocation.nodeIndex; i < currentPathWrapper.nodePositions.length; i++) {
+            currentPathWrapper.nodePositions[i] += shift;
+          }
+        }
+      },
+
+      renderCrossConnections: function () {
+
+        var that = this;
         var connectionContainer = this.parent.select("g.crossConnectionContainer");
 
         var line = d3.svg.line()
           .x(function (d) {
+            var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
             var translate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-            return translate + d.nodeIndex * (nodeWidth + edgeSize) + nodeWidth / 2;
+            return translate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
           })
           .y(function (d) {
             var translate = getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
@@ -1132,16 +1202,18 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .transition()
           .attr({
             x1: function (d) {
+              var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
               var translate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-              return translate + d.nodeIndex * (nodeWidth + edgeSize) + nodeWidth / 2;
+              return translate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
             },
             y1: function (d) {
               var translate = getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
               return translate + (d.up ? 0 : pathHeight / 2);
             },
             x2: function (d) {
+              var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
               var translate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-              return translate + d.nodeIndex * (nodeWidth + edgeSize) + nodeWidth / 2;
+              return translate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
             },
             y2: function (d) {
               var translate = getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
@@ -1316,7 +1388,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           allSc.exit()
             .remove();
 
-
         });
 
         selectionUtil.removeListeners(that.setSelectionListener);
@@ -1327,7 +1398,8 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           "set"
         );
 
-      },
+      }
+      ,
 
       renderPaths: function () {
 
@@ -1336,9 +1408,23 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         var nodeSetScale = this.getNodeSetScale();
         var edgeSetScale = this.getEdgeSetScale();
 
+        var comparator = sortingManager.currentComparator;
+
+        that.sortPaths(comparator);
+
+        this.calcCrossConnections();
+        this.calcNodePositions();
+        this.renderCrossConnections();
+
+        that.updateDataBinding();
+
 
         var allPathContainers = that.parent.selectAll("g.pathContainer")
           .data(that.pathWrappers, getPathKey);
+
+        allPathContainers.sort(comparator)
+          .transition()
+          .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
 
         allPathContainers.exit()
           .transition()
@@ -1457,8 +1543,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           });
 
         var allNodes = allPathContainers.selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.nodeCont")
-          .data(function (pathWrapper) {
-            return pathWrapper.path.nodes;
+          .data(function (pathWrapper, i) {
+            return pathWrapper.path.nodes.map(function (node) {
+              return {node: node, pathIndex: i};
+            });
           });
 
         //var node = nodeGroup.selectAll("g.node")
@@ -1467,13 +1555,16 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         //  })
         var nc = allNodes.enter()
           .append("g")
-          .classed("nodeCont", true)
+          .classed("nodeCont", true);
+
+        allNodes
           .attr("transform", function (d, i) {
-            return "translate(" + ((i * nodeWidth) + (i * edgeSize)) + "," + vSpacing + ")";
+            var position = that.pathWrappers[d.pathIndex].nodePositions[i];
+            return "translate(" + ((position * nodeWidth) + (position * edgeSize)) + "," + vSpacing + ")";
           });
 
         nc.each(function (d, i) {
-          queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "name", d.properties[config.getNodeNameProperty(d)], nodeWidth, 0);
+          queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "name", d.node.properties[config.getNodeNameProperty(d.node)], nodeWidth, 0);
         });
 
         var node = nc
@@ -1482,18 +1573,18 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
           .on("dblclick.align", function (d) {
             //sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
-            sortingStrategies.selectionSortingStrategy.setNodeIds([d.id]);
+            sortingStrategies.selectionSortingStrategy.setNodeIds([d.node.id]);
 
             listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
 
             if (d3.event.altKey) {
-              that.setPivotNode(d.id);
+              that.setPivotNode(d.node.id);
             }
             //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
           });
 
         var l = selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
-            return d.id;
+            return d.node.id;
           },
           "node"
         );
@@ -1511,11 +1602,11 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         node.append("text")
           .text(function (d) {
-            return d.properties[config.getNodeNameProperty(d)];
+            return d.node.properties[config.getNodeNameProperty(d.node)];
           })
           .attr({
             x: function (d) {
-              var text = d.properties[config.getNodeNameProperty(d)];
+              var text = d.node.properties[config.getNodeNameProperty(d.node)];
               var width = that.listView.getTextWidth(text);
               return nodeWidth / 2 + Math.max(-width / 2, -nodeWidth / 2 + 3);
             },
@@ -1525,7 +1616,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           })
           .append("title")
           .text(function (d) {
-            return d.properties[config.getNodeNameProperty(d)];
+            return d.node.properties[config.getNodeNameProperty(d.node)];
           });
 
 
@@ -1665,135 +1756,11 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         that.renderSets(allSetTypes);
 
-        //setType.each(function (d, i) {
-        //
-        //  var sc = d3.select(this)
-        //    .selectAll("g.setCont")
-        //    .data(function () {
-        //      return d.setType.sets.map(function (myset) {
-        //        return {set: myset, pathIndex: d.pathIndex, setTypeIndex: i};
-        //      });
-        //    })
-        //    .enter()
-        //    .append("g")
-        //    .classed("setCont", true)
-        //    .attr({
-        //      display: function (d) {
-        //        if (d.set.canBeShown()) {
-        //          return "inline";
-        //        }
-        //        return "none";
-        //      },
-        //      transform: getSetTransformFunction(that.pathWrappers)
-        //    });
-        //
-        //  sc.each(function (d, i) {
-        //    queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, nodeStart, 0, true);
-        //  });
-        //
-        //  var set = sc
-        //    .append("g")
-        //    .classed("set", true)
-        //    .on("dblclick", function (d) {
-        //      //sortingManager.addOrReplace(sortingStrategies.getSetPresenceStrategy([d.set.id]));
-        //      sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
-        //      listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
-        //      //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
-        //    });
-        //
-        //  set.append("rect")
-        //    .attr("class", "filler")
-        //    .attr("x", 0)
-        //    .attr("y", 0)
-        //    .attr("width", "100%")
-        //    .attr("height", setHeight);
-        //
-        //  set.append("text")
-        //    .text(function (d) {
-        //      return setInfo.getSetLabel(d.set.id);
-        //    })
-        //    .attr("x", setTypeIndent)
-        //    .attr("y", setHeight)
-        //    .style("fill", function (d) {
-        //      return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-        //    })
-        //    .attr("clip-path", "url(#SetLabelClipPath)");
-        //
-        //  set.append("title")
-        //    .text(function (d) {
-        //      return setInfo.getSetLabel(d.set.id);
-        //    });
-        //
-        //  var setVisContainer = set.append("g")
-        //    .classed("setVisContainer", true)
-        //    .attr("transform", function (d) {
-        //      return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
-        //    });
-        //
-        //  setVisContainer.each(function (d, i) {
-        //    d3.select(this).selectAll("circle")
-        //      .data(function () {
-        //        return d.set.nodeIndices.map(function (index) {
-        //          return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, nodeIndex: index};
-        //        });
-        //      })
-        //      .enter()
-        //      .append("circle")
-        //      .attr({
-        //        cx: function (d) {
-        //          return (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
-        //        },
-        //        cy: function (d) {
-        //          return setHeight / 2;
-        //        },
-        //        r: 2,
-        //        fill: function (d) {
-        //          return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-        //        }
-        //      });
-        //
-        //    d3.select(this).selectAll("line").
-        //      data(function (d, i) {
-        //        return d.set.relIndices.map(function (index) {
-        //          return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, setIndex: i, relIndex: index};
-        //        });
-        //      })
-        //      .enter()
-        //      .append("line")
-        //      .attr("x1", function (d) {
-        //        return (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
-        //      })
-        //      .attr("y1", function (d) {
-        //        return setHeight / 2;
-        //        //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
-        //      })
-        //      .attr("x2", function (d) {
-        //        return ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
-        //      })
-        //      .attr("y2", function (d) {
-        //        return setHeight / 2;
-        //        //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
-        //      })
-        //      .attr("stroke", function (d) {
-        //        return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-        //      });
-        //
-        //
-        //  });
-        //
-        //
-        //});
-        //
-        //
-        //var l = selectionUtil.addDefaultListener(setType, "g.set", function (d) {
-        //    return d.set.id;
-        //  },
-        //  "set"
-        //);
-        //that.selectionListeners.push(l);
-
-
-        this.sortUpdateListener(sortingManager.currentComparator);
+        that.parent.selectAll("text.pathRank")
+          .data(that.pathWrappers, getPathKey)
+          .text(function (d) {
+            return d.rank;
+          });
 
         this.updatePathList();
 
