@@ -1536,10 +1536,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         that.selectionListeners.push(l);
 
         var edgeGroup = p.append("g")
-          .attr("class", "edgeGroup")
-          .attr("transform", function (d) {
-            return that.getPivotNodeAlignedTransform(d)
-          });
+          .attr("class", "edgeGroup");
+        //.attr("transform", function (d) {
+        //  return that.getPivotNodeAlignedTransform(d)
+        //});
 
 
         var allEdges = allPathContainers.selectAll("g.path").selectAll("g.edgeGroup").selectAll("g.edge")
@@ -1561,26 +1561,41 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .attr("class", "edge");
 
         edge.append("line")
-          .attr("x1", function (d, i) {
-            if (isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)) {
-              return ( (i + 1) * nodeWidth) + (i * edgeSize);
-            } else {
-              return ( (i + 1) * nodeWidth) + ((i + 1) * edgeSize);
-            }
-          })
           .attr("y1", vSpacing + nodeHeight / 2)
-          .attr("x2", function (d, i) {
-            if (isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)) {
-              return ( (i + 1) * nodeWidth) + ((i + 1) * edgeSize) - arrowWidth;
-            } else {
-              return ( (i + 1) * nodeWidth) + (i * edgeSize) + arrowWidth;
-            }
-          })
           .attr("y2", vSpacing + nodeHeight / 2)
-          .attr("marker-end", "url(#arrowRight)")
-          .attr("display", function (d) {
-            return d.edge.properties["_isNetworkEdge"] ? "inline" : "none";
+          .attr("marker-end", function (d, i) {
+            return isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i) ? "url(#arrowRight)" : "";
+          })
+          .attr("marker-start", function (d, i) {
+            return isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i) ? "" : "url(#arrowRight)";
+          })
+        .attr("display", function (d) {
+          return config.isNetworkEdge(d.edge) ? "inline" : "none";
+        });
+
+        allPathContainers.selectAll("g.path").selectAll("g.edgeGroup").selectAll("g.edge line")
+          .data(function (pathWrapper, i) {
+            return pathWrapper.path.edges.map(function (edge) {
+              return {edge: edge, pathIndex: i};
+            });
           });
+
+        allPathContainers.each(function (d) {
+          d3.select(this).selectAll("g.path g.edgeGroup g.edge line").transition()
+            .attr({
+              x1: function (d, i) {
+                var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                var position = that.pathWrappers[d.pathIndex].nodePositions[i];
+                return pivotNodeTranslate + position * (nodeWidth + edgeSize);
+              },
+              x2: function (d, i) {
+                var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                var position = that.pathWrappers[d.pathIndex].nodePositions[i + 1];
+                return pivotNodeTranslate + position * (nodeWidth + edgeSize);
+              }
+            });
+        });
+
 
         var nodeGroup = p.append("g")
           .attr("class", "nodeGroup");
