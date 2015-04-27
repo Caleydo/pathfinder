@@ -16,6 +16,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
     var setHeight = 10;
     var setTypeHeight = 14;
     var pathSpacing = 15;
+    var alignPathNodes = false;
 
     var currentSetTypeId = 0;
 
@@ -24,6 +25,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
 
     var pathListUpdateTypes = {
+      ALIGN_PATH_NODES: "ALIGN_PATH_NODES",
       UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY",
       COLLAPSE_SET_TYPE: "COLLAPSE_SETYPE"
     };
@@ -324,6 +326,12 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       this.pivotNodeIndex = 0;
       var that = this;
 
+      this.alignPathNodesUpdateListener = function (align) {
+        alignPathNodes = align;
+
+        that.renderPaths();
+      };
+
       this.setVisibilityUpdateListener = function (showSets) {
         showNodeSets = showSets;
 
@@ -449,6 +457,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.add(this.collapseSetTypeListener, pathListUpdateTypes.COLLAPSE_SET_TYPE);
         listeners.add(this.setVisibilityUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        listeners.add(this.alignPathNodesUpdateListener, pathListUpdateTypes.ALIGN_PATH_NODES);
         listeners.add(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.add(this.sortUpdateListener, pathSorting.updateType);
@@ -574,16 +583,16 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             }
             return 1;
           });
-        that.parent.selectAll("g.pathContainer g.path g.edgeGroup").data(that.pathWrappers)
-          .transition()
-          .attr("transform", function (d) {
-            return that.getPivotNodeAlignedTransform(d)
-          });
-        that.parent.selectAll("g.pathContainer g.path g.nodeGroup").data(that.pathWrappers)
-          .transition()
-          .attr("transform", function (d) {
-            return that.getPivotNodeAlignedTransform(d)
-          });
+        //that.parent.selectAll("g.pathContainer g.path g.edgeGroup").data(that.pathWrappers)
+        //  .transition()
+        //  .attr("transform", function (d) {
+        //    return that.getPivotNodeAlignedTransform(d)
+        //  });
+        //that.parent.selectAll("g.pathContainer g.path g.nodeGroup").data(that.pathWrappers)
+        //  .transition()
+        //  .attr("transform", function (d) {
+        //    return that.getPivotNodeAlignedTransform(d)
+        //  });
 
 
         var allSetTypes = that.parent.selectAll("g.pathContainer g.setGroup g.setType");
@@ -701,6 +710,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         this.updateListeners = [];
         listeners.remove(this.collapseSetTypeListener, pathListUpdateTypes.COLLAPSE_SET_TYPE);
         listeners.remove(this.setVisibilityUpdateListener, pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        listeners.remove(this.alignPathNodesUpdateListener, pathListUpdateTypes.ALIGN_PATH_NODES);
         listeners.remove(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         listeners.remove(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
@@ -959,6 +969,11 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
       },
 
       getPivotNodeAlignedTranslationX: function (pathWrapper) {
+
+        if(alignPathNodes) {
+          return nodeStart;
+        }
+
         var index = -1;
         for (var i = 0; i < pathWrapper.path.nodes.length; i++) {
           if (pathWrapper.path.nodes[i].id === this.pivotNodeId) {
@@ -1071,15 +1086,19 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
         var that = this;
         var straightenedConnections = {};
 
+        that.pathWrappers.forEach(function (pathWrapper) {
+          pathWrapper.nodePositions = d3.range(0, pathWrapper.path.nodes.length);
+        });
+
+        if(!alignPathNodes) {
+          return;
+        }
+
         //Calc node alignment
 
         //sort connections by lowest max node index
         this.crossConnections.sort(function (a, b) {
           return d3.ascending(a.maxNodeIndex, b.maxNodeIndex);
-        });
-
-        that.pathWrappers.forEach(function (pathWrapper) {
-          pathWrapper.nodePositions = d3.range(0, pathWrapper.path.nodes.length);
         });
 
         this.crossConnections.forEach(function (connection) {
@@ -1537,10 +1556,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           });
 
         var nodeGroup = p.append("g")
-          .attr("class", "nodeGroup")
-          .attr("transform", function (d) {
-            return that.getPivotNodeAlignedTransform(d)
-          });
+          .attr("class", "nodeGroup");
+          //.attr("transform", function (d) {
+          //  return that.getPivotNodeAlignedTransform(d)
+          //});
 
         var allNodes = allPathContainers.selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.nodeCont")
           .data(function (pathWrapper, i) {
@@ -1558,9 +1577,11 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .classed("nodeCont", true);
 
         allNodes
+          .transition()
           .attr("transform", function (d, i) {
             var position = that.pathWrappers[d.pathIndex].nodePositions[i];
-            return "translate(" + ((position * nodeWidth) + (position * edgeSize)) + "," + vSpacing + ")";
+            var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+            return "translate(" + (pivotNodeTranslate + position * (nodeWidth + edgeSize)) + "," + vSpacing + ")";
           });
 
         nc.each(function (d, i) {
@@ -1575,11 +1596,13 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             //sortingManager.addOrReplace(sortingStrategies.getNodePresenceStrategy([d.id]));
             sortingStrategies.selectionSortingStrategy.setNodeIds([d.node.id]);
 
+            that.setPivotNode(d.node.id);
+
             listeners.notify(pathSorting.updateType, sortingManager.currentComparator);
 
-            if (d3.event.altKey) {
-              that.setPivotNode(d.node.id);
-            }
+            //if (d3.event.altKey) {
+
+            //}
             //sortingManager.sort(that.pathWrappers, parent, "g.pathContainer", getPathContainerTransformFunction(that.pathWrappers));
           });
 

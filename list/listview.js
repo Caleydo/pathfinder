@@ -157,6 +157,10 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
         listeners.notify("UPDATE_NODE_SET_VISIBILITY", !this.checked);
       });
 
+      $("#alignPathNodes").on("click", function () {
+        listeners.notify("ALIGN_PATH_NODES", this.checked);
+      });
+
       //$("#reverseAggregateSorting").on("click", function () {
       //  aggregateSorting.sortingManager.ascending = !this.checked;
       //  listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
