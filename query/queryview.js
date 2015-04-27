@@ -479,11 +479,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         .attr({
           x: 35,
           y: 2,
-          width: 52,
+          width: 90,
           height: 20
         }).append("xhtml:div")
         .style("font", "10px 'Arial'")
         .html('<input type="text" placeholder="' + initialText + '" required="required" size="5px" width="5px" class="queryConstraint">');
+      $(this.myDomElements[0]).find("input").width(90);
     };
 
     ConstraintElement.prototype.setText = function (text) {
@@ -491,7 +492,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     };
 
     ConstraintElement.prototype.getSize = function () {
-      return {width: 92, height: 24};
+      return {width: 130, height: 24};
     };
 
     //-------------------------------------------
