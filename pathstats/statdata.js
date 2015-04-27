@@ -1,5 +1,5 @@
-define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config', '../setinfo'],
-  function (hierarchyElements, listeners, pathSorting, pathQuery, config, setInfo) {
+define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config', '../setinfo', '../visibilitysettings'],
+  function (hierarchyElements, listeners, pathSorting, pathQuery, config, setInfo, visibilitySettings) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
 
@@ -152,8 +152,8 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       BaseHierarchyElement.call(this, parentElement);
       this.setId = setId;
       this.pathIds = [];
-      //this.nodeIds = [];
-      //this.edgeIds = [];
+      this.nodeIds = {};
+      this.edgeIds = {};
     }
 
     SetWrapper.prototype = Object.create(BaseHierarchyElement.prototype);
@@ -163,9 +163,15 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
         this.pathIds.push(path.id);
       }
 
-      //if (this.nodeIds.indexOf(node.id) === -1) {
-      //  this.nodeIds.push(node.id);
-      //}
+      var pathIdsForNode = this.nodeIds[node.id.toString()];
+
+      if(typeof pathIdsForNode === "undefined") {
+        pathIdsForNode = [];
+        this.nodeIds[node.id.toString()] = pathIdsForNode;
+      }
+
+      pathIdsForNode.push(path.id);
+
     };
 
     SetWrapper.prototype.removePath = function (path) {
@@ -173,6 +179,36 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       if (index !== -1) {
         this.pathIds.splice(index, 1);
       }
+
+      path.nodes.forEach(function(node) {
+        var pathIdsForNode = this.nodeIds[node.id.toString()];
+
+        if(typeof pathIdsForNode !== "undefined") {
+          var i = pathIdsForNode.indexOf(path.id);
+          if (i !== -1) {
+            pathIdsForNode.splice(i, 1);
+          }
+          if(pathIdsForNode.length <=0) {
+            delete this.nodeIds[node.id.toString()];
+          }
+        }
+      });
+
+      path.edges.forEach(function(edge) {
+        var pathIdsForEdge = this.edgeIds[edge.id.toString()];
+
+        if(typeof pathIdsForEdge !== "undefined") {
+          var i = pathIdsForEdge.indexOf(path.id);
+          if (i !== -1) {
+            pathIdsForEdge.splice(i, 1);
+          }
+
+          if(pathIdsForEdge.length <=0) {
+            delete this.edgeIds[edge.id.toString()];
+          }
+        }
+      });
+
     };
 
     SetWrapper.prototype.addEdge = function (edge, path) {
@@ -180,13 +216,22 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
         this.pathIds.push(path.id);
       }
 
-      //if (this.edgeIds.indexOf(edge.id) === -1) {
-      //  this.edgeIds.push(edge.id);
-      //}
+      var pathIdsForEdge = this.edgeIds[edge.id.toString()];
+
+      if(typeof pathIdsForEdge === "undefined") {
+        pathIdsForEdge = [];
+        this.edgeIds[edge.id.toString()] = pathIdsForEdge;
+      }
+
+      pathIdsForEdge.push(path.id);
     };
 
     SetWrapper.prototype.isFiltered = function () {
       return pathQuery.isNodeSetFiltered(this.setId) && pathQuery.isEdgeSetFiltered(this.setId);
+    };
+
+    SetWrapper.prototype.canBeShown = function() {
+      return visibilitySettings.isShowNonEdgeSets() || Object.keys(this.edgeIds).length > 0;
     };
 
     SetWrapper.prototype.onDoubleClick = function () {

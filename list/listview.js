@@ -1,8 +1,9 @@
 /**
  * Created by Christian on 23.02.2015.
  */
-define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist', './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview', '../config'],
-  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView, config) {
+define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist',
+    './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview', '../config', '../visibilitysettings'],
+  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView, config, visibilitySettings) {
 
     //var listView = new view("#pathlist");
 
@@ -55,7 +56,7 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
       svg.append("clipPath")
         .attr("id", "pathNodeClipPath")
         .append("rect")
-        .attr("x",  3)
+        .attr("x", 3)
         .attr("y", 0)
         .attr("width", nodeWidth - 6)
         .attr("height", nodeHeight);
@@ -154,7 +155,7 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
       //});
 
       $("#hideNonRelSets").on("click", function () {
-        listeners.notify("UPDATE_NODE_SET_VISIBILITY", !this.checked);
+        visibilitySettings.showNonEdgeSets(!this.checked);
       });
 
       $("#alignPathNodes").on("click", function () {

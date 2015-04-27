@@ -68,6 +68,11 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           that.updateToAllPaths();
         }
       }, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
+
+
+      listeners.add(function (showNonEdgeSets) {
+        that.updateView();
+      }, "UPDATE_SET_VISIBILITY");
     };
 
 

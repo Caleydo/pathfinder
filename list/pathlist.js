@@ -26,7 +26,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
     var pathListUpdateTypes = {
       ALIGN_PATH_NODES: "ALIGN_PATH_NODES",
-      UPDATE_NODE_SET_VISIBILITY: "UPDATE_NODE_SET_VISIBILITY",
+      UPDATE_NODE_SET_VISIBILITY: "UPDATE_SET_VISIBILITY",
       COLLAPSE_SET_TYPE: "COLLAPSE_SETYPE"
     };
 
