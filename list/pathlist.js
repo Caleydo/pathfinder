@@ -436,7 +436,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         });
 
-
       },
 
       addUpdateListener: function (l) {
@@ -606,11 +605,57 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             var setTypes = d3.select(this).selectAll("g.setType");
 
             setTypes.each(function (d) {
-              d3.select(this).selectAll("g.setTypeSummary")
-                .transition()
-                .attr("transform", function (d) {
-                  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
-                });
+              //d3.select(this).selectAll("g.setTypeSummary")
+              //  .transition()
+              //  .attr("transform", function (d) {
+              //    return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
+              //  });
+
+              var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary");
+
+              setTypeSummaryContainer.each(function (d, i) {
+                d3.select(this).selectAll("circle")
+                  .transition()
+                  .attr({
+                    cx: function (d, i) {
+                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                      var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+                      return pivotNodeTranslate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
+                    },
+
+                    r: function (d) {
+
+                      var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                        that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+
+                      return nodeSetScale(numSets);
+                    }
+
+                  });
+
+                d3.select(this).selectAll("line")
+                  .transition()
+                  .attr({
+
+                    x1: function (d) {
+                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                      var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
+                      return pivotNodeTranslate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
+                    },
+
+                    x2: function (d) {
+                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                      var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
+                      return pivotNodeTranslate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
+                    },
+
+                    "stroke-width": function (d) {
+                      var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
+                        that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+                      return edgeSetScale(numSets);
+                    }
+                  });
+              });
 
             });
 
@@ -618,10 +663,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             setTypes
               .transition()
               .each("start", function (d) {
-                var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary")
-                  .attr("transform", function (d) {
-                    return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
-                  });
+                var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary");
+                //.attr("transform", function (d) {
+                //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
+                //});
 
                 if (d.setType.collapsed) {
                   setTypeSummaryContainer
@@ -634,36 +679,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                     return d.setType.collapsed ? "\uf0da" : "\uf0dd";
                   });
 
-                setTypeSummaryContainer.each(function (d, i) {
-                  d3.select(this).selectAll("circle")
-                    .attr({
-                      r: function (d) {
 
-                        var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-                          that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-
-                        return nodeSetScale(numSets);
-                      }
-                    });
-
-                  d3.select(this).selectAll("line")
-                    .attr({
-                      "stroke-width": function (d) {
-                        var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
-                          that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-                        return edgeSetScale(numSets);
-                      }
-                    })
-                });
-
-
-                //d3.select(this).selectAll("g.setCont")
-                //  .each(function (setData) {
-                //    if (d.setType.collapsed || (!setData.set.canBeShown())) {
-                //      d3.select(this)
-                //        .attr("display", "none");
-                //    }
-                //  });
                 if (!d.setType.canBeShown()) {
                   d3.select(this)
                     .attr("display", "none");
@@ -677,26 +693,12 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                     .attr("display", "none");
                 }
 
-                //d3.select(this).selectAll("g.setCont")
-                //  .each(function (setData) {
-                //    if (!d.setType.collapsed && setData.set.canBeShown()) {
-                //      d3.select(this)
-                //        .attr("display", "inline");
-                //    }
-                //  });
-
                 if (d.setType.canBeShown()) {
                   d3.select(this)
                     .attr("display", "inline");
                 }
               });
 
-            //d3.select(this).selectAll("g.setType")
-            //  .each(function () {
-            //    d3.select(this).selectAll("g.setCont")
-            //      .transition()
-            //      .attr("transform", getSetTransformFunction(that.pathWrappers));
-            //  });
 
           });
 
@@ -970,7 +972,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
       getPivotNodeAlignedTranslationX: function (pathWrapper) {
 
-        if(alignPathNodes) {
+        if (alignPathNodes) {
           return nodeStart;
         }
 
@@ -1090,7 +1092,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           pathWrapper.nodePositions = d3.range(0, pathWrapper.path.nodes.length);
         });
 
-        if(!alignPathNodes) {
+        if (!alignPathNodes) {
           return;
         }
 
@@ -1342,7 +1344,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
           //});
 
-          setVisContainer.each(function (d, i) {
+          setVisContainer.each(function (d) {
             var allCircles = d3.select(this).selectAll("circle")
               .data(function () {
                 return d.set.nodeIndices.map(function (index) {
@@ -1353,9 +1355,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             allCircles.enter()
               .append("circle")
               .attr({
-                cx: function (d) {
-                  return (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
-                },
                 cy: function (d) {
                   return setHeight / 2;
                 },
@@ -1364,6 +1363,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
                   return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
                 }
               });
+
 
             allCircles.exit().remove();
 
@@ -1376,16 +1376,16 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
             allLines.enter()
               .append("line")
-              .attr("x1", function (d) {
-                return (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
-              })
+              //.attr("x1", function (d) {
+              //  return (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
+              //})
               .attr("y1", function (d) {
                 return setHeight / 2;
                 //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
               })
-              .attr("x2", function (d) {
-                return ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
-              })
+              //.attr("x2", function (d) {
+              //  return ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
+              //})
               .attr("y2", function (d) {
                 return setHeight / 2;
                 //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
@@ -1397,10 +1397,37 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
             allLines.exit().remove();
           });
 
+
           d3.select(this).selectAll("g.setVisContainer")
-            .transition()
-            .attr("transform", function (d) {
-              return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
+            .each(function (d) {
+
+              var allCircles = d3.select(this).selectAll("circle");
+
+              allCircles.transition()
+                .attr({
+                  cx: function (d) {
+                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+                    return pivotNodeTranslate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
+                  }
+                });
+
+              var allLines = d3.select(this).selectAll("line");
+
+              allLines.transition()
+                .attr({
+                  x1: function (d) {
+                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
+                    return pivotNodeTranslate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
+                  },
+                  x2: function (d) {
+                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
+                    return pivotNodeTranslate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
+                  }
+                });
+
             });
 
 
@@ -1557,9 +1584,9 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
         var nodeGroup = p.append("g")
           .attr("class", "nodeGroup");
-          //.attr("transform", function (d) {
-          //  return that.getPivotNodeAlignedTransform(d)
-          //});
+        //.attr("transform", function (d) {
+        //  return that.getPivotNodeAlignedTransform(d)
+        //});
 
         var allNodes = allPathContainers.selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.nodeCont")
           .data(function (pathWrapper, i) {
@@ -1716,10 +1743,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .classed("setTypeSummary", true)
           .attr("display", function (d) {
             return d.setType.collapsed ? "inline" : "none";
-          })
-          .attr("transform", function (d) {
-            return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
           });
+        //.attr("transform", function (d) {
+        //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
+        //});
 
         setTypeSummaryContainer.each(function (d, i) {
             d3.select(this).selectAll("circle")
@@ -1731,8 +1758,10 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
               .enter()
               .append("circle")
               .attr({
-                cx: function (d) {
-                  return (d.nodeIndex * nodeWidth) + (d.nodeIndex * edgeSize) + nodeWidth / 2;
+                cx: function (d, i) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+                  return pivotNodeTranslate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
                 },
                 cy: setTypeHeight / 2,
                 r: function (d) {
@@ -1756,12 +1785,16 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
               .append("line")
               .attr({
                 x1: function (d) {
-                  return (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
+                  return pivotNodeTranslate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
                 }
                 ,
                 y1: setTypeHeight / 2,
                 x2: function (d) {
-                  return ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
+                  return pivotNodeTranslate + position * (nodeWidth + edgeSize) + nodeWidth / 2;
                 },
                 y2: setTypeHeight / 2,
                 stroke: function (d) {
