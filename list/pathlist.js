@@ -1472,10 +1472,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           .transition()
           .attr("transform", getPathContainerTransformFunction(that.pathWrappers));
 
-        allPathContainers.exit()
-          .transition()
-          .attr("transform", "translate(0," + 2000 + ")")
-          .remove();
+
 
         var pathContainer = allPathContainers
           .enter()
@@ -1696,12 +1693,6 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           });
 
 
-        //var setType = setGroup.selectAll("g.setType")
-        //    .data(function (pathWrapper, i) {
-        //      return pathWrapper.setTypes.map(function (mySetType) {
-        //        return {setType: mySetType, pathIndex: i};
-        //      });
-        //    })
         var setType = allSetTypes.enter()
             .append("g")
             .classed("setType", true)
@@ -1834,6 +1825,11 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
           });
 
         this.updatePathList();
+
+        allPathContainers.exit()
+          .transition()
+          .attr("transform", "translate(0," + 2000 + ")")
+          .remove();
 
         pathContainer.selectAll("rect.pathContainerBackground").transition()
           .duration(800)
