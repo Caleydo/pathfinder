@@ -458,10 +458,10 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
     PathStatsView.prototype.renderStats = function (rootSelector, statTypes, statSelectionFunction, idType) {
 
-      var statTypeGroup = d3.selectAll(rootSelector)
-        .attr({
-          transform: hierarchyElements.transformFunction
-        });
+      var statTypeGroup = d3.selectAll(rootSelector);
+        //.attr({
+        //  transform: hierarchyElements.transformFunction
+        //});
       var that = this;
 
       var allStatTypes = statTypeGroup.selectAll("g.statTypes")

@@ -179,9 +179,10 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       if (index !== -1) {
         this.pathIds.splice(index, 1);
       }
+      var that = this;
 
       path.nodes.forEach(function(node) {
-        var pathIdsForNode = this.nodeIds[node.id.toString()];
+        var pathIdsForNode = that.nodeIds[node.id.toString()];
 
         if(typeof pathIdsForNode !== "undefined") {
           var i = pathIdsForNode.indexOf(path.id);
@@ -189,13 +190,13 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
             pathIdsForNode.splice(i, 1);
           }
           if(pathIdsForNode.length <=0) {
-            delete this.nodeIds[node.id.toString()];
+            delete that.nodeIds[node.id.toString()];
           }
         }
       });
 
       path.edges.forEach(function(edge) {
-        var pathIdsForEdge = this.edgeIds[edge.id.toString()];
+        var pathIdsForEdge = that.edgeIds[edge.id.toString()];
 
         if(typeof pathIdsForEdge !== "undefined") {
           var i = pathIdsForEdge.indexOf(path.id);
@@ -204,7 +205,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
           }
 
           if(pathIdsForEdge.length <=0) {
-            delete this.edgeIds[edge.id.toString()];
+            delete that.edgeIds[edge.id.toString()];
           }
         }
       });
