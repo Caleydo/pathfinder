@@ -5,15 +5,18 @@
     "set_label": "_Set_Node",
     "directions": {
       "Edge": "out",
-      "ConsistsOfEdge": "both"
+      "SetEdge": "both"
     },
     "inline": {
-      "inline": "ConsistsOfEdge",
+      "inline": "SetEdge",
       "type": "Edge",
       "undirectional": false,
       "flag": "_isSetEdge",
       "aggregate": {
-        "_Set_Node": "pathways"
+        "Target_Class": "targetclass",
+        "Pathway": "pathways",
+        "Disease": "diseases",
+        "Phenotype": "phenotypes"
       },
       "toaggregate": "id"
     }
@@ -25,9 +28,21 @@
       "properties": {
         "id": "id",
         "name": "name",
-        "pathways": {
+        "targetclass": {
           "type": "set",
           "set": "targetclass"
+        },
+        "pathways": {
+          "type": "set",
+          "set": "pathways"
+        },
+        "phenotypes": {
+          "type": "set",
+          "set": "phenotypes"
+        },
+        "diseases": {
+          "type": "set",
+          "set": "diseases"
         }
       }
     }
@@ -41,9 +56,21 @@
           "type": "flag",
           "set": "targetclass"
         },
-        "pathways": {
+        "targetclass": {
           "type": "set",
           "set": "targetclass"
+        },
+        "pathways": {
+          "type": "set",
+          "set": "pathways"
+        },
+        "phenotypes": {
+          "type": "set",
+          "set": "phenotypes"
+        },
+        "diseases": {
+          "type": "set",
+          "set": "diseases"
         }
       }
     }
@@ -52,16 +79,64 @@
     {
       "id": "targetclass",
       "name": "Target Class",
-      "node_label": "_Set_Node",
+      "node_label": "Target_Class",
       "properties": {
         "name": "name"
       },
       "inline": {
-        "source": "ConsistsOfEdge",
+        "source": "SetEdge",
+        "target": "Edge"
+      },
+      "flag_property": "_isSetEdge",
+      "set_property": "targetclass"
+    },
+    {
+      "id": "pathways",
+      "name": "Pathways",
+      "node_label": "Pathway",
+
+      "properties": {
+        "name": "name"
+      },
+
+      "inline": {
+        "source": "SetEdge",
         "target": "Edge"
       },
       "flag_property": "_isSetEdge",
       "set_property": "pathways"
+    },
+    {
+      "id": "diseases",
+      "name": "Diseases",
+      "node_label": "Disease",
+
+      "properties": {
+        "name": "name"
+      },
+
+      "inline": {
+        "source": "SetEdge",
+        "target": "Edge"
+      },
+      "flag_property": "_isSetEdge",
+      "set_property": "diseases"
+    },
+    {
+      "id": "phenotypes",
+      "name": "Phenotypes",
+      "node_label": "Phenotype",
+
+      "properties": {
+        "name": "name"
+      },
+
+      "inline": {
+        "source": "SetEdge",
+        "target": "Edge"
+      },
+      "flag_property": "_isSetEdge",
+      "set_property": "phenotypes"
     }
   ]
 }
