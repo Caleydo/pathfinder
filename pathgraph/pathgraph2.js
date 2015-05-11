@@ -430,9 +430,9 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             //points.push({x: targetNode.x - nodeWidth / 2, y: targetNode.y});
             //
             //return line(points);
-            //return line(d.edge.points);
+            return line(d.edge.points);
 
-            return drawBezierLink2(sourceNode.x + nodeWidth / 2, sourceNode.y, targetNode.x - nodeWidth / 2, targetNode.y);
+            //return drawBezierLink2(sourceNode.x + nodeWidth / 2, sourceNode.y, targetNode.x - nodeWidth / 2, targetNode.y);
           }
         });
       //var edgeLines = edge.append("line");
