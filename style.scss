@@ -281,6 +281,14 @@ path.crossConnection.selected, line.stub.selected {
 
 }
 
+g.boxPlotAxis {
+  path, line {
+    fill: none;
+    stroke: $defaultStrokeColor;
+    shape-rendering: crispEdges;
+  }
+}
+
 .collapseIcon {
   font-family: FontAwesome;
   font-size: 16px;
