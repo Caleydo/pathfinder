@@ -1,4 +1,4 @@
-define(['./listeners', './query/pathquery', './config'], function (listeners, pathQuery, config) {
+define(['./listeners', './query/pathquery', './config', './statisticsutil'], function (listeners, pathQuery, config, statisticsUtil) {
 
   var paths = [];
 
@@ -79,6 +79,20 @@ define(['./listeners', './query/pathquery', './config'], function (listeners, pa
 
   };
 
+  var allStats = {
+    mRNAExpression: {
+      breast: {},
+      lung: {},
+      ovary: {}
+    },
+    CopyNumberVariation: {
+      breast: {},
+      lung: {},
+      ovary: {}
+    }
+
+  };
+
   return {
 
     init: function () {
@@ -139,6 +153,19 @@ define(['./listeners', './query/pathquery', './config'], function (listeners, pa
 
       return data;
 
+    },
+
+    getStatsForNode: function (node, dataset, group) {
+
+      var stats = allStats[dataset][group][node.id.toString()];
+
+      if (typeof stats === "undefined") {
+        var data = this.getDataForNode(node, dataset, group);
+        stats = statisticsUtil.statisticsOf(data);
+        allStats[dataset][group][node.id.toString()] = stats;
+      }
+
+      return stats;
     }
   }
 

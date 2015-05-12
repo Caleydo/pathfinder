@@ -1,8 +1,8 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', 'font-awesome', 'bootstrap'],
-  function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting) {
+require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil', 'font-awesome', 'bootstrap'],
+  function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting, statisticsUtil) {
 
     'use strict';
 
@@ -16,6 +16,8 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
 
 
     $(document).ready(function () {
+
+        statisticsUtil.statisticsOf([0, NaN, 5, 3, NaN, 7, 3]);
 
         ServerSearch.on({
           query_start: function () {

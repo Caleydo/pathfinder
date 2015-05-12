@@ -6,6 +6,7 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
 
     var NODE_START = 90;
+    var BOX_WIDTH = 20;
     var SET_TYPE_INDENT = 10;
     var NODE_WIDTH = 50;
     var NODE_HEIGHT = 20;
@@ -16,7 +17,9 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
     var SET_TYPE_HEIGHT = 14;
     var PATH_SPACING = 15;
     var DATASET_HEIGHT = 14;
-    var DATA_GROUP_HEIGHT = 40;
+    var DATA_GROUP_HEIGHT = 60;
+    var DATA_GROUP_V_PADDING = 5;
+    var DATA_GROUP_CONTENT_HEIGHT = DATA_GROUP_HEIGHT - 2 * DATA_GROUP_V_PADDING;
 
 
     var alignPathNodes = false;
@@ -1592,13 +1595,30 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
               return;
             }
 
-            var scaleY = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([0, DATA_GROUP_HEIGHT]);
+            var scaleY = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([DATA_GROUP_CONTENT_HEIGHT, 0]);
 
             var allGroups = d3.select(this).selectAll("g.dataGroup")
               .data(dataset.children);
             var group = allGroups.enter()
               .append("g")
               .classed("dataGroup", true);
+
+            group.append("rect")
+              .classed("background", true)
+              .attr({
+                x: SET_TYPE_INDENT,
+                y: DATA_GROUP_V_PADDING,
+                width: function (d) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                  var position = pathWrapper.nodePositions[pathWrapper.path.nodes.length - 1];
+                  return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH;
+                },
+                height: DATA_GROUP_CONTENT_HEIGHT
+              })
+              .style({
+                //stroke: "black",
+                fill: "rgba(240,240,240,0.5)"
+              });
 
             var groupLabel = group.append("text")
               .attr({
@@ -1632,57 +1652,331 @@ define(['jquery', 'd3', '../listeners', '../sorting', '../setinfo', '../selectio
 
             allGroups.each(function (group) {
 
+              d3.select(this).select("rect.background")
+                .transition()
+                .attr({
+                  width: function (d) {
+                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                    var position = pathWrapper.nodePositions[pathWrapper.path.nodes.length - 1];
+                    return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH;
+                  }
+                });
+
+
               var allNodeData = d3.select(this).selectAll("g.nodeData")
                 .data(pathWrapper.path.nodes);
 
+
               var nodeData = allNodeData.enter()
                 .append("g")
-                .classed("nodeData", true);
+                .classed("nodeData", true)
+                .attr({
+                  transform: "translate(0," + DATA_GROUP_V_PADDING + ")"
+                });
+
+              nodeData.append("title")
+                .text(function (d) {
+                  var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
+                  return "Elements: " + stats.data.length +
+                    "\nNaNs: " + stats.nans +
+                    "\nMedian: " + stats.median +
+                    "\n1st Quartile: " + stats.quartile25 +
+                    "\n3rd Quartile: " + stats.quartile75 +
+                    "\nLowest value in 1.5xIQR range: " + stats.iqrMin +
+                    "\nHighest value in 1.5xIQR range: " + stats.iqrMax +
+                    "\nMin: " + stats.min +
+                    "\nMax: " + stats.max;
+                });
+
+              nodeData.append("rect")
+                .classed("box", true)
+                .attr({
+                  x: function (d, i) {
+                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                    var position = pathWrapper.nodePositions[i];
+                    return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 - BOX_WIDTH / 2;
+                  },
+                  y: function (d) {
+                    var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
+                    return scaleY(stats.quartile75);
+                  },
+                  width: BOX_WIDTH,
+                  height: function (d) {
+                    var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
+                    var height = scaleY(stats.quartile25) - scaleY(stats.quartile75);
+                    return height;
+                  }
+                })
+                .style({
+                  fill: "gray",
+                  stroke: "black"
+                });
+
+              d3.select(this).selectAll("g.nodeData rect.box")
+                .transition()
+                .attr({
+                  x: function (d, i) {
+                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                    var position = pathWrapper.nodePositions[i];
+                    return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 - BOX_WIDTH / 2;
+                  },
+                  y: function (d) {
+                    var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
+
+                    return scaleY(stats.quartile75);
+                    //return scaleY(stats.quartile25);
+                  },
+                  width: BOX_WIDTH,
+                  height: function (d) {
+                    var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
+                    var height = scaleY(stats.quartile25) - scaleY(stats.quartile75);
+
+                    return height;
+                  }
+                });
+
+              nodeData.append("line")
+                .classed("median", true)
+                .attr({
+                  x1: function (d, i) {
+                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                    var position = pathWrapper.nodePositions[i];
+                    return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 - BOX_WIDTH / 2;
+                  },
+                  y1: function (d) {
+                    var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
+                    return scaleY(stats.median);
+                  },
+                  x2: function (d, i) {
+                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                    var position = pathWrapper.nodePositions[i];
+                    return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 + BOX_WIDTH / 2;
+                  },
+                  y2: function (d) {
+                    var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
+                    return scaleY(stats.median);
+                  }
+                })
+                .style({
+                  stroke: "white"
+                });
+
+              d3.select(this).selectAll("g.nodeData line.median")
+                .transition()
+                .attr({
+                  x1: function (d, i) {
+                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                    var position = pathWrapper.nodePositions[i];
+                    return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 - BOX_WIDTH / 2;
+                  },
+                  y1: function (d) {
+                    var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
+                    return scaleY(stats.median);
+                  },
+                  x2: function (d, i) {
+                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                    var position = pathWrapper.nodePositions[i];
+                    return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 + BOX_WIDTH / 2;
+                  },
+                  y2: function (d) {
+                    var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
+                    return scaleY(stats.median);
+                  }
+                });
+
+              nodeData.each(function (node, i) {
+
+                var stats = dataStore.getStatsForNode(node, dataset.name, group.name);
+
+                if (!isNaN(stats.iqrMin)) {
+
+                  d3.select(this).append("line")
+                    .classed("lowerWhisker", true)
+                    .attr({
+                      x1: function (d) {
+                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                        var position = pathWrapper.nodePositions[i];
+                        return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 - BOX_WIDTH / 4;
+                      },
+                      y1: scaleY(stats.iqrMin),
+                      x2: function (d) {
+                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                        var position = pathWrapper.nodePositions[i];
+                        return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 + BOX_WIDTH / 4;
+                      },
+                      y2: scaleY(stats.iqrMin)
+                    })
+                    .style({
+                      stroke: "black"
+                    });
+
+                  d3.select(this).append("line")
+                    .classed("lowerWhiskerConnector", true)
+                    .attr({
+                      x1: function (d) {
+                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                        var position = pathWrapper.nodePositions[i];
+                        return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2;
+                      },
+                      y1: scaleY(stats.iqrMin),
+                      x2: function (d) {
+                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                        var position = pathWrapper.nodePositions[i];
+                        return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2;
+                      },
+                      y2: scaleY(stats.quartile25)
+                    })
+                    .style({
+                      stroke: "black"
+                    });
+                }
+
+                if (!isNaN(stats.iqrMax)) {
+                  d3.select(this).append("line")
+                    .classed("upperWhisker", true)
+                    .attr({
+                      x1: function (d) {
+                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                        var position = pathWrapper.nodePositions[i];
+                        return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 - BOX_WIDTH / 4;
+                      },
+                      y1: scaleY(stats.iqrMax),
+                      x2: function (d) {
+                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                        var position = pathWrapper.nodePositions[i];
+                        return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 + BOX_WIDTH / 4;
+                      },
+                      y2: scaleY(stats.iqrMax)
+                    })
+                    .style({
+                      stroke: "black"
+                    });
+
+                  d3.select(this).append("line")
+                    .classed("upperWhiskerConnector", true)
+                    .attr({
+                      x1: function (d) {
+                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                        var position = pathWrapper.nodePositions[i];
+                        return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2;
+                      },
+                      y1: scaleY(stats.iqrMax),
+                      x2: function (d) {
+                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                        var position = pathWrapper.nodePositions[i];
+                        return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2;
+                      },
+                      y2: scaleY(stats.quartile75)
+                    })
+                    .style({
+                      stroke: "black"
+                    });
+                }
+              });
+
 
               allNodeData.each(function (node, nodeIndex) {
-                var allPoints = d3.select(this).selectAll("g.dataPoint")
-                  .data(dataStore.getDataForNode(node, dataset.name, group.name));
-
-                var point = allPoints.enter()
-                  .append("g")
-                  .classed("dataPoint", true);
-
-                point.append("circle")
-                  .attr({
-
-                    cx: function (d) {
-                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
-                      var position = pathWrapper.nodePositions[nodeIndex];
-                      return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2;
-                    },
-
-                    cy: function (d) {
-                      return scaleY(d);
-                    },
-
-                    r: 1
-
-                  })
-                  .style({
-                    opacity: 0.5,
-                    fill: "gray"
-                  });
-
-                allPoints.selectAll("circle")
+                d3.select(this).select("line.lowerWhisker")
                   .transition()
                   .attr({
-                    cx: function (d) {
+                    x1: function (d) {
+                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                      var position = pathWrapper.nodePositions[nodeIndex];
+                      return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 - BOX_WIDTH / 4;
+                    },
+                    x2: function (d) {
+                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                      var position = pathWrapper.nodePositions[nodeIndex];
+                      return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 + BOX_WIDTH / 4;
+                    }
+                  });
+                d3.select(this).select("line.lowerWhiskerConnector")
+                  .transition()
+                  .attr({
+                    x1: function (d) {
                       var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
                       var position = pathWrapper.nodePositions[nodeIndex];
                       return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2;
                     },
-
-                    cy: function (d) {
-                      return scaleY(d);
+                    x2: function (d) {
+                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                      var position = pathWrapper.nodePositions[nodeIndex];
+                      return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2;
                     }
                   });
 
-                allPoints.exit().remove();
+                d3.select(this).select("line.upperWhisker")
+                  .transition()
+                  .attr({
+                    x1: function (d) {
+                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                      var position = pathWrapper.nodePositions[nodeIndex];
+                      return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 - BOX_WIDTH / 4;
+                    },
+                    x2: function (d) {
+                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                      var position = pathWrapper.nodePositions[nodeIndex];
+                      return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2 + BOX_WIDTH / 4;
+                    }
+                  });
+
+                d3.select(this).select("line.upperWhiskerConnector")
+                  .transition()
+                  .attr({
+                    x1: function (d) {
+                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                      var position = pathWrapper.nodePositions[nodeIndex];
+                      return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2;
+                    },
+                    x2: function (d) {
+                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                      var position = pathWrapper.nodePositions[nodeIndex];
+                      return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2;
+                    }
+                  });
+
+                //var allPoints = d3.select(this).selectAll("g.dataPoint")
+                //  .data(dataStore.getDataForNode(node, dataset.name, group.name));
+                //
+                //var point = allPoints.enter()
+                //  .append("g")
+                //  .classed("dataPoint", true);
+                //
+                //point.append("circle")
+                //  .attr({
+                //
+                //    cx: function (d) {
+                //      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                //      var position = pathWrapper.nodePositions[nodeIndex];
+                //      return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2;
+                //    },
+                //
+                //    cy: function (d) {
+                //      return scaleY(d);
+                //    },
+                //    r: 1
+                //
+                //  })
+                //  .style({
+                //    opacity: 2,
+                //    fill: "red"
+                //  });
+                //
+                //allPoints.selectAll("circle")
+                //  .transition()
+                //  .attr({
+                //    cx: function (d) {
+                //      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(pathWrapper);
+                //      var position = pathWrapper.nodePositions[nodeIndex];
+                //      return pivotNodeTranslate + position * (NODE_WIDTH + EDGE_SIZE) + NODE_WIDTH / 2;
+                //    },
+                //
+                //    cy: function (d) {
+                //      return scaleY(d);
+                //    }
+                //  });
+                //
+                //allPoints.exit().remove();
 
               });
 
