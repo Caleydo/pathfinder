@@ -11,8 +11,8 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
 
     var sortingManager = aggregateSorting.sortingManager;
 
-    function SetCombination(setIds, pathUpdateListener) {
-      a.CombinationAggregate.call(this, setIds, pathUpdateListener);
+    function SetCombination(setIds, pathUpdateListener, listView) {
+      a.CombinationAggregate.call(this, setIds, pathUpdateListener, listView);
     }
 
     SetCombination.prototype = Object.create(a.CombinationAggregate.prototype);
@@ -55,8 +55,8 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
     }
 
 
-    function SetComboList() {
-      a.CombinationAggregateList.call(this);
+    function SetComboList(listView) {
+      a.CombinationAggregateList.call(this, listView);
 
       var that = this;
     }
@@ -123,7 +123,7 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
 
       function addSetToCombo(path, currentEdgeIndex, currentSetCombination, mySet, currentPathCombination) {
         var combo = currentSetCombination;
-        var pathCombo = currentPathCombination.slice(0)
+        var pathCombo = currentPathCombination.slice(0);
         pathCombo.push(mySet);
         if (currentSetCombination.length === 0 || (currentSetCombination.length > 0 && currentSetCombination[currentSetCombination.length - 1] !== mySet)) {
           combo = currentSetCombination.slice(0);
@@ -150,7 +150,7 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
         }
         var setCombo = new SetCombination(combination, function (list) {
           that.updateAggregateList();
-        });
+        }, that.listView);
         setCombo.addPath(path, pathCombination);
         that.aggregates.push(setCombo);
       }

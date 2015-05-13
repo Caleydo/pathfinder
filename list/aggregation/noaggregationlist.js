@@ -2,9 +2,9 @@ define(['jquery', 'd3', '../../listeners', '../pathlist', '../../sorting', '../.
   function ($, d3, listeners, PathList, sorting, setInfo, selectionUtil, pathUtil, config, aggregateSorting, aggregate) {
     'use strict';
 
-    function NoAggregationList() {
-      aggregate.AggregateList.call(this);
-      this.pathList = new PathList();
+    function NoAggregationList(listView) {
+      aggregate.AggregateList.call(this, listView);
+      this.pathList = new PathList(listView);
     }
 
     NoAggregationList.prototype = Object.create(aggregate.AggregateList.prototype);

@@ -1,15 +1,16 @@
 /**
  * Created by Christian on 23.02.2015.
  */
-define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist', './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview'],
-  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView) {
+define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist',
+    './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview', '../config', '../visibilitysettings'],
+  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView, config, visibilitySettings) {
 
-    var listView = new view("#pathlist");
+    //var listView = new view("#pathlist");
 
     function ListView() {
       view.call(this, "#pathlist");
       this.paths = [];
-      this.aggregateList = new NoAggregationList();
+      this.aggregateList = new NoAggregationList(this);
     }
 
     ListView.prototype = Object.create(view.prototype);
@@ -33,11 +34,11 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
       svg.append("marker")
         .attr("id", "arrowRight")
         .attr("viewBox", "0 0 10 10")
-        .attr("refX", "0")
+        .attr("refX", "9")
         .attr("refY", "5")
         .attr("markerUnits", "strokeWidth")
-        .attr("markerWidth", "4")
-        .attr("markerHeight", "3")
+        .attr("markerWidth", "8")
+        .attr("markerHeight", "6")
         .attr("orient", "auto")
         .append("path")
         .attr("d", "M 0 0 L 10 5 L 0 10 z");
@@ -48,6 +49,24 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
         .attr("y", 0)
         .attr("width", 90)
         .attr("height", 20);
+
+      var nodeWidth = config.getNodeWidth();
+      var nodeHeight = config.getNodeHeight();
+
+      svg.append("clipPath")
+        .attr("id", "pathNodeClipPath")
+        .append("rect")
+        .attr("x", 3)
+        .attr("y", 0)
+        .attr("width", nodeWidth - 6)
+        .attr("height", nodeHeight);
+
+      this.textSizeDomElement = svg.append("text")
+        .attr('class', "textSizeElement")
+        .attr("x", 0)
+        .attr("y", 0)
+        .style("font", "10px sans-serif")
+        .style("opacity", 0);
 
 
       var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
@@ -110,7 +129,7 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
       function changeAggregation(constructor) {
         that.aggregateList.destroy();
         aggregateSorting.sortingManager.reset();
-        that.aggregateList = new constructor();
+        that.aggregateList = new constructor(that);
         that.aggregateList.init();
         that.aggregateList.addUpdateListener(function (list) {
           that.updateViewSize();
@@ -136,7 +155,11 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
       //});
 
       $("#hideNonRelSets").on("click", function () {
-        listeners.notify("UPDATE_NODE_SET_VISIBILITY", !this.checked);
+        visibilitySettings.showNonEdgeSets(!this.checked);
+      });
+
+      $("#alignPathNodes").on("click", function () {
+        listeners.notify("ALIGN_PATH_NODES", this.checked);
       });
 
       //$("#reverseAggregateSorting").on("click", function () {
@@ -149,6 +172,14 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
         that.updateViewSize();
       });
 
+    };
+
+    ListView.prototype.getTextWidth = function (string) {
+
+      this.textSizeDomElement
+        .text(string);
+
+      return this.textSizeDomElement.node().getBBox().width;
     };
 
     ListView.prototype.getMinSize = function () {

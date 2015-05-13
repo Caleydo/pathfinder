@@ -1,8 +1,8 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', 'font-awesome', 'bootstrap'],
-  function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting) {
+require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore', './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil', 'font-awesome', 'bootstrap'],
+  function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting, statisticsUtil) {
 
     'use strict';
 
@@ -16,6 +16,8 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
 
 
     $(document).ready(function () {
+
+        statisticsUtil.statisticsOf([0, NaN, 5, 3, NaN, 7, 3]);
 
         ServerSearch.on({
           query_start: function () {
@@ -56,22 +58,22 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
           listView.init().then(function () {
 
             pathStatsView.init();
-            //C.getJSON("dump/testpaths1.json", function (paths) {
-            //
-            //  var i = 0;
-            //
-            //  var interval = setInterval(function () {
-            //
-            //    if (i >= paths.length) {
-            //      clearInterval(interval);
-            //      return;
-            //    }
-            //    addPath(paths[i]);
-            //    i++;
-            //
-            //  }, 100);
-            //
-            //});
+            C.getJSON("dump/testpaths1.json", function (paths) {
+
+              var i = 0;
+
+              var interval = setInterval(function () {
+
+                if (i >= paths.length) {
+                  clearInterval(interval);
+                  return;
+                }
+                addPath(paths[i]);
+                i++;
+
+              }, 100);
+
+            });
           });
 
 
@@ -114,8 +116,9 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
 
           for (var i = 0; i < paths.length; i++) {
             paths[i].id = currentPathId++;
+            dataStore.addPath(paths[i]);
           }
-          dataStore.paths = paths;
+          //dataStore.paths = paths;
           pathQuery.update();
 
 

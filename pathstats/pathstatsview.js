@@ -68,6 +68,11 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           that.updateToAllPaths();
         }
       }, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
+
+
+      listeners.add(function (showNonEdgeSets) {
+        that.updateView();
+      }, "UPDATE_SET_VISIBILITY");
     };
 
 
@@ -453,10 +458,10 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
     PathStatsView.prototype.renderStats = function (rootSelector, statTypes, statSelectionFunction, idType) {
 
-      var statTypeGroup = d3.selectAll(rootSelector)
-        .attr({
-          transform: hierarchyElements.transformFunction
-        });
+      var statTypeGroup = d3.selectAll(rootSelector);
+        //.attr({
+        //  transform: hierarchyElements.transformFunction
+        //});
       var that = this;
 
       var allStatTypes = statTypeGroup.selectAll("g.statTypes")

@@ -14,11 +14,11 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
     var TYPE_NODE_RADIUS_Y = 15;
     var NODE_TYPE_COMBO_HEIGHT = 2 * TYPE_NODE_RADIUS_Y + 2 * V_SPACING;
 
-    function Aggregate(pathUpdateListener) {
+    function Aggregate(pathUpdateListener, listView) {
       this.id = currentAggregateId++;
       this.collapsed = true;
       this.paths = [];
-      this.pathList = new PathList();
+      this.pathList = new PathList(listView);
       this.pathList.init();
       this.pathList.addUpdateListener(pathUpdateListener);
     }
@@ -56,8 +56,8 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
       }
     };
 
-    function CombinationAggregate(comboIds, pathUpdateListener) {
-      Aggregate.call(this, pathUpdateListener);
+    function CombinationAggregate(comboIds, pathUpdateListener, listView) {
+      Aggregate.call(this, pathUpdateListener, listView);
 
       var colors = ["rgb(150,150,150)", "rgb(200,200,200)"];
       var colorIndex = 0;
@@ -167,7 +167,8 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
 
 //-------------------------
 
-    function AggregateList() {
+    function AggregateList(listView) {
+      this.listView = listView;
       this.aggregates = [];
       this.selectionListeners = [];
       this.updateListeners = [];
@@ -509,8 +510,8 @@ define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', 
     }
 
 
-    function CombinationAggregateList() {
-      AggregateList.call(this);
+    function CombinationAggregateList(listView) {
+      AggregateList.call(this, listView);
     }
 
     CombinationAggregateList.prototype = Object.create(AggregateList.prototype);

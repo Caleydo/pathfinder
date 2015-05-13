@@ -1,5 +1,10 @@
 define(function () {
 
+  var DEFAULT_NODE_WIDTH = 50;
+  var DEFAULT_NODE_HEIGHT = 20;
+
+  var DEFAULT_EDGE_SIZE = 50;
+
   var config = {};
   var nodeNamePropertyNames = {};
 
@@ -90,7 +95,7 @@ define(function () {
       return false;
     },
 
-    getEdgeSetProperties: function(edge) {
+    getEdgeSetProperties: function (edge) {
       var sets = edgeSets[edge.type];
       if (typeof sets !== "undefined") {
         return Object.keys(sets);
@@ -114,17 +119,62 @@ define(function () {
     },
 
     isSetEdge: function (edge) {
-      var propertyKeys = Object.keys(edge.properties);
 
-      for(var i = 0; i < propertyKeys.length; i++) {
+      var edgeConfig = this.getEdgeConfig(edge);
+      if (typeof edgeConfig === "undefined") {
+        return false;
+      }
+
+      var propertyKeys = Object.keys(edgeConfig.properties);
+
+      for (var i = 0; i < propertyKeys.length; i++) {
         var key = propertyKeys[i];
-        var propType = edge.properties[key].type;
+        var propType = edgeConfig.properties[key].type;
         if (typeof propType !== "undefined" && propType === "flag") {
-          return true;
+          var edgeProperty = edge.properties[key];
+          if (typeof edgeProperty !== "undefined" && edgeProperty === true)
+            return true;
         }
       }
 
       return false;
+    },
+
+    isNetworkEdge: function (edge) {
+      var edgeConfig = this.getEdgeConfig(edge);
+      if (typeof edgeConfig === "undefined") {
+        return false;
+      }
+
+      var propertyKeys = Object.keys(edgeConfig.properties);
+
+      for (var i = 0; i < propertyKeys.length; i++) {
+        var key = propertyKeys[i];
+        var property = edgeConfig.properties[key];
+        if (typeof property !== "undefined" && property === "flag_network") {
+          var edgeProperty = edge.properties[key];
+          if (typeof edgeProperty !== "undefined" && edgeProperty === true)
+            return true;
+
+        }
+      }
+
+      return false;
+    },
+
+    getNodeWidth: function () {
+      var nodeWidth = config.settings["node_width"];
+      return (typeof nodeWidth === "undefined") ? DEFAULT_NODE_WIDTH : nodeWidth;
+    },
+
+    getNodeHeight: function () {
+      var nodeHeight = config.settings["node_height"];
+      return (typeof nodeWidth === "undefined") ? DEFAULT_NODE_HEIGHT : nodeHeight;
+    },
+
+    getEdgeSize: function () {
+      var edgeSize = config.settings["edge_size"];
+      return (typeof edgeSize === "undefined") ? DEFAULT_EDGE_SIZE : edgeSize;
     },
 
     getNodeConfig: function (node) {
@@ -136,6 +186,15 @@ define(function () {
           if (nodeConfig["node_label"] === currentLabel) {
             return nodeConfig;
           }
+        }
+      }
+    },
+
+    getEdgeConfig: function (edge) {
+      for (var j = 0; j < config.edges.length; j++) {
+        var edgeConfig = config.edges[j];
+        if (edgeConfig["label"] === edge.type) {
+          return edgeConfig;
         }
       }
     },

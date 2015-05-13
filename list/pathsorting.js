@@ -1,4 +1,4 @@
-define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], function (sorting, pathUtil, q, listeners) {
+define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '../query/pathquery'], function (sorting, pathUtil, q, listeners, pathQuery) {
     var SortingStrategy = sorting.SortingStrategy;
 
     //TODO: fetch amount of sets from server
@@ -166,9 +166,8 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
     };
 
 
-    function PathQuerySortingStrategy(pathQuery) {
+    function PathQuerySortingStrategy() {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Filtered paths");
-      this.pathQuery = pathQuery;
       this.ascending = false;
     }
 
@@ -179,8 +178,8 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
 
     PathQuerySortingStrategy.prototype.compare = function (a, b) {
 
-      var scoreA = this.pathQuery.match(a.path) === true ? 1 : 0;
-      var scoreB = this.pathQuery.match(b.path) === true ? 1 : 0;
+      var scoreA = pathQuery.isPathFiltered(a.path.id) === true ? 0 : 1;
+      var scoreB = pathQuery.isPathFiltered(b.path.id) === true ? 0 : 1;
       if (this.ascending) {
         return d3.ascending(scoreA, scoreB);
       }
@@ -205,7 +204,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
       //
       //setPresenceStrategy: new SetPresenceSortingStrategy([]),
 
-      pathQueryStrategy: new PathQuerySortingStrategy(new q.PathQuery())
+      pathQueryStrategy: new PathQuerySortingStrategy()
 
     };
 
@@ -248,7 +247,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners'], f
     return {
       init: function () {
         listeners.add(function (query) {
-          sortingStrategies.pathQueryStrategy.setQuery(query.getQuery());
+          //sortingStrategies.pathQueryStrategy.setQuery(query.getQuery());
           //sortingManager.addOrReplace(sortingStrategies.getPathQueryStrategy(query.getQuery()));
           listeners.notify("UPDATE_PATH_SORTING", sortingManager.currentComparator);
         }, listeners.updateType.QUERY_UPDATE);
