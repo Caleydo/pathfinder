@@ -193,7 +193,7 @@ define(function () {
 
     getNodeType: function (node) {
       var nodeConfig = this.getNodeConfig(node);
-      var type = nodeConfig["node_label"];
+      var type = nodeConfig ? nodeConfig["node_label"] : undefined;
       if (typeof type === "undefined") {
         return "Unknown";
       }
