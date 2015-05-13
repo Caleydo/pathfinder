@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../pathlist', './aggregatesorting', '../../listeners', '../../selectionutil', '../../pathutil', '../../query/pathquery', '../../uiutil', '../../sorting'],
+define(['jquery', 'd3', '../path/pathlist', './aggregatesorting', '../../listeners', '../../selectionutil', '../../pathutil', '../../query/pathquery', '../../uiutil', '../../sorting'],
   function ($, d3, PathList, a, listeners, selectionUtil, pathUtil, pathQuery, uiUtil, sorting) {
 
     var currentAggregateId = 0;

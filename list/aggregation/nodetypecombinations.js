@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../../config', '../pathlist', './aggregate', '../../selectionutil'], function ($, d3, config, PathList, a, selectionUtil) {
+define(['jquery', 'd3', '../../config', '../path/pathlist', './aggregate', '../../selectionutil'], function ($, d3, config, PathList, a, selectionUtil) {
 
   var CombinationAggregate = a.CombinationAggregate;
 
