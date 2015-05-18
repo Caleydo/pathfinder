@@ -28,7 +28,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
   DataGroupWrapper.prototype = Object.create(hierarchyElements.HierarchyElement.prototype);
 
   DataGroupWrapper.prototype.getBaseHeight = function () {
-    return s.isVertical ? DATA_AXIS_SIZE + 2 * DATA_GROUP_V_PADDING : BOX_WIDTH + 2 * DATA_GROUP_V_PADDING;
+    return s.isTiltAttributes() ? DATA_AXIS_SIZE + 2 * DATA_GROUP_V_PADDING : BOX_WIDTH + 2 * DATA_GROUP_V_PADDING;
   };
 
 
@@ -147,8 +147,8 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                 .attr({
                   x: s.SET_TYPE_INDENT,
                   y: DATA_GROUP_V_PADDING,
-                  width: that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isVertical ? 0 : s.EDGE_SIZE / 2),
-                  height: s.isVertical ? DATA_AXIS_SIZE : BOX_WIDTH
+                  width: that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
+                  height: s.isTiltAttributes() ? DATA_AXIS_SIZE : BOX_WIDTH
                 })
                 .style({
                   //stroke: "black",
@@ -196,8 +196,8 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
               d3.select(this).select("rect.background")
                 .transition()
                 .attr({
-                  width: that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isVertical ? 0 : s.EDGE_SIZE / 2),
-                  height: s.isVertical ? DATA_AXIS_SIZE : BOX_WIDTH
+                  width: that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
+                  height: s.isTiltAttributes() ? DATA_AXIS_SIZE : BOX_WIDTH
                 });
 
 
@@ -296,12 +296,12 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       .orient("top")
       .ticks(3);
 
-    var allAxes = $dataset.selectAll("g.boxPlotAxis")
+    var allAxes = $dataset.selectAll("g.boxPlotAxisX")
       .data(pathWrapper.path.nodes);
 
     allAxes.enter()
       .append("g")
-      .classed("boxPlotAxis", true)
+      .classed("boxPlotAxisX", true)
       .attr({
         transform: function (d, i) {
           return "translate(" + (that.pathList.getNodePositionX(pathWrapper, i, true) - axisSize / 2) + "," + DATASET_HEIGHT + ")"
@@ -315,10 +315,10 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
     var that = this;
     var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
-    var allAxes = $dataset.selectAll("g.boxPlotAxis")
+    var allAxes = $dataset.selectAll("g.boxPlotAxisX")
       .data(pathWrapper.path.nodes);
 
-    if(dataset.collapsed) {
+    if (dataset.collapsed) {
       allAxes.remove();
       return;
     } else {
@@ -333,6 +333,10 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       });
 
     allAxes.exit().remove();
+  };
+
+  HDataRenderer.prototype.onDataGroupUpdate = function ($group, pathWrapper, dataset, group, groupIndex) {
+      $group.selectAll("g.boxPlotAxisY").remove();
   };
 
   HDataRenderer.prototype.onNodeDataEnter = function ($nodeData, pathWrapper, dataset, group, node, nodeIndex) {
@@ -447,44 +451,45 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         },
         y2: BOX_WIDTH
       });
+    var stats = dataStore.getStatsForNode(node, dataset.name, group.name);
 
-    //updateWhisker($nodeData, "lower", pathWrapper, nodeIndex, that.pathList);
-    //updateWhisker($nodeData, "upper", pathWrapper, nodeIndex, that.pathList);
-    //
-    //var allPoints = $nodeData.selectAll("g.dataPoint")
-    //  .data(dataStore.getDataForNode(node, dataset.name, group.name));
-    //
-    //var point = allPoints.enter()
-    //  .append("g")
-    //  .classed("dataPoint", true);
-    //
-    //point.append("circle")
-    //  .attr({
-    //
-    //    cx: that.pathList.getNodePositionX(pathWrapper, nodeIndex, true),
-    //
-    //    cy: function (d) {
-    //      return scaleY(d);
-    //    },
-    //    r: 1
-    //
-    //  })
-    //  .style({
-    //    opacity: 2,
-    //    fill: "red"
-    //  });
-    //
-    //allPoints.selectAll("circle")
-    //  .transition()
-    //  .attr({
-    //    cx: that.pathList.getNodePositionX(pathWrapper, nodeIndex, true),
-    //
-    //    cy: function (d) {
-    //      return scaleY(d);
-    //    }
-    //  });
-    //
-    //allPoints.exit().remove();
+    updateWhiskerH($nodeData, "lower", scaleX, stats.iqrMin, stats.quartile25);
+    updateWhiskerH($nodeData, "upper", scaleX, stats.iqrMax, stats.quartile75);
+
+    var allPoints = $nodeData.selectAll("g.dataPoint")
+      .data(dataStore.getDataForNode(node, dataset.name, group.name));
+
+    var point = allPoints.enter()
+      .append("g")
+      .classed("dataPoint", true);
+
+    point.append("circle")
+      .attr({
+
+        cy: BOX_WIDTH / 2,
+
+        cx: function (d) {
+          return scaleX(d);
+        },
+        r: 1
+
+      })
+      .style({
+        opacity: 2,
+        fill: "red"
+      });
+
+    allPoints.selectAll("circle")
+      .transition()
+      .attr({
+        cy: BOX_WIDTH / 2,
+
+        cx: function (d) {
+          return scaleX(d);
+        }
+      });
+
+    allPoints.exit().remove();
 
   };
 
@@ -495,6 +500,10 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
   VDataRenderer.prototype = Object.create(DataRenderer.prototype);
 
+  VDataRenderer.prototype.onDatasetUpdate = function ($dataset, pathWrapper, dataset, datasetIndex) {
+    $dataset.selectAll("g.boxPlotAxisX").remove();
+  };
+
   VDataRenderer.prototype.onDataGroupEnter = function ($group, pathWrapper, dataset, group, groupIndex) {
     var that = this;
     var scaleY = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([DATA_AXIS_SIZE, 0]);
@@ -504,10 +513,27 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       .ticks(3);
 
     $group.append("g")
-      .classed("boxPlotAxis", true)
+      .classed("boxPlotAxisY", true)
       .attr("transform", "translate(" + s.NODE_START + "," + DATA_GROUP_V_PADDING + ")")
       .call(yAxis);
   };
+
+  VDataRenderer.prototype.onDataGroupUpdate = function ($group, pathWrapper, dataset, group, groupIndex) {
+    var that = this;
+    var scaleY = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([DATA_AXIS_SIZE, 0]);
+    var yAxis = d3.svg.axis()
+      .scale(scaleY)
+      .orient("left")
+      .ticks(3);
+
+    if ($group.select("g.boxPlotAxisY").empty()) {
+      $group.append("g")
+        .classed("boxPlotAxisY", true)
+        .attr("transform", "translate(" + s.NODE_START + "," + DATA_GROUP_V_PADDING + ")")
+        .call(yAxis);
+    }
+  };
+
 
   VDataRenderer.prototype.onNodeDataEnter = function ($nodeData, pathWrapper, dataset, group, node, nodeIndex) {
     var that = this;
@@ -515,7 +541,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     var scaleY = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([DATA_AXIS_SIZE, 0]);
 
     $nodeData.attr({
-      transform: "translate(0," + DATA_GROUP_V_PADDING + ")"
+      transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
     });
 
     $nodeData.append("title")
@@ -536,7 +562,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       .classed("box", true)
       .attr({
         x: function (d) {
-          return that.pathList.getNodePositionX(pathWrapper, nodeIndex, true) - BOX_WIDTH / 2;
+          return -BOX_WIDTH / 2;
         },
         y: function (d) {
           var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
@@ -557,14 +583,14 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       .classed("median", true)
       .attr({
         x1: function (d) {
-          return that.pathList.getNodePositionX(pathWrapper, nodeIndex, true) - BOX_WIDTH / 2;
+          return -BOX_WIDTH / 2;
         },
         y1: function (d) {
           var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
           return scaleY(stats.median);
         },
         x2: function (d) {
-          return that.pathList.getNodePositionX(pathWrapper, nodeIndex, true) + BOX_WIDTH / 2;
+          return BOX_WIDTH / 2;
         },
         y2: function (d) {
           var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
@@ -586,11 +612,16 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
     var scaleY = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([DATA_AXIS_SIZE, 0]);
 
+    $nodeData.transition()
+      .attr({
+        transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
+      });
+
     $nodeData.select("rect.box")
       .transition()
       .attr({
         x: function (d) {
-          return that.pathList.getNodePositionX(pathWrapper, nodeIndex, true) - BOX_WIDTH / 2;
+          return -BOX_WIDTH / 2;
         },
         y: function (d) {
           var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
@@ -609,14 +640,14 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       .transition()
       .attr({
         x1: function (d) {
-          return that.pathList.getNodePositionX(pathWrapper, nodeIndex, true) - BOX_WIDTH / 2;
+          return -BOX_WIDTH / 2;
         },
         y1: function (d) {
           var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
           return scaleY(stats.median);
         },
         x2: function (d) {
-          return that.pathList.getNodePositionX(pathWrapper, nodeIndex, true) + BOX_WIDTH / 2;
+          return BOX_WIDTH / 2;
         },
         y2: function (d) {
           var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
@@ -624,8 +655,10 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         }
       });
 
-    updateWhiskerV($nodeData, "lower", pathWrapper, nodeIndex, that.pathList);
-    updateWhiskerV($nodeData, "upper", pathWrapper, nodeIndex, that.pathList);
+    var stats = dataStore.getStatsForNode(node, dataset.name, group.name);
+
+    updateWhiskerV($nodeData, "lower", scaleY, stats.iqrMin, stats.quartile25);
+    updateWhiskerV($nodeData, "upper", scaleY, stats.iqrMax, stats.quartile75);
 
     var allPoints = $nodeData.selectAll("g.dataPoint")
       .data(dataStore.getDataForNode(node, dataset.name, group.name));
@@ -637,7 +670,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     point.append("circle")
       .attr({
 
-        cx: that.pathList.getNodePositionX(pathWrapper, nodeIndex, true),
+        cx: 0,
 
         cy: function (d) {
           return scaleY(d);
@@ -653,7 +686,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     allPoints.selectAll("circle")
       .transition()
       .attr({
-        cx: that.pathList.getNodePositionX(pathWrapper, nodeIndex, true),
+        cx: 0,
 
         cy: function (d) {
           return scaleY(d);
@@ -665,15 +698,15 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
   };
 
 
-  function appendWhiskerV(parent, iqr, quartile, classNamePrefix, scaleY, pathWrapper, nodeIndex, pathList) {
+  function appendWhiskerV(parent, iqr, quartile, classNamePrefix, scaleY) {
     if (!isNaN(iqr)) {
 
       parent.append("line")
         .classed(classNamePrefix + "Whisker", true)
         .attr({
-          x1: pathList.getNodePositionX(pathWrapper, nodeIndex, true) - BOX_WIDTH / 4,
+          x1: -BOX_WIDTH / 4,
           y1: scaleY(iqr),
-          x2: pathList.getNodePositionX(pathWrapper, nodeIndex, true) + BOX_WIDTH / 4,
+          x2: BOX_WIDTH / 4,
           y2: scaleY(iqr)
         })
         .style({
@@ -683,9 +716,9 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       parent.append("line")
         .classed(classNamePrefix + "WhiskerConnector", true)
         .attr({
-          x1: pathList.getNodePositionX(pathWrapper, nodeIndex, true),
+          x1: 0,
           y1: scaleY(iqr),
-          x2: pathList.getNodePositionX(pathWrapper, nodeIndex, true),
+          x2: 0,
           y2: scaleY(quartile)
         })
         .style({
@@ -694,22 +727,26 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     }
   }
 
-  function updateWhiskerV(parent, classPrefix, pathWrapper, nodeIndex, pathList) {
+  function updateWhiskerV(parent, classPrefix, scaleY, iqr, quartile) {
     parent.select("line." + classPrefix + "Whisker")
       .transition()
       .attr({
-        x1: pathList.getNodePositionX(pathWrapper, nodeIndex, true) - BOX_WIDTH / 4,
-        x2: pathList.getNodePositionX(pathWrapper, nodeIndex, true) + BOX_WIDTH / 4
+        x1: -BOX_WIDTH / 4,
+        y1: scaleY(iqr),
+        x2: BOX_WIDTH / 4,
+        y2: scaleY(iqr)
       });
     parent.select("line." + classPrefix + "WhiskerConnector")
       .transition()
       .attr({
-        x1: pathList.getNodePositionX(pathWrapper, nodeIndex, true),
-        x2: pathList.getNodePositionX(pathWrapper, nodeIndex, true)
+        x1: 0,
+        y1: scaleY(iqr),
+        x2: 0,
+        y2: scaleY(quartile)
       });
   }
 
-  function appendWhiskerH(parent, iqr, quartile, classNamePrefix, scaleX, pathWrapper, nodeIndex, pathList) {
+  function appendWhiskerH(parent, iqr, quartile, classNamePrefix, scaleX) {
     if (!isNaN(iqr)) {
 
       parent.append("line")
@@ -738,20 +775,24 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     }
   }
 
-//function updateWhiskerH(parent, classPrefix, pathWrapper, nodeIndex, pathList) {
-//  parent.select("line." + classPrefix + "Whisker")
-//    .transition()
-//    .attr({
-//      x1: scaleX(iqr),
-//      x1: scaleX(iqr)
-//    });
-//  parent.select("line." + classPrefix + "WhiskerConnector")
-//    .transition()
-//    .attr({
-//      x1: scaleX(iqr),
-//      x2: scaleX(quartile)
-//    });
-//}
+  function updateWhiskerH(parent, classPrefix, scaleX, iqr, quartile) {
+    parent.select("line." + classPrefix + "Whisker")
+      .transition()
+      .attr({
+        x1: scaleX(iqr),
+        y1: BOX_WIDTH / 4,
+        x2: scaleX(iqr),
+        y2: 3 * BOX_WIDTH / 4
+      });
+    parent.select("line." + classPrefix + "WhiskerConnector")
+      .transition()
+      .attr({
+        x1: scaleX(iqr),
+        y1: BOX_WIDTH / 2,
+        x2: scaleX(quartile),
+        y2: BOX_WIDTH / 2
+      });
+  }
 
   function DatasetRenderer(pathList) {
     this.vRenderer = new VDataRenderer(pathList);
@@ -762,7 +803,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
   DatasetRenderer.prototype = {
 
     render: function () {
-      if (s.isVertical) {
+      if (s.isTiltAttributes()) {
         this.vRenderer.render();
       } else {
         this.hRenderer.render();

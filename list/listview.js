@@ -2,8 +2,8 @@
  * Created by Christian on 23.02.2015.
  */
 define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist',
-    './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview', '../config', '../visibilitysettings'],
-  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView, config, visibilitySettings) {
+    './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview', '../config', '../visibilitysettings', './path/settings'],
+  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView, config, visibilitySettings, pathSettings) {
 
     //var listView = new view("#pathlist");
 
@@ -159,7 +159,13 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
       });
 
       $("#alignPathNodes").on("click", function () {
-        listeners.notify("ALIGN_PATH_NODES", this.checked);
+        pathSettings.alignPathNodes(this.checked);
+        //listeners.notify("ALIGN_PATH_NODES", this.checked);
+      });
+
+      $("#tiltAttributes").on("click", function () {
+        pathSettings.tiltAttributes(this.checked);
+        //listeners.notify("TILT_ATTRIBUTES", this.checked);
       });
 
       //$("#reverseAggregateSorting").on("click", function () {

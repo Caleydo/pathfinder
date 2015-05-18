@@ -1,6 +1,6 @@
 define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '../../selectionutil',
-    '../pathsorting', '../../pathutil', '../../query/pathquery', '../../datastore', '../../config', '../../listoverlay', '../../query/queryview', '../../query/queryUtil', '../../hierarchyelements', './settings', './datasetrenderer'],
-  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config, ListOverlay, queryView, queryUtil, hierarchyElements, s, dr) {
+    '../pathsorting', '../../pathutil', '../../query/pathquery', '../../datastore', '../../config', '../../listoverlay', '../../query/queryview', '../../query/queryUtil', '../../hierarchyelements', './settings', './datasetrenderer', '../../visibilitysettings'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config, ListOverlay, queryView, queryUtil, hierarchyElements, s, dr, vs) {
     'use strict';
 
 
@@ -20,7 +20,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       //Defines whether this set can be shown. Only considers own data to determine that, not e.g. whether its set type is collapsed.
       canBeShown: function () {
-        return s.showNodeSets || (!s.showNodeSets && this.relIndices.length > 0);
+        return vs.isShowNonEdgeSets() || (!vs.isShowNonEdgeSets() && this.relIndices.length > 0);
       }
     };
 
@@ -48,7 +48,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       },
 
       canBeShown: function () {
-        return s.showNodeSets || (!s.showNodeSets && this.relIndices.length > 0);
+        return vs.isShowNonEdgeSets() || (!vs.isShowNonEdgeSets() && this.relIndices.length > 0);
       }
     };
 
@@ -331,13 +331,17 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       var that = this;
 
       this.alignPathNodesUpdateListener = function (align) {
-        s.alignPathNodes = align;
+        //s.alignPathNodes = align;
 
         that.renderPaths();
       };
 
+      this.tiltAttributesListener = function (tilt) {
+        that.renderPaths();
+      };
+
       this.setVisibilityUpdateListener = function (showSets) {
-        s.showNodeSets = showSets;
+        //s.showNodeSets = showSets;
 
         if (typeof that.parent === "undefined") {
           return;
@@ -465,10 +469,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         s.EDGE_SIZE = config.getEdgeSize();
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.add(this.collapseElementListener, s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE);
-        listeners.add(this.setVisibilityUpdateListener, s.pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        listeners.add(this.setVisibilityUpdateListener, vs.updateTypes.UPDATE_NODE_SET_VISIBILITY);
         listeners.add(this.alignPathNodesUpdateListener, s.pathListUpdateTypes.ALIGN_PATH_NODES);
         listeners.add(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
+        listeners.add(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.add(this.sortUpdateListener, pathSorting.updateType);
       },
 
@@ -723,11 +728,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         this.removePaths();
         this.updateListeners = [];
         listeners.remove(this.collapseElementListener, s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE);
-        listeners.remove(this.setVisibilityUpdateListener, s.pathListUpdateTypes.UPDATE_NODE_SET_VISIBILITY);
+        listeners.remove(this.setVisibilityUpdateListener, vs.updateTypes.UPDATE_NODE_SET_VISIBILITY);
         listeners.remove(this.alignPathNodesUpdateListener, s.pathListUpdateTypes.ALIGN_PATH_NODES);
         listeners.remove(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         listeners.remove(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
+        listeners.remove(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.remove(this.sortUpdateListener, pathSorting.updateType);
       },
 
@@ -984,9 +990,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       getPivotNodeAlignedTranslationX: function (pathWrapper) {
 
-        var nodeStart = s.NODE_START + (s.isVertical ? 0 : s.EDGE_SIZE / 2);
+        var nodeStart = s.NODE_START + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
 
-        if (s.alignPathNodes) {
+        if (s.isAlignPathNodes()) {
           return nodeStart;
         }
 
@@ -1106,7 +1112,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           pathWrapper.nodePositions = d3.range(0, pathWrapper.path.nodes.length);
         });
 
-        if (!s.alignPathNodes) {
+        if (!s.isAlignPathNodes()) {
           return;
         }
 

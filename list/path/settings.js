@@ -1,4 +1,8 @@
-define([], function () {
+define(["../../listeners"], function (listeners) {
+
+  var alignPathNodes = false;
+  var tiltAttributes = false;
+
 
   return {
     NODE_START: 90,
@@ -14,13 +18,28 @@ define([], function () {
 
     pathListUpdateTypes: {
       ALIGN_PATH_NODES: "ALIGN_PATH_NODES",
-      UPDATE_NODE_SET_VISIBILITY: "UPDATE_SET_VISIBILITY",
+      TILT_ATTRIBUTES: "TILT_ATTRIBUTES",
       COLLAPSE_ELEMENT_TYPE: "COLLAPSE_ELEMENT_TYPE"
     },
 
-    alignPathNodes: false,
-    showNodeSets: false,
-    isVertical: false
+    alignPathNodes: function (align) {
+      alignPathNodes = align;
+      listeners.notify(this.pathListUpdateTypes.ALIGN_PATH_NODES, align);
+    },
+
+    isAlignPathNodes: function() {
+      return alignPathNodes;
+    },
+
+    tiltAttributes: function (tilt) {
+      tiltAttributes = tilt;
+      listeners.notify(this.pathListUpdateTypes.TILT_ATTRIBUTES, tilt);
+    },
+
+    isTiltAttributes: function() {
+      return tiltAttributes;
+    }
+
 
   };
 

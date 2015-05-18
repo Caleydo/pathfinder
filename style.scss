@@ -281,13 +281,15 @@ path.crossConnection.selected, line.stub.selected {
 
 }
 
-g.boxPlotAxis {
+g.boxPlotAxisX, g.boxPlotAxisY {
   path, line {
     fill: none;
     stroke: $defaultStrokeColor;
     shape-rendering: crispEdges;
   }
 }
+
+
 
 .collapseIcon {
   font-family: FontAwesome;
