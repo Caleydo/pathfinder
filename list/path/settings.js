@@ -19,7 +19,8 @@ define([], function () {
     },
 
     alignPathNodes: false,
-    showNodeSets: false
+    showNodeSets: false,
+    isVertical: false
 
   };
 

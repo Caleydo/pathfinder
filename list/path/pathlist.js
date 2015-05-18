@@ -4,7 +4,6 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
     'use strict';
 
 
-
     var currentSetTypeId = 0;
 
     function SetRep(setId, type) {
@@ -985,8 +984,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       getPivotNodeAlignedTranslationX: function (pathWrapper) {
 
+        var nodeStart = s.NODE_START + (s.isVertical ? 0 : s.EDGE_SIZE / 2);
+
         if (s.alignPathNodes) {
-          return s.NODE_START;
+          return nodeStart;
         }
 
         var index = -1;
@@ -998,10 +999,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         }
 
         if (index === -1) {
-          return s.NODE_START;
+          return nodeStart;
         }
 
-        return s.NODE_START + (this.pivotNodeIndex - index) * (s.NODE_WIDTH + s.EDGE_SIZE);
+        return nodeStart + (this.pivotNodeIndex - index) * (s.NODE_WIDTH + s.EDGE_SIZE);
       },
 
       getPivotNodeAlignedTransform: function (pathWrapper) {
@@ -1733,7 +1734,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .on("click", function (d) {
             var collapsed = !d.setType.collapsed;
             if (d3.event.ctrlKey) {
-              listeners.notify(s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE, {type: d.setType.type, collapsed: collapsed});
+              listeners.notify(s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE, {
+                type: d.setType.type,
+                collapsed: collapsed
+              });
             } else {
               d.setType.collapsed = collapsed;
               d3.select(this).text(d.setType.collapsed ? "\uf0da" : "\uf0dd");
