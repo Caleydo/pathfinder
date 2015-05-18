@@ -1,6 +1,93 @@
-define(['./listeners', './query/pathquery', './config', './statisticsutil'], function (listeners, pathQuery, config, statisticsUtil) {
+define(['d3', './listeners', './query/pathquery', './config', './statisticsutil', './sorting'], function (d3, listeners, pathQuery, config, statisticsUtil, sorting) {
+
+  var SortingStrategy = sorting.SortingStrategy;
+
+  function DatasetMedianSortingStrategy(datasetName) {
+    SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + ": Median");
+    this.datasetName = datasetName;
+  }
+
+  DatasetMedianSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+
+  DatasetMedianSortingStrategy.prototype.compare = function (a, b) {
+    var statsA = getPathDatasetStats(a.path, this.datasetName);
+    var statsB = getPathDatasetStats(b.path, this.datasetName);
+    if (this.ascending) {
+      return d3.ascending(statsA.median, statsB.median);
+    }
+    return d3.descending(statsA.median, statsB.median);
+  };
+
+  function GroupMedianSortingStrategy(datasetName, groupName) {
+    SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + " - " + groupName + ": Median");
+    this.datasetName = datasetName;
+    this.groupName = groupName;
+  }
+
+  GroupMedianSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+
+  GroupMedianSortingStrategy.prototype.compare = function (a, b) {
+    var statsA = getPathGroupStats(a.path, this.datasetName, this.groupName);
+    var statsB = getPathGroupStats(b.path, this.datasetName, this.groupName);
+    if (this.ascending) {
+      return d3.ascending(statsA.median, statsB.median);
+    }
+    return d3.descending(statsA.median, statsB.median);
+  };
+
 
   var paths = [];
+
+  //var pathStats = {};
+
+  function getPathDatasetStats(path, dataset) {
+    var data = [];
+
+    path.nodes.forEach(function (node) {
+      var groups = Object.keys(allData[dataset.toString()]);
+      groups.forEach(function (group) {
+        data = data.concat(getDataForNode(node, dataset, group));
+      });
+    });
+
+    return statisticsUtil.statisticsOf(data);
+  }
+
+  function getPathGroupStats(path, dataset, group) {
+
+    var data = [];
+
+    path.nodes.forEach(function (node) {
+      data = data.concat(getDataForNode(node, dataset, group));
+    });
+
+    return statisticsUtil.statisticsOf(data);
+  }
+
+  function getStatsForNode(node, dataset, group) {
+
+    var stats = allStats[dataset][group][node.id.toString()];
+
+    if (typeof stats === "undefined") {
+      var data = getDataForNode(node, dataset, group);
+      stats = statisticsUtil.statisticsOf(data);
+      allStats[dataset][group][node.id.toString()] = stats;
+    }
+
+    return stats;
+  }
+
+  function getDataForNode(node, dataset, group) {
+
+    var d = allData[dataset];
+    var g = d[group];
+
+    var data = g[node.id.toString()] || createRandomData(-10, 10, 10);
+    allData[dataset][group][node.id.toString()] = data;
+
+    return data;
+
+  }
 
   function pathExists(path) {
     for (var i = 0; i < paths.length; i++) {
@@ -143,29 +230,24 @@ define(['./listeners', './query/pathquery', './config', './statisticsutil'], fun
       return [];
     },
 
-    getDataForNode: function (node, dataset, group) {
+    getDataForNode: getDataForNode,
 
-      var d = allData[dataset];
-      var g = d[group]
+    getStatsForNode: getStatsForNode,
 
-      var data = g[node.id.toString()] || createRandomData(-10, 10, 10);
-      allData[dataset][group][node.id.toString()] = data;
+    getDataBasedPathSortingStrategies: function () {
 
-      return data;
+      var strategies = [];
+      var datasets = Object.keys(allData);
 
-    },
+      datasets.forEach(function (dataset) {
+        var groups = Object.keys(allData[dataset.toString()]);
+        strategies.push(new DatasetMedianSortingStrategy(dataset.toString()));
+        groups.forEach(function (group) {
+          strategies.push(new GroupMedianSortingStrategy(dataset.toString(), group.toString()));
+        });
+      });
 
-    getStatsForNode: function (node, dataset, group) {
-
-      var stats = allStats[dataset][group][node.id.toString()];
-
-      if (typeof stats === "undefined") {
-        var data = this.getDataForNode(node, dataset, group);
-        stats = statisticsUtil.statisticsOf(data);
-        allStats[dataset][group][node.id.toString()] = stats;
-      }
-
-      return stats;
+      return strategies;
     }
   }
 

@@ -353,7 +353,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     $nodeData.append("title")
       .text(function (d) {
         var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-        return "Elements: " + stats.data.length +
+        return "Elements: " + stats.numElements +
           "\nNaNs: " + stats.nans +
           "\nMedian: " + stats.median +
           "\n1st Quartile: " + stats.quartile25 +
@@ -547,7 +547,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     $nodeData.append("title")
       .text(function (d) {
         var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-        return "Elements: " + stats.data.length +
+        return "Elements: " + stats.numElements +
           "\nNaNs: " + stats.nans +
           "\nMedian: " + stats.median +
           "\n1st Quartile: " + stats.quartile25 +
