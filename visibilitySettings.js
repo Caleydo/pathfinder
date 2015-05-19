@@ -1,15 +1,19 @@
-define(["./listeners"], function(listeners) {
+define(["./listeners"], function (listeners) {
   var showNonEdgeSets = false;
 
   return {
-    showNonEdgeSets: function(show) {
-      showNonEdgeSets = show;
-      listeners.notify("UPDATE_SET_VISIBILITY", show);
+    updateTypes: {
+      UPDATE_NODE_SET_VISIBILITY: "UPDATE_SET_VISIBILITY"
     },
 
-    isShowNonEdgeSets: function() {
+    showNonEdgeSets: function (show) {
+      showNonEdgeSets = show;
+      listeners.notify(this.updateTypes.UPDATE_NODE_SET_VISIBILITY, show);
+    },
+
+    isShowNonEdgeSets: function () {
       return showNonEdgeSets;
     }
-  }
+  };
 });
 

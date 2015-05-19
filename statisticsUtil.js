@@ -42,7 +42,7 @@ define(['d3'], function (d3) {
         quartile75: NaN,
         iqrMin: NaN,
         iqrMax: NaN,
-        data: data
+        numElements: data.length
       };
 
       var sortedData = Object.create(data);

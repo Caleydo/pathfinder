@@ -1,9 +1,9 @@
 /**
  * Created by Christian on 23.02.2015.
  */
-define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist',
-    './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview', '../config', '../visibilitysettings'],
-  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView, config, visibilitySettings) {
+define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist',
+    './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview', '../config', '../visibilitysettings', './path/settings', '../datastore'],
+  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView, config, visibilitySettings, pathSettings, dataStore) {
 
     //var listView = new view("#pathlist");
 
@@ -71,8 +71,11 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
 
       var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
       initialPathSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
+      var selectablePathSortingStrategies = [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy,
+        pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight];
+      selectablePathSortingStrategies = selectablePathSortingStrategies.concat(dataStore.getDataBasedPathSortingStrategies());
       var pathRankConfigView = new RankConfigView("#pathRankConfig",
-        [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy, pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight]
+        selectablePathSortingStrategies
         , initialPathSortingStrategies);
       pathRankConfigView.addUpdateListener(function (view) {
         var chain = view.getStrategyChain();
@@ -81,7 +84,7 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
         listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
       });
       pathRankConfigView.init();
-      d3.select("#pathRankConfig svg").style({"vertical-align": "bottom"})
+      d3.select("#pathRankConfig svg").style({"vertical-align": "bottom"});
 
       var initialAggregateSortingStrategies = Object.create(aggregateSorting.sortingManager.currentStrategyChain);
       initialAggregateSortingStrategies.splice(aggregateSorting.sortingManager.currentStrategyChain.length - 1, 1);
@@ -95,7 +98,7 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
         listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
       });
       aggregateRankConfigView.init();
-      d3.select("#aggregateRankConfig svg").style({"vertical-align": "bottom"})
+      d3.select("#aggregateRankConfig svg").style({"vertical-align": "bottom"});
 
       d3.select("#aggregateWidgets").style({display: "none"});
 
@@ -159,7 +162,13 @@ define(['jquery', 'd3', './pathlist', '../view', './pathsorting', '../listeners'
       });
 
       $("#alignPathNodes").on("click", function () {
-        listeners.notify("ALIGN_PATH_NODES", this.checked);
+        pathSettings.alignPathNodes(this.checked);
+        //listeners.notify("ALIGN_PATH_NODES", this.checked);
+      });
+
+      $("#tiltAttributes").on("click", function () {
+        pathSettings.tiltAttributes(this.checked);
+        //listeners.notify("TILT_ATTRIBUTES", this.checked);
       });
 
       //$("#reverseAggregateSorting").on("click", function () {

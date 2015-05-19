@@ -76,6 +76,11 @@ define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) 
           .text(strategy.label);
       });
 
+      selector.append("title")
+        .text(function() {
+          return $(selector[0]).text;
+        });
+
 
       $(selector[0]).width(RANK_CRITERION_SELECTOR_WIDTH);
       $(selector[0]).val(this.selectedStrategyIndex);

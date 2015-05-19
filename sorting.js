@@ -16,7 +16,8 @@ define(['d3'], function(d3) {
       WEIGHT: 1,
       PRESENCE: 2,
       FILTER: 3,
-      UNKNOWN: 4
+      ATTRIBUTE: 4,
+      UNKNOWN: 5
     },
     compare: function (a, b) {
       return 0;
