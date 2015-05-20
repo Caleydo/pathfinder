@@ -6,7 +6,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
     function PathGraphView() {
       View.call(this, "#pathgraph");
       this.grabHSpace = true;
-      this.grabVSpace = false;
+      this.grabVSpace = true;
       this.layeredLayout = new LayeredLayout(this);
       this.forceLayout = new ForceLayout(this);
 
@@ -82,6 +82,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
       $("#switchGraphLayout").on("click", function () {
         //that.currentGraphLayout.reset();
+        that.currentGraphLayout.prepareLayoutChange();
         that.currentGraphLayout = this.checked ? that.forceLayout : that.layeredLayout;
         that.render(that.paths);
       });

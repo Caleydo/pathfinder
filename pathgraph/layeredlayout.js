@@ -3,7 +3,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
     'use strict';
 
     function getEdgeKey(d) {
-      return d.edge.label;
+      return d.edge.id;
     }
 
     function EdgeWrapper(v, w, edge) {
@@ -89,6 +89,11 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
     };
 
+    LayeredLayout.prototype.prepareLayoutChange = function () {
+      var svg = d3.select("#pathgraph svg");
+      svg.select("g.graph").attr("transform", "translate(0,0)");
+    };
+
 
     //PathGraphView.prototype.setEdge = function (v, w, label, edge, weight) {
     //
@@ -120,6 +125,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             if (prevNode !== 0) {
               that.graph.setEdge(prevNode.id, node.id, {
                 label: path.edges[i - 1].id.toString(),
+                id: path.edges[i - 1].id,
                 edge: path.edges[i - 1]
               });
             }
@@ -255,8 +261,6 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       var allEdges = edgeGroup.selectAll("g.edgePath")
         .data(that.edgeWrappers, getEdgeKey);
 
-      allEdges.exit()
-        .remove();
 
       var edge = allEdges
         .enter()
@@ -332,6 +336,10 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       allEdges.selectAll("path.lines")
         .data(that.edgeWrappers, getEdgeKey)
         .transition()
+        //.each("start", function(d) {
+        //  d3.select(this).style("display", "none");
+        //})
+        //.duration(5000)
         .attr({
           d: function (d) {
             //var points = Object.create(d.edge.points);
@@ -353,9 +361,15 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             //return drawBezierLink2(sourceNode.x + nodeWidth / 2, sourceNode.y, targetNode.x - nodeWidth / 2, targetNode.y);
           }
         });
+        //.each("end", function(d) {
+        //  d3.select(this).style("display", "inline");
+        //});
       //var edgeLines = edge.append("line");
       //.
       //attr("marker-end", "url(#arrowRight)");
+
+      allEdges.exit()
+        .remove();
 
       var nodeGroup = svg.select("g.nodeGroup");
 
@@ -391,6 +405,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       );
 
       allNodes.transition()
+        //.duration(5000)
         .attr("transform", function (d) {
           //var n = that.graph.node(d);
           return "translate(" + d.x + ", " + d.y + ")";
