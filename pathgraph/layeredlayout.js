@@ -215,6 +215,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
     LayeredLayout.prototype.render = function (paths) {
       this.paths = paths;
       //if (paths.length > 0) {
+      this.graph = newGraph();
 
       var svg = d3.select("#pathgraph svg");
       this.addPathsToGraph(paths);
