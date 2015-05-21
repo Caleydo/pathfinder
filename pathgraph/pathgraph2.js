@@ -55,6 +55,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       $(window).on('resize.center', function (e) {
         if (that.currentGraphLayout === that.layeredLayout) {
           that.layeredLayout.centerGraph();
+        } else {
+          that.forceLayout.render(that.paths);
         }
       });
 

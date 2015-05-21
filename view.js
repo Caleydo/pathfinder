@@ -19,10 +19,17 @@ define(['jquery', 'd3'],
         var that = this;
         this.updateViewSize();
 
-        $(window).on('resize', function (e) {
+        $(window).on('resize.updatev', function (e) {
           that.updateViewSize();
         });
 
+        //var svg = d3.select(this.parentSelector + " svg");
+        //svg.attr("width", "100%");
+        ////svg.attr("height", "100%");
+        //svg.style({
+        //  "-webkit-flex": 1,
+        //  "flex": 1
+        //});
       },
 
       getMinSize: function () {
@@ -38,14 +45,20 @@ define(['jquery', 'd3'],
         var p2 = $(this.parentSelector)[0];
         var height = 0;
         if ($(this.parentSelector)[0].offsetHeight > minSize.height && this.grabVSpace) {
-          height = "100%";
+          svg.style({
+            "-webkit-flex": 1,
+            "flex": 1
+          });
+          svg.attr("height", null);
         } else {
-          height = minSize.height;
+          svg.attr("height", minSize.height);
+          //height = minSize.height;
         }
 
 
         svg.attr("width", $(this.parentSelector)[0].offsetWidth > minSize.width && this.grabHSpace ? "100%" : minSize.width);
-        svg.attr("height", height);
+        svg.style("width", $(this.parentSelector)[0].offsetWidth > minSize.width && this.grabHSpace ? "100%" : minSize.width);
+
       }
 
     };
