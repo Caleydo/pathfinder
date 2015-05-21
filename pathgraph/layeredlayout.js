@@ -197,10 +197,18 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       //  return pathQuery.isNodeFiltered(d) ? 0.5 : 1;
       //});
 
-      svg.selectAll("g.edgePath path")
-        .classed("filtered", function (d) {
-          return pathQuery.isNodeFiltered(d.v) || pathQuery.isNodeFiltered(d.w);
-        });
+      svg.selectAll("g.edgePath").each(function (d) {
+        d3.select(this).select("path.lines")
+          .classed("filtered", function (d) {
+            return pathQuery.isNodeFiltered(d.v) || pathQuery.isNodeFiltered(d.w);
+          });
+
+        d3.select(this).select("defs marker path")
+          .classed("filtered", function (d) {
+            return pathQuery.isNodeFiltered(d.v) || pathQuery.isNodeFiltered(d.w);
+          });
+
+      });
 
     };
 
@@ -347,9 +355,9 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             //return drawBezierLink2(sourceNode.x + nodeWidth / 2, sourceNode.y, targetNode.x - nodeWidth / 2, targetNode.y);
           }
         });
-        //.each("end", function(d) {
-        //  d3.select(this).style("display", "inline");
-        //});
+      //.each("end", function(d) {
+      //  d3.select(this).style("display", "inline");
+      //});
       //var edgeLines = edge.append("line");
       //.
       //attr("marker-end", "url(#arrowRight)");
