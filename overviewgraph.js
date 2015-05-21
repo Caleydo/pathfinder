@@ -99,25 +99,25 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil',
 
       init: function () {
 
-        var svg = d3.select("#pathgraph").append("svg")
-        svg.attr("width", w)
-          .attr("height", h);
-        svg.append("marker")
-          .attr("id", "arrowRight")
-          .attr("viewBox", "0 0 10 10")
-          .attr("refX", "0")
-          .attr("refY", "5")
-          .attr("markerUnits", "strokeWidth")
-          .attr("markerWidth", "4")
-          .attr("markerHeight", "3")
-          .attr("orient", "auto")
-          .append("path")
-          .attr("d", "M 0 0 L 10 5 L 0 10 z");
-
-        svg.append("g")
-          .attr("class", "edgeGroup");
-        svg.append("g")
-          .attr("class", "nodeGroup");
+        //var svg = d3.select("#pathgraph").append("svg")
+        //svg.attr("width", w)
+        //  .attr("height", h);
+        //svg.append("marker")
+        //  .attr("id", "arrowRight")
+        //  .attr("viewBox", "0 0 10 10")
+        //  .attr("refX", "0")
+        //  .attr("refY", "5")
+        //  .attr("markerUnits", "strokeWidth")
+        //  .attr("markerWidth", "4")
+        //  .attr("markerHeight", "3")
+        //  .attr("orient", "auto")
+        //  .append("path")
+        //  .attr("d", "M 0 0 L 10 5 L 0 10 z");
+        //
+        //svg.append("g")
+        //  .attr("class", "edgeGroup");
+        //svg.append("g")
+        //  .attr("class", "nodeGroup");
 
         this.force = d3.layout.force()
           .linkDistance(100)
@@ -130,9 +130,9 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil',
 
           that.graph.nodes.forEach(function (node) {
 
-            if (node.fixed) {
-              node.x++;
-            }
+            //if (node.fixed) {
+            //  node.x++;
+            //}
 
 
             if (node.x + nodeWidth / 2 > w) {
@@ -164,31 +164,34 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil',
 
           var nodeGroup = d3.select("#pathgraph svg g.nodeGroup");
 
-          var allNodeRects = nodeGroup.selectAll("g.node rect").data(that.graph.nodes, function (node) {
+          var allNodes = nodeGroup.selectAll("g.node").data(that.graph.nodes, function (node) {
             return node.id;
           });
 
-          allNodeRects
-            .attr("x", function (d) {
-              return d.x - nodeWidth / 2;
-              //}
-            })
-            .attr("y", function (d) {
-              return d.y - nodeHeight / 2;
+          allNodes.each(function (node) {
+            if (!node.fixed) {
+              d3.select(this)
+                .attr("transform", function (d) {
+                  return "translate(" + d.x + ", " + d.y + ")";
+                  //}
+                });
+            }
+          });
 
-            });
 
           var allNodeTexts = nodeGroup.selectAll("g.node text").data(that.graph.nodes, function (node) {
             return node.id;
           });
 
-          allNodeTexts
-            .attr("x", function (d) {
-              return d.x;
-            })
-            .attr("y", function (d) {
-              return d.y + 5;
-            });
+          //allNodeTexts
+          //  .transition()
+          //  .duration(10)
+          //  .attr("x", function (d) {
+          //    return d.x;
+          //  })
+          //  .attr("y", function (d) {
+          //    return d.y + 5;
+          //  });
 
           var edgeGroup = d3.select("#pathgraph svg g.edgeGroup");
 
@@ -197,6 +200,8 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil',
           });
 
           allEdges
+            .transition()
+            .duration(10)
             .attr("x1", function (d) {
               return calcIntersectionX(d.source, d.target, nodeWidth, nodeHeight);
             })
@@ -210,6 +215,29 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil',
               return calcIntersectionY(d.target, d.source, nodeWidth, nodeHeight);
             });
         };
+
+        this.force.on("start", function () {
+          var nodeGroup = d3.select("#pathgraph svg g.nodeGroup");
+          var allNodes = nodeGroup.selectAll("g.node").data(that.graph.nodes, function (node) {
+            return node.id;
+          });
+
+          allNodes.each(function (node) {
+            if (node.fixed) {
+              d3.select(this)
+                .transition()
+                .duration(1000)
+                .attr("transform", function (d) {
+                  return "translate(" + d.x + ", " + d.y + ")";
+                  //}
+                })
+                .each("end", function () {
+                  that.force.stop();
+                });
+            }
+          });
+
+        });
 
         this.force.on("tick", tick);
 
@@ -327,7 +355,8 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil',
 
           }
         );
-      },
+      }
+      ,
 
       fixPath: function (path) {
 
@@ -446,7 +475,8 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil',
         //for(var i = 0; i < 200; i++) tick();
         //force.stop();
 
-      },
+      }
+      ,
 
       updateGraphToFilteredPaths: function () {
 
@@ -456,8 +486,8 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil',
         this.nodeIndex = 0;
         var that = this;
 
-        if(pathQuery.isRemoteQuery()) {
-          for(var i = 0; i < this.paths.length; i++) {
+        if (pathQuery.isRemoteQuery()) {
+          for (var i = 0; i < this.paths.length; i++) {
             var path = this.paths[i];
             if (pathQuery.isPathFiltered(path.id)) {
               this.paths.splice(i, 1);
@@ -473,7 +503,8 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil',
         });
 
         this.renderGraph(d3.select("#pathgraph svg"));
-      },
+      }
+      ,
 
       updateGraphToAllPaths: function () {
         this.graph = {nodes: [], edges: [], groups: []};
@@ -485,7 +516,8 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil',
         that.addPathsToGraph(this.paths);
 
         this.renderGraph(d3.select("#pathgraph svg"));
-      },
+      }
+      ,
 
 
       updateFilter: function () {
@@ -503,7 +535,8 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', './listeners', './selectionutil',
             return pathQuery.isEdgeFiltered(d.edge.id) ? 0.5 : 1;
           });
 
-      },
+      }
+      ,
 
       render: function (paths) {
         this.paths = paths;
