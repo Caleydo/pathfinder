@@ -568,17 +568,6 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
       ,
 
       reset: function () {
-        var svg = d3.select("#pathgraph svg");
-
-        svg.selectAll("g.edgeGroup")
-          .remove();
-        svg.selectAll("g.nodeGroup")
-          .remove();
-        svg.append("g")
-          .attr("class", "edgeGroup");
-        svg.append("g")
-          .attr("class", "nodeGroup");
-
         this.paths = [];
         this.graph = {nodes: [], edges: [], groups: []};
         this.nodeIndexMap = {};

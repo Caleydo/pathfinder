@@ -224,20 +224,6 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
     };
 
     LayeredLayout.prototype.reset = function () {
-      var svg = d3.select("#pathgraph svg");
-
-      svg.selectAll("g.graph")
-        .remove();
-
-      var graphGroup = svg.append("g")
-        .attr("class", "graph");
-
-
-      graphGroup.append("g")
-        .classed("edgeGroup", true);
-      graphGroup.append("g")
-        .classed("nodeGroup", true);
-
       this.paths = [];
       this.graph = newGraph();
     };
