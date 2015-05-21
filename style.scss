@@ -20,7 +20,13 @@ $overlayHoverColor: rgb(150, 200, 255);
   text-anchor: middle;
 }
 
-svg text::selection { background: none; }
+svg text::selection {
+  background: none;
+}
+
+html, body {
+  height: 100%;
+}
 
 body {
   margin: 0px;
@@ -49,7 +55,7 @@ g.node {
   }
 
   text {
-//    text-anchor: middle;
+    //    text-anchor: middle;
     font-size: 11px;
   }
 }
@@ -252,7 +258,6 @@ g.set.selected {
   stroke-width: 1.5px;
 }
 
-
 path.crossConnection, line.stub {
   stroke: $defaultFillColor;
   stroke-width: 5px;
@@ -289,8 +294,6 @@ g.boxPlotAxisX, g.boxPlotAxisY {
   }
 }
 
-
-
 .collapseIcon {
   font-family: FontAwesome;
   font-size: 16px;
@@ -323,8 +326,25 @@ g.boxPlotAxisX, g.boxPlotAxisY {
   flex: 1;
 
   //  width: 45vw;
-  height: 100%;
+  //  position: absolute;
+//  height: 100%;
   overflow: auto;
+
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  -webkit-flex-flow: column wrap;
+}
+
+.inner {
+  //  height: 100%;
+  -webkit-flex: 1;
+  flex: 1;
+
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
+  -webkit-flex-flow: column wrap;
 }
 
 #leftCol {
@@ -351,29 +371,51 @@ g.boxPlotAxisX, g.boxPlotAxisY {
 
 #overviewRow {
   //  overflow: auto;
+  display: -webkit-flex;
   display: flex;
+  flex-direction: row;
+  //  height: 100%;
 
   -webkit-flex: 1;
   flex: 1;
+  //  position:relative;
 }
 
 header {
   padding: 5px;
 }
 
-#pathlist, #pathgraph, #pathstats, #pathQuery {
+#pathgraph {
+  -webkit-flex: 1 0 auto;
+  flex: 1 0 auto;
+
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: row;
+  -webkit-flex-flow: column wrap;
+}
+
+#pathlist, #pathstats, #pathQuery {
   display: block;
   width: 100%;
   height: 100%;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
 }
 
 #pathGraphView {
   //  padding: 5px;
   display: inline-block;
   width: 74%;
+  //  position: absolute;
+  //  height: 100%;
   //  height: 500px;
   overflow: auto;
   vertical-align: top;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: column;
 }
 
 #pathQueryView {
@@ -395,6 +437,8 @@ header {
   padding: 5px;
   display: inline-block;
   width: 25%;
+  //  position: absolute;
+  //  height: 100%;
   //  height: 100%;
   overflow: auto;
   vertical-align: top;
