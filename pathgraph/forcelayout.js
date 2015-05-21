@@ -594,7 +594,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
           .classed("lines", true)
           .attr({
             "marker-end": function (d) {
-              return "url(#arrowhead" + d.edge.id.toString() + ")"
+              return config.isNetworkEdge(d.edge) ? "url(#arrowhead" + d.edge.id.toString() + ")" : null;
             }
           });
 

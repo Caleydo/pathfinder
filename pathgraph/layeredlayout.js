@@ -276,7 +276,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .classed("lines", true)
         .attr({
           "marker-end": function (d) {
-            return "url(#arrowhead" + d.edge.label + ")"
+            return config.isNetworkEdge(d.edge.edge) ? "url(#arrowhead" + d.edge.label + ")" : null;
           }
         });
 
