@@ -1667,34 +1667,40 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         );
         that.selectionListeners.push(l);
 
-
-        node.append("rect")
-          .attr("x", 0)
-          .attr("y", 0)
-          .attr("rx", 5).attr("ry", 5)
-          .attr("width", s.NODE_WIDTH)
-          .attr("height", s.NODE_HEIGHT);
-        //.attr("fill", "rgb(200,200,200)")
-        //.attr("stroke", "rgb(30,30,30)");
-
-        node.append("text")
-          .text(function (d) {
-            return d.node.properties[config.getNodeNameProperty(d.node)];
-          })
-          .attr({
-            x: function (d) {
-              var text = d.node.properties[config.getNodeNameProperty(d.node)];
-              var width = that.listView.getTextWidth(text);
-              return s.NODE_WIDTH / 2 + Math.max(-width / 2, -s.NODE_WIDTH / 2 + 3);
-            },
-            y: +s.NODE_HEIGHT - 5,
-
-            "clip-path": "url(#pathNodeClipPath)"
-          })
-          .append("title")
-          .text(function (d) {
-            return d.node.properties[config.getNodeNameProperty(d.node)];
+        node.each(function (d) {
+          pathUtil.renderNode(d3.select(this), d.node, 0,0, s.NODE_WIDTH, s.NODE_HEIGHT, "url(#pathNodeClipPath)", function (text) {
+            return that.listView.getTextWidth(text);
           });
+        });
+
+
+        //node.append("rect")
+        //  .attr("x", 0)
+        //  .attr("y", 0)
+        //  .attr("rx", 5).attr("ry", 5)
+        //  .attr("width", s.NODE_WIDTH)
+        //  .attr("height", s.NODE_HEIGHT);
+        ////.attr("fill", "rgb(200,200,200)")
+        ////.attr("stroke", "rgb(30,30,30)");
+        //
+        //node.append("text")
+        //  .text(function (d) {
+        //    return d.node.properties[config.getNodeNameProperty(d.node)];
+        //  })
+        //  .attr({
+        //    x: function (d) {
+        //      var text = d.node.properties[config.getNodeNameProperty(d.node)];
+        //      var width = that.listView.getTextWidth(text);
+        //      return s.NODE_WIDTH / 2 + Math.max(-width / 2, -s.NODE_WIDTH / 2 + 3);
+        //    },
+        //    y: +s.NODE_HEIGHT - 5,
+        //
+        //    "clip-path": "url(#pathNodeClipPath)"
+        //  })
+        //  .append("title")
+        //  .text(function (d) {
+        //    return d.node.properties[config.getNodeNameProperty(d.node)];
+        //  });
 
 
         var setGroup = pathContainer.append("g")

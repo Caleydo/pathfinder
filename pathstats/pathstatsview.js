@@ -49,6 +49,13 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         .attr("width", 90)
         .attr("height", 20);
 
+      this.textSizeDomElement = svg.append("text")
+        .attr('class', "textSizeElement")
+        .attr("x", 0)
+        .attr("y", 0)
+        .style("font", "10px sans-serif")
+        .style("opacity", 0);
+
       var that = this;
 
       listeners.add(function (query) {
@@ -73,6 +80,14 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       listeners.add(function (showNonEdgeSets) {
         that.updateView();
       }, "UPDATE_SET_VISIBILITY");
+    };
+
+    PathStatsView.prototype.getTextWidth = function (string) {
+
+      this.textSizeDomElement
+        .text(string);
+
+      return this.textSizeDomElement.node().getBBox().width;
     };
 
 
@@ -459,9 +474,9 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
     PathStatsView.prototype.renderStats = function (rootSelector, statTypes, statSelectionFunction, idType) {
 
       var statTypeGroup = d3.selectAll(rootSelector);
-        //.attr({
-        //  transform: hierarchyElements.transformFunction
-        //});
+      //.attr({
+      //  transform: hierarchyElements.transformFunction
+      //});
       var that = this;
 
       var allStatTypes = statTypeGroup.selectAll("g.statTypes")
@@ -512,12 +527,40 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           that.updateView();
         });
 
+      if (idType === "node") {
+        typeCont.each(function (d) {
+          var symbolType = config.getNodeTypeSymbol(d.type);
+
+          if (typeof symbolType !== "undefined") {
+            var symbol = d3.svg.symbol().type(symbolType)
+              .size(40);
+            var textWidth = that.getTextWidth(d.type);
+
+            d3.select(this).append("path")
+              .classed("nodeTypeSymbol", true)
+              .attr({
+                d: symbol,
+                transform: function () {
+                  return "translate(" + (COLLAPSE_BUTTON_SPACING + textWidth + 8) + "," + (HIERARCHY_ELEMENT_HEIGHT / 2 + 2) + ")";
+                }
+              });
+          }
+        });
+      }
+
       var typeLabel = typeCont.append("text")
         .text(function (typeWrapper) {
           return typeWrapper.getLabel();
         })
         .attr({
-          x: COLLAPSE_BUTTON_SPACING,
+          x: function (d) {
+            //var symbolPresent = false;
+            //if (idType === "node") {
+            //  symbolPresent = (typeof config.getNodeTypeSymbol(d.type) !== "undefined");
+            //}
+
+            return COLLAPSE_BUTTON_SPACING;// + (symbolPresent ? 10 : 0);
+          },
           y: HIERARCHY_ELEMENT_HEIGHT,
           "clip-path": "url(#LabelClipPath)"
         }

@@ -1,5 +1,5 @@
-define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../view', '../overviewgraph'],
-  function ($, d3, webcola, dagre, listeners, selectionUtil, pathSorting, pathQuery, config, View, forceGraph) {
+define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../view', '../overviewgraph', '../pathutil'],
+  function ($, d3, webcola, dagre, listeners, selectionUtil, pathSorting, pathQuery, config, View, forceGraph, pathUtil) {
     'use strict';
 
     function getEdgeKey(d) {
@@ -406,53 +406,122 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           return "translate(" + d.x + ", " + d.y + ")";
         });
 
-      var nodeRects = node.append("rect")
-        .attr({
-          rx: 5,
-          ry: 5,
-          x: function (d) {
-            return -d.width / 2
-          },
-          y: function (d) {
-            return -d.height / 2
-          },
-          width: function (d) {
-            //return that.graph.node(d).width;
-            return d.width;
-          },
-          height: function (d) {
-            //return that.graph.node(d).height;
-            return d.height;
-          }
+      node.each(function (d) {
+        pathUtil.renderNode(d3.select(this), d.node, -d.width/2, -d.height/2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
+          return that.view.getTextWidth(text)
         });
+      });
 
-      var nodeTexts = node.append("text")
-        .attr({
-          x: function (d) {
-            //var node = that.graph.node(d).node;
-            var text = d.node.properties[config.getNodeNameProperty(d.node)];
-            var width = that.view.getTextWidth(text);
-            return Math.max(-width / 2, -d.width / 2 + 3);
-          },
-          y: function (d) {
-            return d.height / 2 - 5;
-          },
-          "clip-path": "url(#graphNodeClipPath)"
-        })
-        .text(function (d) {
-          //var node = that.graph.node(d).node;
-          var text = d.node.properties[config.getNodeNameProperty(d.node)];
-          //if (text.length > 7) {
-          //  text = text.substring(0, 7);
-          //}
-          return text;
-        });
-
-      node.append("title")
-        .text(function (d) {
-          //var node = that.graph.node(d).node;
-          return d.node.properties[config.getNodeNameProperty(d.node)];
-        });
+      //var nodeRects = node.append("rect")
+      //  .attr({
+      //    rx: 5,
+      //    ry: 5,
+      //    x: function (d) {
+      //      return -d.width / 2
+      //    },
+      //    y: function (d) {
+      //      return -d.height / 2
+      //    },
+      //    width: function (d) {
+      //      //return that.graph.node(d).width;
+      //      return d.width;
+      //    },
+      //    height: function (d) {
+      //      //return that.graph.node(d).height;
+      //      return d.height;
+      //    }
+      //  });
+      //
+      //var nodeTexts = node.append("text")
+      //  .attr({
+      //    x: function (d) {
+      //      //var node = that.graph.node(d).node;
+      //      var text = d.node.properties[config.getNodeNameProperty(d.node)];
+      //      var width = that.view.getTextWidth(text); //+ 12;
+      //      var nodeTypeSymbol = config.getTypeSymbolForNode(d.node);
+      //
+      //      //No symbol, text centered
+      //      if (typeof nodeTypeSymbol === "undefined") {
+      //        return Math.max(-width / 2, -d.width / 2+3);
+      //      }
+      //
+      //      //Symbol left, text centered
+      //      return  Math.max(-width / 2, -d.width / 2 + 12)+6;
+      //
+      //
+      //      //Symbol left, text left
+      //      //return -d.width / 2 + 14;
+      //
+      //      //Symbol centered together with text
+      //      //return Math.max(-width / 2, -d.width / 2+2)+12;
+      //    },
+      //    y: function (d) {
+      //      return d.height / 2 - 6;
+      //    },
+      //    "clip-path": "url(#graphNodeClipPath)"
+      //  })
+      //  .text(function (d) {
+      //    //var node = that.graph.node(d).node;
+      //    var text = d.node.properties[config.getNodeNameProperty(d.node)];
+      //    //if (text.length > 7) {
+      //    //  text = text.substring(0, 7);
+      //    //}
+      //    return text;
+      //  });
+      //
+      //node.append("title")
+      //  .text(function (d) {
+      //    //var node = that.graph.node(d).node;
+      //    return d.node.properties[config.getNodeNameProperty(d.node)] + " ("+config.getNodeType(d.node)+")";
+      //  });
+      //
+      //node.each(function (d) {
+      //  var symbolType = config.getTypeSymbolForNode(d.node);
+      //
+      //  if (typeof symbolType !== "undefined") {
+      //    var symbol = d3.svg.symbol().type(symbolType)
+      //      .size(64);
+      //
+      //    //d3.select(this)
+      //    //  .append("rect")
+      //    //  .attr({
+      //    //    x: function () {
+      //    //      var text = d.node.properties[config.getNodeNameProperty(d.node)];
+      //    //      var width = that.view.getTextWidth(text) + 12;
+      //    //      var nodeTypeSymbol = config.getTypeSymbolForNode(d.node);
+      //    //
+      //    //      //No symbol, text centered
+      //    //      //if(typeof nodeTypeSymbol === "undefined") {
+      //    //      return Math.max(-width / 2, -d.width / 2);
+      //    //    },
+      //    //    y: -6,
+      //    //    width: 12,
+      //    //    height: 12,
+      //    //    fill: "red"
+      //    //
+      //    //  });
+      //
+      //    d3.select(this)
+      //      .append("path")
+      //      .classed("nodeTypeSymbol", true)
+      //      .attr({
+      //        d: symbol,
+      //        transform: function () {
+      //
+      //          //var text = d.node.properties[config.getNodeNameProperty(d.node)];
+      //          //var width = that.view.getTextWidth(text) + 12;
+      //          //var nodeTypeSymbol = config.getTypeSymbolForNode(d.node);
+      //
+      //          //No symbol, text centered
+      //          //if(typeof nodeTypeSymbol === "undefined") {
+      //          //return "translate(" + (Math.max(-width / 2, -d.width / 2+2) + 6) + ", 0)";
+      //          //}
+      //
+      //          return "translate(" + (-d.width / 2 + 10) + ",0)"
+      //        }
+      //      });
+      //  }
+      //});
 
       this.updateFilter();
 

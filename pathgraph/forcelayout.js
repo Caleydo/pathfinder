@@ -1,5 +1,5 @@
-define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config'],
-  function ($, d3, webcola, dagreD3, listeners, selectionUtil, pathSorting, pathQuery, config) {
+define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../pathutil'],
+  function ($, d3, webcola, dagreD3, listeners, selectionUtil, pathSorting, pathQuery, config, pathUtil) {
     'use strict';
 
     //var w = 800;
@@ -645,10 +645,10 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
           .on("dblclick", function (d) {
             pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([d.node.id]);
             listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-          })
-          .style("opacity", function (d) {
-            return pathQuery.isNodeFiltered(d.node.id) ? 0.5 : 1;
           });
+        //.style("opacity", function (d) {
+        //  return pathQuery.isNodeFiltered(d.node.id) ? 0.5 : 1;
+        //});
 
         selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
             return d.node.id;
@@ -656,46 +656,52 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
           "node"
         );
 
-        var nodeRects = node.append("rect")
-          .attr({
-            rx: 5,
-            ry: 5,
-            x: function (d) {
-              return -d.width / 2
-            },
-            y: function (d) {
-              return -d.height / 2
-            },
-            width: function (d) {
-              return d.width
-            },
-            height: function (d) {
-              return d.height
-            }
+        node.each(function (d) {
+          pathUtil.renderNode(d3.select(this), d.node, -d.width/2, -d.height/2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
+            return that.view.getTextWidth(text)
           });
-
-
-        var nodeTexts = node.append("text")
-          .attr({
-            x: function (d) {
-              //var node = that.graph.node(d).node;
-              var text = d.node.properties[config.getNodeNameProperty(d.node)];
-              var width = that.view.getTextWidth(text);
-              return Math.max(-width / 2, -config.getNodeWidth() / 2 + 3);
-            },
-            y: function (d) {
-              return d.height / 2 - 5;
-            },
-            "clip-path": "url(#graphNodeClipPath)"
-          })
-          .text(function (d) {
-            //var node = that.graph.node(d).node;
-            var text = d.node.properties[config.getNodeNameProperty(d.node)];
-            //if (text.length > 7) {
-            //  text = text.substring(0, 7);
-            //}
-            return text;
-          });
+        });
+        //
+        //var nodeRects = node.append("rect")
+        //  .attr({
+        //    rx: 5,
+        //    ry: 5,
+        //    x: function (d) {
+        //      return -d.width / 2
+        //    },
+        //    y: function (d) {
+        //      return -d.height / 2
+        //    },
+        //    width: function (d) {
+        //      return d.width
+        //    },
+        //    height: function (d) {
+        //      return d.height
+        //    }
+        //  });
+        //
+        //
+        //var nodeTexts = node.append("text")
+        //  .attr({
+        //    x: function (d) {
+        //      //var node = that.graph.node(d).node;
+        //      var text = d.node.properties[config.getNodeNameProperty(d.node)];
+        //      var width = that.view.getTextWidth(text);
+        //      return Math.max(-width / 2, -config.getNodeWidth() / 2 + 3);
+        //    },
+        //    y: function (d) {
+        //      return d.height / 2 - 5;
+        //    },
+        //    "clip-path": "url(#graphNodeClipPath)"
+        //  })
+        //  .text(function (d) {
+        //    //var node = that.graph.node(d).node;
+        //    var text = d.node.properties[config.getNodeNameProperty(d.node)];
+        //    //if (text.length > 7) {
+        //    //  text = text.substring(0, 7);
+        //    //}
+        //    return text;
+        //  });
 
         allNodes.exit()
           .remove();
