@@ -68,6 +68,16 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       listeners.add(function (query) {
         if (pathQuery.isRemoveFilteredPaths() || pathQuery.isRemoteQuery()) {
           that.currentGraphLayout.updateGraphToFilteredPaths();
+
+          if (pathQuery.isRemoteQuery()) {
+            for (var i = 0; i < that.paths.length; i++) {
+              var path = that.paths[i];
+              if (pathQuery.isPathFiltered(path.id)) {
+                that.paths.splice(i, 1);
+                i--;
+              }
+            }
+          }
         } else {
           that.currentGraphLayout.updateFilter();
         }
@@ -87,6 +97,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         that.currentGraphLayout.prepareLayoutChange();
         that.currentGraphLayout = this.checked ? that.forceLayout : that.layeredLayout;
         that.render(that.paths);
+        that.updateViewSize();
       });
     };
 
@@ -100,7 +111,22 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
     PathGraphView.prototype.reset = function () {
       this.paths = [];
-      this.currentGraphLayout.reset();
+      this.forceLayout.reset();
+      this.layeredLayout.reset();
+
+      var svg = d3.select("#pathgraph svg");
+
+      svg.selectAll("g.graph")
+        .remove();
+
+      var graphGroup = svg.append("g")
+        .attr("class", "graph");
+
+
+      graphGroup.append("g")
+        .classed("edgeGroup", true);
+      graphGroup.append("g")
+        .classed("nodeGroup", true);
     };
 
     PathGraphView.prototype.addPath = function (path) {

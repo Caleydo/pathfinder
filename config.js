@@ -1,6 +1,6 @@
-define(function () {
+define(['d3'], function (d3) {
 
-  var DEFAULT_NODE_WIDTH = 50;
+  var DEFAULT_NODE_WIDTH = 60;
   var DEFAULT_NODE_HEIGHT = 20;
 
   var DEFAULT_EDGE_SIZE = 50;
@@ -11,12 +11,16 @@ define(function () {
   var nodeSets = {};
   var edgeSets = {};
 
+  var nodeTypeSymbols = {};
+
 
   return {
     setConfig: function (c) {
       config = c;
 
-      config.nodes.forEach(function (nodeConfig) {
+      var symbols = d3.svg.symbolTypes;
+
+      config.nodes.forEach(function (nodeConfig, i) {
 
         Object.keys(nodeConfig.properties).forEach(function (key) {
           var prop = nodeConfig.properties[key];
@@ -28,6 +32,9 @@ define(function () {
               nodeSets[nodeConfig["node_label"]] = sets;
             }
             sets[key] = prop;
+          }
+          if (config.nodes.length > 1) {
+            nodeTypeSymbols[nodeConfig["node_label"]] = symbols[i];
           }
         });
 
@@ -257,6 +264,14 @@ define(function () {
         return "Unknown";
       }
       return type;
+    },
+
+    getNodeTypeSymbol: function (nodeType) {
+      return nodeTypeSymbols[nodeType];
+    },
+
+    getTypeSymbolForNode: function (node) {
+      return this.getNodeTypeSymbol(this.getNodeType(node));
     }
   }
 

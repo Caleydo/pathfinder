@@ -1,4 +1,4 @@
-define(["./config"], function (config) {
+define(["d3", "./config"], function (d3, config) {
 
   return {
     isNodeSetProperty: function (node, key) {
@@ -56,7 +56,7 @@ define(["./config"], function (config) {
 
     forEachNodeSetOfType: function (node, setType, callBack) {
       var property = node.properties[setType];
-      if(typeof property === "undefined") {
+      if (typeof property === "undefined") {
         return;
       }
       if (property instanceof Array) {
@@ -80,7 +80,7 @@ define(["./config"], function (config) {
 
     forEachEdgeSetOfType: function (edge, setType, callBack) {
       var property = edge.properties[setType];
-      if(typeof property === "undefined") {
+      if (typeof property === "undefined") {
         return;
       }
       if (property instanceof Array) {
@@ -90,6 +90,86 @@ define(["./config"], function (config) {
       } else {
         callBack(setType, property);
       }
+    },
+
+    renderNode: function (parent, node, x, y, width, height, clipPath, textWidthFunction) {
+      parent.append("rect")
+        .attr({
+          rx: 5,
+          ry: 5,
+          x: x,
+          y: y,
+          width: width,
+          height: height
+        });
+
+      parent.append("text")
+        .attr({
+          x: function (d) {
+            //var node = that.graph.node(d).node;
+            var text = node.properties[config.getNodeNameProperty(node)];
+            var w = textWidthFunction(text); //+ 12;
+            var nodeTypeSymbol = config.getTypeSymbolForNode(node);
+
+            //No symbol, text centered
+            if (typeof nodeTypeSymbol === "undefined") {
+              return x + width / 2 + Math.max(-w / 2, -width / 2 + 3);
+            }
+
+            //Symbol left, text centered
+            return x + width / 2 + Math.max(-w / 2, -width / 2 + 12) + 6;
+
+
+            //Symbol left, text left
+            //return -d.width / 2 + 14;
+
+            //Symbol centered together with text
+            //return Math.max(-width / 2, -d.width / 2+2)+12;
+          },
+          y: function (d) {
+            return y + height - 6;
+          },
+          "clip-path": clipPath
+        })
+        .text(function (d) {
+          //var node = that.graph.node(d).node;
+          var text = node.properties[config.getNodeNameProperty(node)];
+          //if (text.length > 7) {
+          //  text = text.substring(0, 7);
+          //}
+          return text;
+        });
+
+      parent.append("title")
+        .text(node.properties[config.getNodeNameProperty(node)] + " (" + config.getNodeType(node) + ")");
+
+
+      var symbolType = config.getTypeSymbolForNode(node);
+
+      if (typeof symbolType !== "undefined") {
+        var symbol = d3.svg.symbol().type(symbolType)
+          .size(64);
+
+        parent.append("path")
+          .classed("nodeTypeSymbol", true)
+          .attr({
+            d: symbol,
+            transform: function () {
+
+              //var text = d.node.properties[config.getNodeNameProperty(d.node)];
+              //var width = that.view.getTextWidth(text) + 12;
+              //var nodeTypeSymbol = config.getTypeSymbolForNode(d.node);
+
+              //No symbol, text centered
+              //if(typeof nodeTypeSymbol === "undefined") {
+              //return "translate(" + (Math.max(-width / 2, -d.width / 2+2) + 6) + ", 0)";
+              //}
+
+              return "translate(" + (x + 10) + "," + (y + height / 2) + ")";
+            }
+          });
+      }
+
     }
 
   }
