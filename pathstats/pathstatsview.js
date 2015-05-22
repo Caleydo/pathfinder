@@ -391,19 +391,22 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       var svg = d3.select("#pathstats svg");
 
-      var setStats = svg.selectAll("g.set_stat text")
-
+      //Title needs to be appended every time as text() on a text element removes existing subelements with the text
       svg.selectAll("g.set_stat text")
         .text(function (d) {
           return setInfo.getSetLabel(d.setId);
-        });
-
-      var titles = svg.selectAll("g.set_stat text title");
-
-      titles
+        })
+        .append("title")
         .text(function (d) {
           return setInfo.getSetLabel(d.setId);
         });
+
+      //var titles = svg.selectAll("g.set_stat text title");
+      //
+      //titles
+      //  .text(function (d) {
+      //    return setInfo.getSetLabel(d.setId);
+      //  });
     }
 
     PathStatsView.prototype.getMinSize = function () {
