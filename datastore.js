@@ -4,14 +4,36 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
 
   function DatasetMedianSortingStrategy(datasetName) {
     SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + ": Median");
-    this.datasetName = datasetName;
+    this.dataset = datasetName;
   }
 
   DatasetMedianSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
   DatasetMedianSortingStrategy.prototype.compare = function (a, b) {
-    var statsA = getPathDatasetStats(a.path, this.datasetName);
-    var statsB = getPathDatasetStats(b.path, this.datasetName);
+    var statsA = getPathDatasetStats(a.path, this.dataset);
+    var statsB = getPathDatasetStats(b.path, this.dataset);
+    if (this.ascending) {
+      return d3.ascending(statsA.median, statsB.median);
+    }
+    return d3.descending(statsA.median, statsB.median);
+  };
+
+  function MaxMedianSortingStrategy(datasetName) {
+    SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + ": Max Median");
+    this.dataset = datasetName;
+  }
+
+  MaxMedianSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+
+  MaxMedianSortingStrategy.prototype.compare = function (a, b) {
+
+    var groups = Object.keys(allData[this.dataset.toString()]);
+
+    groups.forEach(function (group) {
+      var stats = getPathGroupStats(a.path, this.dataset, group);
+    });
+    var statsA = getPathGroupStats(a.path, this.dataset, this.group);
+    var statsB = getPathGroupStats(b.path, this.dataset, this.group);
     if (this.ascending) {
       return d3.ascending(statsA.median, statsB.median);
     }
@@ -20,20 +42,154 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
 
   function GroupMedianSortingStrategy(datasetName, groupName) {
     SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + " - " + groupName + ": Median");
-    this.datasetName = datasetName;
-    this.groupName = groupName;
+    this.dataset = datasetName;
+    this.group = groupName;
   }
 
   GroupMedianSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
   GroupMedianSortingStrategy.prototype.compare = function (a, b) {
-    var statsA = getPathGroupStats(a.path, this.datasetName, this.groupName);
-    var statsB = getPathGroupStats(b.path, this.datasetName, this.groupName);
+    var statsA = getPathGroupStats(a.path, this.dataset, this.group);
+    var statsB = getPathGroupStats(b.path, this.dataset, this.group);
+
     if (this.ascending) {
       return d3.ascending(statsA.median, statsB.median);
     }
     return d3.descending(statsA.median, statsB.median);
   };
+
+
+  //-------------------------------------------------------------
+
+
+  function PerNodeBetweenGroupsSortingStrategy(datasetName, statsProperty, betweenGroupsAggregateFunction, nodeAggregateFunction, label) {
+    SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + ": " + label);
+    this.dataset = datasetName;
+    this.statsProperty = statsProperty;
+    this.betweenGroupsAggregateFunction = betweenGroupsAggregateFunction;
+    this.nodeAggregateFunction = nodeAggregateFunction;
+  }
+
+  PerNodeBetweenGroupsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+
+  PerNodeBetweenGroupsSortingStrategy.prototype.compare = function (a, b) {
+
+    var scoreA = this.nodeAggregateFunction(getPerNodeAggregatesBetweenGroups(this.dataset, a.path, this.statsProperty, this.betweenGroupsAggregateFunction));
+    var scoreB = this.nodeAggregateFunction(getPerNodeAggregatesBetweenGroups(this.dataset, b.path, this.statsProperty, this.betweenGroupsAggregateFunction));
+
+    if (this.ascending) {
+      return d3.ascending(scoreA, scoreB);
+    }
+    return d3.descending(scoreA, scoreB);
+  };
+
+  function PerNodeWithinGroupSortingStrategy(datasetName, groupName, statsProperty, aggregateFunction, label) {
+    SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + " - " + groupName + ": " + label);
+    this.dataset = datasetName;
+    this.group = groupName;
+    this.statsProperty = statsProperty;
+    this.aggrgateFunction = aggregateFunction;
+  }
+
+  PerNodeWithinGroupSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+
+  PerNodeWithinGroupSortingStrategy.prototype.compare = function (a, b) {
+    var scoreA = aggregateStats(getPerNodeStatsWithinGroup(this.dataset, this.group, a.path), this.statsProperty, this.aggrgateFunction);
+    var scoreB = aggregateStats(getPerNodeStatsWithinGroup(this.dataset, this.group, b.path), this.statsProperty, this.aggrgateFunction);
+
+
+    if (this.ascending) {
+      return d3.ascending(scoreA, scoreB);
+    }
+    return d3.descending(scoreA, scoreB);
+  };
+
+  function maxOfArray(arr) {
+    return Math.max.apply(null, arr);
+  }
+
+  function minOfArray(arr) {
+    return Math.min.apply(null, arr);
+  }
+
+  function mean(arr) {
+    var sum = 0;
+    arr.forEach(function (el) {
+      sum += el;
+    });
+    return sum / arr.length;
+  }
+
+  function maxDiff(arr) {
+    return maxOfArray(diffsOfArray(arr));
+  }
+
+  function minDiff(arr) {
+    return minOfArray(diffsOfArray(arr));
+  }
+
+  function diffsOfArray(arr) {
+    var diffs = [];
+
+    arr.forEach(function (el, i) {
+      arr.forEach(function (e, j) {
+        if (i !== j) {
+          diffs.push(Math.abs(el - e));
+        }
+      });
+    });
+    return diffs;
+  }
+
+  function getPerNodeAggregatesBetweenGroups(dataset, path, statsProperty, aggregateFunction) {
+    var allStatsPerNode = {};
+    var groups = Object.keys(allData[dataset.toString()]);
+    groups.forEach(function (group) {
+      var allGroupStats = getPerNodeStatsWithinGroup(dataset, group, path);
+      allGroupStats.forEach(function (stats, i) {
+        var allStats = allStatsPerNode[i.toString()];
+        if (typeof allStats === "undefined") {
+          allStats = [];
+          allStatsPerNode[i.toString()] = allStats;
+        }
+        allStats.push(stats);
+      });
+    });
+    var nodeAggregates = [];
+
+    Object.keys(allStatsPerNode).forEach(function (key) {
+      var statsPerNode = allStatsPerNode[key];
+      nodeAggregates.push(aggregateStats(statsPerNode, statsProperty, aggregateFunction));
+    });
+
+    return nodeAggregates;
+
+  }
+
+  function getPerNodeStatsWithinGroup(dataset, group, path) {
+
+    var allStats = [];
+
+    path.nodes.forEach(function (node) {
+      allStats.push(getStatsForNode(node, dataset, group));
+    });
+
+    return allStats;
+  }
+
+  function aggregateStats(statsArray, statsProperty, aggregateFunction) {
+
+    var elementsToAggregate = [];
+
+    statsArray.forEach(function (stats) {
+      var el = stats[statsProperty];
+      if (typeof el !== "undefined" && !isNaN(el)) {
+        elementsToAggregate.push(el);
+      }
+    });
+
+    return aggregateFunction(elementsToAggregate);
+  }
 
 
   var paths = [];
@@ -242,8 +398,11 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
       datasets.forEach(function (dataset) {
         var groups = Object.keys(allData[dataset.toString()]);
         strategies.push(new DatasetMedianSortingStrategy(dataset.toString()));
+        strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", maxDiff, maxOfArray, "Max of max median differences between groups per node"));
+        strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, maxOfArray, "Max of min median differences between groups per node"));
         groups.forEach(function (group) {
           strategies.push(new GroupMedianSortingStrategy(dataset.toString(), group.toString()));
+          strategies.push(new PerNodeWithinGroupSortingStrategy(dataset, group, "median", maxOfArray, "Max median per node"));
         });
       });
 
