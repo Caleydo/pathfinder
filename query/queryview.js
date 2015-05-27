@@ -112,6 +112,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
           d3.select("#queryOverlay").selectAll("g.overlayButton")
             .remove();
+          pathQuery.setQuery(queryView.container.getPathQuery(), false);
 
         }
       );
@@ -133,6 +134,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       } else {
         container.updateParent();
       }
+
+      pathQuery.setQuery(queryView.container.getPathQuery(), false);
 
     }
 
@@ -484,7 +487,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         }).append("xhtml:div")
         .style("font", "10px 'Arial'")
         .html('<input type="text" placeholder="' + initialText + '" required="required" size="5px" width="5px" class="queryConstraint">');
-      $(this.myDomElements[0]).find("input").width(90);
+      $(this.myDomElements[0]).find("input").width(90).keypress(function (e) {
+        if (e.which == 13) {
+          pathQuery.setQuery(queryView.container.getPathQuery(), false);
+          return false;
+        }
+      });
     };
 
     ConstraintElement.prototype.setText = function (text) {
@@ -616,6 +624,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         select: function (event, ui) {
           inputField.val(ui.item.label);
           that.id = ui.item.value;
+          pathQuery.setQuery(queryView.container.getPathQuery(), false);
           return false; // Prevent the widget from inserting the value.
         },
         focus: function (event, ui) {
@@ -636,7 +645,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       var el = this.myDomElements.select("input");
       var val = $(el[0]).val();
 
-      return new q.NodeNameConstraint(val);
+      return val === "" ? new q.Constraint() : new q.NodeNameConstraint(val);
     };
 
 
@@ -654,6 +663,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         select: function (event, ui) {
           inputField.val(ui.item.id);
           element.id = ui.item.value;
+          pathQuery.setQuery(queryView.container.getPathQuery(), false);
           return false; // Prevent the widget from inserting the value.
         },
         focus: function (event, ui) {
@@ -686,7 +696,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       var el = this.myDomElements.select("input");
       var val = $(el[0]).val();
 
-      return new q.NodeSetPresenceConstraint(val);
+      return  val === "" ? new q.Constraint() : new q.NodeSetPresenceConstraint(val);
     };
 
 //-----------------------------------
@@ -708,7 +718,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       var el = this.myDomElements.select("input");
       var val = $(el[0]).val();
 
-      return new q.NodeTypeConstraint(val);
+      return  val === "" ? new q.Constraint() : new q.NodeTypeConstraint(val);
     };
 
     //-----------------------------------
@@ -734,7 +744,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       var el = this.myDomElements.select("input");
       var val = $(el[0]).val();
 
-      return new q.EdgeSetPresenceConstraint(val);
+      return  val === "" ? new q.Constraint() : new q.EdgeSetPresenceConstraint(val);
     };
 
 //--------------------------------------
@@ -874,18 +884,21 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
             text: "Add Node Name", callback: function () {
               that.add(new NodeNameElement(that));
               d3.select(this).remove();
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           },
             {
               text: "Add Set", callback: function () {
               that.add(new NodeSetElement(that));
               d3.select(this).remove();
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
             },
             {
               text: "Add Node Type", callback: function () {
               that.add(new NodeTypeElement(that));
               d3.select(this).remove();
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
             }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
@@ -894,6 +907,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         if (!that.hasPosition && !(that.parent instanceof UnorderedContainer)) {
           addPositionButton(that, function () {
             that.showPositionDialog();
+            pathQuery.setQuery(queryView.container.getPathQuery(), false);
           }, (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, 0);
         }
 
@@ -905,6 +919,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
               if (that.parent instanceof SequenceContainer) {
                 that.parent.insert(index + 1, new SequenceFiller(that.parent));
               }
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }, {
             text: "Add Edge", callback: function () {
@@ -919,6 +934,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 }
               }
               that.parent.insert(index + 1, new EdgeContainer(that.parent));
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
         }
@@ -1091,6 +1107,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
               text: "Add Set", callback: function () {
               that.add(new EdgeSetElement(that));
               d3.select(this).remove();
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
             }
           ], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
@@ -1110,6 +1127,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
               }
             }
             that.parent.insert(index + 1, new NodeContainer(that.parent));
+            pathQuery.setQuery(queryView.container.getPathQuery(), false);
           }
         }, {
           text: "Add Edge", callback: function () {
@@ -1119,6 +1137,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
             if (that.parent instanceof SequenceContainer) {
               that.parent.insert(index + 1, new SequenceFiller(that.parent));
             }
+            pathQuery.setQuery(queryView.container.getPathQuery(), false);
           }
         }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
@@ -1172,10 +1191,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           addAddButton(that, [{
             text: "Add Node", callback: function () {
               that.add(new NodeContainer(that));
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }, {
             text: "Add Edge", callback: function () {
               that.add(new EdgeContainer(that));
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
         }
@@ -1299,10 +1320,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           addAddButton(that, [{
             text: "Add Sequence", callback: function () {
               that.parent.replace(that, new SequenceContainer(that.parent));
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }, {
             text: "Add Unordered", callback: function () {
               that.parent.replace(that, new UnorderedContainer(that.parent));
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
@@ -1314,6 +1337,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
               if (index === 0 && that.parent.children.length === 1) {
                 that.parent.replace(that, new NodeContainer(that.parent));
+                pathQuery.setQuery(queryView.container.getPathQuery(), false);
                 return;
               }
 
@@ -1322,12 +1346,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 var nextChild = that.parent.children[index + 1];
                 if (prevChild instanceof EdgeContainer && nextChild instanceof EdgeContainer) {
                   that.parent.replace(that, new NodeContainer(that.parent));
+                  pathQuery.setQuery(queryView.container.getPathQuery(), false);
                   return;
                 }
               }
 
               that.parent.insert(index, new NodeContainer(that.parent));
               that.parent.insert(index, new SequenceFiller(that.parent));
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }, {
             text: "Add Edge", callback: function () {
@@ -1335,6 +1361,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
               if (index === 0 && that.parent.children.length === 1) {
                 that.parent.replace(that, new EdgeContainer(that.parent));
+                pathQuery.setQuery(queryView.container.getPathQuery(), false);
                 return;
               }
 
@@ -1343,12 +1370,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 var nextChild = that.parent.children[index + 1];
                 if (prevChild instanceof NodeContainer && nextChild instanceof NodeContainer) {
                   that.parent.replace(that, new EdgeContainer(that.parent));
+                  pathQuery.setQuery(queryView.container.getPathQuery(), false);
                   return;
                 }
               }
 
               that.parent.insert(index, new EdgeContainer(that.parent));
               that.parent.insert(index, new SequenceFiller(that.parent));
+              pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
         }
@@ -1477,7 +1506,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     SequenceContainer.prototype.getPathQuery = function () {
       if (this.children.length === 0) {
-        return new g.PathQuery();
+        return new q.PathQuery();
       } else if (this.children.length === 1) {
         return getPathBoundedQuery(this.children[0]);
       }
@@ -1643,7 +1672,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         }
       );
 
-      $('#just_network_edges').click(function() {
+      $('#just_network_edges').click(function () {
         pathQuery.setJustNetworkEdges($('#just_network_edges').is(':checked'));
       });
 

@@ -1536,7 +1536,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .on("dblclick", function (d) {
             pathSorting.sortingStrategies.selectionSortingStrategy.setPathIds(selectionUtil.selections["path"]["selected"]);
             listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-          });;
+          });
         //.on("click", function(d) {
         //  console.log(d.path.id);
         //});
