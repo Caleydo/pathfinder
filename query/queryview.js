@@ -661,14 +661,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           })
         },
         select: function (event, ui) {
-          inputField.val(ui.item.id);
-          element.id = ui.item.value;
+          inputField.val(ui.item.label);
+          element.id = ui.item.id;
           pathQuery.setQuery(queryView.container.getPathQuery(), false);
           return false; // Prevent the widget from inserting the value.
         },
         focus: function (event, ui) {
-          inputField.val(ui.item.id);
-          element.id = ui.item.value;
+          inputField.val(ui.item.label);
+          element.id = ui.item.id;
           return false; // Prevent the widget from inserting the value.
         }
       }
@@ -696,7 +696,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       var el = this.myDomElements.select("input");
       var val = $(el[0]).val();
 
-      return  val === "" ? new q.Constraint() : new q.NodeSetPresenceConstraint(val);
+      return  val === "" ? new q.Constraint() : new q.NodeSetPresenceConstraint(this.id);
     };
 
 //-----------------------------------
