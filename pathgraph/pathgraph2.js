@@ -60,8 +60,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         }
       });
 
-      selectionUtil.addListener("path", function (selectionType) {
-        that.currentGraphLayout.onPathSelectionUpdate(selectionType);
+      selectionUtil.addListener("path", function (selectionType, source) {
+        that.currentGraphLayout.onPathSelectionUpdate(selectionType, source);
       });
 
 

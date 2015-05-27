@@ -23,7 +23,7 @@ define(['d3', '../caleydo/main'], function (d3, C) {
         this[type] = [];
       }
       if (ids instanceof Array) {
-        this[type].pushAll(ids);
+        this[type] = this[type].concat(ids);
       } else {
         this[type].push(ids);
       }
@@ -34,13 +34,14 @@ define(['d3', '../caleydo/main'], function (d3, C) {
         this[type] = [];
         return;
       }
+      var that = this;
 
       if (ids instanceof Array) {
         ids.forEach(function (id) {
-          this.removeSingleId(id, type);
+          that.removeSingleId(id, type);
         });
       } else {
-        this.removeSingleId(ids, type);
+        that.removeSingleId(ids, type);
       }
     },
 
@@ -73,10 +74,10 @@ define(['d3', '../caleydo/main'], function (d3, C) {
       nodeInCombo: []
     },
 
-    notify: function (idType, selectionType) {
+    notify: function (idType, selectionType, source) {
       var listeners = this.listeners[idType];
       listeners.forEach(function (l) {
-        l(selectionType);
+        l(selectionType, source);
       })
     },
 
@@ -104,29 +105,33 @@ define(['d3', '../caleydo/main'], function (d3, C) {
       this.listeners[idType].push(listener);
     },
 
-    addDefaultListener: function (parent, selector, idAccessor, idType) {
-
+    addDefaultTrigger: function (parent, selector, idAccessor, idType, source) {
       var that = this;
-      var elements = parent.selectAll(selector)
-        .on("mouseover."+idType, function (d, i) {
+      parent.selectAll(selector)
+        .on("mouseover." + idType, function (d, i) {
           that.selections[idType].setSelection(idAccessor(d, i), "hovered");
-          that.notify(idType, "hovered");
+          that.notify(idType, "hovered", source);
         })
-        .on("mouseout."+idType, function (d, i) {
+        .on("mouseout." + idType, function (d, i) {
           that.selections[idType].removeFromSelection(idAccessor(d, i), "hovered");
-          that.notify(idType, "hovered");
+          that.notify(idType, "hovered", source);
         })
-        .on("click."+idType, function (d, i) {
+        .on("click." + idType, function (d, i) {
           if (d3.event.ctrlKey) {
             that.selections[idType].addToSelection(idAccessor(d, i), "selected");
           } else {
             that.selections[idType].setSelection(idAccessor(d, i), "selected");
           }
-          that.notify(idType, "selected");
+          that.notify(idType, "selected", source);
         });
+    },
 
+    addDefaultListener: function (parent, selector, idAccessor, idType, source) {
+      var that = this;
 
-      var listener = function (selectionType) {
+      this.addDefaultTrigger(parent, selector, idAccessor, idType, source);
+
+      var listener = function (selectionType, source) {
         parent.selectAll(selector)
           .each(function (d, j) {
             var id = idAccessor(d, j);

@@ -1532,7 +1532,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .attr("x", 0)
           .attr("y", 0)
           .attr("width", "100%")
-          .attr("height", s.PATH_HEIGHT);
+          .attr("height", s.PATH_HEIGHT)
+          .on("dblclick", function (d) {
+            pathSorting.sortingStrategies.selectionSortingStrategy.setPathIds(selectionUtil.selections["path"]["selected"]);
+            listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+          });;
         //.on("click", function(d) {
         //  console.log(d.path.id);
         //});
