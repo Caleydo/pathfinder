@@ -260,7 +260,11 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       var edge = allEdges
         .enter()
         .append("g")
-        .classed("edgePath", true);
+        .classed("edgePath", true)
+        .on("dblclick", function (d) {
+          pathSorting.sortingStrategies.selectionSortingStrategy.setPathIds(selectionUtil.selections["path"]["selected"]);
+          listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+        });
 
       var line = d3.svg.line()
         .x(function (d) {
@@ -279,6 +283,10 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             return config.isNetworkEdge(d.edge.edge) ? "url(#arrowhead" + d.edge.label + ")" : null;
           }
         });
+
+      edge.append("path")
+        .style({fill: "none", opacity: 0, "stroke-width":8})
+        .classed("selectionLines", true);
 
       //<marker id="arrowhead1177" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"></path></marker>
 
@@ -356,12 +364,58 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             //return drawBezierLink2(sourceNode.x + nodeWidth / 2, sourceNode.y, targetNode.x - nodeWidth / 2, targetNode.y);
           }
         });
+
+      allEdges.selectAll("path.selectionLines")
+        .data(that.edgeWrappers, getEdgeKey)
+        .transition()
+        //.each("start", function(d) {
+        //  d3.select(this).style("display", "none");
+        //})
+        //.duration(5000)
+        .attr({
+          d: function (d) {
+            //var points = Object.create(d.edge.points);
+            //points.splice(0, 1);
+            //points.splice(points.length - 1, 1);
+            var sourceNode = that.graph.node(d.v);
+            var targetNode = that.graph.node(d.w);
+            //
+            //points.splice(0, 0, {x: sourceNode.x + nodeWidth / 2, y: sourceNode.y});
+            //points.splice(1, 0, {x: sourceNode.x + nodeWidth / 2 + 20, y: sourceNode.y});
+            //
+            //
+            //points.push({x: targetNode.x - nodeWidth / 2 - 20, y: targetNode.y});
+            //points.push({x: targetNode.x - nodeWidth / 2, y: targetNode.y});
+            //
+            //return line(points);
+            return line(d.edge.points);
+
+            //return drawBezierLink2(sourceNode.x + nodeWidth / 2, sourceNode.y, targetNode.x - nodeWidth / 2, targetNode.y);
+          }
+        });
       //.each("end", function(d) {
       //  d3.select(this).style("display", "inline");
       //});
       //var edgeLines = edge.append("line");
       //.
       //attr("marker-end", "url(#arrowRight)");
+
+
+      selectionUtil.addDefaultTrigger(edgeGroup, "g.edgePath", function (d) {
+
+        var pathIds = [];
+        that.paths.forEach(function (path) {
+          for (var i = 0; i < path.edges.length; i++) {
+            var edge = path.edges[i];
+            if (edge.id === d.edge.id) {
+              pathIds.push(path.id);
+              break;
+            }
+          }
+        });
+        return pathIds;
+      }, "path");
+
 
       allEdges.exit()
         .remove();
@@ -407,121 +461,10 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         });
 
       node.each(function (d) {
-        pathUtil.renderNode(d3.select(this), d.node, -d.width/2, -d.height/2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
+        pathUtil.renderNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
           return that.view.getTextWidth(text)
         });
       });
-
-      //var nodeRects = node.append("rect")
-      //  .attr({
-      //    rx: 5,
-      //    ry: 5,
-      //    x: function (d) {
-      //      return -d.width / 2
-      //    },
-      //    y: function (d) {
-      //      return -d.height / 2
-      //    },
-      //    width: function (d) {
-      //      //return that.graph.node(d).width;
-      //      return d.width;
-      //    },
-      //    height: function (d) {
-      //      //return that.graph.node(d).height;
-      //      return d.height;
-      //    }
-      //  });
-      //
-      //var nodeTexts = node.append("text")
-      //  .attr({
-      //    x: function (d) {
-      //      //var node = that.graph.node(d).node;
-      //      var text = d.node.properties[config.getNodeNameProperty(d.node)];
-      //      var width = that.view.getTextWidth(text); //+ 12;
-      //      var nodeTypeSymbol = config.getTypeSymbolForNode(d.node);
-      //
-      //      //No symbol, text centered
-      //      if (typeof nodeTypeSymbol === "undefined") {
-      //        return Math.max(-width / 2, -d.width / 2+3);
-      //      }
-      //
-      //      //Symbol left, text centered
-      //      return  Math.max(-width / 2, -d.width / 2 + 12)+6;
-      //
-      //
-      //      //Symbol left, text left
-      //      //return -d.width / 2 + 14;
-      //
-      //      //Symbol centered together with text
-      //      //return Math.max(-width / 2, -d.width / 2+2)+12;
-      //    },
-      //    y: function (d) {
-      //      return d.height / 2 - 6;
-      //    },
-      //    "clip-path": "url(#graphNodeClipPath)"
-      //  })
-      //  .text(function (d) {
-      //    //var node = that.graph.node(d).node;
-      //    var text = d.node.properties[config.getNodeNameProperty(d.node)];
-      //    //if (text.length > 7) {
-      //    //  text = text.substring(0, 7);
-      //    //}
-      //    return text;
-      //  });
-      //
-      //node.append("title")
-      //  .text(function (d) {
-      //    //var node = that.graph.node(d).node;
-      //    return d.node.properties[config.getNodeNameProperty(d.node)] + " ("+config.getNodeType(d.node)+")";
-      //  });
-      //
-      //node.each(function (d) {
-      //  var symbolType = config.getTypeSymbolForNode(d.node);
-      //
-      //  if (typeof symbolType !== "undefined") {
-      //    var symbol = d3.svg.symbol().type(symbolType)
-      //      .size(64);
-      //
-      //    //d3.select(this)
-      //    //  .append("rect")
-      //    //  .attr({
-      //    //    x: function () {
-      //    //      var text = d.node.properties[config.getNodeNameProperty(d.node)];
-      //    //      var width = that.view.getTextWidth(text) + 12;
-      //    //      var nodeTypeSymbol = config.getTypeSymbolForNode(d.node);
-      //    //
-      //    //      //No symbol, text centered
-      //    //      //if(typeof nodeTypeSymbol === "undefined") {
-      //    //      return Math.max(-width / 2, -d.width / 2);
-      //    //    },
-      //    //    y: -6,
-      //    //    width: 12,
-      //    //    height: 12,
-      //    //    fill: "red"
-      //    //
-      //    //  });
-      //
-      //    d3.select(this)
-      //      .append("path")
-      //      .classed("nodeTypeSymbol", true)
-      //      .attr({
-      //        d: symbol,
-      //        transform: function () {
-      //
-      //          //var text = d.node.properties[config.getNodeNameProperty(d.node)];
-      //          //var width = that.view.getTextWidth(text) + 12;
-      //          //var nodeTypeSymbol = config.getTypeSymbolForNode(d.node);
-      //
-      //          //No symbol, text centered
-      //          //if(typeof nodeTypeSymbol === "undefined") {
-      //          //return "translate(" + (Math.max(-width / 2, -d.width / 2+2) + 6) + ", 0)";
-      //          //}
-      //
-      //          return "translate(" + (-d.width / 2 + 10) + ",0)"
-      //        }
-      //      });
-      //  }
-      //});
 
       this.updateFilter();
 

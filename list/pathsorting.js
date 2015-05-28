@@ -49,6 +49,36 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
       return d3.descending(weightA, weightB);
     };
 
+    function PathPresenceSortingStrategy(pathIds) {
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected nodes");
+      this.pathIds = pathIds;
+      this.ascending = false;
+    }
+
+    PathPresenceSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+    PathPresenceSortingStrategy.prototype.setPathIds = function (pathIds) {
+      this.pathIds = pathIds;
+    };
+
+    PathPresenceSortingStrategy.prototype.compare = function (a, b) {
+      var pathPresentA = 0;
+      var pathPresentB = 0;
+      this.pathIds.forEach(function (pathId) {
+        if(a.path.id === pathId) {
+          pathPresentA = 1;
+        }
+        if(b.path.id === pathId) {
+          pathPresentB = 1;
+        }
+      });
+
+      if (this.ascending) {
+        return d3.ascending(pathPresentA, pathPresentB);
+      }
+      return d3.descending(pathPresentA, pathPresentB);
+
+    };
+
     function NodePresenceSortingStrategy(nodeIds) {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected nodes");
       this.nodeIds = nodeIds;
@@ -145,6 +175,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected elements");
       this.nodePresenceStrategy = new NodePresenceSortingStrategy([]);
       this.setPresenceStrategy = new SetPresenceSortingStrategy([]);
+      this.pathPresenceStrategy = new PathPresenceSortingStrategy([]);
       this.currentStrategy = this.nodePresenceStrategy;
       this.ascending = false;
     }
@@ -158,6 +189,11 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
     SelectionSortingStrategy.prototype.setNodeIds = function (nodeIds) {
       this.nodePresenceStrategy.setNodeIds(nodeIds);
       this.currentStrategy = this.nodePresenceStrategy;
+    };
+
+    SelectionSortingStrategy.prototype.setPathIds = function (pathIds) {
+      this.pathPresenceStrategy.setPathIds(pathIds);
+      this.currentStrategy = this.pathPresenceStrategy;
     };
 
     SelectionSortingStrategy.prototype.compare = function (a, b) {

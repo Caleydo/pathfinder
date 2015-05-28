@@ -184,6 +184,23 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
             }
           });
 
+        allEdges.selectAll("path.selectionLines").data(that.graph.edges, function (d) {
+          return d.edge.id;
+        })
+          .attr({
+            d: function (d) {
+
+              return line([{
+                x: calcIntersectionX(d.source, d.target, nodeWidth, nodeHeight),
+                y: calcIntersectionY(d.source, d.target, nodeWidth, nodeHeight)
+              },
+                {
+                  x: calcIntersectionX(d.target, d.source, nodeWidth, nodeHeight),
+                  y: calcIntersectionY(d.target, d.source, nodeWidth, nodeHeight)
+                }]);
+            }
+          });
+
         //allEdges
         //  .transition()
         //  .attr("x1", function (d) {
@@ -237,7 +254,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
         return {width: 300, height: 300};
       },
 
-      onPathSelectionUpdate: function (selectionType) {
+      onPathSelectionUpdate: function (selectionType, source) {
         //var that = this;
         //var selectedIds = (selectionUtil.selections["path"])[selectionType];
         //var selected = false;
@@ -256,6 +273,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
         //    }
         //  }
         //});
+
 
         var that = this;
         var selectedIds = (selectionUtil.selections["path"])[selectionType];
@@ -292,7 +310,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
           });
 
 
-        if (selectionType === "selected" && lastPath != 0) {
+        if (selectionType === "selected" && lastPath != 0 && source !== this) {
           that.fixPath(lastPath);
         }
       },
@@ -586,7 +604,12 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
         var edge = allEdges
           .enter()
           .append("g")
-          .classed("edgePath", true);
+          .classed("edgePath", true)
+          .on("dblclick", function (d) {
+            pathSorting.sortingStrategies.selectionSortingStrategy.setPathIds(selectionUtil.selections["path"]["selected"]);
+            listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+          });
+        ;
 
 
         edge.append("path")
@@ -597,6 +620,10 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
               return config.isNetworkEdge(d.edge) ? "url(#arrowhead" + d.edge.id.toString() + ")" : null;
             }
           });
+
+        edge.append("path")
+          .style({fill: "none", opacity: 0, "stroke-width": 8})
+          .classed("selectionLines", true);
 
         //<marker id="arrowhead1177" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"></path></marker>
 
@@ -614,6 +641,21 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
           .attr("orient", "auto")
           .append("path")
           .attr("d", "M 0 0 L 10 5 L 0 10 z");
+
+        selectionUtil.addDefaultTrigger(edgeGroup, "g.edgePath", function (d) {
+
+          var pathIds = [];
+          that.paths.forEach(function (path) {
+            for (var i = 0; i < path.edges.length; i++) {
+              var edge = path.edges[i];
+              if (edge.id === d.edge.id) {
+                pathIds.push(path.id);
+                break;
+              }
+            }
+          });
+          return pathIds;
+        }, "path", that);
 
 
         //var edge = allEdges
@@ -657,7 +699,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
         );
 
         node.each(function (d) {
-          pathUtil.renderNode(d3.select(this), d.node, -d.width/2, -d.height/2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
+          pathUtil.renderNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
             return that.view.getTextWidth(text)
           });
         });
