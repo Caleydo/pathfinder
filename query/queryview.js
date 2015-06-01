@@ -131,7 +131,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
             parent.correctSequence();
           } else {
 
-            while (typeof parent !== "undefined" && ((parent instanceof AndContainer || parent instanceof OrContainer && parent.children.length <= 1)
+            while (typeof parent !== "undefined" && (((parent instanceof AndContainer || parent instanceof OrContainer) && parent.children.length <= 1)
             || (parent instanceof NotContainer && parent.children.length <= 0))) {
 
               var grandParent = parent.parent;
