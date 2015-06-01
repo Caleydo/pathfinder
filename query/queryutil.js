@@ -1,4 +1,4 @@
-define(['d3', './queryview', '../listoverlay', '../uiutil', '../setinfo'], function (d3, queryView, ListOverlay, uiUtil, setInfo) {
+define(['d3', './queryview', '../listoverlay', '../uiutil', '../setinfo', '../config'], function (d3, queryView, ListOverlay, uiUtil, setInfo, config) {
 
   var listOverlay = new ListOverlay();
 
@@ -41,7 +41,13 @@ define(['d3', './queryview', '../listoverlay', '../uiutil', '../setinfo'], funct
                 contraintInfo = {label: text, value: text, category: "Type"};
                 break;
               case "set":
-                contraintInfo = {label: setInfo.getSetLabel(text), value: text, id: text, category: "Set"};
+                contraintInfo = {
+                  label: setInfo.getSetLabel(text),
+                  value: text,
+                  id: text,
+                  setNodeLabel: config.getSetNodeLabel(setInfo.get(text)),
+                  category: "Set"
+                };
                 break;
               default:
                 return;

@@ -606,12 +606,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       MultiConstraintElement.call(this, parent);
       this.autoCompleteSource = function (request, response) {
         var term = request.term;
-        ServerSearch.search(term, 'name', '_Set_Node').then(function (setResults) {
-          setResults.forEach(function (element) {
-            element.category = "Set";
-          });
-          response(setResults);
-        });
+        var setNodeLabels = config.getSetNodeLabels();
+        if (setNodeLabels.length > 0) {
+          fetchSetsOfType(term, 0, [], setNodeLabels, response);
+        } else {
+          response([]);
+        }
       }
     }
 
@@ -650,7 +650,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         return new q.Constraint();
       }
       if (this.info.category === "Set") {
-        return new q.EdgeSetPresenceConstraint(this.info.id);
+        return new q.EdgeSetPresenceConstraint(this.info.id, config.getSetProperty(this.info.setNodeLabel));
       }
       return q.Constraint();
 
@@ -753,6 +753,23 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
 //----------------------------------------
 
+    function fetchSetsOfType(term, index, results, setNodeLabels, response) {
+      var label = setNodeLabels[index];
+      var nameProperty = config.getSetNamePropertyOfType(label);
+      ServerSearch.search(term, nameProperty, label).then(function (setResults) {
+        setResults.forEach(function (element) {
+          element.category = "Set";
+          element.setNodeLabel = label;
+        });
+        results = results.concat(setResults);
+        if (index + 1 < setNodeLabels.length) {
+          fetchSetsOfType(term, index + 1, results, setNodeLabels, response);
+        } else {
+          response(results);
+        }
+      });
+    }
+
     function NodeConstraintElement(parent) {
       MultiConstraintElement.call(this, parent);
       this.autoCompleteSource = function (request, response) {
@@ -761,25 +778,27 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           nameResults.forEach(function (element) {
             element.category = "Name";
           });
-          ServerSearch.search(term, 'name', '_Set_Node').then(function (setResults) {
-            setResults.forEach(function (element) {
-              element.category = "Set";
-            });
 
-            var nodeTypes = config.getNodeTypes();
-            nodeTypes = nodeTypes.filter(function (type) {
-              var res = type.search(new RegExp(term, "i"));
-              return res !== -1;
-            });
-            var typeResults = nodeTypes.map(function (type) {
-              return {
-                label: type,
-                value: type,
-                category: "Type"
-              }
-            });
-            response(nameResults.concat(setResults, typeResults));
+          var nodeTypes = config.getNodeTypes();
+          nodeTypes = nodeTypes.filter(function (type) {
+            var res = type.search(new RegExp(term, "i"));
+            return res !== -1;
           });
+          var typeResults = nodeTypes.map(function (type) {
+            return {
+              label: type,
+              value: type,
+              category: "Type"
+            }
+          });
+
+          var setNodeLabels = config.getSetNodeLabels();
+          if (setNodeLabels.length > 0) {
+            fetchSetsOfType(term, 0, nameResults.concat(typeResults), setNodeLabels, response);
+          } else {
+            response(nameResults.concat(typeResults));
+          }
+
         });
       }
     }
@@ -821,7 +840,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       if (this.info.category === "Name") {
         return new q.NodeNameConstraint(this.info.label);
       } else if (this.info.category === "Set") {
-        return new q.NodeSetPresenceConstraint(this.info.id);
+        return new q.NodeSetPresenceConstraint(this.info.id, config.getSetProperty(this.info.setNodeLabel));
       }
       return new q.NodeTypeConstraint(this.info.label);
     };
@@ -1321,10 +1340,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         if (that.children.length <= 0) {
 
           addAddButton(that, function () {
-              that.add(new EdgeConstraintElement(that));
-              d3.select(this).remove();
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
-            }, (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+            that.add(new EdgeConstraintElement(that));
+            d3.select(this).remove();
+            pathQuery.setQuery(queryView.container.getPathQuery(), false);
+          }, (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
         }
 
