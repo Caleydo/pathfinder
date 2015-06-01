@@ -587,6 +587,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
       input.keypress(function (e) {
         that.setCaption("");
+        delete that.info;
         //return false;
       });
     };
@@ -602,13 +603,22 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     //-------------------------------------------
 
     function EdgeConstraintElement(parent) {
-      ConstraintElement.call(this, parent);
+      MultiConstraintElement.call(this, parent);
+      this.autoCompleteSource = function (request, response) {
+        var term = request.term;
+        ServerSearch.search(term, 'name', '_Set_Node').then(function (setResults) {
+          setResults.forEach(function (element) {
+            element.category = "Set";
+          });
+          response(setResults);
+        });
+      }
     }
 
-    EdgeConstraintElement.prototype = Object.create(ConstraintElement.prototype);
+    EdgeConstraintElement.prototype = Object.create(MultiConstraintElement.prototype);
 
     EdgeConstraintElement.prototype.addInput = function (domParent, initialText) {
-      ConstraintElement.prototype.addInput.call(this, domParent, initialText);
+      MultiConstraintElement.prototype.addInput.call(this, domParent, initialText);
 
       var that = this;
 
@@ -620,22 +630,69 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     function addEdgeConstraintBooleanButtons(element) {
       var size = element.getSize();
 
-      addBooleanButtonsWithListOptions(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [
-          {
-            text: "Add Set", callback: function () {
-            replaceWithContainer(element, AndContainer, true, EdgeSetElement);
-          }
-          }],
-        [{
-          text: "Add Set", callback: function () {
-            replaceWithContainer(element, OrContainer, false, EdgeSetElement);
-          }
-        }], function () {
+      addBooleanButtons(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5,
+        function () {
+          replaceWithContainer(element, AndContainer, true, EdgeConstraintElement);
+        },
+        function () {
+          replaceWithContainer(element, OrContainer, false, EdgeConstraintElement);
+        }, function () {
           replaceWithContainer(element, NotContainer, false);
         }
       );
-
     }
+
+    EdgeConstraintElement.prototype.getPathQuery = function () {
+      var el = this.myDomElements.select("input");
+      var val = $(el[0]).val();
+
+      if (typeof this.info === "undefined" || val === "") {
+        return new q.Constraint();
+      }
+      if (this.info.category === "Set") {
+        return new q.EdgeSetPresenceConstraint(this.info.id);
+      }
+      return q.Constraint();
+
+    };
+
+    //-------------------------------------------
+
+    //function EdgeConstraintElement(parent) {
+    //  ConstraintElement.call(this, parent);
+    //}
+    //
+    //EdgeConstraintElement.prototype = Object.create(ConstraintElement.prototype);
+    //
+    //EdgeConstraintElement.prototype.addInput = function (domParent, initialText) {
+    //  ConstraintElement.prototype.addInput.call(this, domParent, initialText);
+    //
+    //  var that = this;
+    //
+    //  $(domParent[0]).mouseenter(function () {
+    //    addEdgeConstraintBooleanButtons(that);
+    //  });
+    //};
+    //
+    //function addEdgeConstraintBooleanButtons(element) {
+    //  var size = element.getSize();
+    //
+    //  addBooleanButtonsWithListOptions(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [
+    //      {
+    //        text: "Add Set", callback: function () {
+    //        replaceWithContainer(element, AndContainer, true, EdgeSetElement);
+    //      }
+    //      }],
+    //    [{
+    //      text: "Add Set", callback: function () {
+    //        replaceWithContainer(element, OrContainer, false, EdgeSetElement);
+    //      }
+    //    }], function () {
+    //      replaceWithContainer(element, NotContainer, false);
+    //    }
+    //  );
+    //
+    //}
 
     //-------------------------------------------
 
@@ -1263,15 +1320,11 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
         if (that.children.length <= 0) {
 
-          addAddButtonWithListOptions(that, [
-            {
-              text: "Add Set", callback: function () {
-              that.add(new EdgeSetElement(that));
+          addAddButton(that, function () {
+              that.add(new EdgeConstraintElement(that));
               d3.select(this).remove();
               pathQuery.setQuery(queryView.container.getPathQuery(), false);
-            }
-            }
-          ], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+            }, (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
         }
 

@@ -148,7 +148,7 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
     var propertyKeys = Object.keys(edge.properties);
     for (var j = 0; j < propertyKeys.length; j++) {
       var key = propertyKeys[j];
-      if (pathUtil.isEdgeSetProperty(key)) {
+      if (pathUtil.isEdgeSetProperty(edge, key)) {
         var property = edge.properties[key];
         if (property instanceof Array) {
           for (var k = 0; k < property.length; k++) {
@@ -161,12 +161,14 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
         }
       }
     }
-    EdgeSetPresenceConstraint.prototype.serialize = function () {
-      //FIXME hard coded
-      return {context: 'rel', 'prop': 'pathways', '$contains': this.setId};
-    };
+
 
     return false;
+  };
+
+  EdgeSetPresenceConstraint.prototype.serialize = function () {
+    //FIXME hard coded
+    return {context: 'rel', 'prop': 'pathways', '$contains': this.setId};
   };
 
 
