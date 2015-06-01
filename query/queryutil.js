@@ -1,4 +1,4 @@
-define(['d3', './queryview', '../listoverlay', '../uiutil'], function (d3, queryView, ListOverlay, uiUtil) {
+define(['d3', './queryview', '../listoverlay', '../uiutil', '../setinfo'], function (d3, queryView, ListOverlay, uiUtil, setInfo) {
 
   var listOverlay = new ListOverlay();
 
@@ -31,16 +31,32 @@ define(['d3', './queryview', '../listoverlay', '../uiutil'], function (d3, query
             var x = coordinates[0];
             var y = coordinates[1];
 
+            var contraintInfo = 0;
+
+            switch (constraintType) {
+              case "name":
+                contraintInfo = {label: text, value: text, category: "Name"};
+                break;
+              case "type":
+                contraintInfo = {label: text, value: text, category: "Type"};
+                break;
+              case "set":
+                contraintInfo = {label: setInfo.getSetLabel(text), value: text, id: text, category: "Set"};
+                break;
+              default:
+                return;
+            }
+
             listOverlay.show(svg, [{
               text: "Must contain",
               callback: function () {
-                queryView.addNodeFilter(constraintType, text, false);
+                queryView.addNodeFilter(contraintInfo, false);
               }
             },
               {
                 text: "Must not contain",
                 callback: function () {
-                  queryView.addNodeFilter(constraintType, text, true);
+                  queryView.addNodeFilter(contraintInfo, true);
                 }
               }
             ], x, y);

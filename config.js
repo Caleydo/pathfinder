@@ -272,6 +272,12 @@ define(['d3'], function (d3) {
 
     getTypeSymbolForNode: function (node) {
       return this.getNodeTypeSymbol(this.getNodeType(node));
+    },
+
+    getNodeTypes: function() {
+      return config.nodes.map(function(nodeConfig) {
+        return nodeConfig["node_label"];
+      });
     }
   }
 
