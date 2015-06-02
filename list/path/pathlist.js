@@ -1,6 +1,7 @@
 define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '../../selectionutil',
-    '../pathsorting', '../../pathutil', '../../query/pathquery', '../../datastore', '../../config', '../../listoverlay', '../../query/queryview', '../../query/queryUtil', '../../hierarchyelements', './settings', './datasetrenderer', '../../visibilitysettings'],
-  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config, ListOverlay, queryView, queryUtil, hierarchyElements, s, dr, vs) {
+    '../pathsorting', '../../pathutil', '../../query/pathquery', '../../datastore', '../../config', '../../listoverlay',
+    '../../query/queryview', '../../query/queryUtil', '../../hierarchyelements', './settings', './datasetrenderer', '../../visibilitysettings', '../../uiutil'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config, ListOverlay, queryView, queryUtil, hierarchyElements, s, dr, vs, uiUtil) {
     'use strict';
 
 
@@ -1310,7 +1311,24 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             .classed("setCont", true);
 
           sc.each(function (d, i) {
-            queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, s.NODE_START, 0, true);
+
+
+            uiUtil.createTemporalMenuOverlayButton(d3.select(this), that.parent, s.NODE_START, 0, true, function() {
+
+              var setNode = setInfo.get(d.set.id);
+
+              if(typeof setNode === "undefined") {
+                return [];
+              }
+
+              var items = queryUtil.getFilterOverlayItems("set", d.set.id);
+              var linkItem = setInfo.getLinkOverlayItem(d.set.id);
+              if(linkItem) {
+                items.push(linkItem);
+              }
+              return items;
+            });
+            //queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, s.NODE_START, 0, true);
           });
 
           allSc.attr({
@@ -1650,7 +1668,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           });
 
         nc.each(function (d, i) {
-          queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "name", d.node.properties[config.getNodeNameProperty(d.node)], s.NODE_WIDTH, 0);
+          uiUtil.createTemporalMenuOverlayButton(d3.select(this), that.parent, s.NODE_WIDTH, 0, false, queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]));
+          //queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "name", d.node.properties[config.getNodeNameProperty(d.node)], s.NODE_WIDTH, 0);
         });
 
         var node = nc

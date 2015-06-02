@@ -279,11 +279,11 @@ define(['d3'], function (d3) {
       return labels;
     },
 
-    getSetNamePropertyOfConfig: function (setConfig) {
+    getSetPropertyOfConfig: function (setConfig, property) {
       var keys = Object.keys(setConfig.properties);
       for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
-        if (setConfig.properties[key] === "name") {
+        if (setConfig.properties[key] === property) {
           return key;
         }
       }
@@ -294,7 +294,7 @@ define(['d3'], function (d3) {
       var that = this;
 
       config.sets.forEach(function (setConfig) {
-        nameProperties.push(that.getSetNamePropertyOfConfig(setConfig));
+        nameProperties.push(that.getSetPropertyOfConfig(setConfig, "name"));
       });
 
       return nameProperties;
@@ -302,7 +302,17 @@ define(['d3'], function (d3) {
 
     getSetNamePropertyOfType: function (label) {
       var setConfig = this.getSetConfigByLabel(label);
-      return this.getSetNamePropertyOfConfig(setConfig);
+      return this.getSetPropertyOfConfig(setConfig, "name");
+    },
+
+    getSetUrlPropertyOfType: function (label) {
+      var setConfig = this.getSetConfigByLabel(label);
+      return this.getSetPropertyOfConfig(setConfig, "url");
+    },
+
+    getSetUrlProperty: function (setNode) {
+      var setConfig = this.getSetConfig(setNode);
+      return this.getSetPropertyOfConfig(setConfig, "url");
     },
 
     /**

@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners', '../query/pathquery', '../sorting', '../setinfo', '../config', '../query/queryutil'],
-  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo, config, queryUtil) {
+define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners', '../query/pathquery', '../sorting', '../setinfo', '../config', '../query/queryutil', '../uiutil'],
+  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo, config, queryUtil, uiUtil) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
     var NodeTypeWrapper = statData.NodeTypeWrapper;
@@ -503,8 +503,12 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         .classed("statTypeCont", true);
 
       typeCont.each(function (d, i) {
-        if (d.supportsNodeFilter()) {
-          queryUtil.createAddNodeFilterButton(d3.select(this), d3.select("#pathstats svg"), d.getNodeConstraintType(), d.getFilterText(), BAR_START_X - 20, 0, true);
+        if (d.hasOverlayItems()) {
+          uiUtil.createTemporalMenuOverlayButton(d3.select(this), d3.select("#pathstats svg"), BAR_START_X - 20, 0, true, function() {
+            return d.getOverlayMenuItems();
+          });
+
+          //queryUtil.createAddNodeFilterButton(d3.select(this), d3.select("#pathstats svg"), d.getNodeConstraintType(), d.getFilterText(), BAR_START_X - 20, 0, true);
         }
       });
 
@@ -612,8 +616,14 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         });
 
       stats.each(function (d, i) {
-        if (d.supportsNodeFilter()) {
-          queryUtil.createAddNodeFilterButton(d3.select(this), d3.select("#pathstats svg"), d.getNodeConstraintType(), d.getFilterText(), BAR_START_X - 20, 0, true);
+        if (d.hasOverlayItems()) {
+          uiUtil.createTemporalMenuOverlayButton(d3.select(this), d3.select("#pathstats svg"), BAR_START_X - 20, 0, true, function() {
+            return d.getOverlayMenuItems();
+          });
+
+
+
+          //queryUtil.createAddNodeFilterButton(d3.select(this), d3.select("#pathstats svg"), d.getNodeConstraintType(), d.getFilterText(), BAR_START_X - 20, 0, true);
         }
       });
 

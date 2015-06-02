@@ -61,7 +61,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     function addAddButtonWithListOptions(parent, data, x, y) {
       return addAddButton(parent, function () {
-        listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
+        listOverlay.setItems(data);
+        listOverlay.show(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y);
       }, x, y);
     }
 
@@ -98,10 +99,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     function addBooleanButtonsWithListOptions(parent, x, y, andData, orData, notCallBack) {
       addAndButton(parent, function () {
-        listOverlay.show(d3.select("#queryOverlay"), andData, parent.translate.x + x, parent.translate.y + y);
+        listOverlay.setItems(andData);
+        listOverlay.show(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y);
       }, x, y);
       addOrButton(parent, function () {
-        listOverlay.show(d3.select("#queryOverlay"), orData, parent.translate.x + x, parent.translate.y + y);
+        listOverlay.setItems(orData);
+        listOverlay.show(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y);
       }, x + AND_BUTTON_WIDTH, y);
       addNotButton(parent, notCallBack, x + AND_BUTTON_WIDTH + OR_BUTTON_WIDTH, y);
     }
@@ -1148,7 +1151,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           addAddButtonWithListOptions(that, [{
             text: "Add Node", callback: function () {
               var index = that.parent.children.indexOf(that);
-              that.parent.insert(index + 1, new NodeContainer(that.parent));
+              that.parent.insert(index + 1, new NodeContainer(that.parent, true));
               if (that.parent instanceof SequenceContainer) {
                 that.parent.insert(index + 1, new SequenceFiller(that.parent));
               }

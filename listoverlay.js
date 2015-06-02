@@ -1,17 +1,44 @@
 define(['jquery', 'd3'], function ($, d3) {
 
   var ITEM_HEIGHT = 18;
+  var ITEM_ICON_WIDTH = 18;
   var ITEM_WIDTH = 120;
 
 
   function ListOverlay() {
     this.isShown = false;
+    this.items = [];
+    var that = this;
+    //console.log("here");
+
+    window.addEventListener('keyup', function (e) {
+      if (e.keyCode === 27) {
+        that.hide();
+      }
+    }, false);
+
+    //window.onkeyup = function (e) {
+    //  var key = e.keyCode ? e.keyCode : e.which;
+    //
+    //  if (key === 27) {
+    //    that.hide();
+    //  }
+    //}
 
   }
 
   ListOverlay.prototype = {
-    //data must be in format [{text: string, callback: function()},...]
-    show: function (domParent, data, x, y) {
+
+    //items must be in format [{text: string, icon: string, callback: function()},...]
+    setItems: function (items) {
+      this.items = items;
+    },
+
+    addItem: function (item) {
+      this.items.push(item);
+    },
+
+    show: function (domParent, x, y) {
       if (this.isShown) {
         this.hide();
       }
@@ -24,7 +51,7 @@ define(['jquery', 'd3'], function ($, d3) {
         .attr("transform", "translate(" + x + "," + y + ")");
 
       var listItem = this.rootElement.selectAll("g.listItem")
-        .data(data)
+        .data(this.items)
         .enter()
         .append("g")
         .classed("listItem", true);
@@ -40,10 +67,25 @@ define(['jquery', 'd3'], function ($, d3) {
         });
 
       listItem.append("text")
+        .classed("icon", true)
         .attr({
-          x: 0,
+          x: 8,
           y: function (d, i) {
-            return (i + 1) * ITEM_HEIGHT-4;
+            return (i + 1) * ITEM_HEIGHT - 4;
+          }
+        })
+        .text(function (d) {
+          if (d.icon) {
+            return d.icon;
+          }
+          return "";
+        });
+
+      listItem.append("text")
+        .attr({
+          x: ITEM_ICON_WIDTH,
+          y: function (d, i) {
+            return (i + 1) * ITEM_HEIGHT - 4;
           }
         })
         .text(function (d) {
@@ -55,23 +97,25 @@ define(['jquery', 'd3'], function ($, d3) {
             d3.select(this).classed("hovered", true);
           },
 
-          mouseout: function() {
+          mouseout: function () {
             d3.select(this).classed("hovered", false);
           },
 
-          click: function(d) {
+          click: function (d) {
             that.hide();
             d.callback();
           }
         }
-
       );
 
 
     },
 
     hide: function () {
-      this.rootElement.remove();
+      if (typeof this.rootElement !== "undefined") {
+        this.rootElement.remove();
+      }
+      this.isShown = false;
     }
   };
 

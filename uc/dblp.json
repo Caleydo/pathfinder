@@ -65,7 +65,8 @@
       "node_label": "TVCG",
 
       "properties": {
-        "title": "name"
+        "title": "name",
+        "ee": "url"
       },
 
       "inline": {
@@ -81,7 +82,8 @@
       "node_label": "CHI",
 
       "properties": {
-        "title": "name"
+        "title": "name",
+        "ee": "url"
       },
 
       "inline": {
