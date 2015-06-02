@@ -1638,6 +1638,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
             return false;
           }
         }
+        if(index === 0 && this.parent.children.length === 1) {
+          return false;
+        }
       }
       return show;
     };
@@ -1878,6 +1881,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           d3.select($progress[0]).transition().duration(100).style('width', d3.round(i / k * 100, 0) + '%');
         },
         query_done: function () {
+          d3.select($progress[0]).transition().duration(100).style('width','100%');
           $progress.parent();
         }
       });
