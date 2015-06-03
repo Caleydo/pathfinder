@@ -535,11 +535,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       },
 
       getNodeSetScale: function () {
-        return d3.scale.linear().domain([1, this.maxNumNodeSets]).range([2, 7]);
+        return d3.scale.linear().domain([1, this.maxNumNodeSets]).range([Math.sqrt(16 / Math.PI), Math.sqrt(Math.min(128, 16 * this.maxNumNodeSets) / Math.PI)]);
       },
 
       getEdgeSetScale: function () {
-        return d3.scale.linear().domain([1, this.maxNumEdgeSets]).range([1, 6]);
+        return d3.scale.linear().domain([1, this.maxNumEdgeSets]).range([1, Math.min(this.maxNumEdgeSets, 6)]);
       },
 
       updateMaxSets: function () {
@@ -1313,17 +1313,17 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           sc.each(function (d, i) {
 
 
-            uiUtil.createTemporalMenuOverlayButton(d3.select(this), that.parent, s.NODE_START, 0, true, function() {
+            uiUtil.createTemporalMenuOverlayButton(d3.select(this), that.parent, s.NODE_START, 0, true, function () {
 
               var setNode = setInfo.get(d.set.id);
 
-              if(typeof setNode === "undefined") {
+              if (typeof setNode === "undefined") {
                 return [];
               }
 
               var items = queryUtil.getFilterOverlayItems("set", d.set.id);
               var linkItem = setInfo.getLinkOverlayItem(d.set.id);
-              if(linkItem) {
+              if (linkItem) {
                 items.push(linkItem);
               }
               return items;
@@ -1691,7 +1691,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         that.selectionListeners.push(l);
 
         node.each(function (d) {
-          pathUtil.renderNode(d3.select(this), d.node, 0,0, s.NODE_WIDTH, s.NODE_HEIGHT, "url(#pathNodeClipPath)", function (text) {
+          pathUtil.renderNode(d3.select(this), d.node, 0, 0, s.NODE_WIDTH, s.NODE_HEIGHT, "url(#pathNodeClipPath)", function (text) {
             return that.listView.getTextWidth(text);
           });
         });
