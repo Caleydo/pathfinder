@@ -610,115 +610,78 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //  });
 
 
-        var allSetTypes = that.parent.selectAll("g.pathContainer g.setGroup g.setType");
+        //var allSetTypes = that.parent.selectAll("g.pathContainer g.setGroup g.setType");
 
 
-        that.renderSets(allSetTypes);
+        that.renderSets(that.parent.selectAll("g.pathContainer"));
         //that.renderDatasets();
         that.datasetRenderer.render();
 
-        pathContainers
-          .each(function () {
-
-            var setTypes = d3.select(this).selectAll("g.setType");
-
-            setTypes.each(function (d) {
-              //d3.select(this).selectAll("g.setTypeSummary")
-              //  .transition()
-              //  .attr("transform", function (d) {
-              //    return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
-              //  });
-
-              var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary");
-
-              setTypeSummaryContainer.each(function (d, i) {
-                d3.select(this).selectAll("circle")
-                  .transition()
-                  .attr({
-                    cx: function (d, i) {
-                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                      var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-                      return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                    },
-
-                    r: function (d) {
-
-                      var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-                        that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-
-                      return nodeSetScale(numSets);
-                    }
-
-                  });
-
-                d3.select(this).selectAll("line")
-                  .transition()
-                  .attr({
-
-                    x1: function (d) {
-                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                      var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
-                      return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                    },
-
-                    x2: function (d) {
-                      var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                      var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
-                      return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                    },
-
-                    "stroke-width": function (d) {
-                      var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
-                        that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-                      return edgeSetScale(numSets);
-                    }
-                  });
-              });
-
-            });
-
-
-            setTypes
-              .transition()
-              .each("start", function (d) {
-                var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary");
-                //.attr("transform", function (d) {
-                //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
-                //});
-
-                if (d.setType.collapsed) {
-                  setTypeSummaryContainer
-                    .attr("display", "inline");
-
-                }
-
-                d3.select(this).selectAll("text.collapseIconSmall")
-                  .text(function (d) {
-                    return d.setType.collapsed ? "\uf0da" : "\uf0dd";
-                  });
-
-
-                if (!d.setType.canBeShown()) {
-                  d3.select(this)
-                    .attr("display", "none");
-                }
-              })
-              .attr("transform", getSetTypeTransformFunction(that.pathWrappers))
-              .each("end", function (d) {
-
-                if (!d.setType.collapsed) {
-                  d3.select(this).selectAll("g.setTypeSummary")
-                    .attr("display", "none");
-                }
-
-                if (d.setType.canBeShown()) {
-                  d3.select(this)
-                    .attr("display", "inline");
-                }
-              });
-
-
-          });
+        //pathContainers
+        //  .each(function () {
+        //
+        //    var setTypes = d3.select(this).selectAll("g.setType");
+        //
+        //    setTypes.each(function (d) {
+        //      //d3.select(this).selectAll("g.setTypeSummary")
+        //      //  .transition()
+        //      //  .attr("transform", function (d) {
+        //      //    return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
+        //      //  });
+        //
+        //      var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary");
+        //
+        //      setTypeSummaryContainer.each(function (d, i) {
+        //        d3.select(this).selectAll("circle")
+        //          .transition()
+        //          .attr({
+        //            cx: function (d, i) {
+        //              var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+        //              var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+        //              return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+        //            },
+        //
+        //            r: function (d) {
+        //
+        //              var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+        //                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+        //
+        //              return nodeSetScale(numSets);
+        //            }
+        //
+        //          });
+        //
+        //        d3.select(this).selectAll("line")
+        //          .transition()
+        //          .attr({
+        //
+        //            x1: function (d) {
+        //              var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+        //              var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
+        //              return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+        //            },
+        //
+        //            x2: function (d) {
+        //              var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+        //              var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
+        //              return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+        //            },
+        //
+        //            "stroke-width": function (d) {
+        //              var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
+        //                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+        //              return edgeSetScale(numSets);
+        //            }
+        //          });
+        //      });
+        //
+        //    });
+        //
+        //
+        //
+        //
+        //
+        //  });
 
         this.renderCrossConnections();
 
@@ -1275,8 +1238,230 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       },
 
-      renderSets: function (allSetTypes) {
+      renderSets: function (allPathContainers) {
         var that = this;
+
+
+        var nodeSetScale = this.getNodeSetScale();
+        var edgeSetScale = this.getEdgeSetScale();
+
+        var allSetTypes = allPathContainers.selectAll("g.setGroup").selectAll("g.setType")
+          .data(function (pathWrapper, i) {
+            var filteredSetTypes = pathWrapper.setTypes.filter(function (setType) {
+              return setType.canBeShown();
+            });
+
+            return filteredSetTypes.map(function (mySetType) {
+              return {setType: mySetType, pathIndex: i};
+            });
+          });
+
+
+        var setType = allSetTypes.enter()
+          .append("g")
+          .classed("setType", true)
+          .attr({
+            //display: function (d) {
+            //  if (d.setType.canBeShown()) {
+            //    return "inline";
+            //  }
+            //  return "none";
+            //},
+            transform: getSetTypeTransformFunction(that.pathWrappers)
+          }
+        );
+
+        setType.append("text")
+          .attr("class", "collapseIconSmall")
+          .attr("x", 5)
+          .attr("y", s.SET_TYPE_HEIGHT);
+
+        allSetTypes.selectAll("text.collapseIconSmall")
+          .text(function (d) {
+            return d.setType.collapsed ? "\uf0da" : "\uf0dd";
+          })
+          .on("click", function (d) {
+            var collapsed = !d.setType.collapsed;
+            if (d3.event.ctrlKey) {
+              listeners.notify(s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE, {
+                type: d.setType.type,
+                collapsed: collapsed
+              });
+            } else {
+              d.setType.collapsed = collapsed;
+              d3.select(this).text(d.setType.collapsed ? "\uf0da" : "\uf0dd");
+
+              that.updatePathList();
+
+            }
+            //updateAggregateList(parent);
+          });
+
+        allSetTypes
+          .transition()
+          .each("start", function (d) {
+            //var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary");
+            ////.attr("transform", function (d) {
+            ////  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
+            ////});
+            //
+            //if (d.setType.collapsed) {
+              d3.select(this).selectAll("g.setTypeSummary")
+                .attr("display", d.setType.collapsed ? "inline": "none");
+
+            //}
+
+            d3.select(this).selectAll("text.collapseIconSmall")
+              .text(function (d) {
+                return d.setType.collapsed ? "\uf0da" : "\uf0dd";
+              });
+
+
+            //if (!d.setType.canBeShown()) {
+            //  d3.select(this)
+            //    .attr("display", "none");
+            //}
+          })
+          .attr("transform", getSetTypeTransformFunction(that.pathWrappers));
+          //.each("end", function (d) {
+          //
+          //
+          //
+          //  //if (d.setType.canBeShown()) {
+          //  //  d3.select(this)
+          //  //    .attr("display", "inline");
+          //  //}
+          //});
+
+        setType.append("text")
+          .text(function (d) {
+            //var text = d[0].id;
+            //return getClampedText(text, 15);
+            return config.getSetTypeFromSetPropertyName(d.setType.type);
+          })
+          .attr("x", 10)
+          .attr("y", s.SET_TYPE_HEIGHT)
+          .style("fill", function (d) {
+            return setInfo.getSetTypeInfo(d.setType.type).color;
+          })
+          .attr("clip-path", "url(#SetLabelClipPath)");
+
+        setType.append("g")
+          .classed("setTypeSummary", true)
+          .attr("display", function (d) {
+            return d.setType.collapsed ? "inline" : "none";
+          });
+        //.attr("transform", function (d) {
+        //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
+        //});
+
+        allSetTypes.each(function (d, i) {
+            var setTypeSummaryContainer =  d3.select(this).select("g.setTypeSummary");
+
+            var allCircles = setTypeSummaryContainer.selectAll("circle")
+              .data(function () {
+                return d.setType.nodeIndices.map(function (index) {
+                  return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
+                });
+              });
+
+            var circle = allCircles.enter()
+              .append("circle")
+              .attr({
+                cx: function (d) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                },
+                cy: s.SET_TYPE_HEIGHT / 2,
+                r: function (d) {
+                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+
+                  return numSets == 0 ? 0 : nodeSetScale(numSets);
+                },
+                fill: function (d) {
+                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                }
+              });
+
+            allCircles.transition()
+              .attr({
+                cx: function (d, i) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                },
+                r: function (d) {
+                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+
+                  return numSets == 0 ? 0 : nodeSetScale(numSets);
+                }
+              });
+
+            allCircles.exit().remove();
+
+
+            var allLines = setTypeSummaryContainer.selectAll("line")
+              .data(function () {
+                return d.setType.relIndices.map(function (index) {
+                  return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
+                });
+              });
+            var line = allLines.enter()
+              .append("line")
+              .attr({
+                x1: function (d) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
+                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                }
+                ,
+                y1: s.SET_TYPE_HEIGHT / 2,
+                x2: function (d) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
+                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                },
+                y2: s.SET_TYPE_HEIGHT / 2,
+                stroke: function (d) {
+                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                },
+                "stroke-width": function (d) {
+                  var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
+                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+                  return edgeSetScale(numSets);
+                }
+              });
+
+            allLines.transition()
+              .attr({
+                x1: function (d) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
+                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                },
+                x2: function (d) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
+                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                },
+                stroke: function (d) {
+                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                },
+                "stroke-width": function (d) {
+                  var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
+                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+                  return edgeSetScale(numSets);
+                }
+              });
+
+            allLines.exit().remove();
+          }
+        );
+
+        allSetTypes.exit().remove();
 
 
         allSetTypes.each(function (d) {
@@ -1491,9 +1676,6 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       renderPaths: function () {
 
         var that = this;
-
-        var nodeSetScale = this.getNodeSetScale();
-        var edgeSetScale = this.getEdgeSetScale();
 
         var comparator = pathSorting.sortingManager.currentComparator;
 
@@ -1733,141 +1915,140 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .attr("class", "datasetGroup");
 
 
-        var allSetTypes = allPathContainers.selectAll("g.setGroup").selectAll("g.setType")
-          .data(function (pathWrapper, i) {
-            return pathWrapper.setTypes.map(function (mySetType) {
-              return {setType: mySetType, pathIndex: i};
-            });
-          });
+        //var allSetTypes = allPathContainers.selectAll("g.setGroup").selectAll("g.setType")
+        //  .data(function (pathWrapper, i) {
+        //    return pathWrapper.setTypes.map(function (mySetType) {
+        //      return {setType: mySetType, pathIndex: i};
+        //    });
+        //  });
+        //
+        //
+        //var setType = allSetTypes.enter()
+        //    .append("g")
+        //    .classed("setType", true)
+        //    .attr({
+        //      display: function (d) {
+        //
+        //        if (d.setType.canBeShown()) {
+        //          return "inline";
+        //        }
+        //        return "none";
+        //      },
+        //      transform: getSetTypeTransformFunction(that.pathWrappers)
+        //    }
+        //  )
+        //  ;
+        //
+        //setType.append("text")
+        //  .attr("class", "collapseIconSmall");
+        //
+        //allSetTypes.selectAll("text.collapseIconSmall")
+        //  .attr("x", 5)
+        //  .attr("y", s.SET_TYPE_HEIGHT)
+        //  .text(function (d) {
+        //    return d.setType.collapsed ? "\uf0da" : "\uf0dd";
+        //  })
+        //  .on("click", function (d) {
+        //    var collapsed = !d.setType.collapsed;
+        //    if (d3.event.ctrlKey) {
+        //      listeners.notify(s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE, {
+        //        type: d.setType.type,
+        //        collapsed: collapsed
+        //      });
+        //    } else {
+        //      d.setType.collapsed = collapsed;
+        //      d3.select(this).text(d.setType.collapsed ? "\uf0da" : "\uf0dd");
+        //
+        //      that.updatePathList();
+        //
+        //    }
+        //    //updateAggregateList(parent);
+        //  });
+        //
+        //setType.append("text")
+        //  .text(function (d) {
+        //    //var text = d[0].id;
+        //    //return getClampedText(text, 15);
+        //    return config.getSetTypeFromSetPropertyName(d.setType.type);
+        //  })
+        //  .attr("x", 10)
+        //  .attr("y", s.SET_TYPE_HEIGHT)
+        //  .style("fill", function (d) {
+        //    return setInfo.getSetTypeInfo(d.setType.type).color;
+        //  })
+        //  .attr("clip-path", "url(#SetLabelClipPath)");
+        //
+        //var setTypeSummaryContainer = setType.append("g")
+        //  .classed("setTypeSummary", true)
+        //  .attr("display", function (d) {
+        //    return d.setType.collapsed ? "inline" : "none";
+        //  });
+        ////.attr("transform", function (d) {
+        ////  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
+        ////});
+        //
+        //setTypeSummaryContainer.each(function (d, i) {
+        //    d3.select(this).selectAll("circle")
+        //      .data(function () {
+        //        return d.setType.nodeIndices.map(function (index) {
+        //          return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
+        //        });
+        //      })
+        //      .enter()
+        //      .append("circle")
+        //      .attr({
+        //        cx: function (d, i) {
+        //          var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+        //          var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+        //          return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+        //        },
+        //        cy: s.SET_TYPE_HEIGHT / 2,
+        //        r: function (d) {
+        //          var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+        //            that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+        //          return nodeSetScale(numSets);
+        //        },
+        //        fill: function (d) {
+        //          return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+        //        }
+        //      });
+        //
+        //
+        //    d3.select(this).selectAll("line")
+        //      .data(function () {
+        //        return d.setType.relIndices.map(function (index) {
+        //          return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
+        //        });
+        //      })
+        //      .enter()
+        //      .append("line")
+        //      .attr({
+        //        x1: function (d) {
+        //          var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+        //          var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
+        //          return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+        //        }
+        //        ,
+        //        y1: s.SET_TYPE_HEIGHT / 2,
+        //        x2: function (d) {
+        //          var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+        //          var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
+        //          return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+        //        },
+        //        y2: s.SET_TYPE_HEIGHT / 2,
+        //        stroke: function (d) {
+        //          return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+        //        },
+        //        "stroke-width": function (d) {
+        //          var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
+        //            that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+        //          return edgeSetScale(numSets);
+        //        }
+        //      });
+        //  }
+        //);
 
-
-        var setType = allSetTypes.enter()
-            .append("g")
-            .classed("setType", true)
-            .attr({
-              display: function (d) {
-
-                if (d.setType.canBeShown()) {
-                  return "inline";
-                }
-                return "none";
-              },
-              transform: getSetTypeTransformFunction(that.pathWrappers)
-            }
-          )
-          ;
-
-        setType.append("text")
-          .attr("class", "collapseIconSmall");
-
-        allSetTypes.selectAll("text.collapseIconSmall")
-          .attr("x", 5)
-          .attr("y", s.SET_TYPE_HEIGHT)
-          .text(function (d) {
-            return d.setType.collapsed ? "\uf0da" : "\uf0dd";
-          })
-          .on("click", function (d) {
-            var collapsed = !d.setType.collapsed;
-            if (d3.event.ctrlKey) {
-              listeners.notify(s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE, {
-                type: d.setType.type,
-                collapsed: collapsed
-              });
-            } else {
-              d.setType.collapsed = collapsed;
-              d3.select(this).text(d.setType.collapsed ? "\uf0da" : "\uf0dd");
-
-              that.updatePathList();
-
-            }
-            //updateAggregateList(parent);
-          });
-
-        setType.append("text")
-          .text(function (d) {
-            //var text = d[0].id;
-            //return getClampedText(text, 15);
-            return config.getSetTypeFromSetPropertyName(d.setType.type);
-          })
-          .attr("x", 10)
-          .attr("y", s.SET_TYPE_HEIGHT)
-          .style("fill", function (d) {
-            return setInfo.getSetTypeInfo(d.setType.type).color;
-          })
-          .attr("clip-path", "url(#SetLabelClipPath)");
-
-        var setTypeSummaryContainer = setType.append("g")
-          .classed("setTypeSummary", true)
-          .attr("display", function (d) {
-            return d.setType.collapsed ? "inline" : "none";
-          });
-        //.attr("transform", function (d) {
-        //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
-        //});
-
-        setTypeSummaryContainer.each(function (d, i) {
-            d3.select(this).selectAll("circle")
-              .data(function () {
-                return d.setType.nodeIndices.map(function (index) {
-                  return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
-                });
-              })
-              .enter()
-              .append("circle")
-              .attr({
-                cx: function (d, i) {
-                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                },
-                cy: s.SET_TYPE_HEIGHT / 2,
-                r: function (d) {
-                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-                  return nodeSetScale(numSets);
-                },
-                fill: function (d) {
-                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-                }
-              });
-
-
-            d3.select(this).selectAll("line")
-              .data(function () {
-                return d.setType.relIndices.map(function (index) {
-                  return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
-                });
-              })
-              .enter()
-              .append("line")
-              .attr({
-                x1: function (d) {
-                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
-                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                }
-                ,
-                y1: s.SET_TYPE_HEIGHT / 2,
-                x2: function (d) {
-                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
-                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                },
-                y2: s.SET_TYPE_HEIGHT / 2,
-                stroke: function (d) {
-                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-                },
-                "stroke-width": function (d) {
-                  var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
-                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-                  return edgeSetScale(numSets);
-                }
-              });
-          }
-        )
-        ;
-
-        that.renderSets(allSetTypes);
+        that.renderSets(allPathContainers);
 
         that.datasetRenderer.render();
 
