@@ -1,4 +1,7 @@
-define(function() {
+define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
+
+
+  var listOverlay = new ListOverlay();
 
   return {
     getClampedText: function (text, maxLength) {
@@ -8,15 +11,48 @@ define(function() {
       return text;
     },
 
-    addOverlayButton: function(parent, x, y, width, height, buttonText, textX, textY, color, showBg) {
 
-    var button = parent.append("g")
-      .classed("overlayButton", true)
-      .attr({
-        transform: "translate(" + (x) + "," + (y) + ")"
+    createTemporalOverlayButton: function (parent, svg, callBack, text, x, y, small) {
+      var that = this;
+
+      $(parent[0]).mouseenter(function () {
+        var button = that.addOverlayButton(parent, x, y, small ? 10 : 16, small ? 10 : 16, text, 7, small ? 10 : 16, "rgb(30, 30, 30)", false);
+
+        button.classed("smallButton", small)
+          .on("click.overlay", function () {
+            callBack();
+
+            parent.selectAll("g.overlayButton").remove();
+          })
       });
 
-      if(showBg) {
+      $(parent[0]).mouseleave(function () {
+        parent.selectAll("g.overlayButton").remove();
+      });
+    },
+
+    createTemporalMenuOverlayButton: function (parent, svg, x, y, small, items) {
+      this.createTemporalOverlayButton(parent, svg, function () {
+
+        var coordinates = d3.mouse(svg[0][0]);
+        if (typeof items === "function") {
+          listOverlay.setItems(items());
+        } else {
+          listOverlay.setItems(items);
+        }
+        listOverlay.show(svg, coordinates[0], coordinates[1]);
+      }, "\uf013", x, y, small);
+    },
+
+    addOverlayButton: function (parent, x, y, width, height, buttonText, textX, textY, color, showBg) {
+
+      var button = parent.append("g")
+        .classed("overlayButton", true)
+        .attr({
+          transform: "translate(" + (x) + "," + (y) + ")"
+        });
+
+      if (showBg) {
         button.append("rect")
           .attr({
             x: 0,
@@ -26,18 +62,18 @@ define(function() {
           });
       }
 
-    button.append("text")
-      .attr({
-        x: textX,
-        y: textY
-      })
-      .style({
-        fill: color
-      })
-      .text(buttonText);
+      button.append("text")
+        .attr({
+          x: textX,
+          y: textY
+        })
+        .style({
+          fill: color
+        })
+        .text(buttonText);
 
-    return button;
-  }
+      return button;
+    }
 
 
   }

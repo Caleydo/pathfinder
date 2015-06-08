@@ -1,5 +1,5 @@
-define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config', '../setinfo', '../visibilitysettings'],
-  function (hierarchyElements, listeners, pathSorting, pathQuery, config, setInfo, visibilitySettings) {
+define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config', '../setinfo', '../visibilitysettings', '../query/queryutil'],
+  function (hierarchyElements, listeners, pathSorting, pathQuery, config, setInfo, visibilitySettings, queryUtil) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
 
@@ -56,17 +56,21 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       return this.node.properties[config.getNodeNameProperty(this.node)];
     };
 
-    NodeWrapper.prototype.supportsNodeFilter = function () {
+    NodeWrapper.prototype.hasOverlayItems = function () {
       return true;
     };
 
-    NodeWrapper.prototype.getNodeConstraintType = function () {
-      return "name";
+    NodeWrapper.prototype.getOverlayMenuItems = function() {
+      return queryUtil.getFilterOverlayItems("name", this.getLabel());
     };
 
-    NodeWrapper.prototype.getFilterText = function () {
-      return this.getLabel();
-    };
+    //NodeWrapper.prototype.getNodeConstraintType = function () {
+    //  return "name";
+    //};
+
+    //NodeWrapper.prototype.getFilterText = function () {
+    //  return this.getLabel();
+    //};
 
     NodeWrapper.prototype.isFiltered = function () {
       return pathQuery.isNodeFiltered(this.node.id);
@@ -124,17 +128,21 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       return true;
     };
 
-    NodeTypeWrapper.prototype.supportsNodeFilter = function () {
+    NodeTypeWrapper.prototype.getOverlayMenuItems = function() {
+      return queryUtil.getFilterOverlayItems("type", this.type);
+    };
+    //
+    NodeTypeWrapper.prototype.hasOverlayItems = function () {
       return true;
     };
-
-    NodeTypeWrapper.prototype.getNodeConstraintType = function () {
-      return "type";
-    };
-
-    NodeTypeWrapper.prototype.getFilterText = function () {
-      return this.type;
-    };
+    //
+    //NodeTypeWrapper.prototype.getNodeConstraintType = function () {
+    //  return "type";
+    //};
+    //
+    //NodeTypeWrapper.prototype.getFilterText = function () {
+    //  return this.type;
+    //};
 
     NodeTypeWrapper.prototype.removePath = function (path) {
       var index = this.pathIds.indexOf(path.id);
@@ -245,17 +253,33 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       return setInfo.getSetLabel(this.setId);
     };
 
-    SetWrapper.prototype.supportsNodeFilter = function () {
+    SetWrapper.prototype.getOverlayMenuItems = function() {
+
+      var setNode = setInfo.get(this.setId);
+
+      if(typeof setNode === "undefined") {
+        return [];
+      }
+
+      var items = queryUtil.getFilterOverlayItems("set", this.setId);
+      var linkItem = setInfo.getLinkOverlayItem(this.setId);
+      if(linkItem) {
+        items.push(linkItem);
+      }
+      return items;
+    };
+
+    SetWrapper.prototype.hasOverlayItems = function () {
       return true;
     };
 
-    SetWrapper.prototype.getNodeConstraintType = function () {
-      return "set";
-    };
-
-    SetWrapper.prototype.getFilterText = function () {
-      return this.setId;
-    };
+    //SetWrapper.prototype.getNodeConstraintType = function () {
+    //  return "set";
+    //};
+    //
+    //SetWrapper.prototype.getFilterText = function () {
+    //  return this.setId;
+    //};
 
     function SetTypeWrapper(parentElement, type) {
       this.id = type;
@@ -289,8 +313,12 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       return config.getSetTypeFromSetPropertyName(this.type);
     };
 
-    SetTypeWrapper.prototype.supportsNodeFilter = function () {
+    SetTypeWrapper.prototype.hasOverlayItems = function () {
       return false;
+    };
+
+    SetTypeWrapper.prototype.getOverlayMenuItems = function() {
+      return [];
     };
 
     SetTypeWrapper.prototype.isFiltered = function () {

@@ -17,7 +17,7 @@ define(['d3', './listeners', './config'], function (d3, listeners, config) {
   return {
     setTypeInfos: {},
     setInfos: {},
-    currentlyLoading : {},
+    currentlyLoading: {},
 
     addToType: function (setType, setId) {
       var t = this.setTypeInfos[setType];
@@ -35,11 +35,39 @@ define(['d3', './listeners', './config'], function (d3, listeners, config) {
       return this.setTypeInfos[type];
     },
 
+    getLinkOverlayItem: function (setId) {
+
+      var setNode = this.get(setId);
+      if(!setNode) {
+        return;
+      }
+      var urlProperty = config.getSetUrlProperty(setNode);
+
+      if (!urlProperty) {
+        return;
+      }
+      return {
+        text: "Show",
+        icon: "\uf08e",
+        callback: function () {
+          window.open(setNode.properties[urlProperty]);
+        }
+      };
+    },
+
     get: function (setId) {
+      //return new Promise(function (resolve, reject) {
+      //  if(this.setInfos[setId]) {
+      //    resolve(this.setInfos[setId]);
+      //  } else {
+      //
+      //  }
+      //
+      //});
       return this.setInfos[setId];
     },
 
-    getSetLabel: function(setId) {
+    getSetLabel: function (setId) {
       var info = this.get(setId);
       if (typeof info === "undefined") {
         return setId;
@@ -51,7 +79,9 @@ define(['d3', './listeners', './config'], function (d3, listeners, config) {
       var that = this;
       //reduce to still unknown setsIds
 
-      var lookup = setIds.filter(function(id) { return !(id in that.setInfos); });
+      var lookup = setIds.filter(function (id) {
+        return !(id in that.setInfos);
+      });
 
       if (lookup.length === 0) { //all already loaded
         listeners.notify(listeners.updateType.SET_INFO_UPDATE, that);
@@ -59,19 +89,23 @@ define(['d3', './listeners', './config'], function (d3, listeners, config) {
       }
 
       //not currently loading
-      lookup = setIds.filter(function(id) { return !(id in that.currentlyLoading); });
+      lookup = setIds.filter(function (id) {
+        return !(id in that.currentlyLoading);
+      });
 
       if (lookup.length === 0) {
         return; // another callback will fire
       }
 
       //mark all as being catched
-      lookup.forEach(function(d) { that.currentlyLoading[d] = true});
+      lookup.forEach(function (d) {
+        that.currentlyLoading[d] = true
+      });
       $.getJSON('/api/pathway/setinfo', {
-        sets : lookup
+        sets: lookup
       }).then(function (data) {
         //integrate the map
-        Object.keys(data).map(function(id) {
+        Object.keys(data).map(function (id) {
           var key = id;
           that.setInfos[key] = data[id];
           delete that.currentlyLoading[key];

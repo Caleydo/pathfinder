@@ -111,6 +111,10 @@ g.listItem {
     font-size: 12px;
     fill: $overlayStrokeColor;
   }
+
+  text.icon {
+    @include textIcon(14px);
+  }
 }
 
 g.listItem.hovered {

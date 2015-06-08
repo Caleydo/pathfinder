@@ -206,15 +206,21 @@ define(['d3'], function (d3) {
       }
     },
 
+    getSetConfigByLabel: function (label) {
+
+      for (var j = 0; j < config.sets.length; j++) {
+        var setConfig = config.sets[j];
+        if (setConfig["node_label"] === label) {
+          return setConfig;
+        }
+      }
+    },
+
     getSetConfig: function (setNode) {
       for (var i = 0; i < setNode.labels.length; i++) {
-        var currentLabel = setNode.labels[i];
-
-        for (var j = 0; j < config.sets.length; j++) {
-          var nodeConfig = config.sets[j];
-          if (nodeConfig["node_label"] === currentLabel) {
-            return nodeConfig;
-          }
+        var setConfig = this.getSetConfigByLabel(setNode.labels[i]);
+        if (typeof setConfig !== "undefined") {
+          return setConfig;
         }
       }
     },
@@ -257,6 +263,73 @@ define(['d3'], function (d3) {
       }
     },
 
+    getSetNodeLabel: function (setNode) {
+      var setConfig = this.getSetConfig(setNode);
+
+     return setConfig["node_label"];
+    },
+
+    getSetNodeLabels: function () {
+      var labels = [];
+
+      config.sets.forEach(function (set) {
+        labels.push(set["node_label"]);
+      });
+
+      return labels;
+    },
+
+    getSetPropertyOfConfig: function (setConfig, property) {
+      var keys = Object.keys(setConfig.properties);
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        if (setConfig.properties[key] === property) {
+          return key;
+        }
+      }
+    },
+
+    getSetNameProperties: function () {
+      var nameProperties = [];
+      var that = this;
+
+      config.sets.forEach(function (setConfig) {
+        nameProperties.push(that.getSetPropertyOfConfig(setConfig, "name"));
+      });
+
+      return nameProperties;
+    },
+
+    getSetNamePropertyOfType: function (label) {
+      var setConfig = this.getSetConfigByLabel(label);
+      return this.getSetPropertyOfConfig(setConfig, "name");
+    },
+
+    getSetUrlPropertyOfType: function (label) {
+      var setConfig = this.getSetConfigByLabel(label);
+      return this.getSetPropertyOfConfig(setConfig, "url");
+    },
+
+    getSetUrlProperty: function (setNode) {
+      var setConfig = this.getSetConfig(setNode);
+      return this.getSetPropertyOfConfig(setConfig, "url");
+    },
+
+    /**
+     *
+     * @param label
+     * @returns {The property that is used in nodes and edges to refer to a set with the specified label}
+     */
+    getSetProperty: function (label) {
+      var setConfig = this.getSetConfigByLabel(label);
+      return setConfig["set_property"];
+    },
+
+    getSetTypeFromLabel: function(label) {
+      var setConfig = this.getSetConfigByLabel(label);
+      return setConfig["name"];
+    },
+
     getNodeType: function (node) {
       var nodeConfig = this.getNodeConfig(node);
       var type = nodeConfig ? nodeConfig["node_label"] : undefined;
@@ -272,6 +345,12 @@ define(['d3'], function (d3) {
 
     getTypeSymbolForNode: function (node) {
       return this.getNodeTypeSymbol(this.getNodeType(node));
+    },
+
+    getNodeTypes: function () {
+      return config.nodes.map(function (nodeConfig) {
+        return nodeConfig["node_label"];
+      });
     }
   }
 

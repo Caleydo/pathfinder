@@ -106,67 +106,75 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
     return {context: 'node', '$contains': this.nodeType}
   };
 
-  function NodeSetPresenceConstraint(setId) {
+  function NodeSetPresenceConstraint(setId, setProperty) {
     Constraint.call(this);
     this.setId = setId;
+    this.setProperty = setProperty;
   }
 
   NodeSetPresenceConstraint.prototype = Object.create(Constraint.prototype);
   NodeSetPresenceConstraint.prototype.match = function (node) {
 
-    var propertyKeys = Object.keys(node.properties);
-    for (var j = 0; j < propertyKeys.length; j++) {
-      var key = propertyKeys[j];
-      if (pathUtil.isNodeSetProperty(node, key)) {
-        var property = node.properties[key];
-        if (property instanceof Array) {
-          for (var k = 0; k < property.length; k++) {
-            if (property[k] === this.setId) {
-              return true;
-            }
-          }
-        } else if (property === this.setId) {
+    //var propertyKeys = Object.keys(node.properties);
+    //for (var j = 0; j < propertyKeys.length; j++) {
+    //  var key = propertyKeys[j];
+    //  if (pathUtil.isNodeSetProperty(node, key)) {
+    var property = node.properties[this.setProperty];
+    if (typeof property === "undefined") {
+      return false;
+    }
+    if (property instanceof Array) {
+      for (var k = 0; k < property.length; k++) {
+        if (property[k] === this.setId) {
           return true;
         }
       }
+    } else if (property === this.setId) {
+      return true;
     }
+    //  }
+    //}
     return false;
   };
   NodeSetPresenceConstraint.prototype.serialize = function () {
-    //FIXME hard coded
-    return {context: 'node', 'prop': 'pathways', '$contains': this.setId};
+    return {context: 'node', 'prop': this.setProperty, '$contains': this.setId};
   };
 
-  function EdgeSetPresenceConstraint(setId) {
+  function EdgeSetPresenceConstraint(setId, setProperty) {
     Constraint.call(this);
     this.setId = setId;
+    this.setProperty = setProperty;
   }
 
   EdgeSetPresenceConstraint.prototype = Object.create(Constraint.prototype);
 
   EdgeSetPresenceConstraint.prototype.match = function (edge) {
-    var propertyKeys = Object.keys(edge.properties);
-    for (var j = 0; j < propertyKeys.length; j++) {
-      var key = propertyKeys[j];
-      if (pathUtil.isEdgeSetProperty(key)) {
-        var property = edge.properties[key];
-        if (property instanceof Array) {
-          for (var k = 0; k < property.length; k++) {
-            if (property[k] === this.setId) {
-              return true;
-            }
-          }
-        } else if (property === this.setId) {
+    //var propertyKeys = Object.keys(edge.properties);
+    //for (var j = 0; j < propertyKeys.length; j++) {
+    //  var key = propertyKeys[j];
+    //  if (pathUtil.isEdgeSetProperty(edge, key)) {
+    var property = edge.properties[this.setProperty];
+    if (!property) {
+      return false;
+    }
+    if (property instanceof Array) {
+      for (var k = 0; k < property.length; k++) {
+        if (property[k] === this.setId) {
           return true;
         }
       }
+    } else if (property === this.setId) {
+      return true;
     }
-    EdgeSetPresenceConstraint.prototype.serialize = function () {
-      //FIXME hard coded
-      return {context: 'rel', 'prop': 'pathways', '$contains': this.setId};
-    };
+    //  }
+    //}
+
 
     return false;
+  };
+
+  EdgeSetPresenceConstraint.prototype.serialize = function () {
+    return {context: 'rel', 'prop': this.setProperty, '$contains': this.setId};
   };
 
 
@@ -319,7 +327,7 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
   };
 
   Not.prototype.serialize = function () {
-    return  { '$not':  this.query.serialize() };
+    return {'$not': this.query.serialize()};
   };
 
   function RegionMatcher(query, region, relativeToEnd, regionRelation) {
@@ -342,7 +350,7 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
     for (var i = 0; i < matchRegions.length; i++) {
       if (this.regionRelation(matchRegions[i], myRegion)) {
         validRegions.push(matchRegions[i]);
-        if(getFirstOnly) {
+        if (getFirstOnly) {
           return validRegions;
         }
       }

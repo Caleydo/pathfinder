@@ -17,6 +17,93 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
 
     $(document).ready(function () {
 
+        //$.widget("custom.typedAutocomplete", $.ui.autocomplete, {
+        //  _renderItem: function (ul, item) {
+        //
+        //    return $("<li>")
+        //      .append($("<a>").text(item.label))
+        //      .appendTo(ul);
+        //    //return $( "<li>" )
+        //    //  .attr( "data-value", item.value )
+        //    //  .css("color", item.color)
+        //    //  .append( item.label )
+        //    //  .appendTo( ul );
+        //  },
+        //
+        //  _renderMenu: function (ul, items) {
+        //    var that = this;
+        //    items.sort(function (a, b) {
+        //      return d3.ascending(a.category, b.category);
+        //    });
+        //
+        //    var currentCategory = 0;
+        //    $.each(items, function (index, item) {
+        //
+        //      if (item.category !== currentCategory) {
+        //
+        //        $("<a>").text(item.category)
+        //          .css({
+        //            "font-style": "italic",
+        //            "font-weight": "bold",
+        //            "font-size": 11
+        //          })
+        //          .appendTo(ul);
+        //        currentCategory = item.category;
+        //      }
+        //      that._renderItemData(ul, item);
+        //    });
+        //  }
+        //});
+
+        //$("#testInput").typedAutocomplete({
+        //
+        //  minLength: 3,
+        //  source: function (request, response) {
+        //    var term = request.term;
+        //    ServerSearch.search(term, 'name', '_Network_Node').then(function (nameResults) {
+        //      nameResults.forEach(function (element) {
+        //        element.category = "Name";
+        //      });
+        //      ServerSearch.search(term, 'name', '_Set_Node').then(function (setResults) {
+        //        setResults.forEach(function (element) {
+        //          element.category = "Set";
+        //        });
+        //
+        //        var nodeTypes = config.getNodeTypes();
+        //        nodeTypes = nodeTypes.filter(function (type) {
+        //          var res = type.search(new RegExp(term, "i"));
+        //          return res !== -1;
+        //        });
+        //        var typeResults = nodeTypes.map(function (type) {
+        //          return {
+        //            label: type,
+        //            value: type,
+        //            category: "Type"
+        //          }
+        //        });
+        //        response(nameResults.concat(setResults, typeResults));
+        //      });
+        //    });
+        //  },
+        //  select: function (event, ui) {
+        //    $("#testInput").val(ui.item.label);
+        //    //that.id = ui.item.value;
+        //    //pathQuery.setQuery(queryView.container.getPathQuery(), false);
+        //    return false; // Prevent the widget from inserting the value.
+        //  },
+        //  focus: function (event, ui) {
+        //    $("#testInput").val(ui.item.label);
+        //    //that.id = ui.item.value;
+        //    return false; // Prevent the widget from inserting the value.
+        //  }
+        //
+        //  //source: [{label: "Alex", value: "value1", category: "Set"}, {
+        //  //  label: "Marc",
+        //  //  value: "value2",
+        //  //  category: "Name"
+        //  //}, {label: "Christian", value: "value3", category: "Name"}, {label: "Sam", value: "value4", category: "Type"}]
+        //});
+
         statisticsUtil.statisticsOf([0, NaN, 5, 3, NaN, 7, 3]);
 
         ServerSearch.on({
@@ -58,22 +145,22 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
           listView.init().then(function () {
 
             pathStatsView.init();
-            C.getJSON("dump/testpaths1.json", function (paths) {
-
-              var i = 0;
-
-              var interval = setInterval(function () {
-
-                if (i >= paths.length) {
-                  clearInterval(interval);
-                  return;
-                }
-                addPath(paths[i]);
-                i++;
-
-              }, 100);
-
-            });
+            //C.getJSON("dump/testpaths1.json", function (paths) {
+            //
+            //  var i = 0;
+            //
+            //  var interval = setInterval(function () {
+            //
+            //    if (i >= paths.length) {
+            //      clearInterval(interval);
+            //      return;
+            //    }
+            //    addPath(paths[i]);
+            //    i++;
+            //
+            //  }, 100);
+            //
+            //});
           });
 
 

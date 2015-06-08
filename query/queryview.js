@@ -1,5 +1,5 @@
-define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../listeners', '../listoverlay', '../search', './pathquery', '../uiutil', 'jquery-ui'],
-  function ($, d3, View, q, pathSorting, listeners, ListOverlay, ServerSearch, pathQuery, uiUtil) {
+define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../listeners', '../listoverlay', '../search', './pathquery', '../uiutil', '../config', 'jquery-ui'],
+  function ($, d3, View, q, pathSorting, listeners, ListOverlay, ServerSearch, pathQuery, uiUtil, config) {
 
     var listOverlay = new ListOverlay();
 
@@ -12,16 +12,58 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     var POSITION_LABEL_WIDTH = 40;
     var POSITION_LABEL_HEIGHT = 10;
 
+    $.widget("custom.typedAutocomplete", $.ui.autocomplete, {
+      _renderItem: function (ul, item) {
 
-    function addAddButton(parent, data, x, y) {
+        return $("<li>")
+          .append($("<a>").text(item.label))
+          .appendTo(ul);
+        //return $( "<li>" )
+        //  .attr( "data-value", item.value )
+        //  .css("color", item.color)
+        //  .append( item.label )
+        //  .appendTo( ul );
+      },
+
+      _renderMenu: function (ul, items) {
+        var that = this;
+        items.sort(function (a, b) {
+          return d3.ascending(a.category, b.category);
+        });
+
+        var currentCategory = 0;
+        $.each(items, function (index, item) {
+
+          if (item.category !== currentCategory) {
+
+            $("<a>").text(item.category)
+              .css({
+                "font-style": "italic",
+                "font-weight": "bold",
+                "font-size": 11
+              })
+              .appendTo(ul);
+            currentCategory = item.category;
+          }
+          that._renderItemData(ul, item);
+        });
+      }
+    });
+
+
+    function addAddButton(parent, callback, x, y) {
 
       var button = uiUtil.addOverlayButton(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y, DEFAULT_OVERLAY_BUTTON_SIZE, DEFAULT_OVERLAY_BUTTON_SIZE, "\uf067", DEFAULT_OVERLAY_BUTTON_SIZE / 2, DEFAULT_OVERLAY_BUTTON_SIZE - 1, "green", true);
 
-      button.on("click", function () {
-          listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
-        }
-      );
+      button.on("click", callback);
       return button;
+    }
+
+    function addAddButtonWithListOptions(parent, data, x, y) {
+      return addAddButton(parent, function () {
+        listOverlay.setItems(data);
+        listOverlay.show(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y);
+      }, x, y);
     }
 
     function addPositionButton(parent, callBack, x, y) {
@@ -31,14 +73,11 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       return button;
     }
 
-    function addAndButton(parent, data, x, y) {
+    function addAndButton(parent, callBack, x, y) {
 
       var button = uiUtil.addOverlayButton(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y, AND_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "AND", AND_BUTTON_WIDTH / 2, DEFAULT_OVERLAY_BUTTON_SIZE - 2, "orange", true);
 
-      button.on("click", function () {
-          listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
-        }
-      );
+      button.on("click", callBack);
       return button;
     }
 
@@ -50,22 +89,32 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       return button;
     }
 
-    function addOrButton(parent, data, x, y) {
+    function addOrButton(parent, callBack, x, y) {
 
       var button = uiUtil.addOverlayButton(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y, OR_BUTTON_WIDTH, DEFAULT_OVERLAY_BUTTON_SIZE, "OR", OR_BUTTON_WIDTH / 2, DEFAULT_OVERLAY_BUTTON_SIZE - 2, "lightblue", true);
 
-      button.on("click", function () {
-          listOverlay.show(d3.select("#queryOverlay"), data, parent.translate.x + x, parent.translate.y + y);
-        }
-      );
+      button.on("click", callBack);
       return button;
     }
 
-    function addBooleanButtons(parent, x, y, andData, orData, notCallBack) {
-      addAndButton(parent, andData, x, y);
-      addOrButton(parent, orData, x + AND_BUTTON_WIDTH, y);
+    function addBooleanButtonsWithListOptions(parent, x, y, andData, orData, notCallBack) {
+      addAndButton(parent, function () {
+        listOverlay.setItems(andData);
+        listOverlay.show(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y);
+      }, x, y);
+      addOrButton(parent, function () {
+        listOverlay.setItems(orData);
+        listOverlay.show(d3.select("#queryOverlay"), parent.translate.x + x, parent.translate.y + y);
+      }, x + AND_BUTTON_WIDTH, y);
       addNotButton(parent, notCallBack, x + AND_BUTTON_WIDTH + OR_BUTTON_WIDTH, y);
     }
+
+    function addBooleanButtons(parent, x, y, andCallback, orCallback, notCallBack) {
+      addAndButton(parent, andCallback, x, y);
+      addOrButton(parent, orCallback, x + AND_BUTTON_WIDTH, y);
+      addNotButton(parent, notCallBack, x + AND_BUTTON_WIDTH + OR_BUTTON_WIDTH, y);
+    }
+
 
     function addRemoveButton(element, x, y) {
 
@@ -85,7 +134,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
             parent.correctSequence();
           } else {
 
-            while (typeof parent !== "undefined" && ((parent instanceof AndContainer || parent instanceof OrContainer && parent.children.length <= 1)
+            while (typeof parent !== "undefined" && (((parent instanceof AndContainer || parent instanceof OrContainer) && parent.children.length <= 1)
             || (parent instanceof NotContainer && parent.children.length <= 0))) {
 
               var grandParent = parent.parent;
@@ -476,7 +525,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         .attr({
           x: 5,
           y: 14
-        }).text(initialText);
+        }).text(initialText)
+        .classed("caption", true);
 
       domParent.append("foreignObject")
         .attr({
@@ -486,33 +536,92 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           height: 20
         }).append("xhtml:div")
         .style("font", "10px 'Arial'")
-        .html('<input type="text" placeholder="' + initialText + '" required="required" size="5px" width="5px" class="queryConstraint">');
-      $(this.myDomElements[0]).find("input").width(90).keypress(function (e) {
-        if (e.which == 13) {
-          pathQuery.setQuery(queryView.container.getPathQuery(), false);
-          return false;
-        }
-      });
+        .html('<input type="text" placeholder="' + initialText + '" size="5px" width="5px" class="queryConstraint">');
+      $(this.myDomElements[0]).find("input").width(90);
+
     };
 
-    ConstraintElement.prototype.setText = function (text) {
-      $(this.myDomElements[0]).find("input").val(text);
+    ConstraintElement.prototype.setCaption = function (text) {
+      $(this.myDomElements[0]).find("text.caption").text(text);
     };
 
     ConstraintElement.prototype.getSize = function () {
       return {width: 130, height: 24};
     };
 
+    //------------------------------------------
+
+    function MultiConstraintElement(parent) {
+      ConstraintElement.call(this, parent);
+      this.autoCompleteSource = [];
+    }
+
+    MultiConstraintElement.prototype = Object.create(ConstraintElement.prototype);
+
+    MultiConstraintElement.prototype.init = function (domParent) {
+      ConstraintElement.prototype.init.call(this, domParent);
+
+      this.addInput(this.myDomElements, "");
+
+      var that = this;
+    };
+
+    MultiConstraintElement.prototype.addInput = function (domParent, initialText) {
+      ConstraintElement.prototype.addInput.call(this, domParent, initialText);
+
+      var that = this;
+      var input = $(this.myDomElements[0]).find("input");
+      input.typedAutocomplete({
+        minLength: 3,
+        source: that.autoCompleteSource,
+        select: function (event, ui) {
+
+          that.setInfo(ui.item);
+          //that.id = ui.item.value;
+          //pathQuery.setQuery(queryView.container.getPathQuery(), false);
+          return false; // Prevent the widget from inserting the value.
+        },
+        focus: function (event, ui) {
+          //input.val(ui.item.label);
+          //that.id = ui.item.value;
+          return false; // Prevent the widget from inserting the value.
+        }
+      });
+
+      input.keypress(function (e) {
+        that.setCaption("");
+        delete that.info;
+        //return false;
+      });
+    };
+
+    MultiConstraintElement.prototype.setInfo = function (info) {
+      this.info = info;
+      $(this.myDomElements[0]).find("input").val(info.label);
+      this.setCaption(info.category);
+      pathQuery.setQuery(queryView.container.getPathQuery(), false);
+    };
+
+
     //-------------------------------------------
 
     function EdgeConstraintElement(parent) {
-      ConstraintElement.call(this, parent);
+      MultiConstraintElement.call(this, parent);
+      this.autoCompleteSource = function (request, response) {
+        var term = request.term;
+        var setNodeLabels = config.getSetNodeLabels();
+        if (setNodeLabels.length > 0) {
+          fetchSetsOfType(term, 0, [], setNodeLabels, response);
+        } else {
+          response([]);
+        }
+      }
     }
 
-    EdgeConstraintElement.prototype = Object.create(ConstraintElement.prototype);
+    EdgeConstraintElement.prototype = Object.create(MultiConstraintElement.prototype);
 
     EdgeConstraintElement.prototype.addInput = function (domParent, initialText) {
-      ConstraintElement.prototype.addInput.call(this, domParent, initialText);
+      MultiConstraintElement.prototype.addInput.call(this, domParent, initialText);
 
       var that = this;
 
@@ -524,33 +633,183 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     function addEdgeConstraintBooleanButtons(element) {
       var size = element.getSize();
 
-      addBooleanButtons(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [
-          {
-            text: "Add Set", callback: function () {
-            replaceWithContainer(element, AndContainer, true, EdgeSetElement);
-          }
-          }],
-        [{
-          text: "Add Set", callback: function () {
-            replaceWithContainer(element, OrContainer, false, EdgeSetElement);
-          }
-        }], function () {
+      addBooleanButtons(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5,
+        function () {
+          replaceWithContainer(element, AndContainer, true, EdgeConstraintElement);
+        },
+        function () {
+          replaceWithContainer(element, OrContainer, false, EdgeConstraintElement);
+        }, function () {
           replaceWithContainer(element, NotContainer, false);
         }
       );
-
     }
+
+    EdgeConstraintElement.prototype.getPathQuery = function () {
+      var el = this.myDomElements.select("input");
+      var val = $(el[0]).val();
+
+      if (typeof this.info === "undefined" || val === "") {
+        return new q.Constraint();
+      }
+      if (this.info.category === "Set") {
+        return new q.EdgeSetPresenceConstraint(this.info.id, config.getSetProperty(this.info.setNodeLabel));
+      }
+      return q.Constraint();
+
+    };
 
     //-------------------------------------------
 
-    function NodeConstraintElement(parent) {
-      ConstraintElement.call(this, parent);
+    //function EdgeConstraintElement(parent) {
+    //  ConstraintElement.call(this, parent);
+    //}
+    //
+    //EdgeConstraintElement.prototype = Object.create(ConstraintElement.prototype);
+    //
+    //EdgeConstraintElement.prototype.addInput = function (domParent, initialText) {
+    //  ConstraintElement.prototype.addInput.call(this, domParent, initialText);
+    //
+    //  var that = this;
+    //
+    //  $(domParent[0]).mouseenter(function () {
+    //    addEdgeConstraintBooleanButtons(that);
+    //  });
+    //};
+    //
+    //function addEdgeConstraintBooleanButtons(element) {
+    //  var size = element.getSize();
+    //
+    //  addBooleanButtonsWithListOptions(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [
+    //      {
+    //        text: "Add Set", callback: function () {
+    //        replaceWithContainer(element, AndContainer, true, EdgeSetElement);
+    //      }
+    //      }],
+    //    [{
+    //      text: "Add Set", callback: function () {
+    //        replaceWithContainer(element, OrContainer, false, EdgeSetElement);
+    //      }
+    //    }], function () {
+    //      replaceWithContainer(element, NotContainer, false);
+    //    }
+    //  );
+    //
+    //}
+
+    //-------------------------------------------
+
+    //function NodeConstraintElement(parent) {
+    //  ConstraintElement.call(this, parent);
+    //}
+    //
+    //NodeConstraintElement.prototype = Object.create(ConstraintElement.prototype);
+    //
+    //NodeConstraintElement.prototype.addInput = function (domParent, initialText) {
+    //  ConstraintElement.prototype.addInput.call(this, domParent, initialText);
+    //
+    //  var that = this;
+    //
+    //  $(domParent[0]).mouseenter(function () {
+    //    addNodeConstraintBooleanButtons(that);
+    //  });
+    //};
+    //
+    //function addNodeConstraintBooleanButtons(element) {
+    //  var size = element.getSize();
+    //
+    //  addBooleanButtons(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [{
+    //      text: "Add Node Name", callback: function () {
+    //        replaceWithContainer(element, AndContainer, true, NodeNameElement);
+    //      }
+    //    },
+    //      {
+    //        text: "Add Set", callback: function () {
+    //        replaceWithContainer(element, AndContainer, true, NodeSetElement);
+    //      }
+    //      },
+    //      {
+    //        text: "Add Node Type", callback: function () {
+    //        replaceWithContainer(element, AndContainer, true, NodeTypeElement);
+    //      }
+    //      }],
+    //    [{
+    //      text: "Add Node Name", callback: function () {
+    //        replaceWithContainer(element, OrContainer, false, NodeNameElement);
+    //      }
+    //    },
+    //      {
+    //        text: "Add Set", callback: function () {
+    //        replaceWithContainer(element, OrContainer, false, NodeSetElement);
+    //      }
+    //      },
+    //      {
+    //        text: "Add Node Type", callback: function () {
+    //        replaceWithContainer(element, OrContainer, false, NodeTypeElement);
+    //      }
+    //      }], function () {
+    //      replaceWithContainer(element, NotContainer, false);
+    //    }
+    //  );
+    //}
+
+
+//----------------------------------------
+
+    function fetchSetsOfType(term, index, results, setNodeLabels, response) {
+      var label = setNodeLabels[index];
+      var nameProperty = config.getSetNamePropertyOfType(label);
+      ServerSearch.search(term, nameProperty, label).then(function (setResults) {
+        setResults.forEach(function (element) {
+          element.category = "Set";
+          element.setNodeLabel = label;
+        });
+        results = results.concat(setResults);
+        if (index + 1 < setNodeLabels.length) {
+          fetchSetsOfType(term, index + 1, results, setNodeLabels, response);
+        } else {
+          response(results);
+        }
+      });
     }
 
-    NodeConstraintElement.prototype = Object.create(ConstraintElement.prototype);
+    function NodeConstraintElement(parent) {
+      MultiConstraintElement.call(this, parent);
+      this.autoCompleteSource = function (request, response) {
+        var term = request.term;
+        ServerSearch.search(term, 'name', '_Network_Node').then(function (nameResults) {
+          nameResults.forEach(function (element) {
+            element.category = "Name";
+          });
+
+          var nodeTypes = config.getNodeTypes();
+          nodeTypes = nodeTypes.filter(function (type) {
+            var res = type.search(new RegExp(term, "i"));
+            return res !== -1;
+          });
+          var typeResults = nodeTypes.map(function (type) {
+            return {
+              label: type,
+              value: type,
+              category: "Type"
+            }
+          });
+
+          var setNodeLabels = config.getSetNodeLabels();
+          if (setNodeLabels.length > 0) {
+            fetchSetsOfType(term, 0, nameResults.concat(typeResults), setNodeLabels, response);
+          } else {
+            response(nameResults.concat(typeResults));
+          }
+
+        });
+      }
+    }
+
+    NodeConstraintElement.prototype = Object.create(MultiConstraintElement.prototype);
 
     NodeConstraintElement.prototype.addInput = function (domParent, initialText) {
-      ConstraintElement.prototype.addInput.call(this, domParent, initialText);
+      MultiConstraintElement.prototype.addInput.call(this, domParent, initialText);
 
       var that = this;
 
@@ -562,190 +821,182 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     function addNodeConstraintBooleanButtons(element) {
       var size = element.getSize();
 
-      addBooleanButtons(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [{
-          text: "Add Node Name", callback: function () {
-            replaceWithContainer(element, AndContainer, true, NodeNameElement);
-          }
+      addBooleanButtons(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5,
+        function () {
+          replaceWithContainer(element, AndContainer, true, NodeConstraintElement);
         },
-          {
-            text: "Add Set", callback: function () {
-            replaceWithContainer(element, AndContainer, true, NodeSetElement);
-          }
-          },
-          {
-            text: "Add Node Type", callback: function () {
-            replaceWithContainer(element, AndContainer, true, NodeTypeElement);
-          }
-          }],
-        [{
-          text: "Add Node Name", callback: function () {
-            replaceWithContainer(element, OrContainer, false, NodeNameElement);
-          }
-        },
-          {
-            text: "Add Set", callback: function () {
-            replaceWithContainer(element, OrContainer, false, NodeSetElement);
-          }
-          },
-          {
-            text: "Add Node Type", callback: function () {
-            replaceWithContainer(element, OrContainer, false, NodeTypeElement);
-          }
-          }], function () {
+        function () {
+          replaceWithContainer(element, OrContainer, false, NodeConstraintElement);
+        }, function () {
           replaceWithContainer(element, NotContainer, false);
         }
       );
     }
 
+    NodeConstraintElement.prototype.getPathQuery = function () {
+      var el = this.myDomElements.select("input");
+      var val = $(el[0]).val();
+
+      if (typeof this.info === "undefined" || val === "") {
+        return new q.Constraint();
+      }
+      if (this.info.category === "Name") {
+        return new q.NodeNameConstraint(this.info.label);
+      } else if (this.info.category === "Set") {
+        return new q.NodeSetPresenceConstraint(this.info.id, config.getSetProperty(this.info.setNodeLabel));
+      }
+      return new q.NodeTypeConstraint(this.info.label);
+    };
+
 //----------------------------------------
 
-    function NodeNameElement(parent) {
-      NodeConstraintElement.call(this, parent);
-    }
-
-    NodeNameElement.prototype = Object.create(NodeConstraintElement.prototype);
-
-    NodeNameElement.prototype.init = function (domParent) {
-      NodeConstraintElement.prototype.init.call(this, domParent);
-
-      this.addInput(this.myDomElements, "Name");
-
-      var that = this;
-
-      var inputField = $(this.myDomElements[0]).find("input");
-      inputField.autocomplete({
-        minLength: 3,
-        source: function (request, response) {
-          var term = request.term;
-          ServerSearch.search(term, 'name', '_Network_Node').then(function (results) {
-            response(results);
-          })
-        },
-        select: function (event, ui) {
-          inputField.val(ui.item.label);
-          that.id = ui.item.value;
-          pathQuery.setQuery(queryView.container.getPathQuery(), false);
-          return false; // Prevent the widget from inserting the value.
-        },
-        focus: function (event, ui) {
-          inputField.val(ui.item.label);
-          that.id = ui.item.value;
-          return false; // Prevent the widget from inserting the value.
-        }
-      });
-
-
-      //inputField.on('autocompletechange change', function () {
-      //  inputField.text(this.label);
-      //  //$('#tagsname').html('You selected: ' + this.value);
-      //});
-    };
-
-    NodeNameElement.prototype.getPathQuery = function () {
-      var el = this.myDomElements.select("input");
-      var val = $(el[0]).val();
-
-      return val === "" ? new q.Constraint() : new q.NodeNameConstraint(val);
-    };
+    //function NodeNameElement(parent) {
+    //  NodeConstraintElement.call(this, parent);
+    //}
+    //
+    //NodeNameElement.prototype = Object.create(NodeConstraintElement.prototype);
+    //
+    //NodeNameElement.prototype.init = function (domParent) {
+    //  NodeConstraintElement.prototype.init.call(this, domParent);
+    //
+    //  this.addInput(this.myDomElements, "Name");
+    //
+    //  var that = this;
+    //
+    //  var inputField = $(this.myDomElements[0]).find("input");
+    //  inputField.autocomplete({
+    //    minLength: 3,
+    //    source: function (request, response) {
+    //      var term = request.term;
+    //      ServerSearch.search(term, 'name', '_Network_Node').then(function (results) {
+    //        response(results);
+    //      })
+    //    },
+    //    select: function (event, ui) {
+    //      inputField.val(ui.item.label);
+    //      that.id = ui.item.value;
+    //      pathQuery.setQuery(queryView.container.getPathQuery(), false);
+    //      return false; // Prevent the widget from inserting the value.
+    //    },
+    //    focus: function (event, ui) {
+    //      inputField.val(ui.item.label);
+    //      that.id = ui.item.value;
+    //      return false; // Prevent the widget from inserting the value.
+    //    }
+    //  });
+    //
+    //
+    //  //inputField.on('autocompletechange change', function () {
+    //  //  inputField.text(this.label);
+    //  //  //$('#tagsname').html('You selected: ' + this.value);
+    //  //});
+    //};
+    //
+    //NodeNameElement.prototype.getPathQuery = function () {
+    //  var el = this.myDomElements.select("input");
+    //  var val = $(el[0]).val();
+    //
+    //  return val === "" ? new q.Constraint() : new q.NodeNameConstraint(val);
+    //};
 
 
 //-----------------------------------
 
-    function getSetAutoComplete(inputField, element) {
-      return {
-        minLength: 3,
-        source: function (request, response) {
-          var term = request.term;
-          ServerSearch.search(term, 'name', '_Set_Node').then(function (results) {
-            response(results);
-          })
-        },
-        select: function (event, ui) {
-          inputField.val(ui.item.label);
-          element.id = ui.item.id;
-          pathQuery.setQuery(queryView.container.getPathQuery(), false);
-          return false; // Prevent the widget from inserting the value.
-        },
-        focus: function (event, ui) {
-          inputField.val(ui.item.label);
-          element.id = ui.item.id;
-          return false; // Prevent the widget from inserting the value.
-        }
-      }
-    }
-
-
-    function NodeSetElement(parent) {
-      NodeConstraintElement.call(this, parent);
-    }
-
-    NodeSetElement.prototype = Object.create(NodeConstraintElement.prototype);
-
-    NodeSetElement.prototype.init = function (domParent) {
-      NodeConstraintElement.prototype.init.call(this, domParent);
-
-      this.addInput(this.myDomElements, "Set");
-
-      var that = this;
-
-      var inputField = $(this.myDomElements[0]).find("input");
-      inputField.autocomplete(getSetAutoComplete(inputField, that));
-    };
-
-    NodeSetElement.prototype.getPathQuery = function () {
-      var el = this.myDomElements.select("input");
-      var val = $(el[0]).val();
-
-      return  val === "" ? new q.Constraint() : new q.NodeSetPresenceConstraint(this.id);
-    };
+    //function getSetAutoComplete(inputField, element) {
+    //  return {
+    //    minLength: 3,
+    //    source: function (request, response) {
+    //      var term = request.term;
+    //      ServerSearch.search(term, 'name', '_Set_Node').then(function (results) {
+    //        response(results);
+    //      })
+    //    },
+    //    select: function (event, ui) {
+    //      inputField.val(ui.item.label);
+    //      element.id = ui.item.id;
+    //      pathQuery.setQuery(queryView.container.getPathQuery(), false);
+    //      return false; // Prevent the widget from inserting the value.
+    //    },
+    //    focus: function (event, ui) {
+    //      inputField.val(ui.item.label);
+    //      element.id = ui.item.id;
+    //      return false; // Prevent the widget from inserting the value.
+    //    }
+    //  }
+    //}
+    //
+    //
+    //function NodeSetElement(parent) {
+    //  NodeConstraintElement.call(this, parent);
+    //}
+    //
+    //NodeSetElement.prototype = Object.create(NodeConstraintElement.prototype);
+    //
+    //NodeSetElement.prototype.init = function (domParent) {
+    //  NodeConstraintElement.prototype.init.call(this, domParent);
+    //
+    //  this.addInput(this.myDomElements, "Set");
+    //
+    //  var that = this;
+    //
+    //  var inputField = $(this.myDomElements[0]).find("input");
+    //  inputField.autocomplete(getSetAutoComplete(inputField, that));
+    //};
+    //
+    //NodeSetElement.prototype.getPathQuery = function () {
+    //  var el = this.myDomElements.select("input");
+    //  var val = $(el[0]).val();
+    //
+    //  return val === "" ? new q.Constraint() : new q.NodeSetPresenceConstraint(this.id);
+    //};
 
 //-----------------------------------
 
-    function NodeTypeElement(parent) {
-      NodeConstraintElement.call(this, parent);
-
-    }
-
-    NodeTypeElement.prototype = Object.create(NodeConstraintElement.prototype);
-
-    NodeTypeElement.prototype.init = function (domParent) {
-      NodeConstraintElement.prototype.init.call(this, domParent);
-
-      this.addInput(this.myDomElements, "Type");
-    };
-
-    NodeTypeElement.prototype.getPathQuery = function () {
-      var el = this.myDomElements.select("input");
-      var val = $(el[0]).val();
-
-      return  val === "" ? new q.Constraint() : new q.NodeTypeConstraint(val);
-    };
+    //function NodeTypeElement(parent) {
+    //  NodeConstraintElement.call(this, parent);
+    //
+    //}
+    //
+    //NodeTypeElement.prototype = Object.create(NodeConstraintElement.prototype);
+    //
+    //NodeTypeElement.prototype.init = function (domParent) {
+    //  NodeConstraintElement.prototype.init.call(this, domParent);
+    //
+    //  this.addInput(this.myDomElements, "Type");
+    //};
+    //
+    //NodeTypeElement.prototype.getPathQuery = function () {
+    //  var el = this.myDomElements.select("input");
+    //  var val = $(el[0]).val();
+    //
+    //  return val === "" ? new q.Constraint() : new q.NodeTypeConstraint(val);
+    //};
 
     //-----------------------------------
 
-    function EdgeSetElement(parent) {
-      EdgeConstraintElement.call(this, parent);
-    }
-
-    EdgeSetElement.prototype = Object.create(EdgeConstraintElement.prototype);
-
-    EdgeSetElement.prototype.init = function (domParent) {
-      EdgeConstraintElement.prototype.init.call(this, domParent);
-
-      this.addInput(this.myDomElements, "Set");
-
-      var that = this;
-
-      var inputField = $(this.myDomElements[0]).find("input");
-      inputField.autocomplete(getSetAutoComplete(inputField, that));
-    };
-
-    EdgeSetElement.prototype.getPathQuery = function () {
-      var el = this.myDomElements.select("input");
-      var val = $(el[0]).val();
-
-      return  val === "" ? new q.Constraint() : new q.EdgeSetPresenceConstraint(val);
-    };
+    //function EdgeSetElement(parent) {
+    //  EdgeConstraintElement.call(this, parent);
+    //}
+    //
+    //EdgeSetElement.prototype = Object.create(EdgeConstraintElement.prototype);
+    //
+    //EdgeSetElement.prototype.init = function (domParent) {
+    //  EdgeConstraintElement.prototype.init.call(this, domParent);
+    //
+    //  this.addInput(this.myDomElements, "Set");
+    //
+    //  var that = this;
+    //
+    //  var inputField = $(this.myDomElements[0]).find("input");
+    //  inputField.autocomplete(getSetAutoComplete(inputField, that));
+    //};
+    //
+    //EdgeSetElement.prototype.getPathQuery = function () {
+    //  var el = this.myDomElements.select("input");
+    //  var val = $(el[0]).val();
+    //
+    //  return val === "" ? new q.Constraint() : new q.EdgeSetPresenceConstraint(val);
+    //};
 
 //--------------------------------------
 
@@ -862,9 +1113,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
 
 //------------------------------------------------------
-    function NodeContainer(parent) {
+    function NodeContainer(parent, hasInitialConstraint) {
       CaptionContainer.call(this, parent, "", "rgb(200, 200, 200)", "rgb(30, 30, 30)", false);
       this.hasPosition = false;
+      this.hasInitialConstraint = hasInitialConstraint;
     }
 
     NodeContainer.prototype = Object.create(CaptionContainer.prototype);
@@ -880,27 +1132,11 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         var size = that.getSize();
         if (that.children.length <= 0) {
 
-          addAddButton(that, [{
-            text: "Add Node Name", callback: function () {
-              that.add(new NodeNameElement(that));
-              d3.select(this).remove();
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
-            }
-          },
-            {
-              text: "Add Set", callback: function () {
-              that.add(new NodeSetElement(that));
-              d3.select(this).remove();
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
-            }
-            },
-            {
-              text: "Add Node Type", callback: function () {
-              that.add(new NodeTypeElement(that));
-              d3.select(this).remove();
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
-            }
-            }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+          addAddButton(that, function () {
+            that.add(new NodeConstraintElement(that));
+            d3.select(this).remove();
+            pathQuery.setQuery(queryView.container.getPathQuery(), false);
+          }, (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
         }
 
@@ -912,10 +1148,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         }
 
         if (!(that.hasPosition && (that.index === 0 || that.index === -1))) {
-          addAddButton(that, [{
+          addAddButtonWithListOptions(that, [{
             text: "Add Node", callback: function () {
               var index = that.parent.children.indexOf(that);
-              that.parent.insert(index + 1, new NodeContainer(that.parent));
+              that.parent.insert(index + 1, new NodeContainer(that.parent, true));
               if (that.parent instanceof SequenceContainer) {
                 that.parent.insert(index + 1, new SequenceFiller(that.parent));
               }
@@ -939,6 +1175,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
         }
       });
+
+      if (this.hasInitialConstraint) {
+        this.add(new NodeConstraintElement(that));
+      }
     };
 
     NodeContainer.prototype.showPositionDialog = function () {
@@ -1102,19 +1342,15 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
         if (that.children.length <= 0) {
 
-          addAddButton(that, [
-            {
-              text: "Add Set", callback: function () {
-              that.add(new EdgeSetElement(that));
-              d3.select(this).remove();
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
-            }
-            }
-          ], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
+          addAddButton(that, function () {
+            that.add(new EdgeConstraintElement(that));
+            d3.select(this).remove();
+            pathQuery.setQuery(queryView.container.getPathQuery(), false);
+          }, (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
         }
 
-        addAddButton(that, [{
+        addAddButtonWithListOptions(that, [{
           text: "Add Node", callback: function () {
             var index = that.parent.children.indexOf(that);
 
@@ -1188,9 +1424,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
         var size = that.getSize();
         if (that.children.length <= 0) {
-          addAddButton(that, [{
+          addAddButtonWithListOptions(that, [{
             text: "Add Node", callback: function () {
-              that.add(new NodeContainer(that));
+              that.add(new NodeContainer(that, true));
               pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }, {
@@ -1210,7 +1446,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     function addContainerBooleanButtons(element) {
       var size = element.getSize();
 
-      addBooleanButtons(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5,
+      addBooleanButtonsWithListOptions(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5,
         [{
           text: "Add Unordered", callback: function () {
             replaceWithContainer(element, AndContainer, false, UnorderedContainer);
@@ -1317,7 +1553,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         var size = that.getSize();
 
         if (that.parent instanceof PathContainer) {
-          addAddButton(that, [{
+          addAddButtonWithListOptions(that, [{
             text: "Add Sequence", callback: function () {
               that.parent.replace(that, new SequenceContainer(that.parent));
               pathQuery.setQuery(queryView.container.getPathQuery(), false);
@@ -1330,13 +1566,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
         } else {
-          addAddButton(that, [{
+          addAddButtonWithListOptions(that, [{
             text: "Add Node", callback: function () {
               var index = that.parent.children.indexOf(that);
 
 
               if (index === 0 && that.parent.children.length === 1) {
-                that.parent.replace(that, new NodeContainer(that.parent));
+                that.parent.replace(that, new NodeContainer(that.parent, true));
                 pathQuery.setQuery(queryView.container.getPathQuery(), false);
                 return;
               }
@@ -1345,13 +1581,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 var prevChild = that.parent.children[index - 1];
                 var nextChild = that.parent.children[index + 1];
                 if (prevChild instanceof EdgeContainer && nextChild instanceof EdgeContainer) {
-                  that.parent.replace(that, new NodeContainer(that.parent));
+                  that.parent.replace(that, new NodeContainer(that.parent, true));
                   pathQuery.setQuery(queryView.container.getPathQuery(), false);
                   return;
                 }
               }
 
-              that.parent.insert(index, new NodeContainer(that.parent));
+              that.parent.insert(index, new NodeContainer(that.parent, true));
               that.parent.insert(index, new SequenceFiller(that.parent));
               pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
@@ -1401,6 +1637,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
             (prevChild instanceof NodeContainer && nextChild instanceof NodeContainer)) {
             return false;
           }
+        }
+        if(index === 0 && this.parent.children.length === 1) {
+          return false;
         }
       }
       return show;
@@ -1553,8 +1792,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     PathContainer.prototype.init = function (parent) {
       BoxContainer.prototype.init.call(this, parent);
 
-      var nc1 = new NodeContainer(this);
-      var nc2 = new NodeContainer(this);
+      var nc1 = new NodeContainer(this, true);
+      var nc2 = new NodeContainer(this, true);
 
       this.add(nc1);
       this.add(new SequenceFiller(this));
@@ -1642,6 +1881,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           d3.select($progress[0]).transition().duration(100).style('width', d3.round(i / k * 100, 0) + '%');
         },
         query_done: function () {
+          d3.select($progress[0]).transition().duration(100).style('width','100%');
           $progress.parent();
         }
       });
@@ -1714,7 +1954,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     };
 
-    QueryView.prototype.addNodeFilter = function (constraintType, text, isNot) {
+    QueryView.prototype.addNodeFilter = function (constraintInfo, isNot) {
 
       var pathContainers = [];
       this.findPathContainers(this.container, pathContainers);
@@ -1739,31 +1979,31 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       });
 
       function addNodeConstraint(unorderedContainer) {
-        var nodeContainer = new NodeContainer(unorderedContainer)
+        var nodeContainer = new NodeContainer(unorderedContainer, false)
         unorderedContainer.add(nodeContainer);
 
-        var constraintElement = 0;
+        var constraintElement = new NodeConstraintElement(nodeContainer);
 
-        switch (constraintType) {
-          case "name":
-            constraintElement = new NodeNameElement(nodeContainer);
-            break;
-          case "type":
-            constraintElement = new NodeTypeElement(nodeContainer);
-            break;
-          case "set":
-            constraintElement = new NodeSetElement(nodeContainer);
-            break;
-          default:
-            return;
-        }
+        //switch (constraintType) {
+        //  case "name":
+        //    constraintElement.setItem({label: ""})
+        //    break;
+        //  case "type":
+        //    constraintElement = new NodeTypeElement(nodeContainer)
+        //    break;
+        //  case "set":
+        //    constraintElement = new NodeSetElement(nodeContainer);
+        //    break;
+        //  default:
+        //    return;
+        //}
 
         nodeContainer.add(constraintElement);
-        constraintElement.setText(text);
+        constraintElement.setInfo(constraintInfo);
       }
 
-      var query = this.container.getPathQuery();
-      pathQuery.setQuery(query, false);
+      //var query = this.container.getPathQuery();
+      //pathQuery.setQuery(query, false);
 
     };
 
