@@ -480,6 +480,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
   VDataRenderer.prototype.onDatasetEnter = function ($dataset, pathWrapper, dataset, datasetIndex) {
     var that = this;
 
+    var scaleY = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([DATA_AXIS_SIZE, 0]);
     this.appendAxis($dataset, dataset);
 
     var allSummaryPlots = $dataset.selectAll("g.nodeSummaryData")
