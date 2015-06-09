@@ -2,14 +2,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
   function ($, d3, webcola, dagreD3, listeners, selectionUtil, pathSorting, pathQuery, config, pathUtil) {
     'use strict';
 
-    //var w = 800;
-    //var h = 700;
-    //
     var sideSpacing = 10;
-    ////var arrowWidth = 7;
-    //var nodeWidth = 50;
-    //var nodeHeight = 20;
-
 
     function calcIntersectionX(source, target, nodeWidth, nodeHeight) {
       if (source.x === target.x) {
@@ -201,44 +194,8 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
             }
           });
 
-        //allEdges
-        //  .transition()
-        //  .attr("x1", function (d) {
-        //    return calcIntersectionX(d.source, d.target, nodeWidth, nodeHeight);
-        //  })
-        //  .attr("y1", function (d) {
-        //    return calcIntersectionY(d.source, d.target, nodeWidth, nodeHeight);
-        //  })
-        //  .attr("x2", function (d) {
-        //    return calcIntersectionX(d.target, d.source, nodeWidth, nodeHeight);
-        //  })
-        //  .attr("y2", function (d) {
-        //    return calcIntersectionY(d.target, d.source, nodeWidth, nodeHeight);
-        //  });
       };
 
-      //this.force.on("start", function () {
-      //  var nodeGroup = d3.select("#pathgraph svg g.nodeGroup");
-      //  var allNodes = nodeGroup.selectAll("g.node").data(that.graph.nodes, function (node) {
-      //    return node.node.id;
-      //  });
-      //
-      //  allNodes.each(function (node) {
-      //    if (node.fixed) {
-      //      d3.select(this)
-      //        .transition()
-      //        .duration(1000)
-      //        .attr("transform", function (d) {
-      //          return "translate(" + d.x + ", " + d.y + ")";
-      //          //}
-      //        })
-      //        .each("end", function () {
-      //          that.force.stop();
-      //        });
-      //    }
-      //  });
-      //
-      //});
 
       this.force.on("tick", tick);
     }
@@ -255,24 +212,6 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
       },
 
       onPathSelectionUpdate: function (selectionType, source) {
-        //var that = this;
-        //var selectedIds = (selectionUtil.selections["path"])[selectionType];
-        //var selected = false;
-        //
-        //var selectedNodes = [];
-        //var selectedEdges = [];
-        //var lastPath = {};
-        //selectedIds.forEach(function (pathId) {
-        //
-        //  for (var i = 0; i < that.paths.length; i++) {
-        //    lastPath = that.paths[i];
-        //    if (lastPath.id === pathId) {
-        //      selectedNodes = selectedNodes.concat(lastPath.nodes);
-        //      selectedEdges = selectedEdges.concat(lastPath.edges);
-        //      break;
-        //    }
-        //  }
-        //});
 
 
         var that = this;
@@ -408,21 +347,6 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
             var node = that.graph.nodes[i];
             if (node.node.id === fixedNode.id) {
 
-              //if (i === 0) {
-              //  nodeRangeDict[node.id.toString()] = {startX: node.x, endX: posX, startY: node.y, endY: posY};
-              //  node.fixed = true;
-              //  posX += nodeStep;
-              //} else {
-              //
-              //  var ranges = nodeRangeDict[node.id.toString()];
-              //
-              //  var vX = ranges.startX + scale * (ranges.endX - ranges.startX);
-              //  node.x = vX;
-              //  node.px = vX;
-              //  //delete node.px;
-              //  var vY = ranges.startY + scale * (ranges.endY - ranges.startY);
-              //  node.y = vY;
-              //  node.py = vY;
 
               node.x = posX;
               node.px = posX;
@@ -433,23 +357,10 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
               posX += nodeStep;
 
               fixedNodes.push(i);
-              //pathAlignmentConstraint.offsets.push({
-              //  node: i, offset: 0
-              //});
-
-              //if(fixedNodes.length >=2) {
-              //  constraints.push({axis: "x", left: fixedNodes[fixedNodes.length-2], right: fixedNodes[fixedNodes.length-1], gap: 300, equality:true})
-              //}
-              //delete node.py;
 
             }
           }
         });
-        //tick();
-        //}
-        //this.graph.groups = [
-        //  {"leaves": fixedNodes}];
-
 
         this.force
           .nodes(that.graph.nodes)
@@ -609,7 +520,6 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
             pathSorting.sortingStrategies.selectionSortingStrategy.setPathIds(selectionUtil.selections["path"]["selected"]);
             listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
           });
-        ;
 
 
         edge.append("path")
@@ -663,16 +573,6 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
         }, "path", that);
 
 
-        //var edge = allEdges
-        //  .enter()
-        //  .append("g")
-        //  .attr("class", "edge")
-        //  .style("opacity", function (d) {
-        //    return pathQuery.isEdgeFiltered(d.edge.id) ? 0.5 : 1;
-        //  });
-        //
-        //var edgeLines = edge.append("line");
-
         allEdges.exit()
           .remove();
         //.attr("marker-end", "url(#arrowRight)");
@@ -708,47 +608,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
             return that.view.getTextWidth(text)
           });
         });
-        //
-        //var nodeRects = node.append("rect")
-        //  .attr({
-        //    rx: 5,
-        //    ry: 5,
-        //    x: function (d) {
-        //      return -d.width / 2
-        //    },
-        //    y: function (d) {
-        //      return -d.height / 2
-        //    },
-        //    width: function (d) {
-        //      return d.width
-        //    },
-        //    height: function (d) {
-        //      return d.height
-        //    }
-        //  });
-        //
-        //
-        //var nodeTexts = node.append("text")
-        //  .attr({
-        //    x: function (d) {
-        //      //var node = that.graph.node(d).node;
-        //      var text = d.node.properties[config.getNodeNameProperty(d.node)];
-        //      var width = that.view.getTextWidth(text);
-        //      return Math.max(-width / 2, -config.getNodeWidth() / 2 + 3);
-        //    },
-        //    y: function (d) {
-        //      return d.height / 2 - 5;
-        //    },
-        //    "clip-path": "url(#graphNodeClipPath)"
-        //  })
-        //  .text(function (d) {
-        //    //var node = that.graph.node(d).node;
-        //    var text = d.node.properties[config.getNodeNameProperty(d.node)];
-        //    //if (text.length > 7) {
-        //    //  text = text.substring(0, 7);
-        //    //}
-        //    return text;
-        //  });
+
 
         allNodes.exit()
           .remove();
@@ -759,8 +619,6 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
     };
 
     return ForceLayout;
-
-
   }
 )
 ;
