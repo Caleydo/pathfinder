@@ -613,7 +613,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //var allSetTypes = that.parent.selectAll("g.pathContainer g.setGroup g.setType");
 
 
-        that.renderSets(that.parent.selectAll("g.pathContainer"));
+        that.renderSets(that.parent.selectAll("g.pathContainer").data(that.pathWrappers, getPathKey));
         //that.renderDatasets();
         that.datasetRenderer.render();
 
@@ -1387,7 +1387,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
             allCircles.transition()
               .attr({
-                cx: function (d, i) {
+                cx: function (d) {
                   var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
                   var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
                   return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;

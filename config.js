@@ -266,7 +266,7 @@ define(['d3'], function (d3) {
     getSetNodeLabel: function (setNode) {
       var setConfig = this.getSetConfig(setNode);
 
-     return setConfig["node_label"];
+      return setConfig["node_label"];
     },
 
     getSetNodeLabels: function () {
@@ -324,7 +324,7 @@ define(['d3'], function (d3) {
       return setConfig["set_property"];
     },
 
-    getSetTypeFromLabel: function(label) {
+    getSetTypeFromLabel: function (label) {
       var setConfig = this.getSetConfigByLabel(label);
       return setConfig["name"];
     },
@@ -350,6 +350,10 @@ define(['d3'], function (d3) {
       return config.nodes.map(function (nodeConfig) {
         return nodeConfig["node_label"];
       });
+    },
+
+    getDatasetConfigs: function () {
+      return config["datasets"];
     }
   }
 

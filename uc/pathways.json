@@ -77,5 +77,29 @@
       "flag_property": "_isSetEdge",
       "set_property": "pathways"
     }
+  ],
+  "datasets": [
+    {
+      "id": "copynumbervariation",
+      "type": "numerical",
+      "mapping_type": "GENE_SYMBOL",
+      "mapping_nodes": [
+        {
+          "node_label": "Gene",
+          "id_property": "name"
+        }
+      ]
+    },
+    {
+      "id": "mrnaexpression",
+      "type": "numerical",
+      "mapping_type": "GENE_SYMBOL",
+      "mapping_nodes": [
+        {
+          "node_label": "Gene",
+          "id_property": "name"
+        }
+      ]
+    }
   ]
 }
