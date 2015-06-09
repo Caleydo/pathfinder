@@ -316,9 +316,8 @@ define(['d3'], function (d3) {
     },
 
     /**
-     *
+     * returns the property that is used in nodes and edges to refer to a set with the specified label
      * @param label
-     * @returns {The property that is used in nodes and edges to refer to a set with the specified label}
      */
     getSetProperty: function (label) {
       var setConfig = this.getSetConfigByLabel(label);
@@ -332,7 +331,7 @@ define(['d3'], function (d3) {
 
     getNodeType: function (node) {
       var nodeConfig = this.getNodeConfig(node);
-      var type = nodeConfig["node_label"];
+      var type = nodeConfig ? nodeConfig["node_label"] : undefined;
       if (typeof type === "undefined") {
         return "Unknown";
       }
