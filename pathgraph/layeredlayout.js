@@ -276,7 +276,12 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .interpolate("basis");
 
       edge.append("path")
-        .style({fill: "none"})
+        .style({
+          fill: "none",
+          "stroke-dasharray": function (d) {
+            return config.isNetworkEdge(d.edge.edge) ? "0,0" : "10,5";
+          }
+        })
         .classed("lines", true)
         .attr({
           "marker-end": function (d) {
@@ -285,7 +290,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         });
 
       edge.append("path")
-        .style({fill: "none", opacity: 0, "stroke-width":8})
+        .style({fill: "none", opacity: 0, "stroke-width": 8})
         .classed("selectionLines", true);
 
       //<marker id="arrowhead1177" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"></path></marker>
@@ -321,8 +326,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
         //if (tarX - srcX > 50) {
         pathSegment = pathSegment.concat(" H" + (tarX - width) + " Q" + ((tarX - width) + width / 3) + "," + (srcY) + " " +
-        ((tarX - width) + width / 2) + "," + (srcY + (tarY - srcY) / 2) + " " +
-        "T" + (tarX) + "," + tarY);
+          ((tarX - width) + width / 2) + "," + (srcY + (tarY - srcY) / 2) + " " +
+          "T" + (tarX) + "," + tarY);
         //} else {
         //  pathSegment = pathSegment.concat(" C" + (srcX + width) + "," + (srcY) + " " +
         //  (tarX - width) + "," + (tarY) + " " +

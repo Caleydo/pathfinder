@@ -613,7 +613,12 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
 
 
         edge.append("path")
-          .style({fill: "none"})
+          .style({
+            fill: "none",
+            "stroke-dasharray": function (d) {
+              return config.isNetworkEdge(d.edge) ? "0,0" : "10,5";
+            }
+          })
           .classed("lines", true)
           .attr({
             "marker-end": function (d) {

@@ -19,16 +19,16 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
 
     $(document).ready(function () {
 
-        ccle.list().then(function (datasets) {
-          var x = datasets;
-          ccle.stats(datasets[1].name).then(function (data) {
-            var x = 0;
-          });
-
-          //ccle.stats(datasets[1].name, ["EGFR"]).then(function(stats){
-          //  var z = stats;
-          //})
-        });
+        //ccle.list().then(function (datasets) {
+        //  var x = datasets;
+        //  ccle.stats(datasets[1].name).then(function (data) {
+        //    var x = 0;
+        //  });
+        //
+        //  //ccle.stats(datasets[1].name, ["EGFR"]).then(function(stats){
+        //  //  var z = stats;
+        //  //})
+        //});
 
         //$.widget("custom.typedAutocomplete", $.ui.autocomplete, {
         //  _renderItem: function (ul, item) {

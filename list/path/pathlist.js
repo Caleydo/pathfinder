@@ -1306,8 +1306,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             ////});
             //
             //if (d.setType.collapsed) {
-              d3.select(this).selectAll("g.setTypeSummary")
-                .attr("display", d.setType.collapsed ? "inline": "none");
+            d3.select(this).selectAll("g.setTypeSummary")
+              .attr("display", d.setType.collapsed ? "inline" : "none");
 
             //}
 
@@ -1323,15 +1323,15 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             //}
           })
           .attr("transform", getSetTypeTransformFunction(that.pathWrappers));
-          //.each("end", function (d) {
-          //
-          //
-          //
-          //  //if (d.setType.canBeShown()) {
-          //  //  d3.select(this)
-          //  //    .attr("display", "inline");
-          //  //}
-          //});
+        //.each("end", function (d) {
+        //
+        //
+        //
+        //  //if (d.setType.canBeShown()) {
+        //  //  d3.select(this)
+        //  //    .attr("display", "inline");
+        //  //}
+        //});
 
         setType.append("text")
           .text(function (d) {
@@ -1356,7 +1356,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //});
 
         allSetTypes.each(function (d, i) {
-            var setTypeSummaryContainer =  d3.select(this).select("g.setTypeSummary");
+            var setTypeSummaryContainer = d3.select(this).select("g.setTypeSummary");
 
             var allCircles = setTypeSummaryContainer.selectAll("circle")
               .data(function () {
@@ -1787,14 +1787,25 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .attr("y1", s.V_SPACING + s.NODE_HEIGHT / 2)
           .attr("y2", s.V_SPACING + s.NODE_HEIGHT / 2)
           .attr("marker-end", function (d, i) {
-            return isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i) ? "url(#arrowRight)" : "";
+            if (!config.isNetworkEdge(d.edge))
+              return "";
+            return (isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)) ? "url(#arrowRight)" : "";
           })
           .attr("marker-start", function (d, i) {
-            return isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i) ? "" : "url(#arrowRight)";
+            if (!config.isNetworkEdge(d.edge))
+              return "";
+            return ( isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)
+            )
+            ? "" : "url(#arrowRight)";
           })
-          .attr("display", function (d) {
-            return config.isNetworkEdge(d.edge) ? "inline" : "none";
+          .style({
+            "stroke-dasharray": function (d) {
+              return config.isNetworkEdge(d.edge) ? "0,0" : "10,5";
+            }
           });
+        //.attr("display", function (d) {
+        //  return config.isNetworkEdge(d.edge) ? "inline" : "none";
+        //});
 
         allPathContainers.selectAll("g.path").selectAll("g.edgeGroup").selectAll("g.edge line")
           .data(function (pathWrapper, i) {
