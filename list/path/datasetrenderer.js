@@ -341,10 +341,13 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     var that = this;
     var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
     var scaleX = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([0, axisSize]);
+    var tickValues = [];
+
     var xAxis = d3.svg.axis()
       .scale(scaleX)
       .orient("bottom")
-      .ticks(3)
+      .tickValues([dataset.minValue, dataset.maxValue - (Math.abs(dataset.maxValue - dataset.minValue) / 2), dataset.maxValue])
+      //.tickFormat(d3.format(".2f"))
       .tickSize(3, 3);
 
     var allAxes = $dataset.selectAll("g.boxPlotAxisX")
@@ -389,7 +392,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
     pathWrapper.path.nodes.forEach(function (node, index) {
       //FIXME: Temporary adding data of first group
-      if(dataset.children.length > 0) {
+      if (dataset.children.length > 0) {
         var stats = dataStore.getStatsForNode(node, dataset.id, dataset.children[0].name);
         if (typeof stats !== "undefined") {
           statData.push({
@@ -561,7 +564,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
     pathWrapper.path.nodes.forEach(function (node, index) {
       //FIXME: Temporary adding data of first group
-      if(dataset.children.length > 0) {
+      if (dataset.children.length > 0) {
         var stats = dataStore.getStatsForNode(node, dataset.id, dataset.children[0].name);
         if (typeof stats !== "undefined") {
           statData.push({
