@@ -58,8 +58,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       this.path = path;
       this.nodePositions = d3.range(0, path.nodes.length - 1);
       this.rank = "?.";
+      this.datasets = [];
       this.addPathSets(path);
-      this.addDatasets();
+      this.updateDatasets();
     }
 
     PathWrapper.prototype = {
@@ -95,16 +96,29 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         return s.NODE_START + this.path.nodes.length * s.NODE_WIDTH + this.path.edges.length * s.EDGE_SIZE;
       },
 
-      addDatasets: function () {
+      updateDatasets: function () {
         var datasets = dataStore.getDataSets();
         var that = this;
-        this.datasets = [];
+
 
         datasets.forEach(function (dataset) {
-          var d = new dr.DatasetWrapper(dataset.name, dataset.minValue, dataset.maxValue);
-          that.datasets.push(d);
+          var d = new dr.DatasetWrapper(dataset.info.name, dataset.info.title, dataset.stats.min, dataset.stats.max);
+          var exists = false;
+          //Use existing wrapper if present
+          that.datasets.forEach(function (wrapper) {
+            if (wrapper.id === dataset.info.name) {
+              d = wrapper;
+              //clear children
+              d.children = [];
+              exists = true;
+            }
+          });
 
-          dataset.groups.forEach(function (group) {
+          if (!exists) {
+            that.datasets.push(d);
+          }
+
+          Object.keys(dataset.groups).forEach(function (group) {
             var g = new dr.DataGroupWrapper(group, d);
             d.children.push(g);
           });
@@ -331,6 +345,13 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       this.datasetRenderer = new dr.DatasetRenderer(this);
       var that = this;
 
+      this.updateDatasetsListener = function () {
+        that.pathWrappers.forEach(function (pathWrapper) {
+          pathWrapper.updateDatasets();
+        });
+        that.renderPaths();
+      };
+
       this.alignPathNodesUpdateListener = function (align) {
         //s.alignPathNodes = align;
 
@@ -476,6 +497,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.add(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.add(this.sortUpdateListener, pathSorting.updateType);
+        listeners.add(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
       },
 
       updatePathWrappersToFilter: function () {
@@ -699,6 +721,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.remove(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.remove(this.sortUpdateListener, pathSorting.updateType);
+        listeners.remove(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
       },
 
       removeGuiElements: function () {
@@ -1796,7 +1819,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               return "";
             return ( isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)
             )
-            ? "" : "url(#arrowRight)";
+              ? "" : "url(#arrowRight)";
           })
           .style({
             "stroke-dasharray": function (d) {

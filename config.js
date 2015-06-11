@@ -354,6 +354,22 @@ define(['d3'], function (d3) {
 
     getDatasetConfigs: function () {
       return config["datasets"];
+    },
+
+    getDatasetConfig: function (datasetId) {
+
+      for (var i = 0; i < config["datasets"].length; i++) {
+        var dsConfig = config["datasets"][i];
+        if (dsConfig.id === datasetId) {
+          return dsConfig;
+        }
+      }
+
+
+    },
+
+    getStratification: function () {
+      return config["stratification"];
     }
   }
 

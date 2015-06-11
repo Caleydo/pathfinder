@@ -223,26 +223,54 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
 
     function getStatsForNode(node, dataset, group) {
 
-      var stats = allStats[dataset][group][node.id.toString()];
+      //var stats = allStats[dataset][group][node.id.toString()];
+      //
+      //if (typeof stats === "undefined") {
+      //  var data = getDataForNode(node, dataset, group);
+      //  stats = statisticsUtil.statisticsOf(data);
+      //  allStats[dataset][group][node.id.toString()] = stats;
+      //}
 
-      if (typeof stats === "undefined") {
-        var data = getDataForNode(node, dataset, group);
-        stats = statisticsUtil.statisticsOf(data);
-        allStats[dataset][group][node.id.toString()] = stats;
+      var nodeId = getMappingIdForDataset(node, dataset);
+
+      if (typeof nodeId !== "undefined") {
+        if (!allDatasets[dataset] || !allDatasets[dataset].groups[group] || !allDatasets[dataset].groups[group][nodeId] || !allDatasets[dataset].groups[group][nodeId].stats) {
+          return;
+        }
+        return allDatasets[dataset].groups[group][nodeId].stats;
       }
+    }
 
-      return stats;
+    function getMappingIdForDataset(node, dataset) {
+      var dsConfig = config.getDatasetConfig(dataset);
+      if (!dsConfig) {
+        return;
+      }
+      var nodeId = -1;
+
+      for (var i = 0; i < dsConfig["mapping_nodes"].length; i++) {
+        var n = dsConfig["mapping_nodes"][i]
+        if (node.labels.indexOf(n["node_label"] !== -1)) {
+          return node.properties[n["id_property"]];
+        }
+      }
     }
 
     function getDataForNode(node, dataset, group) {
 
-      var d = allData[dataset];
-      var g = d.groups[group];
+      //var d = allData[dataset];
+      //var g = d.groups[group];
+      //
+      //var data = g[node.id.toString()] || createRandomData(-10, 10, 10);
 
-      var data = g[node.id.toString()] || createRandomData(-10, 10, 10);
-      allData[dataset].groups[group][node.id.toString()] = data;
+      var nodeId = getMappingIdForDataset(node, dataset);
 
-      return data;
+      if (typeof nodeId !== "undefined") {
+        if (!allDatasets[dataset] || !allDatasets[dataset].groups[group] || !allDatasets[dataset].groups[group][nodeId] || !allDatasets[dataset].groups[group][nodeId].data) {
+          return;
+        }
+        return allDatasets[dataset].groups[group][nodeId].data;
+      }
 
     }
 
@@ -301,6 +329,133 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
       return false;
     }
 
+
+    function fetchData() {
+      //Get every node just once, no duplicates
+      var nodes = [];
+      paths.forEach(function (path) {
+        path.nodes.forEach(function (node) {
+          if (!(node.id in nodesWithData)) {
+            nodes.push(node);
+            nodesWithData[node.id] = true;
+          }
+        });
+      });
+
+      var keys = Object.keys(allDatasets);
+
+      keys.forEach(function (key) {
+          var dsConfig = config.getDatasetConfig(key);
+          var dataset = allDatasets[key];
+          var nodeIds = [];
+          nodes.forEach(function (node) {
+            var nodeId = getMappingIdForDataset(node, key);
+            if (typeof nodeId != "undefined") {
+              nodeIds.push(nodeId);
+            }
+          });
+
+          var groupKeys = Object.keys(stratification.groups);
+
+          if (groupKeys.length === 0 || nodeIds.length === 0) {
+            return;
+          }
+
+          //---------------------
+          //Fetch each group separately, don't wait for previous promise to be satisfied
+          //groupKeys.forEach(function (groupKey) {
+          //  dataset.groups[groupKey] = dataset.groups[groupKey] || {};
+          //  nodeIds.forEach(function (nodeId) {
+          //    dataset.groups[groupKey][nodeId] = dataset.groups[groupKey][nodeId] || {};
+          //  });
+          //
+          //  if (dsConfig["mapping_type"] === dataset.info.rowtype) {
+          //    ccle.data(key, nodeIds, stratification.groups[groupKey].ids).then(function (data) {
+          //      data.rows.forEach(function (row, i) {
+          //        dataset.groups[groupKey][row].data = data.data[i];
+          //      });
+          //      listeners.notify(listeners.updateType.DATASET_UPDATE);
+          //    });
+          //  } else {
+          //    ccle.data(key, stratification.groups[groupKey].ids, nodeIds).then(function (data) {
+          //      data.cols.forEach(function (col, i) {
+          //        var colData = [];
+          //        data.data.forEach(function (row) {
+          //          colData.push(row[i]);
+          //        });
+          //        dataset.groups[groupKey][col].data = colData;
+          //      });
+          //      listeners.notify(listeners.updateType.DATASET_UPDATE);
+          //    });
+          //  }
+          //});
+
+          //---------------------
+          //Fetch all groups at once
+          //var allGroupIds = [];
+          //
+          //groupKeys.forEach(function (groupKey) {
+          //  allGroupIds = allGroupIds.concat(stratification.groups[groupKey].ids);
+          //});
+          //
+          //ccle.data(key, nodeIds, allGroupIds).then(function (data) {
+          //  console.log("there")
+          //  //data.rows.forEach(function (row, i) {
+          //  //  dataset.groups[groupKey][row].data = data.data[i];
+          //  //});
+          //
+          //});
+          //---------------------
+
+          //---------------------
+          //Fetch each group separately, wait for previous promise to be satisfied
+          var fetchData = function (groupKeyIndex) {
+            var groupKey = groupKeys[groupKeyIndex];
+
+            dataset.groups[groupKey] = dataset.groups[groupKey] || {};
+            nodeIds.forEach(function (nodeId) {
+              dataset.groups[groupKey][nodeId] = dataset.groups[groupKey][nodeId] || {};
+            });
+
+            if (dsConfig["mapping_type"] === dataset.info.rowtype) {
+              ccle.data(key, nodeIds, stratification.groups[groupKey].ids).then(function (data) {
+                data.rows.forEach(function (row, i) {
+                  dataset.groups[groupKey][row].data = data.cols.length <= 1 ? [data.data[i]] : data.data[i];
+                  dataset.groups[groupKey][row].stats = statisticsUtil.statisticsOf(data.cols.length <= 1 ? [data.data[i]] : data.data[i]);
+                });
+                listeners.notify(listeners.updateType.DATASET_UPDATE);
+                if (groupKeyIndex < groupKeys.length - 1) {
+                  fetchData(groupKeyIndex + 1);
+                }
+              });
+            } else {
+              ccle.data(key, stratification.groups[groupKey].ids, nodeIds).then(function (data) {
+                data.cols.forEach(function (col, i) {
+                  var colData = [];
+                  data.data.forEach(function (row) {
+                    colData.push(row[i]);
+                  });
+                  dataset.groups[groupKey][col].data = colData;
+                  dataset.groups[groupKey][col].stats = statisticsUtil.statisticsOf(colData);
+                });
+                listeners.notify(listeners.updateType.DATASET_UPDATE);
+                if (groupKeyIndex < groupKeys.length - 1) {
+                  fetchData(groupKeyIndex + 1);
+                }
+
+              });
+            }
+          };
+
+          if (groupKeys.length > 0) {
+            fetchData(0);
+          }
+
+        }
+      )
+
+    }
+
     function createRandomData(min, max, count) {
       var data = [];
       for (var i = 0; i < count; i++) {
@@ -341,7 +496,15 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
 
     };
 
+    /**
+     *
+     * Data has been loaded for these nodes or data is currently loading.
+     */
+    var nodesWithData = {};
+
     var allDatasets = {};
+
+    var stratification = {};
 
     return {
 
@@ -360,27 +523,65 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
           },
           listeners.updateType.QUERY_UPDATE);
 
+        //ccle.data("mrnaexpression", ["SOS1"], ["CHP212_AUTONOMIC_GANGLIA", "IMR32_AUTONOMIC_GANGLIA", "KELLY_AUTONOMIC_GANGLIA"]).then(function (data) {
+        //  var x = 0;
+        //});
 
-        ccle.list().then(function (datasetDescs) {
+
+        ccle.list().then(function (dataInfos) {
           var configs = config.getDatasetConfigs();
 
-          var datasets = [];
+          var datasetInfos = [];
+          var stratificationInfo = {};
 
-          configs.forEach(function (c) {
-            datasetDescs.forEach(function (desc) {
-              if (desc.name === c.id) {
-                datasets.push(desc.name);
-              }
-            })
+          dataInfos.forEach(function (info) {
+            if (info.type === "stratification" && info.name === config.getStratification()) {
+              stratificationInfo = info;
+            } else if (info.type === "matrix") {
+              configs.forEach(function (c) {
+                if (info.name === c.id) {
+                  datasetInfos.push(info);
+                }
+              });
+            }
           });
 
-          datasets.forEach(function (ds) {
-            ccle.stats(ds).then(function (stats) {
-              allDatasets[ds] = {
-                stats: stats,
-                groups:{}
-              }
-            });
+          ccle.group(stratificationInfo.name).then(function (strat) {
+            stratification.info = stratificationInfo;
+            stratification.groups = strat;
+            var groupKeys = Object.keys(stratification.groups);
+
+            //var fetchGroups = function (index) {
+            //  ccle.data("mrnaexpression", [], stratification.groups[groupKeys[index]].ids).then(function (data) {
+            //    if (index < groupKeys.length - 1) {
+            //      fetchGroups(index + 1);
+            //    }
+            //  });
+            //};
+
+            var fetchDataset = function (index) {
+              var info = datasetInfos[index];
+              ccle.stats(info.name).then(function (stats) {
+                allDatasets[info.name] = {
+                  info: info,
+                  stats: stats,
+                  groups: {},
+                  data: {}
+                };
+                if (index < datasetInfos.length - 1) {
+                  fetchDataset(index + 1);
+                } else {
+                  //fetchGroups(0);
+                  //fetchData();
+                }
+              });
+            };
+
+            if (datasetInfos.length > 0) {
+              fetchDataset(0);
+            }
+
+
           });
         });
       },
@@ -392,6 +593,7 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
       addPath: function (path) {
         if (!pathExists(path)) {
           paths.push(path);
+          fetchData();
           return true;
         }
         return false;
@@ -402,19 +604,27 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
       },
 
       getDataSets: function () {
-        //TODO: get real data
-        return [{
-          name: "mRNAExpression",
-          minValue: -10,
-          maxValue: 10,
-          groups: ["breast", "lung", "ovary"]
-        }, {
-          name: "CopyNumberVariation",
-          minValue: -10,
-          maxValue: 10,
-          groups: ["breast", "lung", "ovary"]
-        }];
-        return [];
+
+        var datasets = [];
+
+        Object.keys(allDatasets).forEach(function (key) {
+          datasets.push(allDatasets[key]);
+        });
+
+        return datasets;
+        ////TODO: get real data
+        //return [{
+        //  name: "mRNAExpression",
+        //  minValue: -10,
+        //  maxValue: 10,
+        //  groups: ["breast", "lung", "ovary"]
+        //}, {
+        //  name: "CopyNumberVariation",
+        //  minValue: -10,
+        //  maxValue: 10,
+        //  groups: ["breast", "lung", "ovary"]
+        //}];
+        //return [];
       },
 
       getDataForNode: getDataForNode,
@@ -424,21 +634,22 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
       getDataBasedPathSortingStrategies: function () {
 
         var strategies = [];
-        var datasets = Object.keys(allData);
-
-        datasets.forEach(function (dataset) {
-          var groups = Object.keys(allData[dataset.toString()].groups);
-          strategies.push(new DatasetMedianSortingStrategy(dataset.toString()));
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", maxDiff, maxOfArray, "Max of max median differences between groups per node"));
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, maxOfArray, "Max of min median differences between groups per node"));
-          groups.forEach(function (group) {
-            strategies.push(new GroupMedianSortingStrategy(dataset.toString(), group.toString()));
-            strategies.push(new PerNodeWithinGroupSortingStrategy(dataset, group, "median", maxOfArray, "Max median per node"));
-          });
-        });
+        //var datasets = Object.keys(allData);
+        //
+        //datasets.forEach(function (dataset) {
+        //  var groups = Object.keys(allData[dataset.toString()].groups);
+        //  strategies.push(new DatasetMedianSortingStrategy(dataset.toString()));
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", maxDiff, maxOfArray, "Max of max median differences between groups per node"));
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, maxOfArray, "Max of min median differences between groups per node"));
+        //  groups.forEach(function (group) {
+        //    strategies.push(new GroupMedianSortingStrategy(dataset.toString(), group.toString()));
+        //    strategies.push(new PerNodeWithinGroupSortingStrategy(dataset, group, "median", maxOfArray, "Max median per node"));
+        //  });
+        //});
 
         return strategies;
       }
     }
 
-  });
+  })
+;

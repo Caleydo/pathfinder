@@ -6,8 +6,9 @@ define(function () {
 
     updateType: {
       SET_INFO_UPDATE: "SET_INFO_UPDATE",
-      QUERY_UPDATE : 'QUERY_UPDATE',
-      REMOVE_FILTERED_PATHS_UPDATE: 'REMOVE_FILTERED_PATHS_UPDATE'
+      QUERY_UPDATE: 'QUERY_UPDATE',
+      REMOVE_FILTERED_PATHS_UPDATE: 'REMOVE_FILTERED_PATHS_UPDATE',
+      DATASET_UPDATE: "DATASET_UPDATE"
     },
 
     add: function (listener, type) {
@@ -28,11 +29,11 @@ define(function () {
       }
     },
 
-    remove: function(listener, type) {
+    remove: function (listener, type) {
       if (typeof this[type] === "undefined") {
         return;
       }
-      var index =  this[type].indexOf(listener);
+      var index = this[type].indexOf(listener);
       if (index > -1) {
         this[type].splice(index, 1);
       }
