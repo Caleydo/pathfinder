@@ -234,10 +234,18 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
       var nodeId = getMappingIdForDataset(node, dataset);
 
       if (typeof nodeId !== "undefined") {
-        if (!allDatasets[dataset] || !allDatasets[dataset].groups[group] || !allDatasets[dataset].groups[group][nodeId] || !allDatasets[dataset].groups[group][nodeId].stats) {
-          return;
+        if (typeof group === "undefined") {
+          if (!allDatasets[dataset] || !allDatasets[dataset][nodeId]) {
+            return;
+          }
+          return allDatasets[dataset][nodeId].stats;
+        } else {
+
+          if (!allDatasets[dataset] || !allDatasets[dataset].groups[group] || !allDatasets[dataset].groups[group][nodeId]) {
+            return;
+          }
+          return allDatasets[dataset].groups[group][nodeId].stats;
         }
-        return allDatasets[dataset].groups[group][nodeId].stats;
       }
     }
 
@@ -342,117 +350,150 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
         });
       });
 
-      var keys = Object.keys(allDatasets);
-
-      keys.forEach(function (key) {
-          var dsConfig = config.getDatasetConfig(key);
-          var dataset = allDatasets[key];
-          var nodeIds = [];
-          nodes.forEach(function (node) {
-            var nodeId = getMappingIdForDataset(node, key);
-            if (typeof nodeId != "undefined") {
-              nodeIds.push(nodeId);
-            }
-          });
-
-          var groupKeys = Object.keys(stratification.groups);
-
-          if (groupKeys.length === 0 || nodeIds.length === 0) {
-            return;
-          }
-
-          //---------------------
-          //Fetch each group separately, don't wait for previous promise to be satisfied
-          //groupKeys.forEach(function (groupKey) {
-          //  dataset.groups[groupKey] = dataset.groups[groupKey] || {};
-          //  nodeIds.forEach(function (nodeId) {
-          //    dataset.groups[groupKey][nodeId] = dataset.groups[groupKey][nodeId] || {};
-          //  });
-          //
-          //  if (dsConfig["mapping_type"] === dataset.info.rowtype) {
-          //    ccle.data(key, nodeIds, stratification.groups[groupKey].ids).then(function (data) {
-          //      data.rows.forEach(function (row, i) {
-          //        dataset.groups[groupKey][row].data = data.data[i];
-          //      });
-          //      listeners.notify(listeners.updateType.DATASET_UPDATE);
-          //    });
-          //  } else {
-          //    ccle.data(key, stratification.groups[groupKey].ids, nodeIds).then(function (data) {
-          //      data.cols.forEach(function (col, i) {
-          //        var colData = [];
-          //        data.data.forEach(function (row) {
-          //          colData.push(row[i]);
-          //        });
-          //        dataset.groups[groupKey][col].data = colData;
-          //      });
-          //      listeners.notify(listeners.updateType.DATASET_UPDATE);
-          //    });
-          //  }
-          //});
-
-          //---------------------
-          //Fetch all groups at once
-          //var allGroupIds = [];
-          //
-          //groupKeys.forEach(function (groupKey) {
-          //  allGroupIds = allGroupIds.concat(stratification.groups[groupKey].ids);
-          //});
-          //
-          //ccle.data(key, nodeIds, allGroupIds).then(function (data) {
-          //  console.log("there")
-          //  //data.rows.forEach(function (row, i) {
-          //  //  dataset.groups[groupKey][row].data = data.data[i];
-          //  //});
-          //
-          //});
-          //---------------------
-
-          //---------------------
-          //Fetch each group separately, wait for previous promise to be satisfied
-          var fetchData = function (groupKeyIndex) {
-            var groupKey = groupKeys[groupKeyIndex];
-
-            dataset.groups[groupKey] = dataset.groups[groupKey] || {};
-            nodeIds.forEach(function (nodeId) {
-              dataset.groups[groupKey][nodeId] = dataset.groups[groupKey][nodeId] || {};
-            });
-
-            if (dsConfig["mapping_type"] === dataset.info.rowtype) {
-              ccle.data(key, nodeIds, stratification.groups[groupKey].ids).then(function (data) {
-                data.rows.forEach(function (row, i) {
-                  dataset.groups[groupKey][row].data = data.cols.length <= 1 ? [data.data[i]] : data.data[i];
-                  dataset.groups[groupKey][row].stats = statisticsUtil.statisticsOf(data.cols.length <= 1 ? [data.data[i]] : data.data[i]);
-                });
-                listeners.notify(listeners.updateType.DATASET_UPDATE);
-                if (groupKeyIndex < groupKeys.length - 1) {
-                  fetchData(groupKeyIndex + 1);
-                }
-              });
-            } else {
-              ccle.data(key, stratification.groups[groupKey].ids, nodeIds).then(function (data) {
-                data.cols.forEach(function (col, i) {
-                  var colData = [];
-                  data.data.forEach(function (row) {
-                    colData.push(row[i]);
-                  });
-                  dataset.groups[groupKey][col].data = colData;
-                  dataset.groups[groupKey][col].stats = statisticsUtil.statisticsOf(colData);
-                });
-                listeners.notify(listeners.updateType.DATASET_UPDATE);
-                if (groupKeyIndex < groupKeys.length - 1) {
-                  fetchData(groupKeyIndex + 1);
-                }
-
-              });
-            }
-          };
-
-          if (groupKeys.length > 0) {
-            fetchData(0);
-          }
-
+      //var keys = Object.keys(allDatasets);
+      //
+      //keys.forEach(function (key) {
+      //    var dsConfig = config.getDatasetConfig(key);
+      //    var dataset = allDatasets[key];
+      var nodeIds = [];
+      nodes.forEach(function (node) {
+        //FIXME hardcoded
+        var nodeId = getMappingIdForDataset(node, Object.keys(allDatasets)[0]);
+        if (typeof nodeId != "undefined") {
+          nodeIds.push(nodeId);
         }
-      )
+      });
+
+      var groupKeys = Object.keys(stratification.groups);
+
+      if (groupKeys.length === 0 || nodeIds.length === 0) {
+        return;
+      }
+
+
+      nodeIds.forEach(function (nodeId) {
+        ccle.boxplot_of(nodeId, function (res) {
+          if (typeof res !== "undefined") {
+            Object.keys(res).forEach(function (dataset) {
+              Object.keys(res[dataset]).forEach(function (group) {
+                allDatasets[dataset]
+                allDatasets[dataset][nodeId] = allDatasets[dataset][nodeId] || {};
+                allDatasets[dataset][nodeId].stats = res[dataset].summary;
+              })
+            });
+            listeners.notify(listeners.updateType.DATASET_UPDATE);
+          }
+
+        }, ["_all"]);
+
+        ccle.boxplot_of(nodeId, function (res) {
+          if (typeof res !== "undefined") {
+            Object.keys(res).forEach(function (dataset) {
+              Object.keys(res[dataset]).forEach(function (group) {
+                allDatasets[dataset].groups[group] = allDatasets[dataset].groups[group] || {};
+                allDatasets[dataset].groups[group][nodeId] = allDatasets[dataset].groups[group][nodeId] || {};
+                allDatasets[dataset].groups[group][nodeId].stats = res[dataset][group];
+              })
+            });
+            listeners.notify(listeners.updateType.DATASET_UPDATE);
+          }
+
+        });
+      });
+
+
+      //---------------------
+      //Fetch each group separately, don't wait for previous promise to be satisfied
+      //groupKeys.forEach(function (groupKey) {
+      //  dataset.groups[groupKey] = dataset.groups[groupKey] || {};
+      //  nodeIds.forEach(function (nodeId) {
+      //    dataset.groups[groupKey][nodeId] = dataset.groups[groupKey][nodeId] || {};
+      //  });
+      //
+      //  if (dsConfig["mapping_type"] === dataset.info.rowtype) {
+      //    ccle.data(key, nodeIds, stratification.groups[groupKey].ids).then(function (data) {
+      //      data.rows.forEach(function (row, i) {
+      //        dataset.groups[groupKey][row].data = data.data[i];
+      //      });
+      //      listeners.notify(listeners.updateType.DATASET_UPDATE);
+      //    });
+      //  } else {
+      //    ccle.data(key, stratification.groups[groupKey].ids, nodeIds).then(function (data) {
+      //      data.cols.forEach(function (col, i) {
+      //        var colData = [];
+      //        data.data.forEach(function (row) {
+      //          colData.push(row[i]);
+      //        });
+      //        dataset.groups[groupKey][col].data = colData;
+      //      });
+      //      listeners.notify(listeners.updateType.DATASET_UPDATE);
+      //    });
+      //  }
+      //});
+
+      //---------------------
+      //Fetch all groups at once
+      //var allGroupIds = [];
+      //
+      //groupKeys.forEach(function (groupKey) {
+      //  allGroupIds = allGroupIds.concat(stratification.groups[groupKey].ids);
+      //});
+      //
+      //ccle.data(key, nodeIds, allGroupIds).then(function (data) {
+      //  console.log("there")
+      //  //data.rows.forEach(function (row, i) {
+      //  //  dataset.groups[groupKey][row].data = data.data[i];
+      //  //});
+      //
+      //});
+      //---------------------
+
+      //---------------------
+      //Fetch each group separately, wait for previous promise to be satisfied
+      //var fetchData = function (groupKeyIndex) {
+      //  var groupKey = groupKeys[groupKeyIndex];
+      //
+      //  dataset.groups[groupKey] = dataset.groups[groupKey] || {};
+      //  nodeIds.forEach(function (nodeId) {
+      //    dataset.groups[groupKey][nodeId] = dataset.groups[groupKey][nodeId] || {};
+      //  });
+      //
+      //  if (dsConfig["mapping_type"] === dataset.info.rowtype) {
+      //    ccle.data(key, nodeIds, stratification.groups[groupKey].ids).then(function (data) {
+      //      data.rows.forEach(function (row, i) {
+      //        dataset.groups[groupKey][row].data = data.cols.length <= 1 ? [data.data[i]] : data.data[i];
+      //        dataset.groups[groupKey][row].stats = statisticsUtil.statisticsOf(data.cols.length <= 1 ? [data.data[i]] : data.data[i]);
+      //      });
+      //      listeners.notify(listeners.updateType.DATASET_UPDATE);
+      //      if (groupKeyIndex < groupKeys.length - 1) {
+      //        fetchData(groupKeyIndex + 1);
+      //      }
+      //    });
+      //  } else {
+      //    ccle.data(key, stratification.groups[groupKey].ids, nodeIds).then(function (data) {
+      //      data.cols.forEach(function (col, i) {
+      //        var colData = [];
+      //        data.data.forEach(function (row) {
+      //          colData.push(row[i]);
+      //        });
+      //        dataset.groups[groupKey][col].data = colData;
+      //        dataset.groups[groupKey][col].stats = statisticsUtil.statisticsOf(colData);
+      //      });
+      //      listeners.notify(listeners.updateType.DATASET_UPDATE);
+      //      if (groupKeyIndex < groupKeys.length - 1) {
+      //        fetchData(groupKeyIndex + 1);
+      //      }
+      //
+      //    });
+      //  }
+      //};
+      //
+      //if (groupKeys.length > 0) {
+      //  fetchData(0);
+      //}
+
+      //}
+      //)
 
     }
 
@@ -526,6 +567,14 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
         //ccle.data("mrnaexpression", ["SOS1"], ["CHP212_AUTONOMIC_GANGLIA", "IMR32_AUTONOMIC_GANGLIA", "KELLY_AUTONOMIC_GANGLIA"]).then(function (data) {
         //  var x = 0;
         //});
+
+        //ccle.boxplot_of("SOS1", function (res) {
+        //  var x = res;
+        //}, ["_all"]);
+        //
+        //ccle.boxplot_of("SOS1", function (res) {
+        //  var x = res;
+        //}, ["skin", "ovary"]);
 
 
         ccle.list().then(function (dataInfos) {

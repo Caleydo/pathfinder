@@ -293,20 +293,6 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
   HDataRenderer.prototype = Object.create(DataRenderer.prototype);
 
-//VDataRenderer.prototype.onDataGroupEnter = function ($group, pathWrapper, dataset, group, groupIndex) {
-//  var that = this;
-//  var scaleY = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([DATA_AXIS_SIZE, 0]);
-//  var yAxis = d3.svg.axis()
-//    .scale(scaleY)
-//    .orient("left")
-//    .ticks(3);
-//
-//  $group.append("g")
-//    .classed("boxPlotAxis", true)
-//    .attr("transform", "translate(" + s.NODE_START + "," + DATA_GROUP_V_PADDING + ")")
-//    .call(yAxis);
-//};
-
   HDataRenderer.prototype.onDatasetEnter = function ($dataset, pathWrapper, dataset, datasetIndex) {
     var that = this;
 
@@ -315,33 +301,12 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
     this.appendAxes($dataset, pathWrapper, dataset);
 
-    //var allSummaryPlots = $dataset.selectAll("g.nodeSummaryData")
-    //  .data(pathWrapper.path.nodes);
-    //
-    //allSummaryPlots.enter()
-    //  .append("g")
-    //  .classed("nodeSummaryData", true)
-    //  .each(function (node, nodeIndex) {
-    //    var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
-    //    var $summaryData = d3.select(this);
-    //    $summaryData.attr({
-    //      transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, nodeIndex, true) - axisSize / 2) + "," + (DATA_GROUP_V_PADDING) + ")"
-    //    });
-    //
-    //    //FIXME: Temporary adding data of first group
-    //    var stats = dataStore.getStatsForNode(node, dataset.name, dataset.children[0].name);
-    //
-    //    appendBoxPlotH($summaryData, stats, scaleX);
-    //  });
-
-
   };
 
   HDataRenderer.prototype.appendAxes = function ($dataset, pathWrapper, dataset) {
     var that = this;
     var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
     var scaleX = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([0, axisSize]);
-    var tickValues = [];
 
     var xAxis = d3.svg.axis()
       .scale(scaleX)
@@ -393,7 +358,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     pathWrapper.path.nodes.forEach(function (node, index) {
       //FIXME: Temporary adding data of first group
       if (dataset.children.length > 0) {
-        var stats = dataStore.getStatsForNode(node, dataset.id, dataset.children[0].name);
+        var stats = dataStore.getStatsForNode(node, dataset.id);
         if (typeof stats !== "undefined") {
           statData.push({
             stats: stats,
@@ -437,10 +402,6 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
     allSummaryPlots.exit()
       .remove();
-
-    //var allSummaryPlots = $dataset.selectAll("g.nodeSummaryData")
-    //  .data(pathWrapper.path.nodes);
-
 
   };
 
@@ -524,30 +485,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
   VDataRenderer.prototype = Object.create(DataRenderer.prototype);
 
   VDataRenderer.prototype.onDatasetEnter = function ($dataset, pathWrapper, dataset, datasetIndex) {
-    //var that = this;
-
-    //var scaleY = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([DATA_AXIS_SIZE, 0]);
     this.appendAxis($dataset, dataset);
-
-    //var allSummaryPlots = $dataset.selectAll("g.nodeSummaryData")
-    //  .data(pathWrapper.path.nodes);
-
-    //allSummaryPlots.enter()
-    //  .append("g")
-    //  .classed("nodeSummaryData", true)
-    //  .each(function (node, nodeIndex) {
-    //    var $summaryData = d3.select(this);
-    //    $summaryData.attr({
-    //      transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
-    //    });
-    //
-    //    //FIXME: Temporary adding data of first group
-    //    var stats = dataStore.getStatsForNode(node, dataset.name, dataset.children[0].name);
-    //
-    //    appendBoxPlotV($summaryData, stats, scaleY);
-    //  });
-
-
   };
 
   VDataRenderer.prototype.onDatasetUpdate = function ($dataset, pathWrapper, dataset, datasetIndex) {
@@ -563,9 +501,8 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     var statData = [];
 
     pathWrapper.path.nodes.forEach(function (node, index) {
-      //FIXME: Temporary adding data of first group
       if (dataset.children.length > 0) {
-        var stats = dataStore.getStatsForNode(node, dataset.id, dataset.children[0].name);
+        var stats = dataStore.getStatsForNode(node, dataset.id);
         if (typeof stats !== "undefined") {
           statData.push({
             stats: stats,
@@ -589,7 +526,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
         var $summaryData = d3.select(this);
         $summaryData.attr({
-          transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + (DATA_GROUP_V_PADDING) + ")"
+          transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
         });
 
         appendBoxPlotV($summaryData, statData.stats, scaleY);
@@ -601,7 +538,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         var $summaryData = d3.select(this);
         $summaryData.transition()
           .attr({
-            transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + (DATA_GROUP_V_PADDING) + ")"
+            transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
           });
 
         updateBoxPlotV($summaryData, statData.stats, scaleY);
@@ -610,26 +547,6 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     allSummaryPlots.exit()
       .remove();
 
-    //var allSummaryPlots = $dataset.selectAll("g.nodeSummaryData")
-    //  .data(pathWrapper.path.nodes);
-    //
-    //allSummaryPlots
-    //  .each(function (node, nodeIndex) {
-    //    var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
-    //    var $summaryData = d3.select(this);
-    //    $summaryData.transition()
-    //      .attr({
-    //        transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
-    //      });
-    //
-    //    //FIXME: Temporary adding data of first group
-    //    var stats = dataStore.getStatsForNode(node, dataset.name, dataset.children[0].name);
-    //
-    //    updateBoxPlotV($summaryData, stats, scaleY);
-    //  });
-    //
-    //allSummaryPlots.exit()
-    //  .remove();
   };
 
   VDataRenderer.prototype.appendAxis = function (parent, dataset) {
@@ -638,7 +555,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     var yAxis = d3.svg.axis()
       .scale(scaleY)
       .orient("left")
-      .ticks(3)
+      .tickValues([dataset.minValue, dataset.maxValue - (Math.abs(dataset.maxValue - dataset.minValue) / 2), dataset.maxValue])
       .tickSize(3, 3);
 
     parent.append("g")
@@ -669,68 +586,6 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
     });
     appendBoxPlotV($nodeData, statData.stats, scaleY);
-
-    //$nodeData.append("title")
-    //  .text(function (d) {
-    //    var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-    //    return "Elements: " + stats.numElements +
-    //      "\nNaNs: " + stats.nans +
-    //      "\nMedian: " + stats.median +
-    //      "\n1st Quartile: " + stats.quartile25 +
-    //      "\n3rd Quartile: " + stats.quartile75 +
-    //      "\nLowest value in 1.5xIQR range: " + stats.iqrMin +
-    //      "\nHighest value in 1.5xIQR range: " + stats.iqrMax +
-    //      "\nMin: " + stats.min +
-    //      "\nMax: " + stats.max;
-    //  });
-    //
-    //$nodeData.append("rect")
-    //  .classed("box", true)
-    //  .attr({
-    //    x: function (d) {
-    //      return -BOX_WIDTH / 2;
-    //    },
-    //    y: function (d) {
-    //      var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-    //      return scaleY(stats.quartile75);
-    //    },
-    //    width: BOX_WIDTH,
-    //    height: function (d) {
-    //      var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-    //      return scaleY(stats.quartile25) - scaleY(stats.quartile75);
-    //    }
-    //  })
-    //  .style({
-    //    fill: "gray",
-    //    stroke: "black"
-    //  });
-    //
-    //$nodeData.append("line")
-    //  .classed("median", true)
-    //  .attr({
-    //    x1: function (d) {
-    //      return -BOX_WIDTH / 2;
-    //    },
-    //    y1: function (d) {
-    //      var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-    //      return scaleY(stats.median);
-    //    },
-    //    x2: function (d) {
-    //      return BOX_WIDTH / 2;
-    //    },
-    //    y2: function (d) {
-    //      var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-    //      return scaleY(stats.median);
-    //    }
-    //  })
-    //  .style({
-    //    stroke: "white"
-    //  });
-    //
-    //var stats = dataStore.getStatsForNode(node, dataset.name, group.name);
-    //
-    //appendWhiskerV($nodeData, stats.iqrMin, stats.quartile25, "lower", scaleY, pathWrapper, nodeIndex, that.pathList);
-    //appendWhiskerV($nodeData, stats.iqrMax, stats.quartile75, "upper", scaleY, pathWrapper, nodeIndex, that.pathList);
   };
 
   VDataRenderer.prototype.onNodeDataUpdate = function ($nodeData, pathWrapper, dataset, group, statData) {
@@ -745,115 +600,29 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
 
     updateBoxPlotV($nodeData, statData.stats, scaleY);
-
-    //$nodeData.select("rect.box")
-    //  .transition()
-    //  .attr({
-    //    x: function (d) {
-    //      return -BOX_WIDTH / 2;
-    //    },
-    //    y: function (d) {
-    //      var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-    //
-    //      return scaleY(stats.quartile75);
-    //      //return scaleY(stats.quartile25);
-    //    },
-    //    width: BOX_WIDTH,
-    //    height: function (d) {
-    //      var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-    //      return scaleY(stats.quartile25) - scaleY(stats.quartile75);
-    //    }
-    //  });
-    //
-    //$nodeData.select("line.median")
-    //  .transition()
-    //  .attr({
-    //    x1: function (d) {
-    //      return -BOX_WIDTH / 2;
-    //    },
-    //    y1: function (d) {
-    //      var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-    //      return scaleY(stats.median);
-    //    },
-    //    x2: function (d) {
-    //      return BOX_WIDTH / 2;
-    //    },
-    //    y2: function (d) {
-    //      var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-    //      return scaleY(stats.median);
-    //    }
-    //  });
-    //
-    //var stats = dataStore.getStatsForNode(node, dataset.name, group.name);
-    //
-    //updateWhiskerV($nodeData, "lower", scaleY, stats.iqrMin, stats.quartile25);
-    //updateWhiskerV($nodeData, "upper", scaleY, stats.iqrMax, stats.quartile75);
-
-    //var allPoints = $nodeData.selectAll("g.dataPoint")
-    //  .data(dataStore.getDataForNode(node, dataset.name, group.name));
-    //
-    //var point = allPoints.enter()
-    //  .append("g")
-    //  .classed("dataPoint", true);
-    //
-    //point.append("circle")
-    //  .attr({
-    //
-    //    cx: 0,
-    //
-    //    cy: function (d) {
-    //      return scaleY(d);
-    //    },
-    //    r: 1
-    //
-    //  })
-    //  .style({
-    //    opacity: 2,
-    //    fill: "red"
-    //  });
-    //
-    //allPoints.selectAll("circle")
-    //  .transition()
-    //  .attr({
-    //    cx: 0,
-    //
-    //    cy: function (d) {
-    //      return scaleY(d);
-    //    }
-    //  });
-    //
-    //allPoints.exit().remove();
-
   };
 
   function appendBoxPlotV(parent, stats, scaleY) {
 
     parent.append("title")
-      .text(function (d) {
-        return "Elements: " + stats.numElements +
-          "\nNaNs: " + stats.nans +
-          "\nMedian: " + stats.median +
-          "\n1st Quartile: " + stats.quartile25 +
-          "\n3rd Quartile: " + stats.quartile75 +
-          "\nLowest value in 1.5xIQR range: " + stats.iqrMin +
-          "\nHighest value in 1.5xIQR range: " + stats.iqrMax +
-          "\nMin: " + stats.min +
-          "\nMax: " + stats.max;
-      });
+      .text("Elements: " + stats.numElements +
+      "\nNaNs: " + stats.nans +
+      "\nMedian: " + stats.median +
+      "\n1st Quartile: " + stats.quartile25 +
+      "\n3rd Quartile: " + stats.quartile75 +
+      "\nLowest value in 1.5xIQR range: " + stats.iqrMin +
+      "\nHighest value in 1.5xIQR range: " + stats.iqrMax +
+      "\nMin: " + stats.min +
+      "\nMax: " + stats.max
+    );
 
     parent.append("rect")
       .classed("box", true)
       .attr({
-        x: function (d) {
-          return -BOX_WIDTH / 2;
-        },
-        y: function (d) {
-          return scaleY(stats.quartile75);
-        },
+        x: -BOX_WIDTH / 2,
+        y: scaleY(stats.quartile75),
         width: BOX_WIDTH,
-        height: function (d) {
-          return scaleY(stats.quartile25) - scaleY(stats.quartile75);
-        }
+        height: scaleY(stats.quartile25) - scaleY(stats.quartile75)
       })
       .style({
         fill: "gray",
@@ -863,18 +632,10 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     parent.append("line")
       .classed("median", true)
       .attr({
-        x1: function (d) {
-          return -BOX_WIDTH / 2;
-        },
-        y1: function (d) {
-          return scaleY(stats.median);
-        },
-        x2: function (d) {
-          return BOX_WIDTH / 2;
-        },
-        y2: function (d) {
-          return scaleY(stats.median);
-        }
+        x1: -BOX_WIDTH / 2,
+        y1: scaleY(stats.median),
+        x2: BOX_WIDTH / 2,
+        y2: scaleY(stats.median)
       })
       .style({
         stroke: "white"
@@ -891,34 +652,19 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     parent.select("rect.box")
       .transition()
       .attr({
-        x: function (d) {
-          return -BOX_WIDTH / 2;
-        },
-        y: function (d) {
-          return scaleY(stats.quartile75);
-          //return scaleY(stats.quartile25);
-        },
+        x: -BOX_WIDTH / 2,
+        y: scaleY(stats.quartile75),
         width: BOX_WIDTH,
-        height: function (d) {
-          return scaleY(stats.quartile25) - scaleY(stats.quartile75);
-        }
+        height: scaleY(stats.quartile25) - scaleY(stats.quartile75)
       });
 
     parent.select("line.median")
       .transition()
       .attr({
-        x1: function (d) {
-          return -BOX_WIDTH / 2;
-        },
-        y1: function (d) {
-          return scaleY(stats.median);
-        },
-        x2: function (d) {
-          return BOX_WIDTH / 2;
-        },
-        y2: function (d) {
-          return scaleY(stats.median);
-        }
+        x1: -BOX_WIDTH / 2,
+        y1: scaleY(stats.median),
+        x2: BOX_WIDTH / 2,
+        y2: scaleY(stats.median)
       });
 
     updateWhiskerV(parent, "lower", scaleY, stats.iqrMin, stats.quartile25);
@@ -976,16 +722,9 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       .classed("box", true)
       .attr({
 
-        x: function (d) {
-          //var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-          var res = scaleX(stats.quartile25);
-          return res;
-        },
+        x: scaleX(stats.quartile25),
         y: 0,
-        width: function (d) {
-          //var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-          return scaleX(stats.quartile75) - scaleX(stats.quartile25);
-        },
+        width: scaleX(stats.quartile75) - scaleX(stats.quartile25),
         height: BOX_WIDTH
 
       })
@@ -997,15 +736,9 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     parent.append("line")
       .classed("median", true)
       .attr({
-        x1: function (d) {
-          //var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-          return scaleX(stats.median);
-        },
+        x1: scaleX(stats.median),
         y1: 0,
-        x2: function (d) {
-          //var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
-          return scaleX(stats.median);
-        },
+        x2: scaleX(stats.median),
         y2: BOX_WIDTH
       })
       .style({
@@ -1021,26 +754,18 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     parent.select("rect.box")
       .transition()
       .attr({
-        x: function (d) {
-          return scaleX(stats.quartile25);
-        },
+        x: scaleX(stats.quartile25),
         y: 0,
-        width: function (d) {
-          return scaleX(stats.quartile75) - scaleX(stats.quartile25);
-        },
+        width: scaleX(stats.quartile75) - scaleX(stats.quartile25),
         height: BOX_WIDTH
       });
 
     parent.select("line.median")
       .transition()
       .attr({
-        x1: function (d) {
-          return scaleX(stats.median);
-        },
+        x1: scaleX(stats.median),
         y1: 0,
-        x2: function (d) {
-          return scaleX(stats.median);
-        },
+        x2: scaleX(stats.median),
         y2: BOX_WIDTH
       });
 
