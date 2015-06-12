@@ -27,7 +27,7 @@ define(["../../listeners"], function (listeners) {
       listeners.notify(this.pathListUpdateTypes.ALIGN_PATH_NODES, align);
     },
 
-    isAlignPathNodes: function() {
+    isAlignPathNodes: function () {
       return alignPathNodes;
     },
 
@@ -36,8 +36,17 @@ define(["../../listeners"], function (listeners) {
       listeners.notify(this.pathListUpdateTypes.TILT_ATTRIBUTES, tilt);
     },
 
-    isTiltAttributes: function() {
+    isTiltAttributes: function () {
       return tiltAttributes;
+    },
+
+
+    getPathContainerTranslateY: function (pathWrappers, pathIndex) {
+      var posY = 0;
+      for (var index = 0; index < pathIndex; index++) {
+        posY += pathWrappers[index].getHeight() + this.PATH_SPACING;
+      }
+      return posY;
     }
 
 
