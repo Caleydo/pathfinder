@@ -377,7 +377,8 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
             Object.keys(res).forEach(function (dataset) {
               Object.keys(res[dataset]).forEach(function (group) {
                 allDatasets[dataset][nodeId] = allDatasets[dataset][nodeId] || {};
-                allDatasets[dataset][nodeId].stats = res[dataset]["_all"];
+                allDatasets[dataset][nodeId].stats = res[dataset]["_all"].stats;
+                allDatasets[dataset][nodeId].data = res[dataset]["_all"].data;
               })
             });
             listeners.notify(listeners.updateType.DATASET_UPDATE);
@@ -391,7 +392,8 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
               Object.keys(res[dataset]).forEach(function (group) {
                 allDatasets[dataset].groups[group] = allDatasets[dataset].groups[group] || {};
                 allDatasets[dataset].groups[group][nodeId] = allDatasets[dataset].groups[group][nodeId] || {};
-                allDatasets[dataset].groups[group][nodeId].stats = res[dataset][group];
+                allDatasets[dataset].groups[group][nodeId].stats = res[dataset][group].stats;
+                allDatasets[dataset].groups[group][nodeId].data = res[dataset][group].data;
               })
             });
             listeners.notify(listeners.updateType.DATASET_UPDATE);
@@ -569,7 +571,7 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
 
         //ccle.boxplot_of("SOS1", function (res) {
         //  var x = res;
-        //}, ["_all"]);
+        //});
         ////
         //ccle.boxplot_of("SOS1", function (res) {
         //  var x = res;
