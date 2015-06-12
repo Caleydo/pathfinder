@@ -604,17 +604,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
   function appendBoxPlotV(parent, stats, scaleY) {
 
-    parent.append("title")
-      .text("Elements: " + stats.numElements +
-      "\nNaNs: " + stats.nans +
-      "\nMedian: " + stats.median +
-      "\n1st Quartile: " + stats.quartile25 +
-      "\n3rd Quartile: " + stats.quartile75 +
-      "\nLowest value in 1.5xIQR range: " + stats.iqrMin +
-      "\nHighest value in 1.5xIQR range: " + stats.iqrMax +
-      "\nMin: " + stats.min +
-      "\nMax: " + stats.max
-    );
+    appendToolTip(parent, stats);
 
     parent.append("rect")
       .classed("box", true)
@@ -701,22 +691,29 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     }
   }
 
+  function appendToolTip(parent, stats) {
+
+    var formatter = d3.format(".4f")
+    parent.append("title")
+      .text("Elements: " + stats.numElements +
+      "\nNaNs: " + stats.nans +
+      "\nMedian: " + formatter(stats.median) +
+      "\nMean: " + formatter(stats.mean) +
+      "\nStandard Deviation: " + formatter(stats.std) +
+      "\n1st Quartile: " + formatter(stats.quartile25) +
+      "\n3rd Quartile: " + formatter(stats.quartile75) +
+      "\nLowest value in 1.5xIQR range: " + formatter(stats.iqrMin) +
+      "\nHighest value in 1.5xIQR range: " + formatter(stats.iqrMax) +
+      "\nMin: " + formatter(stats.min) +
+      "\nMax: " + formatter(stats.max)
+    );
+  }
+
   function appendBoxPlotH(parent, stats, scaleX) {
 
     //var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
 
-    parent.append("title")
-      .text(function (d) {
-        return "Elements: " + stats.numElements +
-          "\nNaNs: " + stats.nans +
-          "\nMedian: " + stats.median +
-          "\n1st Quartile: " + stats.quartile25 +
-          "\n3rd Quartile: " + stats.quartile75 +
-          "\nLowest value in 1.5xIQR range: " + stats.iqrMin +
-          "\nHighest value in 1.5xIQR range: " + stats.iqrMax +
-          "\nMin: " + stats.min +
-          "\nMax: " + stats.max;
-      });
+    appendToolTip(parent, stats);
 
     parent.append("rect")
       .classed("box", true)
