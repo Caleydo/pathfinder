@@ -1,5 +1,5 @@
-define(['d3', './listeners', './query/pathquery', './config', './statisticsutil', './sorting', '../pathfinder-ccle/ccle'],
-  function (d3, listeners, pathQuery, config, statisticsUtil, sorting, ccle) {
+define(['d3', 'jquery', './listeners', './query/pathquery', './config', './statisticsutil', './sorting', '../pathfinder-ccle/ccle'],
+  function (d3, $, listeners, pathQuery, config, statisticsUtil, sorting, ccle) {
 
     var SortingStrategy = sorting.SortingStrategy;
 
@@ -565,6 +565,13 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
           },
           listeners.updateType.QUERY_UPDATE);
 
+        $("#savePaths").click(function () {
+          var data = JSON.stringify(paths);
+          var url = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
+          window.open(url, '_blank');
+          window.focus();
+        });
+
         //ccle.data("mrnaexpression", ["SOS1"], ["CHP212_AUTONOMIC_GANGLIA", "IMR32_AUTONOMIC_GANGLIA", "KELLY_AUTONOMIC_GANGLIA"]).then(function (data) {
         //  var x = 0;
         //});
@@ -622,7 +629,9 @@ define(['d3', './listeners', './query/pathquery', './config', './statisticsutil'
                   fetchDataset(index + 1);
                 } else {
                   //fetchGroups(0);
-                  //fetchData();
+                  //Reset node status as new datasets are available
+                  nodesWithData = {};
+                  fetchData();
                 }
               });
             };
