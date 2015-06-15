@@ -2,6 +2,7 @@ define(["../../listeners"], function (listeners) {
 
   var alignPathNodes = false;
   var tiltAttributes = false;
+  var alignColumns = false;
 
 
   return {
@@ -18,6 +19,7 @@ define(["../../listeners"], function (listeners) {
 
     pathListUpdateTypes: {
       ALIGN_PATH_NODES: "ALIGN_PATH_NODES",
+      ALIGN_COLUMNS: "ALIGN_COLUMNS",
       TILT_ATTRIBUTES: "TILT_ATTRIBUTES",
       COLLAPSE_ELEMENT_TYPE: "COLLAPSE_ELEMENT_TYPE"
     },
@@ -40,6 +42,14 @@ define(["../../listeners"], function (listeners) {
       return tiltAttributes;
     },
 
+    alignColumns: function (align) {
+      alignColumns = align;
+      listeners.notify(this.pathListUpdateTypes.ALIGN_COLUMNS, align);
+    },
+
+    isAlignColumns: function () {
+      return alignColumns;
+    },
 
     getPathContainerTranslateY: function (pathWrappers, pathIndex) {
       var posY = 0;

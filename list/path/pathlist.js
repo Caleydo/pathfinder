@@ -346,6 +346,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       var that = this;
 
       columns.addColumn(new columns.PathLengthColumn(this));
+      columns.addColumn(new columns.PathLengthColumn(this));
 
       this.updateDatasetsListener = function () {
         that.pathWrappers.forEach(function (pathWrapper) {
@@ -357,6 +358,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       this.alignPathNodesUpdateListener = function (align) {
         //s.alignPathNodes = align;
 
+        that.renderPaths();
+      };
+
+      this.alignColumnsUpdateListener = function (align) {
         that.renderPaths();
       };
 
@@ -495,6 +500,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.add(this.collapseElementListener, s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE);
         listeners.add(this.setVisibilityUpdateListener, vs.updateTypes.UPDATE_NODE_SET_VISIBILITY);
         listeners.add(this.alignPathNodesUpdateListener, s.pathListUpdateTypes.ALIGN_PATH_NODES);
+        listeners.add(this.alignColumnsUpdateListener, s.pathListUpdateTypes.ALIGN_COLUMNS);
         listeners.add(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.add(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
@@ -622,90 +628,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             }
             return 1;
           });
-        //that.parent.selectAll("g.pathContainer g.path g.edgeGroup").data(that.pathWrappers)
-        //  .transition()
-        //  .attr("transform", function (d) {
-        //    return that.getPivotNodeAlignedTransform(d)
-        //  });
-        //that.parent.selectAll("g.pathContainer g.path g.nodeGroup").data(that.pathWrappers)
-        //  .transition()
-        //  .attr("transform", function (d) {
-        //    return that.getPivotNodeAlignedTransform(d)
-        //  });
-
-
-        //var allSetTypes = that.parent.selectAll("g.pathContainer g.setGroup g.setType");
-
 
         that.renderSets(that.parent.selectAll("g.pathContainer").data(that.pathWrappers, getPathKey));
         //that.renderDatasets();
         that.datasetRenderer.render();
+        columns.renderColumns(that.parent, that.pathWrappers);
 
-        //pathContainers
-        //  .each(function () {
-        //
-        //    var setTypes = d3.select(this).selectAll("g.setType");
-        //
-        //    setTypes.each(function (d) {
-        //      //d3.select(this).selectAll("g.setTypeSummary")
-        //      //  .transition()
-        //      //  .attr("transform", function (d) {
-        //      //    return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
-        //      //  });
-        //
-        //      var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary");
-        //
-        //      setTypeSummaryContainer.each(function (d, i) {
-        //        d3.select(this).selectAll("circle")
-        //          .transition()
-        //          .attr({
-        //            cx: function (d, i) {
-        //              var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-        //              var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-        //              return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-        //            },
-        //
-        //            r: function (d) {
-        //
-        //              var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-        //                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-        //
-        //              return nodeSetScale(numSets);
-        //            }
-        //
-        //          });
-        //
-        //        d3.select(this).selectAll("line")
-        //          .transition()
-        //          .attr({
-        //
-        //            x1: function (d) {
-        //              var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-        //              var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
-        //              return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-        //            },
-        //
-        //            x2: function (d) {
-        //              var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-        //              var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
-        //              return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-        //            },
-        //
-        //            "stroke-width": function (d) {
-        //              var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
-        //                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-        //              return edgeSetScale(numSets);
-        //            }
-        //          });
-        //      });
-        //
-        //    });
-        //
-        //
-        //
-        //
-        //
-        //  });
 
         this.renderCrossConnections();
 
@@ -718,6 +646,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.remove(this.collapseElementListener, s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE);
         listeners.remove(this.setVisibilityUpdateListener, vs.updateTypes.UPDATE_NODE_SET_VISIBILITY);
         listeners.remove(this.alignPathNodesUpdateListener, s.pathListUpdateTypes.ALIGN_PATH_NODES);
+        listeners.remove(this.alignColumnsUpdateListener, s.pathListUpdateTypes.ALIGN_COLUMNS);
         listeners.remove(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         listeners.remove(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);

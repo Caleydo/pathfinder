@@ -2,12 +2,14 @@ define(["jquery", "d3", "./settings", "../../listeners"], function ($, d3, s, li
 
   var DEFAULT_COLUMN_WIDTH = 80;
   var COLUMN_SPACING = 5;
+  var BAR_SIZE = 12;
 
   var currentColumnID = 0;
   var allColumns = [];
 
   function getTotalColumnWidth(index) {
-    var maxIndex = index || allColumns.length - 1;
+
+    var maxIndex = (typeof index === "undefined") ? allColumns.length - 1 : index;
 
     var width = 0;
     for (var i = 0; i < maxIndex; i++) {
@@ -54,38 +56,43 @@ define(["jquery", "d3", "./settings", "../../listeners"], function ($, d3, s, li
     var allPathLengthGroups = parent.selectAll("g.pathLength" + this.id)
       .data(pathWrappers);
 
+    var maxPathLength = 0;
+    var maxLengthPathWrapper = 0;
+
+    pathWrappers.forEach(function (p) {
+      var l = p.path.nodes.length;
+      if (l > maxPathLength) {
+        maxPathLength = l;
+        maxLengthPathWrapper = p;
+      }
+    });
+
     var pathLengthGroup = allPathLengthGroups.enter()
       .append("g")
       .classed("pathLength" + this.id, true)
       .attr({
         transform: function (d, i) {
-          var translateX = that.pathList.getNodePositionX(d, d.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
+          var pathWrapper = s.isAlignColumns() ? maxLengthPathWrapper : d;
+          var translateX = that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
           translateX += getTotalColumnWidth(allColumns.indexOf(that));
           var translateY = s.getPathContainerTranslateY(pathWrappers, i);
           return "translate(" + translateX + "," + translateY + ")";
         }
       });
 
-    var maxPathLength = 0;
 
-    pathWrappers.forEach(function (p) {
-      var l = p.path.nodes.length;
-      if (l > maxPathLength) {
-        maxPathLength = l;
-      }
-    });
 
     var barScale = d3.scale.linear().domain([0, maxPathLength]).range([0, this.getWidth()]);
 
     var bar = pathLengthGroup.append("rect")
       .attr({
         x: 0,
-        y: 0,
+        y: (s.PATH_HEIGHT - BAR_SIZE) / 2,
         fill: "gray",
         width: function (d) {
           return barScale(d.path.nodes.length);
         },
-        height: 14
+        height: BAR_SIZE
       });
 
     bar.append("title")
@@ -96,7 +103,8 @@ define(["jquery", "d3", "./settings", "../../listeners"], function ($, d3, s, li
     allPathLengthGroups.transition()
       .attr({
         transform: function (d, i) {
-          var translateX = that.pathList.getNodePositionX(d, d.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
+          var pathWrapper = s.isAlignColumns() ? maxLengthPathWrapper : d;
+          var translateX = that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
           translateX += getTotalColumnWidth(allColumns.indexOf(that));
           var translateY = s.getPathContainerTranslateY(pathWrappers, i);
           return "translate(" + translateX + "," + translateY + ")";

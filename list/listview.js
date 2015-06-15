@@ -171,6 +171,11 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
         //listeners.notify("TILT_ATTRIBUTES", this.checked);
       });
 
+      $("#alignColumns").on("click", function () {
+        pathSettings.alignColumns(this.checked);
+        //listeners.notify("TILT_ATTRIBUTES", this.checked);
+      });
+
       //$("#reverseAggregateSorting").on("click", function () {
       //  aggregateSorting.sortingManager.ascending = !this.checked;
       //  listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);

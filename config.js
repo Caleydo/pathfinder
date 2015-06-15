@@ -3,7 +3,7 @@ define(['d3'], function (d3) {
   var DEFAULT_NODE_WIDTH = 60;
   var DEFAULT_NODE_HEIGHT = 20;
 
-  var DEFAULT_EDGE_SIZE = 50;
+  var DEFAULT_EDGE_SIZE = 30;
 
   var config = {};
   var nodeNamePropertyNames = {};
