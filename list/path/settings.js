@@ -16,6 +16,7 @@ define(["../../listeners"], function (listeners) {
     SET_HEIGHT: 10,
     SET_TYPE_HEIGHT: 14,
     PATH_SPACING: 15,
+    COLUMN_HEADER_HEIGHT: 22,
 
     pathListUpdateTypes: {
       ALIGN_PATH_NODES: "ALIGN_PATH_NODES",
