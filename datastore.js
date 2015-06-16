@@ -339,6 +339,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
 
     function fetchData() {
+
+      if(Object.keys(allDatasets).length === 0){
+        return;
+      }
       //Get every node just once, no duplicates
       var nodes = [];
       paths.forEach(function (path) {
@@ -587,6 +591,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
         ccle.list().then(function (dataInfos) {
           var configs = config.getDatasetConfigs();
+
+          if(!configs) {
+            return;
+          }
 
           var datasetInfos = [];
           var stratificationInfo = {};
