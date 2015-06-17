@@ -1,4 +1,4 @@
-define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], function ($, d3, s, listeners, uiUtil) {
+define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pathsorting", "../../datastore"], function ($, d3, s, listeners, uiUtil, pathSorting, dataStore) {
 
   //var DEFAULT_COLUMN_WIDTH = 80;
   var COLUMN_SPACING = 5;
@@ -14,23 +14,23 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
   var currentColumnID = 0;
   var allColumns = [];
 
-  function getTotalColumnWidth(index) {
+  function getTotalColumnWidth(columns, index) {
 
-    var maxIndex = (typeof index === "undefined") ? allColumns.length - 1 : index;
+    var maxIndex = (typeof index === "undefined") ? columns.length - 1 : index;
 
     var width = 0;
     for (var i = 0; i < maxIndex; i++) {
-      width += allColumns[i].getWidth();
+      width += columns[i].getWidth();
       width += COLUMN_SPACING;
     }
 
     return width;
   }
 
-  function getColumnItemTranlateX(column, pathWrappers, index) {
+  function getColumnItemTranlateX(columns, column, pathWrappers, index) {
     var pathWrapper = s.isAlignColumns() ? getMaxLengthPathWrapper(pathWrappers) : pathWrappers[index];
     var translateX = column.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
-    translateX += getTotalColumnWidth(allColumns.indexOf(column));
+    translateX += getTotalColumnWidth(columns, columns.indexOf(column));
     return translateX;
   }
 
@@ -50,11 +50,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
   }
 
 
-  function RankColumnHeader(rankConfigView, selectedStrategyIndex) {
-    this.priority = 0;
-    //this.rankConfigView = rankConfigView;
+  function RankColumnHeader(priority, column, columnManager, selectedStrategyIndex) {
+    this.priority = priority;
+    this.column = column;
+    this.columnManager = columnManager;
     this.selectedStrategyIndex = selectedStrategyIndex || 0;
-
   }
 
   RankColumnHeader.prototype = {
@@ -71,6 +71,17 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
 
       this.rootDomElement = parent.append("g")
         .classed("rankCriterionElement", true);
+
+      this.rootDomElement.append("rect")
+        .attr({
+          x: 0,
+          y: 0,
+          width: DEFAULT_COLUMN_WIDTH,
+          height: s.COLUMN_HEADER_HEIGHT
+        })
+        .style({
+          fill: "rgb(240,240,240)"
+        });
 
       this.rootDomElement.append("rect")
         .attr({
@@ -110,13 +121,13 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
       var that = this;
       var selector = this.rootDomElement.select("select.strategySelector");
 
-      //this.rankConfigView.selectableSortingStrategies.forEach(function (strategy, i) {
-      //  selector.append("option")
-      //    .attr({
-      //      value: i
-      //    })
-      //    .text(strategy.label);
-      //});
+      this.columnManager.selectableSortingStrategies.forEach(function (strategy, i) {
+        selector.append("option")
+          .attr({
+            value: i
+          })
+          .text(strategy.label);
+      });
 
       selector.append("title")
         .text(function () {
@@ -133,15 +144,16 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
       sortingOrderButton
         .classed("sortOrderButton", true)
         .on("click", function () {
-          //that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending = !that.rankConfigView.selectableSortingStrategies[that.selectedStrategyIndex].ascending;
-          //that.rankConfigView.updateSortOrder();
-          //that.rankConfigView.notify();
+          that.columnManager.selectableSortingStrategies[that.selectedStrategyIndex].ascending = !that.columnManager.selectableSortingStrategies[that.selectedStrategyIndex].ascending;
+          that.columnManager.updateSortOrder();
+          that.columnManager.notify();
         });
 
       $(selector[0]).on("change", function () {
         that.selectedStrategyIndex = this.value;
-        //that.rankConfigView.updateSortOrder();
-        //that.rankConfigView.notify();
+        that.column.setSortingStrategy(that.columnManager.selectableSortingStrategies[that.selectedStrategyIndex]);
+        that.columnManager.updateSortOrder();
+        that.columnManager.notify();
       });
 
       var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 10 + 16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
@@ -149,12 +161,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
       removeButton.attr("display", "none");
 
       removeButton.on("click", function () {
-        //var index = that.rankConfigView.rankElements.indexOf(that);
+        //var index = that.columnManager.rankElements.indexOf(that);
         //if (index !== -1) {
-        //  that.rankConfigView.rankElements.splice(index, 1);
+        //  that.columnManager.rankElements.splice(index, 1);
         //  that.rootDomElement.remove();
-        //  that.rankConfigView.update();
-        //  that.rankConfigView.notify();
+        //  that.columnManager.update();
+        //  that.columnManager.notify();
         //}
       });
 
@@ -168,8 +180,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
     },
 
     orderButtonText: function () {
-      return "\uf160";
-      //return this.rankConfigView.selectableSortingStrategies[this.selectedStrategyIndex].ascending ? "\uf160" : "\uf161";
+      return this.columnManager.selectableSortingStrategies[this.selectedStrategyIndex].ascending ? "\uf160" : "\uf161";
     },
 
     updateSortOrder: function () {
@@ -177,12 +188,21 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
     }
   };
 
-  function Column(pathList) {
-    this.pathList = pathList;
+  function Column(columnManager, sortingStrategy, priority) {
+    this.columnManager = columnManager;
+    this.pathList = columnManager.pathList;
     this.id = currentColumnID++;
+    this.header = new RankColumnHeader(priority, this, columnManager, columnManager.selectableSortingStrategies.indexOf(sortingStrategy));
+    this.setSortingStrategy(sortingStrategy);
   }
 
   Column.prototype = {
+    setSortingStrategy: function (sortingStrategy) {
+      this.sortingStrategy = sortingStrategy;
+      this.itemRenderer = this.columnManager.itemRenderers[sortingStrategy.id] || new PathItemRenderer();
+      d3.selectAll("g.columnItem" + this.id).remove();
+    },
+
     render: function (parent, pathWrappers) {
       this.renderHeader(pathWrappers);
       this.renderBackground(parent, pathWrappers);
@@ -201,25 +221,13 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
         .attr({
           transform: function (d, i) {
             var translateY = s.getPathContainerTranslateY(pathWrappers, i);
-            return "translate(" + getColumnItemTranlateX(that, pathWrappers, i) + "," + translateY + ")";
+            return "translate(" + getColumnItemTranlateX(that.columnManager.columns, that, pathWrappers, i) + "," + translateY + ")";
           }
         });
 
       columnItem.each(function (pathWrapper, index) {
-
         var item = d3.select(this);
-
-        //item.append("rect")
-        //  .classed("background", true)
-        //  .attr({
-        //    x: 0,
-        //    y: 0,
-        //    width: that.getWidth(),
-        //    height: pathWrapper.getHeight(),
-        //    fill: "rgb(230,230,230)"
-        //  });
-
-        that.onItemEnter(item, pathWrapper, index, pathWrappers);
+        that.itemRenderer.enter(item, pathWrapper, index, pathWrappers, that);
       });
 
       allColumnItems.transition()
@@ -227,7 +235,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
           transform: function (d, i) {
             var pathWrapper = s.isAlignColumns() ? maxLengthPathWrapper : d;
             var translateX = that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
-            translateX += getTotalColumnWidth(allColumns.indexOf(that));
+            translateX += getTotalColumnWidth(that.columnManager.columns, that.columnManager.columns.indexOf(that));
             var translateY = s.getPathContainerTranslateY(pathWrappers, i);
             return "translate(" + translateX + "," + translateY + ")";
           }
@@ -235,16 +243,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
 
       allColumnItems.each(function (pathWrapper, index) {
         var item = d3.select(this);
-        //item.select("rect.background")
-        //  .transition()
-        //  .attr({
-        //    width: that.getWidth(),
-        //    height: function (d) {
-        //      return pathWrapper.getHeight()
-        //    }
-        //  });
-
-        that.onItemUpdate(item, pathWrapper, index, pathWrappers);
+        that.itemRenderer.update(item, pathWrapper, index, pathWrappers, that);
       });
 
       allColumnItems.exit().remove();
@@ -252,36 +251,25 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
 
     renderHeader: function (pathWrappers) {
       var that = this;
-      var translateX = getTotalColumnWidth(allColumns.indexOf(this));
+      var translateX = getTotalColumnWidth(that.columnManager.columns, that.columnManager.columns.indexOf(this));
       if (pathWrappers.length !== 0) {
         var pathWrapper = s.isAlignColumns() ? getMaxLengthPathWrapper(pathWrappers) : pathWrappers[0];
         translateX += this.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
       }
 
 
-      if (!this.header) {
-        this.header = d3.select("#columnHeaders svg").append("g")
+      if (!this.headerElement) {
+        this.headerElement = d3.select("#columnHeaders svg").append("g")
           .classed("columnHeader" + this.id, true)
           .attr({
             transform: "translate(" + translateX + ",0)"
           });
 
-        var columnHeader = new RankColumnHeader();
-        columnHeader.init(this.header);
-        //
-        //this.header.append("rect")
-        //  .attr({
-        //    x: 0,
-        //    y: 0,
-        //    rx: 5,
-        //    ry: 5,
-        //    width: that.getWidth(),
-        //    height: s.COLUMN_HEADER_HEIGHT,
-        //    fill: "gray"
-        //  })
+
+        this.header.init(this.headerElement);
       }
 
-      this.header.transition()
+      this.headerElement.transition()
         .attr({
           transform: "translate(" + translateX + ",0)"
         });
@@ -303,7 +291,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
 
       for (var i = 0, j = pathWrappers.length - 1; i < pathWrappers.length && j >= 0; i++, j--) {
 
-        var translateX = getColumnItemTranlateX(that, pathWrappers, i);
+        var translateX = getColumnItemTranlateX(that.columnManager.columns, that, pathWrappers, i);
         var translateY = s.getPathContainerTranslateY(pathWrappers, i);
 
         bgDataLeft.push({
@@ -315,7 +303,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
           y: translateY + pathWrappers[i].getHeight()
         });
 
-        translateX = getColumnItemTranlateX(that, pathWrappers, j);
+        translateX = getColumnItemTranlateX(that.columnManager.columns, that, pathWrappers, j);
         translateY = s.getPathContainerTranslateY(pathWrappers, j);
 
         bgDataRight.push({
@@ -349,14 +337,14 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
           //stroke: "black",
           fill: "rgb(240,240,240)",
           d: function (d) {
-            return line(d)+"Z";
+            return line(d) + "Z";
           }
         });
 
       allBg.transition()
         .attr({
           d: function (d) {
-            return line(d)+"Z";
+            return line(d) + "Z";
           }
         });
 
@@ -365,17 +353,20 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
 
     },
 
-    onItemEnter: function ($item, pathWrapper, index, pathWrappers) {
-
-    },
-
-    onItemUpdate: function ($item, pathWrapper, index, pathWrappers) {
-
-    },
+    //onItemEnter: function ($item, pathWrapper, index, pathWrappers) {
+    //
+    //},
+    //
+    //onItemUpdate: function ($item, pathWrapper, index, pathWrappers) {
+    //
+    //},
 
     destroy: function () {
       if (this.header) {
         this.header.remove();
+      }
+      if (this.bgRoot) {
+        this.bgRoot.remove();
       }
     },
 
@@ -384,14 +375,27 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
     }
   };
 
-  function PathLengthColumn(parent) {
-    Column.call(this, parent);
+  function PathItemRenderer() {
   }
 
-  PathLengthColumn.prototype = Object.create(Column.prototype);
+  PathItemRenderer.prototype = {
+    enter: function (item, pathWrapper, index, pathWrappers) {
 
-  PathLengthColumn.prototype.onItemEnter = function (item, pathWrapper, index, pathWrappers) {
-    var barScale = d3.scale.linear().domain([0, pathWrappers.length > 0 ? getMaxLengthPathWrapper(pathWrappers).path.nodes.length : 1]).range([0, this.getWidth()]);
+    },
+
+    update: function (item, pathWrapper, index, pathWrappers) {
+
+    }
+  };
+
+  function PathLengthRenderer() {
+    PathItemRenderer.call(this);
+  }
+
+  PathLengthRenderer.prototype = Object.create(PathItemRenderer.prototype);
+
+  PathLengthRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
+    var barScale = d3.scale.linear().domain([0, pathWrappers.length > 0 ? getMaxLengthPathWrapper(pathWrappers).path.nodes.length : 1]).range([0, column.getWidth()]);
 
     var bar = item.append("rect")
       .classed("pathLength", true)
@@ -407,8 +411,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
       .text("Length: " + pathWrapper.path.nodes.length);
   };
 
-  PathLengthColumn.prototype.onItemUpdate = function (item, pathWrapper, index, pathWrappers) {
-    var barScale = d3.scale.linear().domain([0, pathWrappers.length > 0 ? getMaxLengthPathWrapper(pathWrappers).path.nodes.length : 1]).range([0, this.getWidth()]);
+  PathLengthRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
+    var barScale = d3.scale.linear().domain([0, pathWrappers.length > 0 ? getMaxLengthPathWrapper(pathWrappers).path.nodes.length : 1]).range([0, column.getWidth()]);
     item.select("rect.pathLength")
       .transition()
       .attr({
@@ -418,82 +422,78 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil"], functi
       });
   };
 
-  //PathLengthColumn.prototype.render = function (parent, pathWrappers) {
-  //  //Column.prototype.render.call(this, parent, pathWrappers);
-  //  this.renderHeader(pathWrappers);
-  //
-  //  var that = this;
-  //
-  //  var allPathLengthGroups = parent.selectAll("g.pathLength" + this.id)
-  //    .data(pathWrappers);
-  //
-  //  var maxLengthPathWrapper = getMaxLengthPathWrapper(pathWrappers);
-  //  var pathLengthGroup = allPathLengthGroups.enter()
-  //    .append("g")
-  //    .classed("pathLength" + this.id, true)
-  //    .attr({
-  //      transform: function (d, i) {
-  //        var pathWrapper = s.isAlignColumns() ? maxLengthPathWrapper : d;
-  //        var translateX = that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
-  //        translateX += getTotalColumnWidth(allColumns.indexOf(that));
-  //        var translateY = s.getPathContainerTranslateY(pathWrappers, i);
-  //        return "translate(" + translateX + "," + translateY + ")";
-  //      }
-  //    });
-  //
-  //
-  //  allPathLengthGroups.transition()
-  //    .attr({
-  //      transform: function (d, i) {
-  //        var pathWrapper = s.isAlignColumns() ? maxLengthPathWrapper : d;
-  //        var translateX = that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
-  //        translateX += getTotalColumnWidth(allColumns.indexOf(that));
-  //        var translateY = s.getPathContainerTranslateY(pathWrappers, i);
-  //        return "translate(" + translateX + "," + translateY + ")";
-  //      }
-  //    });
-  //
-  //  allPathLengthGroups.each(function (d, i) {
-  //
-  //    d3.select(this).select("rect")
-  //      .transition()
-  //      .attr({
-  //        width: function (d) {
-  //          return barScale(d.path.nodes.length);
-  //        }
-  //      })
-  //  });
-  //
-  //  allPathLengthGroups.exit().remove();
-  //
-  //};
+  function ColumnManager() {
+    this.columns = [];
+    this.itemRenderers = {};
+  }
 
-  return {
+  ColumnManager.prototype = {
 
-    PathLengthColumn: PathLengthColumn,
+    init: function (pathList) {
+      this.pathList = pathList;
+      this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = new PathLengthRenderer();
 
-    addColumn: function (col) {
-      allColumns.push(col);
-    },
+      var that = this;
+      var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
+      initialPathSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
 
-    removeColumn: function (col) {
-      var index = allColumns.indexOf(col);
-      if (index !== -1) {
-        allColumns.splice(index, 1);
-        col.destroy();
-      }
-    },
+      this.selectableSortingStrategies = [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy,
+        pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight];
+      this.selectableSortingStrategies = this.selectableSortingStrategies.concat(dataStore.getDataBasedPathSortingStrategies());
 
-    renderColumns: function (parent, pathWrappers) {
-      allColumns.forEach(function (col) {
-        col.render(parent, pathWrappers);
+      this.columns = initialPathSortingStrategies.map(function (sortingStrategy, i) {
+        return new Column(that, sortingStrategy, i + 1);
       });
     },
 
+    getStrategyChain: function () {
+      var chain = [];
+      var that = this;
+
+      this.columns.forEach(function (column) {
+        chain.push(that.selectableSortingStrategies[column.header.selectedStrategyIndex]);
+      });
+
+      return chain;
+    },
+
+    notify: function () {
+      var chain = this.getStrategyChain();
+      chain.push(pathSorting.sortingStrategies.pathId);
+      pathSorting.sortingManager.setStrategyChain(chain);
+      listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+    },
+
+    updateSortOrder: function () {
+      this.columns.forEach(function (column) {
+        column.header.updateSortOrder();
+      });
+    },
+
+    //removeColumn: function (col) {
+    //  var index = allColumns.indexOf(col);
+    //  if (index !== -1) {
+    //    allColumns.splice(index, 1);
+    //    col.destroy();
+    //  }
+    //}
+    //,
+
+    renderColumns: function (parent, pathWrappers) {
+      this.columns.forEach(function (col) {
+        col.render(parent, pathWrappers);
+      });
+    }
+    ,
+
     getWidth: function () {
-      return getTotalColumnWidth();
+      return getTotalColumnWidth(this.columns);
     }
 
-  };
+  }
+  ;
 
-});
+  return new ColumnManager();
+
+})
+;

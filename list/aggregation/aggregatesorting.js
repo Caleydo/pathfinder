@@ -2,7 +2,7 @@ define(['../../sorting', '../../pathutil', '../../query/querymodel', '../../list
     var SortingStrategy = sorting.SortingStrategy;
 
     function NumPathsSortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT, "Number of paths");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT, "Number of paths", "NUM_PATHS");
       this.ascending = false;
     }
 
@@ -26,7 +26,7 @@ define(['../../sorting', '../../pathutil', '../../query/querymodel', '../../list
     var sortingStrategies = {
       aggregateId: new sorting.IdSortingStrategy(function (aggregate) {
         return aggregate.id
-      }),
+      }, "AGGREGATE_ID"),
       numPaths: new NumPathsSortingStrategy()
     };
 

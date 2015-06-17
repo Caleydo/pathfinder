@@ -6,7 +6,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
 
 
     function PathLengthSortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT, "Path length");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT, "Path length", "PATH_LENGTH");
     }
 
     PathLengthSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
@@ -19,7 +19,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
 
 
     function SetCountEdgeWeightSortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID, "Set count edge weight");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID, "Set count edge weight", "SET_COUNT_EDGE_WEIGHT");
     }
 
     SetCountEdgeWeightSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
@@ -50,7 +50,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
     };
 
     function PathPresenceSortingStrategy(pathIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected nodes");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected paths", "SELECTED_PATHS");
       this.pathIds = pathIds;
       this.ascending = false;
     }
@@ -80,7 +80,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
     };
 
     function NodePresenceSortingStrategy(nodeIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected nodes");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected nodes", "SELECTED_NODES");
       this.nodeIds = nodeIds;
       this.ascending = false;
     }
@@ -116,7 +116,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
 
 
     function SetPresenceSortingStrategy(setIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Selected sets");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Selected sets" , "SELECTED_SETS");
       this.ascending = false;
       this.setIds = setIds;
 
@@ -172,7 +172,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
     };
 
     function SelectionSortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected elements");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected elements", "SELECTED_ELEMENTS");
       this.nodePresenceStrategy = new NodePresenceSortingStrategy([]);
       this.setPresenceStrategy = new SetPresenceSortingStrategy([]);
       this.pathPresenceStrategy = new PathPresenceSortingStrategy([]);
@@ -203,7 +203,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
 
 
     function PathQuerySortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Filtered paths");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Filtered paths", "FILTERED_PATHS");
       this.ascending = false;
     }
 
@@ -230,7 +230,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
 
       pathId: new sorting.IdSortingStrategy(function (pathWrapper) {
         return pathWrapper.path.id
-      }),
+      }, "PATH_ID"),
 
       setCountEdgeWeight: new SetCountEdgeWeightSortingStrategy(),
 

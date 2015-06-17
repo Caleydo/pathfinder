@@ -345,8 +345,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       this.datasetRenderer = new dr.DatasetRenderer(this);
       var that = this;
 
-      columns.addColumn(new columns.PathLengthColumn(this));
-      columns.addColumn(new columns.PathLengthColumn(this));
+      columns.init(this);
 
       this.updateDatasetsListener = function () {
         that.pathWrappers.forEach(function (pathWrapper) {
