@@ -161,6 +161,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       removeButton.attr("display", "none");
 
       removeButton.on("click", function () {
+        that.columnManager.removeColumn(that.column);
         //var index = that.columnManager.rankElements.indexOf(that);
         //if (index !== -1) {
         //  that.columnManager.rankElements.splice(index, 1);
@@ -363,11 +364,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     destroy: function () {
       if (this.header) {
-        this.header.remove();
+        this.headerElement.remove();
       }
       if (this.bgRoot) {
         this.bgRoot.remove();
       }
+      d3.selectAll("g.columnItem" + this.id).remove();
     },
 
     getWidth: function () {
@@ -470,14 +472,15 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       });
     },
 
-    //removeColumn: function (col) {
-    //  var index = allColumns.indexOf(col);
-    //  if (index !== -1) {
-    //    allColumns.splice(index, 1);
-    //    col.destroy();
-    //  }
-    //}
-    //,
+    removeColumn: function (col) {
+      var index = this.columns.indexOf(col);
+      if (index !== -1) {
+        this.columns.splice(index, 1);
+        col.destroy();
+        this.pathList.renderPaths();
+      }
+    }
+    ,
 
     renderColumns: function (parent, pathWrappers) {
       this.columns.forEach(function (col) {
