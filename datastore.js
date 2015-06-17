@@ -195,10 +195,25 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
     var paths = [];
 
-    //var pathStats = {};
+    var pathStats = {};
 
     function getPathDatasetStats(path, dataset) {
       var data = [];
+      var cached = true;
+
+      if (!pathStats[path.id]) {
+        pathStats[path.id] = {};
+        pathStats[path.id][dataset] = {};
+        cached = false;
+      }
+
+      if (!pathStats[path.id][dataset]) {
+        pathStats[path.id][dataset] = {};
+        cached = false;
+      }
+      if (cached && pathStats[path.id][dataset].stats) {
+        return pathStats[path.id][dataset].stats;
+      }
 
       path.nodes.forEach(function (node) {
         var groups = Object.keys(allDatasets[dataset.toString()].groups);
@@ -207,7 +222,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         });
       });
 
-      return statisticsUtil.statisticsOf(data);
+      var stats = statisticsUtil.statisticsOf(data);
+      pathStats[path.id][dataset].stats = stats;
+
+      return stats;
     }
 
     function getPathGroupStats(path, dataset, group) {
@@ -563,6 +581,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
                 if (pathQuery.isPathFiltered(path.id)) {
                   paths.splice(i, 1);
                   i--;
+                  delete pathStats[path.id];
                 }
               }
             }
@@ -668,6 +687,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
       reset: function () {
         paths = [];
+        pathStats = {};
       },
 
       getDataSets: function () {
