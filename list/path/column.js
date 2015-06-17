@@ -446,6 +446,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       this.columns = initialPathSortingStrategies.map(function (sortingStrategy, i) {
         return new Column(that, sortingStrategy, i + 1);
       });
+
+
     },
 
     getStrategyChain: function () {
@@ -477,14 +479,45 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       if (index !== -1) {
         this.columns.splice(index, 1);
         col.destroy();
+
+        this.columns.forEach(function (column, i) {
+          column.header.setPriority(i + 1);
+        });
         this.pathList.renderPaths();
       }
     }
     ,
 
     renderColumns: function (parent, pathWrappers) {
+
+      if (!this.addColumnButton) {
+        var svg = d3.select("#columnHeaders svg");
+        var that = this;
+
+        this.addColumnButton = uiUtil.addOverlayButton(svg, 0, 0, 16, 16, "\uf067", 16 / 2, 16 - 1, "green", true);
+        this.addColumnButton
+          .attr("display", "none")
+          .on("click", function () {
+            that.columns.push(new Column(that, that.selectableSortingStrategies[0], that.columns.length + 1));
+            that.notify();
+          });
+
+
+        $(svg[0]).mouseenter(function () {
+          that.addColumnButton.attr("display", "inline");
+        });
+
+        $(svg[0]).mouseleave(function () {
+          that.addColumnButton.attr("display", "none");
+        });
+      }
+
       this.columns.forEach(function (col) {
         col.render(parent, pathWrappers);
+      });
+
+      this.addColumnButton.transition().attr({
+        transform: "translate(" + ((this.columns.length > 0 && pathWrappers.length > 0) ? getColumnItemTranlateX(this.columns, this.columns[this.columns.length - 1], pathWrappers, 0) + this.columns[this.columns.length - 1].getWidth() + COLUMN_SPACING : 0) + ", 3)"
       });
     }
     ,
