@@ -4,7 +4,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
     var SortingStrategy = sorting.SortingStrategy;
 
     function DatasetMedianSortingStrategy(datasetName) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + ": Median");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + ": Median", "MEDIAN");
       this.dataset = datasetName;
     }
 
@@ -201,7 +201,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       var data = [];
 
       path.nodes.forEach(function (node) {
-        var groups = Object.keys(allData[dataset.toString()].groups);
+        var groups = Object.keys(allDatasets[dataset.toString()].groups);
         groups.forEach(function (group) {
           data = data.concat(getDataForNode(node, dataset, group));
         });
@@ -340,7 +340,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
     function fetchData() {
 
-      if(Object.keys(allDatasets).length === 0){
+      if (Object.keys(allDatasets).length === 0) {
         return;
       }
       //Get every node just once, no duplicates
@@ -592,7 +592,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         ccle.list().then(function (dataInfos) {
           var configs = config.getDatasetConfigs();
 
-          if(!configs) {
+          if (!configs) {
             return;
           }
 
@@ -698,21 +698,23 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
       getStatsForNode: getStatsForNode,
 
+      getPathDatasetStats: getPathDatasetStats,
+
       getDataBasedPathSortingStrategies: function () {
 
         var strategies = [];
-        //var datasets = Object.keys(allData);
-        //
-        //datasets.forEach(function (dataset) {
-        //  var groups = Object.keys(allData[dataset.toString()].groups);
-        //  strategies.push(new DatasetMedianSortingStrategy(dataset.toString()));
-        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", maxDiff, maxOfArray, "Max of max median differences between groups per node"));
-        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, maxOfArray, "Max of min median differences between groups per node"));
-        //  groups.forEach(function (group) {
-        //    strategies.push(new GroupMedianSortingStrategy(dataset.toString(), group.toString()));
-        //    strategies.push(new PerNodeWithinGroupSortingStrategy(dataset, group, "median", maxOfArray, "Max median per node"));
-        //  });
-        //});
+        var datasets = Object.keys(allDatasets);
+
+        datasets.forEach(function (dataset) {
+          //var groups = Object.keys(allData[dataset.toString()].groups);
+          strategies.push(new DatasetMedianSortingStrategy(dataset.toString()));
+          //strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", maxDiff, maxOfArray, "Max of max median differences between groups per node"));
+          //strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, maxOfArray, "Max of min median differences between groups per node"));
+          //groups.forEach(function (group) {
+          //  strategies.push(new GroupMedianSortingStrategy(dataset.toString(), group.toString()));
+          //  strategies.push(new PerNodeWithinGroupSortingStrategy(dataset, group, "median", maxOfArray, "Max median per node"));
+          //});
+        });
 
         return strategies;
       }

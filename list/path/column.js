@@ -162,13 +162,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       removeButton.on("click", function () {
         that.columnManager.removeColumn(that.column);
-        //var index = that.columnManager.rankElements.indexOf(that);
-        //if (index !== -1) {
-        //  that.columnManager.rankElements.splice(index, 1);
-        //  that.rootDomElement.remove();
-        //  that.columnManager.update();
-        //  that.columnManager.notify();
-        //}
       });
 
       $(this.rootDomElement[0]).mouseenter(function () {
@@ -186,6 +179,18 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     updateSortOrder: function () {
       this.rootDomElement.select("g.sortOrderButton").select("text").text(this.orderButtonText());
+    },
+
+    addSortingStrategies: function (newStrategies) {
+      var selector = this.rootDomElement.select("select.strategySelector");
+      var startIndex = this.columnManager.selectableSortingStrategies.length - newStrategies.length;
+      newStrategies.forEach(function (strategy, i) {
+        selector.append("option")
+          .attr({
+            value: startIndex + i
+          })
+          .text(strategy.label);
+      });
     }
   };
 
@@ -424,6 +429,132 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       });
   };
 
+  function getPathDatasetStatsValueRange(pathWrappers, dataset, stat) {
+    var max = Number.NEGATIVE_INFINITY;
+    var min = Number.POSITIVE_INFINITY;
+
+    pathWrappers.forEach(function (pathWrapper) {
+      var median = dataStore.getPathDatasetStats(pathWrapper.path, dataset.id)[stat];
+      if (median > max) {
+        max = median;
+      }
+      if (median < min) {
+        min = median;
+      }
+    });
+
+    return {min: min, max: max};
+  }
+
+//------------------------------
+  function MedianRenderer() {
+    PathItemRenderer.call(this);
+  }
+
+  MedianRenderer.prototype = Object.create(PathItemRenderer.prototype);
+
+  MedianRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
+
+
+    item.selectAll("rect.datasetMedian")
+      .data(pathWrapper.datasets)
+      .enter()
+      .append("rect")
+      .classed("datasetMedian", true)
+      .each(function (dataset, index) {
+
+        var valueRange = getPathDatasetStatsValueRange(pathWrappers, dataset, "median");
+        var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), valueRange.max]).range([0, column.getWidth()]);
+
+        var median = dataStore.getPathDatasetStats(pathWrapper.path, dataset.id).median;
+
+        var posY = 0;
+        var datasetWrappers = pathWrapper.datasets;
+
+        for (var j = 0; j < index; j++) {
+          var datasetWrapper = datasetWrappers[j];
+          if (datasetWrapper.canBeShown()) {
+            posY += datasetWrapper.getHeight();
+          }
+        }
+
+        d3.select(this).attr({
+          x: 0,
+          y: (dataset.getBaseHeight() - BAR_SIZE) / 2,
+          fill: "gray",
+          width: barScale(median),
+          height: BAR_SIZE,
+          transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + posY) + ")"
+        });
+
+        d3.select(this).append("title")
+          .text("Median: " + median);
+
+      });
+
+
+    //var bar = item.append("rect")
+    //  .classed("median", true)
+    //  .attr({
+    //    x: 0,
+    //    y: (s.PATH_HEIGHT - BAR_SIZE) / 2,
+    //    fill: "gray",
+    //    width: barScale(median),
+    //    height: BAR_SIZE
+    //  });
+
+
+  };
+
+  MedianRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
+
+
+    var allDatasetBars = item.selectAll("rect.datasetMedian")
+      .data(pathWrapper.datasets);
+
+    allDatasetBars.each(function (dataset, index) {
+
+      var valueRange = getPathDatasetStatsValueRange(pathWrappers, dataset, "median");
+      var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), valueRange.max]).range([0, column.getWidth()]);
+
+      var median = dataStore.getPathDatasetStats(pathWrapper.path, dataset.id).median;
+
+      var posY = 0;
+      var datasetWrappers = pathWrapper.datasets;
+
+      for (var j = 0; j < index; j++) {
+        var datasetWrapper = datasetWrappers[j];
+        if (datasetWrapper.canBeShown()) {
+          posY += datasetWrapper.getHeight();
+        }
+      }
+
+      d3.select(this).transition()
+        .attr({
+          y: (dataset.getBaseHeight() - BAR_SIZE) / 2,
+          width: barScale(median),
+          transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + posY) + ")"
+        });
+
+      d3.select(this).append("title")
+        .text("Median: " + median);
+
+    });
+
+    allDatasetBars.exit().remove();
+
+    //var median = dataStore.getPathDatasetStats(pathWrapper.path, pathWrapper.datasets[0].id).median;
+    //item.select("rect.median")
+    //  .transition()
+    //  .attr({
+    //    width: function (d) {
+    //      return barScale(median);
+    //    }
+    //  });
+  };
+
+  //----------------------
+
   function ColumnManager() {
     this.columns = [];
     this.itemRenderers = {};
@@ -434,6 +565,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     init: function (pathList) {
       this.pathList = pathList;
       this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = new PathLengthRenderer();
+      this.itemRenderers["MEDIAN"] = new MedianRenderer();
 
       var that = this;
       var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
@@ -446,6 +578,27 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       this.columns = initialPathSortingStrategies.map(function (sortingStrategy, i) {
         return new Column(that, sortingStrategy, i + 1);
       });
+
+      listeners.add(function () {
+
+        var dataSortingStrategies = dataStore.getDataBasedPathSortingStrategies();
+        var newStrategies = dataSortingStrategies.filter(function (strategy) {
+          for (var i = 0; i < that.selectableSortingStrategies.length; i++) {
+            if (that.selectableSortingStrategies[i].id === strategy.id) {
+              return false;
+            }
+          }
+          return true;
+        });
+
+        if (newStrategies.length > 0) {
+          that.selectableSortingStrategies = that.selectableSortingStrategies.concat(newStrategies);
+          that.columns.forEach(function (column) {
+            column.header.addSortingStrategies(newStrategies);
+          });
+        }
+
+      }, listeners.updateType.DATASET_UPDATE);
 
 
     },
