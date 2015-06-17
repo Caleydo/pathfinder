@@ -314,7 +314,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
         bgDataRight.push({
           x: translateX + that.getWidth(),
-          y: translateY + pathWrappers[i].getHeight()
+          y: translateY + pathWrappers[j].getHeight()
         });
         bgDataRight.push({
           x: translateX + that.getWidth(),
@@ -493,17 +493,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       });
 
 
-    //var bar = item.append("rect")
-    //  .classed("median", true)
-    //  .attr({
-    //    x: 0,
-    //    y: (s.PATH_HEIGHT - BAR_SIZE) / 2,
-    //    fill: "gray",
-    //    width: barScale(median),
-    //    height: BAR_SIZE
-    //  });
-
-
   };
 
   MedianRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
@@ -543,14 +532,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     allDatasetBars.exit().remove();
 
-    //var median = dataStore.getPathDatasetStats(pathWrapper.path, pathWrapper.datasets[0].id).median;
-    //item.select("rect.median")
-    //  .transition()
-    //  .attr({
-    //    width: function (d) {
-    //      return barScale(median);
-    //    }
-    //  });
   };
 
   //----------------------
