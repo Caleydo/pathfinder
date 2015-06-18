@@ -5,10 +5,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
   var BAR_SIZE = 12;
 
 
-  var RANK_CRITERION_SELECTOR_WIDTH = 100;
+  var RANK_CRITERION_SELECTOR_WIDTH = 50;
   var COLUMN_ELEMENT_SPACING = 5;
-  var STRATEGY_SELECTOR_START = 20;
-  var DEFAULT_COLUMN_WIDTH = STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 2 * COLUMN_ELEMENT_SPACING + 2 * 16 + 5;
+  var STRATEGY_SELECTOR_START = 5;
+  var DEFAULT_COLUMN_WIDTH = STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 2 * COLUMN_ELEMENT_SPACING + 16 + 5;
   //var RANK_CRITERION_ELEMENT_HEIGHT = 22;
 
   var currentColumnID = 0;
@@ -61,10 +61,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     setPriority: function (priority) {
       this.priority = priority;
-      if (typeof this.rootDomElement !== "undefined") {
-        this.rootDomElement.select("text.priority")
-          .text(this.priority.toString() + ".")
-      }
+      //if (typeof this.rootDomElement !== "undefined") {
+      //  this.rootDomElement.select("text.priority")
+      //    .text(this.priority.toString() + ".")
+      //}
     },
 
     init: function (parent) {
@@ -96,18 +96,38 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           fill: "lightgray"
         });
 
-      this.rootDomElement.append("text")
-        .classed("priority", true)
-        .attr({
-          x: 5,
-          y: s.COLUMN_HEADER_HEIGHT / 2 + 5
-        })
-        .style({
-          "font-size": "12px"
-        })
-        .text(this.priority.toString() + ".");
+      this.rootDomElement.append("clipPath")
+        .attr("id", "columnHeaderClipPath" + this.column.id)
+        .append("rect")
+        .attr("x", 3)
+        .attr("y", 0)
+        .attr("width", RANK_CRITERION_SELECTOR_WIDTH)
+        .attr("height", s.COLUMN_HEADER_HEIGHT);
 
-      this.rootDomElement.append("foreignObject")
+      var tooltip = this.rootDomElement.append("title")
+        .text(this.columnManager.selectableSortingStrategies[this.selectedStrategyIndex].label);
+
+      //this.rootDomElement.append("text")
+      //  .classed("priority", true)
+      //  .attr({
+      //    x: 5,
+      //    y: s.COLUMN_HEADER_HEIGHT / 2 + 5
+      //  })
+      //  .style({
+      //    "font-size": "12px"
+      //  })
+      //  .text(this.priority.toString() + ".");
+
+      var label = this.rootDomElement.append("text")
+        .attr({
+          x: STRATEGY_SELECTOR_START,
+          y: s.COLUMN_HEADER_HEIGHT / 2 + 4,
+          "clip-path": "url(#columnHeaderClipPath" + this.column.id + ")"
+        })
+        .style({font: "12px 'Arial'"})
+        .text(this.columnManager.selectableSortingStrategies[this.selectedStrategyIndex].label);
+
+      var fo = this.rootDomElement.append("foreignObject")
         .attr({
           x: STRATEGY_SELECTOR_START,
           y: 2,
@@ -115,6 +135,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           height: s.COLUMN_HEADER_HEIGHT - 4
         }).append("xhtml:div")
         .style("font", "12px 'Arial'")
+        .style("opacity", 0)
         .html('<select class="strategySelector"></select>');
 
 
@@ -151,12 +172,16 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       $(selector[0]).on("change", function () {
         that.selectedStrategyIndex = this.value;
-        that.column.setSortingStrategy(that.columnManager.selectableSortingStrategies[that.selectedStrategyIndex]);
+        var sortingStrategy = that.columnManager.selectableSortingStrategies[that.selectedStrategyIndex];
+        label.text(sortingStrategy.label);
+        tooltip.text(sortingStrategy.label)
+        that.column.setSortingStrategy(sortingStrategy);
         that.columnManager.updateSortOrder();
         that.columnManager.notify();
       });
 
       var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 10 + 16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
+
 
       removeButton.attr("display", "none");
 
@@ -166,10 +191,20 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       $(this.rootDomElement[0]).mouseenter(function () {
         removeButton.attr("display", "inline");
+        //fo.attr("display", "inline");
+        //fo.style("opacity", 1);
+        //fo.attr("display", "inline");
+        label.attr("display", "none");
+        fo.style("opacity", 1);
       });
 
       $(this.rootDomElement[0]).mouseleave(function () {
         removeButton.attr("display", "none");
+        //fo.attr("display", "none");
+        //fo.style("opacity", 0);
+        //selector.attr("display", "none");
+        label.attr("display", "inline");
+        fo.style("opacity", 0);
       });
     },
 
@@ -265,7 +300,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
 
       if (!this.headerElement) {
-        this.headerElement = d3.select("#columnHeaders svg").append("g")
+        this.headerElement = d3.select("#columnHeaders svg g.headers").append("g")
           .classed("columnHeader" + this.id, true)
           .attr({
             transform: "translate(" + translateX + ",0)"
@@ -624,11 +659,20 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     renderColumns: function (parent, pathWrappers) {
 
-      if (!this.addColumnButton) {
-        var svg = d3.select("#columnHeaders svg");
-        var that = this;
+      var svg = d3.select("#columnHeaders svg");
+      if (svg.select("g.overlay").empty()) {
+        svg.append("g")
+          .classed("headers", true);
+        svg.append("g")
+          .classed("overlay", true);
+      }
 
-        this.addColumnButton = uiUtil.addOverlayButton(svg, 0, 0, 16, 16, "\uf067", 16 / 2, 16 - 1, "green", true);
+      if (!this.addColumnButton) {
+
+        var that = this;
+        var overlay = svg.select("g.overlay");
+
+        this.addColumnButton = uiUtil.addOverlayButton(overlay, 0, 0, 16, 16, "\uf067", 16 / 2, 16 - 1, "green", true);
         this.addColumnButton
           .attr("display", "none")
           .on("click", function () {
@@ -646,12 +690,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         });
       }
 
-      this.columns.forEach(function (col) {
+      this.columns.reverse().forEach(function (col) {
         col.render(parent, pathWrappers);
       });
 
       this.addColumnButton.transition().attr({
-        transform: "translate(" + ((this.columns.length > 0 && pathWrappers.length > 0) ? getColumnItemTranlateX(this.columns, this.columns[this.columns.length - 1], pathWrappers, 0) + this.columns[this.columns.length - 1].getWidth() + COLUMN_SPACING : 0) + ", 3)"
+        transform: "translate(" + ((this.columns.length > 0 && pathWrappers.length > 0) ? getColumnItemTranlateX(this.columns, this.columns[this.columns.length - 1], pathWrappers, 0) + this.columns[this.columns.length - 1].getWidth() + COLUMN_SPACING + 16 : 0) + ", 3)"
       });
     }
     ,
