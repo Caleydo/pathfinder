@@ -1,6 +1,6 @@
 define(function () {
   function HierarchyElement(parentItem) {
-    this.parentElement = parentItem;
+    this.parent = parentItem;
     this.collapsed = false;
     this.children = [];
   }
@@ -9,23 +9,31 @@ define(function () {
 
     getHeight: function () {
       var height = this.getBaseHeight();
-      if (!this.collapsed) {
-        this.getChildElements().forEach(function (item) {
-          if (item.canBeShown()) {
-            height += item.getHeight();
-          }
-        });
-      }
+
+      this.getVisibleChildren().forEach(function(child){
+        height += child.getHeight();
+      });
       return height;
+    },
+
+    getVisibleChildren: function() {
+      var that = this;
+      return this.children.filter(function(child) {
+        if(that.collapsed){
+          return child.isSticky() && child.canBeShown();
+        }
+        return child.canBeShown();
+      })
+    },
+
+    isSticky: function () {
+      return false;
     },
 
     getBaseHeight: function () {
       return 0;
     },
 
-    getChildElements: function () {
-      return this.children;
-    },
     canBeShown: function () {
       return true;
     },
@@ -45,7 +53,7 @@ define(function () {
     },
 
     transformFunction: function (hierarchyElement, i) {
-      var parent = hierarchyElement.parentElement;
+      var parent = hierarchyElement.parent;
 
       var posY = 0;
       if (parent instanceof HierarchyElement) {
@@ -55,7 +63,7 @@ define(function () {
         var element;
 
         if (parent instanceof HierarchyElement) {
-          element = parent.getChildElements()[index];
+          element = parent.children[index];
         } else if (parent instanceof Array) {
           element = parent[index];
         }

@@ -37,6 +37,10 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     return s.isTiltAttributes() ? DATA_AXIS_SIZE + 2 * DATA_GROUP_V_PADDING : BOX_WIDTH + 2 * DATA_GROUP_V_PADDING;
   };
 
+  DataGroupWrapper.prototype.isSticky = function () {
+    return s.isDataGroupSticky(this.parent.id, this.name);
+  };
+
 
   function DataRenderer(pathList) {
     this.pathList = pathList;
@@ -132,13 +136,11 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
             that.onDatasetUpdate($dataset, pathWrapper, dataset, datasetIndex);
 
-            if (dataset.collapsed) {
-              $dataset.selectAll("g.dataGroup").remove();
-              return;
-            }
 
             var allGroups = $dataset.selectAll("g.dataGroup")
-              .data(dataset.children);
+              .data(dataset.getVisibleChildren(), function (d) {
+                return d.name
+              });
 
             var group = allGroups.enter()
               .append("g")
@@ -187,13 +189,11 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
               $group.attr({
                 transform: function (d) {
                   var posY = dataset.getBaseHeight();
-                  var groups = dataset.children;
+                  var groups = dataset.getVisibleChildren();
 
                   for (var j = 0; j < groupIndex; j++) {
                     var g = groups[j];
-                    if (g.canBeShown()) {
                       posY += g.getHeight();
-                    }
                   }
                   return ("translate(0, " + posY + ")");
                 }

@@ -121,7 +121,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         } else {
 
           nodesToRemove.forEach(function (nodeWrapper) {
-            nodeWrapper.parentElement.removeNode(nodeWrapper.node);
+            nodeWrapper.parent.removeNode(nodeWrapper.node);
           });
         }
       }
@@ -144,7 +144,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         } else {
 
           setsToRemove.forEach(function (setWrapper) {
-            setWrapper.parentElement.removeSet(setWrapper.setId);
+            setWrapper.parent.removeSet(setWrapper.setId);
           });
         }
       }
@@ -652,7 +652,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         });
       if (idType === "set") {
         setLabel.style("fill", function (d) {
-          return setInfo.getSetTypeInfo(d.parentElement.type).color;
+          return setInfo.getSetTypeInfo(d.parent.type).color;
         });
       }
 
@@ -672,7 +672,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         });
 
       addPathOccurrenceBar(stats, idType === "set" ? function (d) {
-        return setInfo.getSetTypeInfo(d.parentElement.type).color;
+        return setInfo.getSetTypeInfo(d.parent.type).color;
       } : function (d) {
         return "gray";
       });

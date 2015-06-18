@@ -3,6 +3,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
   //var DEFAULT_COLUMN_WIDTH = 80;
   var COLUMN_SPACING = 5;
   var BAR_SIZE = 12;
+  var SMALL_BAR_SIZE = 8;
 
 
   var RANK_CRITERION_SELECTOR_WIDTH = 50;
@@ -476,97 +477,201 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       if (median < min) {
         min = median;
       }
+      dataset.children.forEach(function (group) {
+        var median = dataStore.getPathGroupStats(pathWrapper.path, dataset.id, group.name)[stat];
+        if (median > max) {
+          max = median;
+        }
+        if (median < min) {
+          min = median;
+        }
+      })
+
     });
 
     return {min: min, max: max};
   }
 
 //------------------------------
-  function MedianRenderer() {
+  function StatRenderer() {
     PathItemRenderer.call(this);
   }
 
-  MedianRenderer.prototype = Object.create(PathItemRenderer.prototype);
+  StatRenderer.prototype = Object.create(PathItemRenderer.prototype);
 
-  MedianRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
+  StatRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
 
+    var datasetId = column.sortingStrategy.datasetId;
+    var groupId = column.sortingStrategy.groupId;
+    var dataset = 0;
+    var index = 0;
+    for (var i = 0; i < pathWrapper.datasets.length; i++) {
+      var d = pathWrapper.datasets[i];
+      if (d.id === datasetId) {
+        dataset = d;
+        index = i;
+        break;
+      }
+    }
 
-    item.selectAll("rect.datasetMedian")
-      .data(pathWrapper.datasets)
-      .enter()
-      .append("rect")
-      .classed("datasetMedian", true)
-      .each(function (dataset, index) {
+    var valueRange = getPathDatasetStatsValueRange(pathWrappers, dataset, column.sortingStrategy.stat);
+    var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range([0, column.getWidth()]);
 
-        var valueRange = getPathDatasetStatsValueRange(pathWrappers, dataset, "median");
-        var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), valueRange.max]).range([0, column.getWidth()]);
+    var stat = dataStore.getPathDatasetStats(pathWrapper.path, dataset.id)[column.sortingStrategy.stat];
 
-        var median = dataStore.getPathDatasetStats(pathWrapper.path, dataset.id).median;
+    var posY = 0;
+    var datasetWrappers = pathWrapper.datasets;
 
-        var posY = 0;
-        var datasetWrappers = pathWrapper.datasets;
+    for (var j = 0; j < index; j++) {
+      var datasetWrapper = datasetWrappers[j];
+      if (datasetWrapper.canBeShown()) {
+        posY += datasetWrapper.getHeight();
+      }
+    }
 
-        for (var j = 0; j < index; j++) {
-          var datasetWrapper = datasetWrappers[j];
-          if (datasetWrapper.canBeShown()) {
-            posY += datasetWrapper.getHeight();
-          }
-        }
-
-        d3.select(this).attr({
-          x: 0,
-          y: (dataset.getBaseHeight() - BAR_SIZE) / 2,
-          fill: "gray",
-          width: barScale(median),
-          height: BAR_SIZE,
-          transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + posY) + ")"
-        });
-
-        d3.select(this).append("title")
-          .text("Median: " + median);
-
+    var datasetGroup = item.append("g")
+      .classed("dataset", true)
+      .attr({
+        transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + posY) + ")"
       });
 
+    var bar = datasetGroup.append("rect")
+      .classed("datasetMedian", true)
+      .attr({
+        x: stat < 0 ? barScale(stat) : barScale(0),
+        y: (dataset.getBaseHeight() - BAR_SIZE) / 2,
+        fill: (typeof groupId === "undefined") ? "gray" : "rgb(180, 180,180)",
+        width: Math.abs(barScale(0) - barScale(stat)),
+        height: BAR_SIZE
+      })
+      .on("dblclick", function (d) {
+        dataset.children.forEach(function (g) {
+          s.setStickyDataGroup(dataset.id, g.name, false);
+        });
+        delete column.sortingStrategy.groupId;
+        listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+      });
+
+    bar.append("title")
+      .text(column.sortingStrategy.stat + ":" + stat);
 
   };
 
-  MedianRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
+  StatRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
 
+    var datasetId = column.sortingStrategy.datasetId;
+    var groupId = column.sortingStrategy.groupId;
+    var dataset = 0;
+    var index = 0;
+    for (var i = 0; i < pathWrapper.datasets.length; i++) {
+      var d = pathWrapper.datasets[i];
+      if (d.id === datasetId) {
+        dataset = d;
+        index = i;
+        break;
+      }
+    }
 
-    var allDatasetBars = item.selectAll("rect.datasetMedian")
-      .data(pathWrapper.datasets);
+    var valueRange = getPathDatasetStatsValueRange(pathWrappers, dataset, column.sortingStrategy.stat);
+    var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range([0, column.getWidth()]);
 
-    allDatasetBars.each(function (dataset, index) {
+    var stat = dataStore.getPathDatasetStats(pathWrapper.path, dataset.id)[column.sortingStrategy.stat];
 
-      var valueRange = getPathDatasetStatsValueRange(pathWrappers, dataset, "median");
-      var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), valueRange.max]).range([0, column.getWidth()]);
+    var posY = 0;
+    var datasetWrappers = pathWrapper.datasets;
 
-      var median = dataStore.getPathDatasetStats(pathWrapper.path, dataset.id).median;
+    for (var j = 0; j < index; j++) {
+      var datasetWrapper = datasetWrappers[j];
+      if (datasetWrapper.canBeShown()) {
+        posY += datasetWrapper.getHeight();
+      }
+    }
 
-      var posY = 0;
-      var datasetWrappers = pathWrapper.datasets;
+    var datasetGroup = item.select("g.dataset")
+      .classed("dataset", true)
+      .attr({
+        transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + posY) + ")"
+      });
+
+    datasetGroup.select("rect.datasetMedian")
+      .transition()
+      .attr({
+        x: stat < 0 ? barScale(stat) : barScale(0),
+        y: (dataset.getBaseHeight() - BAR_SIZE) / 2,
+        fill: (typeof groupId === "undefined") ? "gray" : "rgb(180, 180,180)",
+        width: Math.abs(barScale(0) - barScale(stat))
+      });
+
+    //if (dataset.collapsed) {
+    //  datasetGroup.selectAll("rect.groupMedian").remove();
+    //  return;
+    //}
+
+    var allGroupBars = datasetGroup.selectAll("rect.groupMedian")
+      .data(dataset.getVisibleChildren(), function (d) {
+        return d.name
+      });
+
+    allGroupBars.enter()
+      .append("rect")
+      .classed("groupMedian", true)
+      .each(function (group, index) {
+
+        var stat = dataStore.getPathGroupStats(pathWrapper.path, dataset.id, group.name)[column.sortingStrategy.stat];
+
+        var posY = dataset.getBaseHeight();
+        var groups = dataset.getVisibleChildren();
+
+        for (var j = 0; j < index; j++) {
+          var g = groups[j];
+          posY += g.getHeight();
+        }
+
+        d3.select(this).attr({
+          x: stat < 0 ? barScale(stat) : barScale(0),
+          y: (group.getBaseHeight() - SMALL_BAR_SIZE) / 2,
+          fill: groupId === group.name ? "gray" : "rgb(180, 180,180)",
+          width: Math.abs(barScale(0) - barScale(stat)),
+          height: SMALL_BAR_SIZE,
+          transform: "translate(0," + posY + ")"
+        })
+          .on("dblclick", function (d) {
+            dataset.children.forEach(function (g) {
+              s.setStickyDataGroup(dataset.id, g.name, false);
+            });
+            s.setStickyDataGroup(dataset.id, group.name, true);
+            column.sortingStrategy.groupId = group.name;
+            group.permanentlyVisible = true;
+            listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+          });
+
+        d3.select(this).append("title")
+          .text(column.sortingStrategy.stat + ": " + stat);
+
+      });
+
+    allGroupBars.each(function (group, index) {
+      var stat = dataStore.getPathGroupStats(pathWrapper.path, dataset.id, group.name)[column.sortingStrategy.stat];
+
+      var posY = dataset.getBaseHeight();
+      var groups = dataset.getVisibleChildren();
 
       for (var j = 0; j < index; j++) {
-        var datasetWrapper = datasetWrappers[j];
-        if (datasetWrapper.canBeShown()) {
-          posY += datasetWrapper.getHeight();
-        }
+        var g = groups[j];
+        posY += g.getHeight();
       }
 
-      d3.select(this).transition()
-        .attr({
-          y: (dataset.getBaseHeight() - BAR_SIZE) / 2,
-          width: barScale(median),
-          transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + posY) + ")"
-        });
 
-      d3.select(this).append("title")
-        .text("Median: " + median);
-
+      d3.select(this).attr({
+        x: stat < 0 ? barScale(stat) : barScale(0),
+        y: (group.getBaseHeight() - SMALL_BAR_SIZE) / 2,
+        fill: groupId === group.name ? "gray" : "rgb(180, 180,180)",
+        width: Math.abs(barScale(0) - barScale(stat)),
+        transform: "translate(0," + posY + ")"
+      });
     });
 
-    allDatasetBars.exit().remove();
-
+    allGroupBars.exit().remove();
   };
 
   //----------------------
@@ -581,7 +686,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     init: function (pathList) {
       this.pathList = pathList;
       this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = new PathLengthRenderer();
-      this.itemRenderers["MEDIAN"] = new MedianRenderer();
+      this.itemRenderers["OVERALL_STATS"] = new StatRenderer();
 
       var that = this;
       var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
@@ -690,7 +795,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         });
       }
 
-      this.columns.reverse().forEach(function (col) {
+      this.columns.forEach(function (col) {
         col.render(parent, pathWrappers);
       });
 

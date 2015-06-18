@@ -4,6 +4,8 @@ define(["../../listeners"], function (listeners) {
   var tiltAttributes = false;
   var alignColumns = false;
 
+  var stickyDataGroup = {};
+
 
   return {
     NODE_START: 90,
@@ -23,6 +25,19 @@ define(["../../listeners"], function (listeners) {
       ALIGN_COLUMNS: "ALIGN_COLUMNS",
       TILT_ATTRIBUTES: "TILT_ATTRIBUTES",
       COLLAPSE_ELEMENT_TYPE: "COLLAPSE_ELEMENT_TYPE"
+    },
+
+    setStickyDataGroup: function (datasetId, groupId, sticky) {
+      stickyDataGroup[datasetId] = stickyDataGroup[datasetId] || {};
+      stickyDataGroup[datasetId][groupId] = sticky;
+    },
+
+    isDataGroupSticky: function (datasetId, groupId) {
+      stickyDataGroup[datasetId] = stickyDataGroup[datasetId] || {};
+      if (!stickyDataGroup[datasetId][groupId]) {
+        return false;
+      }
+      return stickyDataGroup[datasetId][groupId];
     },
 
     alignPathNodes: function (align) {
