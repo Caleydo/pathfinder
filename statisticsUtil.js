@@ -38,6 +38,8 @@ define(['d3'], function (d3) {
         max: NaN,
         nans: 0,
         median: NaN,
+        mean: NaN,
+        sd: NaN,
         quartile25: NaN,
         quartile75: NaN,
         iqrMin: NaN,
@@ -50,20 +52,34 @@ define(['d3'], function (d3) {
         return isNaN(a) && isNaN(b) ? 0 : isNaN(a) ? 1 : isNaN(b) ? -1 : d3.ascending(a, b);
       });
 
+      var n = 0;
+      var variance = 0;
       sortedData.forEach(function (d) {
         if (isNaN(d)) {
           stats.nans++;
         } else {
+
+          n++;
           if (isNaN(stats.min) || d < stats.min) {
             stats.min = d;
           }
           if (isNaN(stats.max) || d > stats.max) {
             stats.max = d;
           }
+          if (n == 1) {
+            stats.mean = d;
+          } else {
+            var prevMean = stats.mean;
+            stats.mean = stats.mean + (d - stats.mean) / n;
+            variance = variance + (d - prevMean) * (d - stats.mean);
+          }
         }
       });
+      variance = variance/(n-1);
 
       var lengthWithoutNaNs = sortedData.length - stats.nans;
+
+      stats.std = Math.sqrt(variance);
 
       stats.median = median(sortedData, lengthWithoutNaNs);
       stats.quartile25 = percentile(sortedData, lengthWithoutNaNs, 0.25);
