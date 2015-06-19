@@ -243,9 +243,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       if (this.itemRenderer) {
         this.itemRenderer.destroy(this);
       }
+      d3.selectAll("g.columnItem" + this.id).remove();
       this.sortingStrategy = sortingStrategy;
       this.itemRenderer = this.columnManager.itemRenderers[sortingStrategy.id] || new PathItemRenderer();
-      d3.selectAll("g.columnItem" + this.id).remove();
+      this.itemRenderer.init(this);
     },
 
     render: function (parent, pathWrappers) {
@@ -431,6 +432,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     },
 
     update: function (item, pathWrapper, index, pathWrappers) {
+
+    },
+
+    init: function (column) {
 
     },
 
@@ -679,6 +684,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     });
 
     allGroupBars.exit().remove();
+  };
+
+  StatRenderer.prototype.init = function (column) {
+    if (column.sortingStrategy.groupId) {
+      s.incStickyDataGroupOwners(column.sortingStrategy.datasetId, column.sortingStrategy.groupId);
+    }
   };
 
   StatRenderer.prototype.destroy = function (column) {
