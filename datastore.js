@@ -68,54 +68,56 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
     };
 
 
-    function MaxMedianSortingStrategy(datasetName) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + ": Max Median");
-      this.dataset = datasetName;
-    }
-
-    MaxMedianSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
-
-    MaxMedianSortingStrategy.prototype.compare = function (a, b) {
-
-      var groups = Object.keys(allData[this.dataset.toString()].groups);
-
-      groups.forEach(function (group) {
-        var stats = getPathGroupStats(a.path, this.dataset, group);
-      });
-      var statsA = getPathGroupStats(a.path, this.dataset, this.group);
-      var statsB = getPathGroupStats(b.path, this.dataset, this.group);
-      if (this.ascending) {
-        return d3.ascending(statsA.median, statsB.median);
-      }
-      return d3.descending(statsA.median, statsB.median);
-    };
-
-    function GroupMedianSortingStrategy(datasetName, groupName) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + " - " + groupName + ": Median");
-      this.dataset = datasetName;
-      this.group = groupName;
-    }
-
-    GroupMedianSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
-
-    GroupMedianSortingStrategy.prototype.compare = function (a, b) {
-      var statsA = getPathGroupStats(a.path, this.dataset, this.group);
-      var statsB = getPathGroupStats(b.path, this.dataset, this.group);
-
-      if (this.ascending) {
-        return d3.ascending(statsA.median, statsB.median);
-      }
-      return d3.descending(statsA.median, statsB.median);
-    };
-
-
     //-------------------------------------------------------------
 
+    /**
+     * Sort by an aggregate score of overall group stats.
+     *
+     * @param datasetId
+     * @param stat
+     * @param betweenGroupsAggregateFunction
+     * @param nodeAggregateFunction
+     * @param label
+     * @constructor
+     */
+    function OverallBetweenGroupsSortingStrategy(datasetId, stat, betweenGroupsAggregateFunction, label) {
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetId + ": " + label);
+      this.datasetId = datasetId;
+      this.stat = stat;
+      this.betweenGroupsAggregateFunction = betweenGroupsAggregateFunction;
+    }
 
-    function PerNodeBetweenGroupsSortingStrategy(datasetName, statsProperty, betweenGroupsAggregateFunction, nodeAggregateFunction, label) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + ": " + label);
-      this.dataset = datasetName;
-      this.stat = statsProperty;
+    OverallBetweenGroupsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+
+    OverallBetweenGroupsSortingStrategy.prototype.compare = function (a, b) {
+
+      var scoreA = this.getScore(a.path, this.datasetId);
+      var scoreB = this.getScore(a.path, this.datasetId);
+
+      if (this.ascending) {
+        return d3.ascending(scoreA, scoreB);
+      }
+      return d3.descending(scoreA, scoreB);
+    };
+
+    OverallBetweenGroupsSortingStrategy.prototype.getScore = function (path, datasetId) {
+      return getAggregatesBetweenGroups(datasetId, path, this.stat, this.betweenGroupsAggregateFunction);
+    };
+
+
+    /**
+     * Sort by an aggregate score of per node stats.
+     * @param datasetId
+     * @param stat
+     * @param betweenGroupsAggregateFunction
+     * @param nodeAggregateFunction
+     * @param label
+     * @constructor
+     */
+    function PerNodeBetweenGroupsSortingStrategy(datasetId, stat, betweenGroupsAggregateFunction, nodeAggregateFunction, label) {
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetId + ": " + label);
+      this.datasetId = datasetId;
+      this.stat = stat;
       this.betweenGroupsAggregateFunction = betweenGroupsAggregateFunction;
       this.nodeAggregateFunction = nodeAggregateFunction;
     }
@@ -124,13 +126,17 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
     PerNodeBetweenGroupsSortingStrategy.prototype.compare = function (a, b) {
 
-      var scoreA = this.nodeAggregateFunction(getPerNodeAggregatesBetweenGroups(this.dataset, a.path, this.stat, this.betweenGroupsAggregateFunction));
-      var scoreB = this.nodeAggregateFunction(getPerNodeAggregatesBetweenGroups(this.dataset, b.path, this.stat, this.betweenGroupsAggregateFunction));
+      var scoreA = this.getScore(a.path, this.datasetId);
+      var scoreB = this.getScore(a.path, this.datasetId);
 
       if (this.ascending) {
         return d3.ascending(scoreA, scoreB);
       }
       return d3.descending(scoreA, scoreB);
+    };
+
+    PerNodeBetweenGroupsSortingStrategy.prototype.getScore = function (path, datasetId) {
+      return this.nodeAggregateFunction(getPerNodeAggregatesBetweenGroups(datasetId, path, this.stat, this.betweenGroupsAggregateFunction));
     };
 
 
@@ -171,9 +177,22 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       return diffs;
     }
 
+    function getAggregatesBetweenGroups(datasetId, path, stat, aggregateFunction) {
+      var allStats = [];
+      var groups = Object.keys(allDatasets[datasetId].groups);
+      groups.forEach(function (groupId) {
+        var stats = getPathGroupStats(path, datasetId, groupId);
+        if (stats) {
+          allStats.push(stats);
+        }
+
+      });
+      return aggregateStats(allStats, stat, aggregateFunction);
+    }
+
     function getPerNodeAggregatesBetweenGroups(dataset, path, statsProperty, aggregateFunction) {
       var allStatsPerNode = {};
-      var groups = Object.keys(allData[dataset.toString()].groups);
+      var groups = Object.keys(allDatasets[dataset.toString()].groups);
       groups.forEach(function (group) {
         var allGroupStats = getPerNodeStatsWithinGroup(path, dataset, group);
         allGroupStats.forEach(function (stats, i) {
@@ -562,38 +581,6 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       return data;
     }
 
-    var allData = {
-      mRNAExpression: {
-        groups: {
-          breast: {},
-          lung: {},
-          ovary: {}
-        }
-      },
-      CopyNumberVariation: {
-        groups: {
-          breast: {},
-          lung: {},
-          ovary: {}
-        }
-      }
-
-    };
-
-    var allStats = {
-      mRNAExpression: {
-        breast: {},
-        lung: {},
-        ovary: {}
-      },
-      CopyNumberVariation: {
-        breast: {},
-        lung: {},
-        ovary: {}
-      }
-
-    };
-
     /**
      *
      * Data has been loaded for these nodes or data is currently loading.
@@ -781,8 +768,31 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
           strategies.push(new PerNodeStatsSortingStrategy(dataset, "mean", minOfArray, "Min mean per node"));
           strategies.push(new PerNodeStatsSortingStrategy(dataset, "std", minOfArray, "Min standard-deviation per node"));
 
+          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "median", maxDiff, "Max difference in median between groups"));
+          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "max", maxDiff, "Max difference in max between groups"));
+          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "min", maxDiff, "Max difference in min between groups"));
+          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "mean", maxDiff, "Max difference in mean between groups"));
+          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "std", maxDiff, "Max difference in standard-deviation between groups"));
 
-          //strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", maxDiff, maxOfArray, "Max of max median differences between groups per node"));
+          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "median", minDiff, "Min difference in median between groups"));
+          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "max", minDiff, "Min difference in max between groups"));
+          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "min", minDiff, "Min difference in min between groups"));
+          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "mean", minDiff, "Min difference in mean between groups"));
+          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "std", minDiff, "Min difference in standard-deviation between groups"));
+
+          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", maxDiff, maxOfArray, "Max of max median differences between groups per node"));
+          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "max", maxDiff, maxOfArray, "Max of max max differences between groups per node"));
+          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "min", maxDiff, maxOfArray, "Max of max min differences between groups per node"));
+          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "mean", maxDiff, maxOfArray, "Max of max mean differences between groups per node"));
+          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "std", maxDiff, maxOfArray, "Max of max standard-deviation differences between groups per node"));
+
+          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, minOfArray, "Min of min median differences between groups per node"));
+          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "max", minDiff, minOfArray, "Min of min max differences between groups per node"));
+          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "min", minDiff, minOfArray, "Min of min min differences between groups per node"));
+          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "mean", minDiff, minOfArray, "Min of min mean differences between groups per node"));
+          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "std", minDiff, minOfArray, "Min of min standard-deviation differences between groups per node"));
+
+
           //strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, maxOfArray, "Max of min median differences between groups per node"));
           //groups.forEach(function (group) {
           //  strategies.push(new GroupMedianSortingStrategy(dataset.toString(), group.toString()));
