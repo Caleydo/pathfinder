@@ -3,6 +3,14 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
     var SortingStrategy = sorting.SortingStrategy;
 
+    /**
+     * Sort by stats for the whole dataset or a whole group.
+     *
+     * @param datasetId
+     * @param stat
+     * @param groupId
+     * @constructor
+     */
     function OverallStatsSortingStrategy(datasetId, stat, groupId) {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetId + ": " + stat, "OVERALL_STATS");
       this.datasetId = datasetId;
@@ -13,13 +21,52 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
     OverallStatsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
     OverallStatsSortingStrategy.prototype.compare = function (a, b) {
-      var statsA = this.groupId ? getPathGroupStats(a.path, this.datasetId, this.groupId) : getPathDatasetStats(a.path, this.datasetId);
-      var statsB = this.groupId ? getPathGroupStats(b.path, this.datasetId, this.groupId) : getPathDatasetStats(b.path, this.datasetId);
+      var scoreA = this.getScore(a.path, this.datasetId, this.groupId);
+      var scoreB = this.getScore(b.path, this.datasetId, this.groupId);
       if (this.ascending) {
-        return d3.ascending(statsA[this.stat], statsB[this.stat]);
+        return d3.ascending(scoreA, scoreB);
       }
-      return d3.descending(statsA[this.stat], statsB[this.stat]);
+      return d3.descending(scoreA, scoreB);
     };
+
+    OverallStatsSortingStrategy.prototype.getScore = function (path, datasetId, groupId) {
+      return groupId ? getPathGroupStats(path, datasetId, groupId)[this.stat] : getPathDatasetStats(path, datasetId)[this.stat];
+    };
+
+    /**
+     * Sort by stats of individual nodes.
+     *
+     * @param datasetId
+     * @param stat
+     * @param aggregateFunction
+     * @param label
+     * @param groupId
+     * @constructor
+     */
+    function PerNodeStatsSortingStrategy(datasetId, stat, aggregateFunction, label, groupId) {
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetId + ": " + label, "PER_NODE_STATS");
+      this.datasetId = datasetId;
+      this.groupId = groupId;
+      this.stat = stat;
+      this.aggrgateFunction = aggregateFunction;
+    }
+
+    PerNodeStatsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+
+    PerNodeStatsSortingStrategy.prototype.compare = function (a, b) {
+      var scoreA = this.getScore(a.path, this.datasetId, this.groupId);
+      var scoreB = this.getScore(b.path, this.datasetId, this.groupId);
+
+      if (this.ascending) {
+        return d3.ascending(scoreA, scoreB);
+      }
+      return d3.descending(scoreA, scoreB);
+    };
+
+    PerNodeStatsSortingStrategy.prototype.getScore = function (path, datasetId, groupId) {
+      return aggregateStats(getPerNodeStatsWithinGroup(path, datasetId, groupId), this.stat, this.aggrgateFunction);
+    };
+
 
     function MaxMedianSortingStrategy(datasetName) {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + ": Max Median");
@@ -68,7 +115,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
     function PerNodeBetweenGroupsSortingStrategy(datasetName, statsProperty, betweenGroupsAggregateFunction, nodeAggregateFunction, label) {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + ": " + label);
       this.dataset = datasetName;
-      this.statsProperty = statsProperty;
+      this.stat = statsProperty;
       this.betweenGroupsAggregateFunction = betweenGroupsAggregateFunction;
       this.nodeAggregateFunction = nodeAggregateFunction;
     }
@@ -77,8 +124,8 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
     PerNodeBetweenGroupsSortingStrategy.prototype.compare = function (a, b) {
 
-      var scoreA = this.nodeAggregateFunction(getPerNodeAggregatesBetweenGroups(this.dataset, a.path, this.statsProperty, this.betweenGroupsAggregateFunction));
-      var scoreB = this.nodeAggregateFunction(getPerNodeAggregatesBetweenGroups(this.dataset, b.path, this.statsProperty, this.betweenGroupsAggregateFunction));
+      var scoreA = this.nodeAggregateFunction(getPerNodeAggregatesBetweenGroups(this.dataset, a.path, this.stat, this.betweenGroupsAggregateFunction));
+      var scoreB = this.nodeAggregateFunction(getPerNodeAggregatesBetweenGroups(this.dataset, b.path, this.stat, this.betweenGroupsAggregateFunction));
 
       if (this.ascending) {
         return d3.ascending(scoreA, scoreB);
@@ -86,26 +133,6 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       return d3.descending(scoreA, scoreB);
     };
 
-    function PerNodeWithinGroupSortingStrategy(datasetName, groupName, statsProperty, aggregateFunction, label) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetName + " - " + groupName + ": " + label);
-      this.dataset = datasetName;
-      this.group = groupName;
-      this.statsProperty = statsProperty;
-      this.aggrgateFunction = aggregateFunction;
-    }
-
-    PerNodeWithinGroupSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
-
-    PerNodeWithinGroupSortingStrategy.prototype.compare = function (a, b) {
-      var scoreA = aggregateStats(getPerNodeStatsWithinGroup(this.dataset, this.group, a.path), this.statsProperty, this.aggrgateFunction);
-      var scoreB = aggregateStats(getPerNodeStatsWithinGroup(this.dataset, this.group, b.path), this.statsProperty, this.aggrgateFunction);
-
-
-      if (this.ascending) {
-        return d3.ascending(scoreA, scoreB);
-      }
-      return d3.descending(scoreA, scoreB);
-    };
 
     function maxOfArray(arr) {
       return Math.max.apply(null, arr);
@@ -148,7 +175,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       var allStatsPerNode = {};
       var groups = Object.keys(allData[dataset.toString()].groups);
       groups.forEach(function (group) {
-        var allGroupStats = getPerNodeStatsWithinGroup(dataset, group, path);
+        var allGroupStats = getPerNodeStatsWithinGroup(path, dataset, group);
         allGroupStats.forEach(function (stats, i) {
           var allStats = allStatsPerNode[i.toString()];
           if (typeof allStats === "undefined") {
@@ -169,12 +196,15 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
     }
 
-    function getPerNodeStatsWithinGroup(dataset, group, path) {
+    function getPerNodeStatsWithinGroup(path, dataset, group) {
 
       var allStats = [];
 
       path.nodes.forEach(function (node) {
-        allStats.push(getStatsForNode(node, dataset, group));
+        var stats = getStatsForNode(node, dataset, group);
+        if (stats) {
+          allStats.push(stats);
+        }
       });
 
       return allStats;
@@ -738,11 +768,25 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
           strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "min"));
           strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "mean"));
           strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "std"));
+
+          strategies.push(new PerNodeStatsSortingStrategy(dataset, "median", maxOfArray, "Max median per node"));
+          strategies.push(new PerNodeStatsSortingStrategy(dataset, "max", maxOfArray, "Max max per node"));
+          strategies.push(new PerNodeStatsSortingStrategy(dataset, "min", maxOfArray, "Max min per node"));
+          strategies.push(new PerNodeStatsSortingStrategy(dataset, "mean", maxOfArray, "Max mean per node"));
+          strategies.push(new PerNodeStatsSortingStrategy(dataset, "std", maxOfArray, "Max standard-deviation per node"));
+
+          strategies.push(new PerNodeStatsSortingStrategy(dataset, "median", minOfArray, "Min median per node"));
+          strategies.push(new PerNodeStatsSortingStrategy(dataset, "max", minOfArray, "Min max per node"));
+          strategies.push(new PerNodeStatsSortingStrategy(dataset, "min", minOfArray, "Min min per node"));
+          strategies.push(new PerNodeStatsSortingStrategy(dataset, "mean", minOfArray, "Min mean per node"));
+          strategies.push(new PerNodeStatsSortingStrategy(dataset, "std", minOfArray, "Min standard-deviation per node"));
+
+
           //strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", maxDiff, maxOfArray, "Max of max median differences between groups per node"));
           //strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, maxOfArray, "Max of min median differences between groups per node"));
           //groups.forEach(function (group) {
           //  strategies.push(new GroupMedianSortingStrategy(dataset.toString(), group.toString()));
-          //  strategies.push(new PerNodeWithinGroupSortingStrategy(dataset, group, "median", maxOfArray, "Max median per node"));
+
           //});
         });
 

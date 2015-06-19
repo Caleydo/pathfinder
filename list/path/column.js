@@ -478,25 +478,25 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       });
   };
 
-  function getPathDatasetStatsValueRange(pathWrappers, dataset, stat) {
+  function getPathDataScoreValueRange(pathWrappers, dataset, sortingStrategy) {
     var max = Number.NEGATIVE_INFINITY;
     var min = Number.POSITIVE_INFINITY;
 
     pathWrappers.forEach(function (pathWrapper) {
-      var median = dataStore.getPathDatasetStats(pathWrapper.path, dataset.id)[stat];
-      if (median > max) {
-        max = median;
+      var score = sortingStrategy.getScore(pathWrapper.path, dataset.id);
+      if (score > max) {
+        max = score;
       }
-      if (median < min) {
-        min = median;
+      if (score < min) {
+        min = score;
       }
       dataset.children.forEach(function (group) {
-        var median = dataStore.getPathGroupStats(pathWrapper.path, dataset.id, group.name)[stat];
-        if (median > max) {
-          max = median;
+        var score = sortingStrategy.getScore(pathWrapper.path, dataset.id, group.name);
+        if (score > max) {
+          max = score;
         }
-        if (median < min) {
-          min = median;
+        if (score < min) {
+          min = score;
         }
       })
 
@@ -527,10 +527,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       }
     }
 
-    var valueRange = getPathDatasetStatsValueRange(pathWrappers, dataset, column.sortingStrategy.stat);
+    var valueRange = getPathDataScoreValueRange(pathWrappers, dataset, column.sortingStrategy);
     var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range([0, column.getWidth()]);
 
-    var stat = dataStore.getPathDatasetStats(pathWrapper.path, dataset.id)[column.sortingStrategy.stat];
+    var score = column.sortingStrategy.getScore(pathWrapper.path, dataset.id);
 
     var posY = 0;
     var datasetWrappers = pathWrapper.datasets;
@@ -551,10 +551,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     var bar = datasetGroup.append("rect")
       .classed("datasetMedian", true)
       .attr({
-        x: stat < 0 ? barScale(stat) : barScale(0),
+        x: score < 0 ? barScale(score) : barScale(0),
         y: (dataset.getBaseHeight() - BAR_SIZE) / 2,
         fill: (typeof groupId === "undefined") ? "gray" : "rgb(180, 180,180)",
-        width: Math.abs(barScale(0) - barScale(stat)),
+        width: Math.abs(barScale(0) - barScale(score)),
         height: BAR_SIZE
       })
       .on("dblclick", function (d) {
@@ -566,7 +566,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       });
 
     bar.append("title")
-      .text(column.sortingStrategy.stat + ":" + stat);
+      .text(column.sortingStrategy.stat + ":" + score);
 
   };
 
@@ -585,10 +585,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       }
     }
 
-    var valueRange = getPathDatasetStatsValueRange(pathWrappers, dataset, column.sortingStrategy.stat);
+    var valueRange = getPathDataScoreValueRange(pathWrappers, dataset, column.sortingStrategy);
     var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range([0, column.getWidth()]);
 
-    var stat = dataStore.getPathDatasetStats(pathWrapper.path, dataset.id)[column.sortingStrategy.stat];
+    var score = column.sortingStrategy.getScore(pathWrapper.path, dataset.id);
 
     var posY = 0;
     var datasetWrappers = pathWrapper.datasets;
@@ -609,10 +609,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     datasetGroup.select("rect.datasetMedian")
       .transition()
       .attr({
-        x: stat < 0 ? barScale(stat) : barScale(0),
+        x: score < 0 ? barScale(score) : barScale(0),
         y: (dataset.getBaseHeight() - BAR_SIZE) / 2,
         fill: (typeof groupId === "undefined") ? "gray" : "rgb(180, 180,180)",
-        width: Math.abs(barScale(0) - barScale(stat))
+        width: Math.abs(barScale(0) - barScale(score))
       });
 
     //if (dataset.collapsed) {
@@ -630,7 +630,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       .classed("groupMedian", true)
       .each(function (group, index) {
 
-        var stat = dataStore.getPathGroupStats(pathWrapper.path, dataset.id, group.name)[column.sortingStrategy.stat];
+        var score = column.sortingStrategy.getScore(pathWrapper.path, dataset.id, group.name);
 
         var posY = dataset.getBaseHeight();
         var groups = dataset.getVisibleChildren();
@@ -641,10 +641,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         }
 
         d3.select(this).attr({
-          x: stat < 0 ? barScale(stat) : barScale(0),
+          x: score < 0 ? barScale(score) : barScale(0),
           y: (group.getBaseHeight() - SMALL_BAR_SIZE) / 2,
           fill: groupId === group.name ? "gray" : "rgb(180, 180,180)",
-          width: Math.abs(barScale(0) - barScale(stat)),
+          width: Math.abs(barScale(0) - barScale(score)),
           height: SMALL_BAR_SIZE,
           transform: "translate(0," + posY + ")"
         })
@@ -658,12 +658,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           });
 
         d3.select(this).append("title")
-          .text(column.sortingStrategy.stat + ": " + stat);
+          .text(column.sortingStrategy.stat + ": " + score);
 
       });
 
     allGroupBars.each(function (group, index) {
-      var stat = dataStore.getPathGroupStats(pathWrapper.path, dataset.id, group.name)[column.sortingStrategy.stat];
+      var score = column.sortingStrategy.getScore(pathWrapper.path, dataset.id, group.name);
 
       var posY = dataset.getBaseHeight();
       var groups = dataset.getVisibleChildren();
@@ -675,10 +675,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
 
       d3.select(this).attr({
-        x: stat < 0 ? barScale(stat) : barScale(0),
+        x: score < 0 ? barScale(score) : barScale(0),
         y: (group.getBaseHeight() - SMALL_BAR_SIZE) / 2,
         fill: groupId === group.name ? "gray" : "rgb(180, 180,180)",
-        width: Math.abs(barScale(0) - barScale(stat)),
+        width: Math.abs(barScale(0) - barScale(score)),
         transform: "translate(0," + posY + ")"
       });
     });
@@ -711,6 +711,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       this.pathList = pathList;
       this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = new PathLengthRenderer();
       this.itemRenderers["OVERALL_STATS"] = new StatRenderer();
+      this.itemRenderers["PER_NODE_STATS"] = new StatRenderer();
 
       var that = this;
       var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
