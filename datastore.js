@@ -736,6 +736,8 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
           strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "median"));
           strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "max"));
           strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "min"));
+          strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "mean"));
+          strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "std"));
           //strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", maxDiff, maxOfArray, "Max of max median differences between groups per node"));
           //strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, maxOfArray, "Max of min median differences between groups per node"));
           //groups.forEach(function (group) {
