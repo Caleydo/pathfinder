@@ -27,9 +27,16 @@ define(["../../listeners"], function (listeners) {
       COLLAPSE_ELEMENT_TYPE: "COLLAPSE_ELEMENT_TYPE"
     },
 
-    setStickyDataGroup: function (datasetId, groupId, sticky) {
+    incStickyDataGroupOwners: function (datasetId, groupId) {
       stickyDataGroup[datasetId] = stickyDataGroup[datasetId] || {};
-      stickyDataGroup[datasetId][groupId] = sticky;
+      stickyDataGroup[datasetId][groupId] = stickyDataGroup[datasetId][groupId] || 0;
+      stickyDataGroup[datasetId][groupId]++;
+    },
+
+    decStickyDataGroupOwners: function (datasetId, groupId) {
+      stickyDataGroup[datasetId] = stickyDataGroup[datasetId] || {};
+      stickyDataGroup[datasetId][groupId] = stickyDataGroup[datasetId][groupId] || 0;
+      stickyDataGroup[datasetId][groupId] = Math.max(stickyDataGroup[datasetId][groupId] - 1, 0);
     },
 
     isDataGroupSticky: function (datasetId, groupId) {
@@ -37,7 +44,7 @@ define(["../../listeners"], function (listeners) {
       if (!stickyDataGroup[datasetId][groupId]) {
         return false;
       }
-      return stickyDataGroup[datasetId][groupId];
+      return stickyDataGroup[datasetId][groupId] > 0;
     },
 
     alignPathNodes: function (align) {

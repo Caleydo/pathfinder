@@ -240,6 +240,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
   Column.prototype = {
     setSortingStrategy: function (sortingStrategy) {
+      if (this.itemRenderer) {
+        this.itemRenderer.destroy(this);
+      }
       this.sortingStrategy = sortingStrategy;
       this.itemRenderer = this.columnManager.itemRenderers[sortingStrategy.id] || new PathItemRenderer();
       d3.selectAll("g.columnItem" + this.id).remove();
@@ -404,6 +407,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     //},
 
     destroy: function () {
+      this.itemRenderer.destroy(this);
       if (this.header) {
         this.headerElement.remove();
       }
@@ -427,6 +431,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     },
 
     update: function (item, pathWrapper, index, pathWrappers) {
+
+    },
+
+    destroy: function (column) {
 
     }
   };
@@ -545,9 +553,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         height: BAR_SIZE
       })
       .on("dblclick", function (d) {
-        dataset.children.forEach(function (g) {
-          s.setStickyDataGroup(dataset.id, g.name, false);
-        });
+        if (column.sortingStrategy.groupId) {
+          s.decStickyDataGroupOwners(dataset.id, column.sortingStrategy.groupId);
+        }
         delete column.sortingStrategy.groupId;
         listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
       });
@@ -636,12 +644,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           transform: "translate(0," + posY + ")"
         })
           .on("dblclick", function (d) {
-            dataset.children.forEach(function (g) {
-              s.setStickyDataGroup(dataset.id, g.name, false);
-            });
-            s.setStickyDataGroup(dataset.id, group.name, true);
+            if (column.sortingStrategy.groupId) {
+              s.decStickyDataGroupOwners(dataset.id, column.sortingStrategy.groupId);
+            }
+            s.incStickyDataGroupOwners(dataset.id, group.name);
             column.sortingStrategy.groupId = group.name;
-            group.permanentlyVisible = true;
             listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
           });
 
@@ -672,6 +679,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     });
 
     allGroupBars.exit().remove();
+  };
+
+  StatRenderer.prototype.destroy = function (column) {
+    if (column.sortingStrategy.groupId) {
+      s.decStickyDataGroupOwners(column.sortingStrategy.datasetId, column.sortingStrategy.groupId);
+    }
   };
 
   //----------------------
