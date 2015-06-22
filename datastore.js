@@ -16,21 +16,22 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       this.datasetId = datasetId;
       this.groupId = groupId;
       this.stat = stat;
+      this.supportsScoresPerGroup = true;
     }
 
     OverallStatsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
     OverallStatsSortingStrategy.prototype.compare = function (a, b) {
-      var scoreA = this.getScore(a.path, this.datasetId, this.groupId);
-      var scoreB = this.getScore(b.path, this.datasetId, this.groupId);
+      var scoreA = this.getScoreInfo(a.path, this.datasetId, this.groupId).score;
+      var scoreB = this.getScoreInfo(b.path, this.datasetId, this.groupId).score;
       if (this.ascending) {
         return d3.ascending(scoreA, scoreB);
       }
       return d3.descending(scoreA, scoreB);
     };
 
-    OverallStatsSortingStrategy.prototype.getScore = function (path, datasetId, groupId) {
-      return groupId ? getPathGroupStats(path, datasetId, groupId)[this.stat] : getPathDatasetStats(path, datasetId)[this.stat];
+    OverallStatsSortingStrategy.prototype.getScoreInfo = function (path, datasetId, groupId) {
+      return {score: groupId ? getPathGroupStats(path, datasetId, groupId)[this.stat] : getPathDatasetStats(path, datasetId)[this.stat]};
     };
 
     /**
@@ -48,14 +49,15 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       this.datasetId = datasetId;
       this.groupId = groupId;
       this.stat = stat;
-      this.aggrgateFunction = aggregateFunction;
+      this.aggregateFunction = aggregateFunction;
+      this.supportsScoresPerGroup = true;
     }
 
     PerNodeStatsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
     PerNodeStatsSortingStrategy.prototype.compare = function (a, b) {
-      var scoreA = this.getScore(a.path, this.datasetId, this.groupId);
-      var scoreB = this.getScore(b.path, this.datasetId, this.groupId);
+      var scoreA = this.getScoreInfo(a.path, this.datasetId, this.groupId).score;
+      var scoreB = this.getScoreInfo(b.path, this.datasetId, this.groupId).score;
 
       if (this.ascending) {
         return d3.ascending(scoreA, scoreB);
@@ -63,8 +65,15 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       return d3.descending(scoreA, scoreB);
     };
 
-    PerNodeStatsSortingStrategy.prototype.getScore = function (path, datasetId, groupId) {
-      return aggregateStats(getPerNodeStatsWithinGroup(path, datasetId, groupId), this.stat, this.aggrgateFunction);
+    PerNodeStatsSortingStrategy.prototype.getScoreInfo = function (path, datasetId, groupId) {
+      var desc = aggregateStats(getPerNodeStatsWithinGroup(path, datasetId, groupId), this.stat, this.aggregateFunction, function (el) {
+        return el.stats;
+      });
+
+      return {
+        node: desc.node,
+        score: desc.stats[this.stat]
+      };
     };
 
 
@@ -76,23 +85,23 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
      * @param datasetId
      * @param stat
      * @param betweenGroupsAggregateFunction
-     * @param nodeAggregateFunction
      * @param label
      * @constructor
      */
     function OverallBetweenGroupsSortingStrategy(datasetId, stat, betweenGroupsAggregateFunction, label) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetId + ": " + label);
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetId + ": " + label, "OVERALL_BETWEEN_GROUPS_STATS");
       this.datasetId = datasetId;
       this.stat = stat;
       this.betweenGroupsAggregateFunction = betweenGroupsAggregateFunction;
+      this.supportsScoresPerGroup = false;
     }
 
     OverallBetweenGroupsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
     OverallBetweenGroupsSortingStrategy.prototype.compare = function (a, b) {
 
-      var scoreA = this.getScore(a.path, this.datasetId);
-      var scoreB = this.getScore(a.path, this.datasetId);
+      var scoreA = this.getScoreInfo(a.path, this.datasetId).score;
+      var scoreB = this.getScoreInfo(b.path, this.datasetId).score;
 
       if (this.ascending) {
         return d3.ascending(scoreA, scoreB);
@@ -100,8 +109,13 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       return d3.descending(scoreA, scoreB);
     };
 
-    OverallBetweenGroupsSortingStrategy.prototype.getScore = function (path, datasetId) {
-      return getAggregatesBetweenGroups(datasetId, path, this.stat, this.betweenGroupsAggregateFunction);
+    OverallBetweenGroupsSortingStrategy.prototype.getScoreInfo = function (path, datasetId) {
+      var desc = getAggregatesBetweenGroups(datasetId, path, this.stat, this.betweenGroupsAggregateFunction);
+      return {
+        group1: desc.el1.group,
+        group2: desc.el2.group,
+        score: desc.diff
+      }
     };
 
 
@@ -115,19 +129,20 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
      * @constructor
      */
     function PerNodeBetweenGroupsSortingStrategy(datasetId, stat, betweenGroupsAggregateFunction, nodeAggregateFunction, label) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetId + ": " + label);
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, datasetId + ": " + label, "PER_NODE_BETWEEN_GROUPS_STATS");
       this.datasetId = datasetId;
       this.stat = stat;
       this.betweenGroupsAggregateFunction = betweenGroupsAggregateFunction;
       this.nodeAggregateFunction = nodeAggregateFunction;
+      this.supportsScoresPerGroup = false;
     }
 
     PerNodeBetweenGroupsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
     PerNodeBetweenGroupsSortingStrategy.prototype.compare = function (a, b) {
 
-      var scoreA = this.getScore(a.path, this.datasetId);
-      var scoreB = this.getScore(a.path, this.datasetId);
+      var scoreA = this.getScoreInfo(a.path, this.datasetId).score;
+      var scoreB = this.getScoreInfo(b.path, this.datasetId).score;
 
       if (this.ascending) {
         return d3.ascending(scoreA, scoreB);
@@ -135,42 +150,79 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       return d3.descending(scoreA, scoreB);
     };
 
-    PerNodeBetweenGroupsSortingStrategy.prototype.getScore = function (path, datasetId) {
-      return this.nodeAggregateFunction(getPerNodeAggregatesBetweenGroups(datasetId, path, this.stat, this.betweenGroupsAggregateFunction));
+    PerNodeBetweenGroupsSortingStrategy.prototype.getScoreInfo = function (path, datasetId) {
+      var desc = this.nodeAggregateFunction(getPerNodeAggregatesBetweenGroups(datasetId, path, this.stat, this.betweenGroupsAggregateFunction), function (el) {
+        return el.diff;
+      });
+      return {
+        group1: desc.el1.group,
+        group2: desc.el2.group,
+        node: desc.el1.node,
+        score: desc.diff
+      };
     };
 
 
-    function maxOfArray(arr) {
-      return Math.max.apply(null, arr);
+    function maxOfArray(arr, accessor) {
+
+      var max = Number.NEGATIVE_INFINITY;
+      var maxEl = null;
+
+      arr.forEach(function (el) {
+        var val = accessor ? accessor(el) : el;
+        if (max < val) {
+          max = val;
+          maxEl = el;
+        }
+      });
+
+      return maxEl;
     }
 
-    function minOfArray(arr) {
-      return Math.min.apply(null, arr);
+    function minOfArray(arr, accessor) {
+      var min = Number.POSITIVE_INFINITY;
+      var minEl = null;
+
+      arr.forEach(function (el) {
+        var val = accessor ? accessor(el) : el;
+        if (min > val) {
+          min = val;
+          minEl = el;
+        }
+      });
+
+      return minEl;
     }
 
-    function mean(arr) {
+    function mean(arr, accessor) {
       var sum = 0;
       arr.forEach(function (el) {
-        sum += el;
+        sum += accessor ? accessor(el) : el;
       });
       return sum / arr.length;
     }
 
-    function maxDiff(arr) {
-      return maxOfArray(diffsOfArray(arr));
+    function maxDiff(arr, accessor) {
+      return maxOfArray(diffsOfArray(arr, accessor), function (el) {
+        return el.diff;
+      });
     }
 
-    function minDiff(arr) {
-      return minOfArray(diffsOfArray(arr));
+    function minDiff(arr, accessor) {
+      return minOfArray(diffsOfArray(arr, accessor), function (el) {
+        return el.diff;
+      });
     }
 
-    function diffsOfArray(arr) {
+    function diffsOfArray(arr, accessor) {
       var diffs = [];
 
       arr.forEach(function (el, i) {
         arr.forEach(function (e, j) {
           if (i !== j) {
-            diffs.push(Math.abs(el - e));
+            var val1 = accessor ? accessor(el) : el;
+            var val2 = accessor ? accessor(e) : e;
+            diffs.push({el1: el, el2: e, diff: Math.abs(val1 - val2)});
           }
         });
       });
@@ -183,11 +235,13 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       groups.forEach(function (groupId) {
         var stats = getPathGroupStats(path, datasetId, groupId);
         if (stats) {
-          allStats.push(stats);
+          allStats.push({group: groupId, stats: stats});
         }
 
       });
-      return aggregateStats(allStats, stat, aggregateFunction);
+      return aggregateStats(allStats, stat, aggregateFunction, function (el) {
+        return el.stats;
+      });
     }
 
     function getPerNodeAggregatesBetweenGroups(dataset, path, statsProperty, aggregateFunction) {
@@ -208,7 +262,9 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
       Object.keys(allStatsPerNode).forEach(function (key) {
         var statsPerNode = allStatsPerNode[key];
-        nodeAggregates.push(aggregateStats(statsPerNode, statsProperty, aggregateFunction));
+        nodeAggregates.push(aggregateStats(statsPerNode, statsProperty, aggregateFunction, function (el) {
+          return el.stats;
+        }));
       });
 
       return nodeAggregates;
@@ -222,25 +278,27 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       path.nodes.forEach(function (node) {
         var stats = getStatsForNode(node, dataset, group);
         if (stats) {
-          allStats.push(stats);
+          allStats.push({group: group, node: node, stats: stats});
         }
       });
 
       return allStats;
     }
 
-    function aggregateStats(statsArray, statsProperty, aggregateFunction) {
-
+    function aggregateStats(arr, statsProperty, aggregateFunction, accessor) {
       var elementsToAggregate = [];
 
-      statsArray.forEach(function (stats) {
-        var el = stats[statsProperty];
-        if (typeof el !== "undefined" && !isNaN(el)) {
-          elementsToAggregate.push(el);
+      arr.forEach(function (e) {
+
+        var stat = accessor ? accessor(e)[statsProperty] : e[statsProperty];
+        if (typeof stat !== "undefined" && !isNaN(stat)) {
+          elementsToAggregate.push(e);
         }
       });
 
-      return aggregateFunction(elementsToAggregate);
+      return aggregateFunction(elementsToAggregate, function (el) {
+        return accessor ? accessor(el)[statsProperty] : el[statsProperty];
+      });
     }
 
 
