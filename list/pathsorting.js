@@ -1,4 +1,5 @@
-define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '../query/pathquery'], function (sorting, pathUtil, q, listeners, pathQuery) {
+define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../listeners', '../query/pathquery', '../datastore'],
+  function ($, sorting, pathUtil, q, listeners, pathQuery, dataStore) {
     var SortingStrategy = sorting.SortingStrategy;
 
     //TODO: fetch amount of sets from server
@@ -15,6 +16,10 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
         return d3.ascending(a.path.edges.length, b.path.edges.length);
       }
       return d3.descending(a.path.edges.length, b.path.edges.length);
+    };
+
+    PathLengthSortingStrategy.prototype.getScore = function (path) {
+      return path.edges.length;
     };
 
 
@@ -64,10 +69,10 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
       var pathPresentA = 0;
       var pathPresentB = 0;
       this.pathIds.forEach(function (pathId) {
-        if(a.path.id === pathId) {
+        if (a.path.id === pathId) {
           pathPresentA = 1;
         }
-        if(b.path.id === pathId) {
+        if (b.path.id === pathId) {
           pathPresentB = 1;
         }
       });
@@ -116,7 +121,7 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
 
 
     function SetPresenceSortingStrategy(setIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Selected sets" , "SELECTED_SETS");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Selected sets", "SELECTED_SETS");
       this.ascending = false;
       this.setIds = setIds;
 
@@ -223,6 +228,29 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
 
     };
 
+    var currentCustomStratId = 0;
+
+    function CustomSortingStrategy(userScoreFunction, label) {
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.UNKNOWN, label, "CUSTOM_" + (currentCustomStratId++));
+      this.userScoreFunction = userScoreFunction;
+    }
+
+    CustomSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+    CustomSortingStrategy.prototype.compare = function (a, b) {
+
+      var scoreA = this.getScore(a.path);
+      var scoreB = this.getScore(b.path);
+      if (this.ascending) {
+        return d3.ascending(scoreA, scoreB);
+      }
+      return d3.descending(scoreA, scoreB);
+    };
+
+    CustomSortingStrategy.prototype.getScore = function (path) {
+      return this.userScoreFunction(path, dataStore.getDataSets(), (pathUtil.getAllSetInfosForNode).bind(pathUtil), (dataStore.getDataForNode).bind(dataStore), (dataStore.getStatsForNode).bind(dataStore));
+    };
+
+
     var sortingManager = new sorting.SortingManager(true);
 
     var sortingStrategies = {
@@ -281,12 +309,60 @@ define(['./../sorting', '../pathutil', '../query/querymodel', '../listeners', '.
 
 
     return {
+      customSortingStrategies: [],
+
       init: function () {
+        var that = this;
         listeners.add(function (query) {
           //sortingStrategies.pathQueryStrategy.setQuery(query.getQuery());
           //sortingManager.addOrReplace(sortingStrategies.getPathQueryStrategy(query.getQuery()));
           listeners.notify("UPDATE_PATH_SORTING", sortingManager.currentComparator);
         }, listeners.updateType.QUERY_UPDATE);
+
+        $("#addRanking").click(function () {
+          $("#scriptText").val("var getScore = function(path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {\n" +
+            "//insert code here\n" +
+            "return 0;\n}");
+
+          $("#rankScriptModal").modal("show");
+        });
+
+        $("#rankScriptConfirm").click(function () {
+
+          var rankScript = $("#scriptText").val();
+          var label = $("#customScriptTitle").val();
+          eval(rankScript);
+
+          if(getScore) {
+            that.customSortingStrategies.push(new CustomSortingStrategy(getScore, label));
+            listeners.notify("CUSTOM_SORTING_STRATEGY_UPDATE", that.customSortingStrategies);
+          }
+
+          //var getScore = function (path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {
+          //  var numSets = 0;
+          //  path.nodes.forEach(function (node) {
+          //    var sets = getSetsForNode(node);
+          //    if (sets) {
+          //      numSets += sets.length;
+          //    }
+          //  });
+          //
+          //  return numSets;
+          //};
+
+
+
+
+
+          //if ($("#startOffsetButton").prop("checked")) {
+          //  that.setPosition(parseInt($("#startOffsetInput").val(), 10));
+          //} else if ($("#endOffsetButton").prop("checked")) {
+          //  that.setPosition(-(1 + parseInt($("#endOffsetInput").val(), 10)));
+          //} else {
+          //  that.removePosition();
+          //}
+          //$("#positionConfirm").off("click");
+        });
       },
 
       sortingManager: sortingManager,

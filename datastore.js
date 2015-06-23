@@ -350,16 +350,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       return stats;
     }
 
-    function getStatsForNode(node, dataset, group) {
-
-      //var stats = allStats[dataset][group][node.id.toString()];
-      //
-      //if (typeof stats === "undefined") {
-      //  var data = getDataForNode(node, dataset, group);
-      //  stats = statisticsUtil.statisticsOf(data);
-      //  allStats[dataset][group][node.id.toString()] = stats;
-      //}
-
+    function getDataPropertyForNode(property, node, dataset, group) {
       var nodeId = getMappingIdForDataset(node, dataset);
 
       if (typeof nodeId !== "undefined") {
@@ -367,15 +358,19 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
           if (!allDatasets[dataset] || !allDatasets[dataset][nodeId]) {
             return;
           }
-          return allDatasets[dataset][nodeId].stats;
+          return allDatasets[dataset][nodeId][property];
         } else {
 
           if (!allDatasets[dataset] || !allDatasets[dataset].groups[group] || !allDatasets[dataset].groups[group][nodeId]) {
             return;
           }
-          return allDatasets[dataset].groups[group][nodeId].stats;
+          return allDatasets[dataset].groups[group][nodeId][property];
         }
       }
+    }
+
+    function getStatsForNode(node, dataset, group) {
+      return getDataPropertyForNode("stats", node, dataset, group);
     }
 
     function getMappingIdForDataset(node, dataset) {
@@ -393,22 +388,8 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       }
     }
 
-    function getDataForNode(node, dataset, group) {
-
-      //var d = allData[dataset];
-      //var g = d.groups[group];
-      //
-      //var data = g[node.id.toString()] || createRandomData(-10, 10, 10);
-
-      var nodeId = getMappingIdForDataset(node, dataset);
-
-      if (typeof nodeId !== "undefined") {
-        if (!allDatasets[dataset] || !allDatasets[dataset].groups[group] || !allDatasets[dataset].groups[group][nodeId] || !allDatasets[dataset].groups[group][nodeId].data) {
-          return;
-        }
-        return allDatasets[dataset].groups[group][nodeId].data;
-      }
-
+    function getDataForNode(node, dataset, group, property) {
+      return getDataPropertyForNode("data", node, dataset, group);
     }
 
     function pathExists(path) {

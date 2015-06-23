@@ -22,6 +22,7 @@
     <input type="checkbox" id="switchGraphLayout"/>
     <label>Switch Graph Layout</label>
     <input type="button" id="savePaths" value="Save Paths"/>
+    <input type="button" id="addRanking" value="Add Custom Ranking"/>
     <select id="select_dump" style="display:block"></select>
 
   </header>
@@ -65,6 +66,45 @@
       </div>
     </div>
   </section>
+</div>
+
+
+<div class="modal" id="rankScriptModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+          aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Define Path Score</h4>
+      </div>
+      <div class="modal-body">
+        <label for="customScriptTitle">Title</label><br>
+        <input type="text" id="customScriptTitle" value="Custom Score"><br><br>
+
+        <label for="scriptText">Custom path score function</label><textarea id="scriptText" cols="77"
+                                                                             rows="15"></textarea>
+
+        <!--<form role="form">-->
+        <!--<div class="radio">-->
+        <!--<label for="startOffsetInput"><input type="radio" name="optradio" id="startOffsetButton"/>Start + </label>-->
+        <!--<input type="number" id="startOffsetInput" style="width: 5em; position:absolute; left:70px;" maxlength="3"-->
+        <!--value="1" min="1" required="required">-->
+        <!--</div>-->
+        <!--<div class="radio">-->
+        <!--<label for="endOffsetInput"><input type="radio" name="optradio" id="endOffsetButton"/>End - </label>-->
+        <!--<input type="number" id="endOffsetInput" style="width: 5em; position:absolute; left:70px;" maxlength="3"-->
+        <!--value="1" min="1" required="required">-->
+        <!--</div>-->
+        <!--<div class="radio">-->
+        <!--<label><input type="radio" name="optradio" id="noPositionButton" checked/>None</label>-->
+        <!--</div>-->
+        <!--</form>-->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="rankScriptConfirm" data-dismiss="modal">Ok</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 </body>

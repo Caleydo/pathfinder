@@ -38,7 +38,7 @@ define(['d3', './listeners', './config'], function (d3, listeners, config) {
     getLinkOverlayItem: function (setId) {
 
       var setNode = this.get(setId);
-      if(!setNode) {
+      if (!setNode) {
         return;
       }
       var urlProperty = config.getSetUrlProperty(setNode);
@@ -53,6 +53,10 @@ define(['d3', './listeners', './config'], function (d3, listeners, config) {
           window.open(setNode.properties[urlProperty]);
         }
       };
+    },
+
+    getAllSetInfosForNode: function (node) {
+
     },
 
     get: function (setId) {

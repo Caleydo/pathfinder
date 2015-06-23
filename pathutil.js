@@ -1,4 +1,4 @@
-define(["d3", "./config"], function (d3, config) {
+define(["d3", "./config", "./setinfo"], function (d3, config, setInfo) {
 
   return {
     isNodeSetProperty: function (node, key) {
@@ -42,6 +42,18 @@ define(["d3", "./config"], function (d3, config) {
       });
 
       return setTypes;
+    },
+
+    getAllSetInfosForNode: function (node) {
+      var setInfos = [];
+      this.forEachNodeSet(node, function (setType, setId) {
+        var info = setInfo.get(setId);
+        if (info) {
+          setInfos.push(info);
+        }
+      });
+
+      return setInfos;
     },
 
     forEachNodeSet: function (node, callBack) {

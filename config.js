@@ -70,6 +70,10 @@ define(['d3'], function (d3) {
       return false;
     },
 
+    getSetProperties: function(node) {
+
+    },
+
     getSetTypeFromSetPropertyName: function (id) {
       for (var i = 0; i < config.sets.length; i++) {
         var setConfig = config.sets[i];
