@@ -185,6 +185,19 @@ g.edge {
   }
 }
 
+g.edge.path_hovered line, g.edge.path_hovered path {
+  stroke: $hoverColor;
+  fill: $hoverColor;
+  //  stroke-width: 3px;
+}
+
+g.edge.path_selected line,  g.edge.path_selected path {
+  stroke: $selectionColor;
+  fill: $selectionColor;
+  //  stroke-width: 3px;
+
+}
+
 g.overlayButton {
   text {
     @include textIcon(16px);

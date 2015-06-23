@@ -339,15 +339,15 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
           }
 
           //var getScore = function (path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {
-          //  var numSets = 0;
-          //  path.nodes.forEach(function (node) {
-          //    var sets = getSetsForNode(node);
-          //    if (sets) {
-          //      numSets += sets.length;
-          //    }
-          //  });
-          //
-          //  return numSets;
+            var numSets = 0;
+            path.nodes.forEach(function (node) {
+              var sets = getSetsForNode(node);
+              if (sets) {
+                numSets += sets.length;
+              }
+            });
+
+            return numSets;
           //};
 
 

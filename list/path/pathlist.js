@@ -444,6 +444,42 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           })
         });
         that.updatePathList();
+      };
+
+      this.pathSelectionUpdateListener = function (selectionType) {
+
+        var selectedIds = (selectionUtil.selections["path"])[selectionType];
+
+        //var selectedNodes = {};
+        //var selectedEdges = {};
+        //selectedIds.forEach(function (pathId) {
+        //
+        //  that.pathWrappers.forEach(function(pathWrapper){
+        //    var path = pathWrapper.path;
+        //    if (path.id === pathId) {
+        //      path.nodes.forEach(function (node) {
+        //        selectedNodes[node.id.toString()] = true;
+        //      });
+        //      path.edges.forEach(function (edge) {
+        //        selectedEdges[edge.id.toString()] = true;
+        //      });
+        //    }
+        //  });
+        //});
+
+        that.parent.selectAll("g.pathContainer").each(function (pathWrapper) {
+
+          d3.select(this).selectAll("g.node")
+            .classed("path_" + selectionType, function (d) {
+              return (selectedIds.indexOf(pathWrapper.path.id) !== -1);
+            });
+
+          d3.select(this).selectAll("g.edge")
+            .classed("path_" + selectionType, function (d) {
+              return (selectedIds.indexOf(pathWrapper.path.id) !== -1);
+            });
+        });
+
       }
     }
 
@@ -505,6 +541,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.add(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.add(this.sortUpdateListener, pathSorting.updateType);
         listeners.add(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
+
+        selectionUtil.addListener("path", this.pathSelectionUpdateListener);
       },
 
       updatePathWrappersToFilter: function () {
@@ -612,13 +650,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
         this.updateDataBinding();
 
-
         var that = this;
-
-        var nodeSetScale = this.getNodeSetScale();
-        var edgeSetScale = this.getEdgeSetScale();
-
-        var pathContainers = that.parent.selectAll("g.pathContainer").data(that.pathWrappers, getPathKey)
+        that.parent.selectAll("g.pathContainer").data(that.pathWrappers, getPathKey)
           .transition()
           .attr("transform", getPathContainerTransformFunction(this.pathWrappers))
           .style("opacity", function (d) {
@@ -652,6 +685,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.remove(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.remove(this.sortUpdateListener, pathSorting.updateType);
         listeners.remove(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
+
       },
 
       removeGuiElements: function () {
@@ -664,6 +698,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         this.connectionSelectionListener = 0;
         selectionUtil.removeListeners(this.stubSelectionListener);
         this.stubSelectionListener = 0;
+        selectionUtil.removeListeners(this.pathSelectionUpdateListener);
         currentSetTypeId = 0;
 
         if (typeof this.parent === "undefined")
@@ -1736,20 +1771,34 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .append("g")
           .attr("class", "edge");
 
+        edge.append("marker")
+          .attr("id", function (d) {
+            return "arrowRight" + that.pathWrappers[d.pathIndex].path.id + "_" + d.edge.id;
+          })
+          .attr("viewBox", "0 0 10 10")
+          .attr("refX", "9")
+          .attr("refY", "5")
+          .attr("markerUnits", "strokeWidth")
+          .attr("markerWidth", "8")
+          .attr("markerHeight", "6")
+          .attr("orient", "auto")
+          .append("path")
+          .attr("d", "M 0 0 L 10 5 L 0 10 z");
+
         edge.append("line")
           .attr("y1", s.V_SPACING + s.NODE_HEIGHT / 2)
           .attr("y2", s.V_SPACING + s.NODE_HEIGHT / 2)
           .attr("marker-end", function (d, i) {
             if (!config.isNetworkEdge(d.edge))
               return "";
-            return (isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)) ? "url(#arrowRight)" : "";
+            return (isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)) ? "url(#arrowRight" + that.pathWrappers[d.pathIndex].path.id + "_" + d.edge.id + ")" : "";
           })
           .attr("marker-start", function (d, i) {
             if (!config.isNetworkEdge(d.edge))
               return "";
             return ( isSourceNodeLeft(that.pathWrappers[d.pathIndex].path.nodes, d.edge, i)
             )
-              ? "" : "url(#arrowRight)";
+              ? "" : "url(#arrowRight" + that.pathWrappers[d.pathIndex].path.id + "_" + d.edge.id + ")";
           })
           .style({
             "stroke-dasharray": function (d) {
@@ -1843,174 +1892,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         });
 
 
-        //node.append("rect")
-        //  .attr("x", 0)
-        //  .attr("y", 0)
-        //  .attr("rx", 5).attr("ry", 5)
-        //  .attr("width", s.NODE_WIDTH)
-        //  .attr("height", s.NODE_HEIGHT);
-        ////.attr("fill", "rgb(200,200,200)")
-        ////.attr("stroke", "rgb(30,30,30)");
-        //
-        //node.append("text")
-        //  .text(function (d) {
-        //    return d.node.properties[config.getNodeNameProperty(d.node)];
-        //  })
-        //  .attr({
-        //    x: function (d) {
-        //      var text = d.node.properties[config.getNodeNameProperty(d.node)];
-        //      var width = that.listView.getTextWidth(text);
-        //      return s.NODE_WIDTH / 2 + Math.max(-width / 2, -s.NODE_WIDTH / 2 + 3);
-        //    },
-        //    y: +s.NODE_HEIGHT - 5,
-        //
-        //    "clip-path": "url(#pathNodeClipPath)"
-        //  })
-        //  .append("title")
-        //  .text(function (d) {
-        //    return d.node.properties[config.getNodeNameProperty(d.node)];
-        //  });
-
-
         var setGroup = pathContainer.append("g")
           .attr("class", "setGroup");
 
         var datasetGroup = pathContainer.append("g")
           .attr("class", "datasetGroup");
 
-
-        //var allSetTypes = allPathContainers.selectAll("g.setGroup").selectAll("g.setType")
-        //  .data(function (pathWrapper, i) {
-        //    return pathWrapper.setTypes.map(function (mySetType) {
-        //      return {setType: mySetType, pathIndex: i};
-        //    });
-        //  });
-        //
-        //
-        //var setType = allSetTypes.enter()
-        //    .append("g")
-        //    .classed("setType", true)
-        //    .attr({
-        //      display: function (d) {
-        //
-        //        if (d.setType.canBeShown()) {
-        //          return "inline";
-        //        }
-        //        return "none";
-        //      },
-        //      transform: getSetTypeTransformFunction(that.pathWrappers)
-        //    }
-        //  )
-        //  ;
-        //
-        //setType.append("text")
-        //  .attr("class", "collapseIconSmall");
-        //
-        //allSetTypes.selectAll("text.collapseIconSmall")
-        //  .attr("x", 5)
-        //  .attr("y", s.SET_TYPE_HEIGHT)
-        //  .text(function (d) {
-        //    return d.setType.collapsed ? "\uf0da" : "\uf0dd";
-        //  })
-        //  .on("click", function (d) {
-        //    var collapsed = !d.setType.collapsed;
-        //    if (d3.event.ctrlKey) {
-        //      listeners.notify(s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE, {
-        //        type: d.setType.type,
-        //        collapsed: collapsed
-        //      });
-        //    } else {
-        //      d.setType.collapsed = collapsed;
-        //      d3.select(this).text(d.setType.collapsed ? "\uf0da" : "\uf0dd");
-        //
-        //      that.updatePathList();
-        //
-        //    }
-        //    //updateAggregateList(parent);
-        //  });
-        //
-        //setType.append("text")
-        //  .text(function (d) {
-        //    //var text = d[0].id;
-        //    //return getClampedText(text, 15);
-        //    return config.getSetTypeFromSetPropertyName(d.setType.type);
-        //  })
-        //  .attr("x", 10)
-        //  .attr("y", s.SET_TYPE_HEIGHT)
-        //  .style("fill", function (d) {
-        //    return setInfo.getSetTypeInfo(d.setType.type).color;
-        //  })
-        //  .attr("clip-path", "url(#SetLabelClipPath)");
-        //
-        //var setTypeSummaryContainer = setType.append("g")
-        //  .classed("setTypeSummary", true)
-        //  .attr("display", function (d) {
-        //    return d.setType.collapsed ? "inline" : "none";
-        //  });
-        ////.attr("transform", function (d) {
-        ////  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
-        ////});
-        //
-        //setTypeSummaryContainer.each(function (d, i) {
-        //    d3.select(this).selectAll("circle")
-        //      .data(function () {
-        //        return d.setType.nodeIndices.map(function (index) {
-        //          return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
-        //        });
-        //      })
-        //      .enter()
-        //      .append("circle")
-        //      .attr({
-        //        cx: function (d, i) {
-        //          var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-        //          var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-        //          return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-        //        },
-        //        cy: s.SET_TYPE_HEIGHT / 2,
-        //        r: function (d) {
-        //          var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-        //            that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-        //          return nodeSetScale(numSets);
-        //        },
-        //        fill: function (d) {
-        //          return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-        //        }
-        //      });
-        //
-        //
-        //    d3.select(this).selectAll("line")
-        //      .data(function () {
-        //        return d.setType.relIndices.map(function (index) {
-        //          return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
-        //        });
-        //      })
-        //      .enter()
-        //      .append("line")
-        //      .attr({
-        //        x1: function (d) {
-        //          var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-        //          var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
-        //          return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-        //        }
-        //        ,
-        //        y1: s.SET_TYPE_HEIGHT / 2,
-        //        x2: function (d) {
-        //          var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-        //          var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
-        //          return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-        //        },
-        //        y2: s.SET_TYPE_HEIGHT / 2,
-        //        stroke: function (d) {
-        //          return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-        //        },
-        //        "stroke-width": function (d) {
-        //          var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
-        //            that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-        //          return edgeSetScale(numSets);
-        //        }
-        //      });
-        //  }
-        //);
 
         that.renderSets(allPathContainers);
 

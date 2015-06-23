@@ -31,17 +31,6 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
     ListView.prototype.initImpl = function () {
       view.prototype.init.call(this);
       var svg = d3.select("#pathlist svg");
-      svg.append("marker")
-        .attr("id", "arrowRight")
-        .attr("viewBox", "0 0 10 10")
-        .attr("refX", "9")
-        .attr("refY", "5")
-        .attr("markerUnits", "strokeWidth")
-        .attr("markerWidth", "8")
-        .attr("markerHeight", "6")
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M 0 0 L 10 5 L 0 10 z");
       svg.append("clipPath")
         .attr("id", "SetLabelClipPath")
         .append("rect")
