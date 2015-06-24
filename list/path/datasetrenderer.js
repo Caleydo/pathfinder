@@ -428,7 +428,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
     //var stats = dataStore.getStatsForNode(node, dataset.name, group.name);
 
-    appendBoxPlotH($nodeData, statData.stats, scaleX);
+    appendBoxPlotH($nodeData, statData.stats, scaleX, dataset.color);
   };
 
 
@@ -535,7 +535,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
           transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
         });
 
-        appendBoxPlotV($summaryData, statData.stats, scaleY);
+        appendBoxPlotV($summaryData, statData.stats, scaleY, dataset.color);
       });
 
     allSummaryPlots
@@ -591,7 +591,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     $nodeData.attr({
       transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
     });
-    appendBoxPlotV($nodeData, statData.stats, scaleY);
+    appendBoxPlotV($nodeData, statData.stats, scaleY, dataset.color);
   };
 
   VDataRenderer.prototype.onNodeDataUpdate = function ($nodeData, pathWrapper, dataset, group, statData) {
