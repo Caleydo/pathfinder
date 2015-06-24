@@ -6,13 +6,14 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
   var DATA_AXIS_SIZE = 60;
 
 
-  function DatasetWrapper(id, name, minValue, maxValue) {
+  function DatasetWrapper(id, name, minValue, maxValue, color) {
     hierarchyElements.HierarchyElement.call(this);
     this.collapsed = true;
     this.name = name;
     this.id = id;
     this.minValue = minValue;
     this.maxValue = maxValue;
+    this.color = color;
   }
 
   DatasetWrapper.prototype = Object.create(hierarchyElements.HierarchyElement.prototype);
@@ -79,6 +80,9 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                 x: s.SET_TYPE_INDENT,
                 y: 14,
                 "clip-path": "url(#SetLabelClipPath)"
+              })
+              .style({
+                fill: dataset.color
               })
               .text(function (d) {
                 return d.name;
@@ -168,6 +172,9 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                   x: s.SET_TYPE_INDENT,
                   y: 14,
                   "clip-path": "url(#SetLabelClipPath)"
+                })
+                .style({
+                  fill: dataset.color
                 })
                 .text(function (d) {
                   return d.name;
@@ -356,7 +363,6 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     var statData = [];
 
     pathWrapper.path.nodes.forEach(function (node, index) {
-      //FIXME: Temporary adding data of first group
       if (dataset.children.length > 0) {
         var stats = dataStore.getStatsForNode(node, dataset.id);
         if (typeof stats !== "undefined") {
@@ -385,7 +391,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
           transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + (DATA_GROUP_V_PADDING) + ")"
         });
 
-        appendBoxPlotH($summaryData, statData.stats, scaleX);
+        appendBoxPlotH($summaryData, statData.stats, scaleX, dataset.color);
       });
 
     allSummaryPlots
@@ -615,7 +621,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         height: scaleY(stats.quartile25) - scaleY(stats.quartile75)
       })
       .style({
-        fill: "gray",
+        fill: color ? color : "gray",
         stroke: "black"
       });
 
@@ -709,7 +715,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     );
   }
 
-  function appendBoxPlotH(parent, stats, scaleX) {
+  function appendBoxPlotH(parent, stats, scaleX, color) {
 
     //var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
 
@@ -726,7 +732,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
       })
       .style({
-        fill: "gray",
+        fill: color ? color : "gray",
         stroke: "black"
       });
 

@@ -1,18 +1,18 @@
 /**
  * Created by Christian on 24.02.2015.
  */
-define(['d3', './listeners', './config'], function (d3, listeners, config) {
+define(['d3', './listeners', './config', './colors'], function (d3, listeners, config, colors) {
 
-  var colorScheme = Object.create(colorbrewer.Set1[9]);
-  //remove orange color to avoid conflict with highlighting
-  colorScheme.splice(4, 1);
-  //var scheme = Object.create(d3.scale.category10().domain());
-  //scheme.splice(1, 1);
-
-  var scale = d3.scale.ordinal()
-    .domain(d3.range(8))
-    .range(colorScheme);
-  var numTypes = -1;
+  //var colorScheme = Object.create(colorbrewer.Set1[9]);
+  ////remove orange color to avoid conflict with highlighting
+  //colorScheme.splice(4, 1);
+  ////var scheme = Object.create(d3.scale.category10().domain());
+  ////scheme.splice(1, 1);
+  //
+  //var scale = d3.scale.ordinal()
+  //  .domain(d3.range(8))
+  //  .range(colorScheme);
+  //var numTypes = -1;
 
   return {
     setTypeInfos: {},
@@ -22,8 +22,7 @@ define(['d3', './listeners', './config'], function (d3, listeners, config) {
     addToType: function (setType, setId) {
       var t = this.setTypeInfos[setType];
       if (typeof t === "undefined") {
-        numTypes++;
-        t = {type: setType, sets: [setId], color: scale(numTypes)};
+        t = {type: setType, sets: [setId], color: colors.nextColor()};
         this.setTypeInfos[setType] = t;
       } else {
         if (t.sets.indexOf(setId) === -1)

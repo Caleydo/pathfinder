@@ -1,5 +1,5 @@
-define(['d3', 'jquery', './listeners', './query/pathquery', './config', './statisticsutil', './sorting', '../pathfinder-ccle/ccle'],
-  function (d3, $, listeners, pathQuery, config, statisticsUtil, sorting, ccle) {
+define(['d3', 'jquery', './listeners', './query/pathquery', './config', './statisticsutil', './sorting', '../pathfinder-ccle/ccle', './colors'],
+  function (d3, $, listeners, pathQuery, config, statisticsUtil, sorting, ccle, colors) {
 
     var SortingStrategy = sorting.SortingStrategy;
 
@@ -706,6 +706,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
             var fetchDataset = function (index) {
               var info = datasetInfos[index];
               ccle.stats(info.name).then(function (stats) {
+                info.color = colors.nextColor();
                 allDatasets[info.name] = {
                   info: info,
                   stats: stats,

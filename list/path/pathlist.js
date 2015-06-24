@@ -102,7 +102,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
 
         datasets.forEach(function (dataset) {
-          var d = new dr.DatasetWrapper(dataset.info.name, dataset.info.title, dataset.stats.min, dataset.stats.max);
+          var d = new dr.DatasetWrapper(dataset.info.name, dataset.info.title, dataset.stats.min, dataset.stats.max, dataset.info.color);
           var exists = false;
           //Use existing wrapper if present
           that.datasets.forEach(function (wrapper) {
