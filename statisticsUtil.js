@@ -29,7 +29,25 @@ define(['d3'], function (d3) {
     }
   }
 
+  var humanReadableNames = {
+    min: "minimum",
+    max: "maximum",
+    nans: "number of NaNs",
+    median: "median",
+    mean: "arithmetic mean",
+    std: "standard-deviation",
+    quartile25: "1st quartile",
+    quartile75: "3rd quartile",
+    iqrMin: "lowest value in 1.5xIQR range",
+    iqrMax: "highest value in 1.5xIQR range",
+    numElements: "number of elements"
+  };
+
   return {
+
+    getHumanReadableStat: function (stat) {
+      return humanReadableNames[stat];
+    },
 
     statisticsOf: function (data) {
 
@@ -39,7 +57,7 @@ define(['d3'], function (d3) {
         nans: 0,
         median: NaN,
         mean: NaN,
-        sd: NaN,
+        std: NaN,
         quartile25: NaN,
         quartile75: NaN,
         iqrMin: NaN,
@@ -75,7 +93,7 @@ define(['d3'], function (d3) {
           }
         }
       });
-      variance = variance/(n-1);
+      variance = variance / (n - 1);
 
       var lengthWithoutNaNs = sortedData.length - stats.nans;
 

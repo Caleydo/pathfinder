@@ -783,6 +783,34 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
       getPathGroupStats: getPathGroupStats,
 
+      getSortingStrategy: function (datasetId, stat, method, scope) {
+        if (method === "stat") {
+          if (scope === "path") {
+            return new OverallStatsSortingStrategy(datasetId, stat);
+          } else if (scope === "minNode") {
+            return new PerNodeStatsSortingStrategy(datasetId, stat, minOfArray, "Max " + statisticsUtil.getHumanReadableStat(stat) + " per node");
+          } else {
+            return new PerNodeStatsSortingStrategy(datasetId, stat, maxOfArray, "Max " + statisticsUtil.getHumanReadableStat(stat) + " per node");
+          }
+        } else if (method === "minDiff") {
+          if (scope === "path") {
+            return new OverallBetweenGroupsSortingStrategy(datasetId, stat, minDiff, "Min difference in " + statisticsUtil.getHumanReadableStat(stat) + " between groups");
+          } else if (scope === "minNode") {
+            return new PerNodeBetweenGroupsSortingStrategy(datasetId, stat, minDiff, minOfArray, "Min of min " + statisticsUtil.getHumanReadableStat(stat) + " differences between groups per node");
+          } else {
+            return new PerNodeBetweenGroupsSortingStrategy(datasetId, stat, minDiff, maxOfArray, "Max of min " + statisticsUtil.getHumanReadableStat(stat) + " differences between groups per node");
+          }
+        } else {
+          if (scope === "path") {
+            return new OverallBetweenGroupsSortingStrategy(datasetId, stat, maxDiff, "Max difference in " + statisticsUtil.getHumanReadableStat(stat) + " between groups");
+          } else if (scope === "minNode") {
+            return new PerNodeBetweenGroupsSortingStrategy(datasetId, stat, maxDiff, minOfArray, "Min of max " + statisticsUtil.getHumanReadableStat(stat) + " differences between groups per node");
+          } else {
+            return new PerNodeBetweenGroupsSortingStrategy(datasetId, stat, maxDiff, maxOfArray, "Max of max " + statisticsUtil.getHumanReadableStat(stat) + " differences between groups per node");
+          }
+        }
+      },
+
       getDataBasedPathSortingStrategies: function () {
 
         var strategies = [];

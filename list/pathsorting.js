@@ -319,6 +319,49 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
           listeners.notify("UPDATE_PATH_SORTING", sortingManager.currentComparator);
         }, listeners.updateType.QUERY_UPDATE);
 
+        //$('#rankConfigModal').on('show', function () {
+        //  $(this).find('.modal-body').css({
+        //    width:'auto', //probably not needed
+        //    height:'auto', //probably not needed
+        //    'max-height':'100%'
+        //  });
+        //});
+
+        function updateWidgetVisibility() {
+          $("#dataBasedScoreWidgets").css({
+            display: $("#dataBasedScoreRadio").prop("checked") ? "block" : "none"
+          });
+
+          $("#customScoreWidgets").css({
+            display: $("#customScoreRadio").prop("checked") ? "block" : "none"
+          });
+        }
+
+        function updateCustomSortingStrategyList() {
+          var customScoreSelect = $("#customScoreSelect");
+          customScoreSelect.empty();
+          that.customSortingStrategies.forEach(function (strat) {
+            customScoreSelect.append("<option label='" + strat.label + "'>" + strat.id + "</option>")
+          });
+        }
+
+        $("#pathLengthRadio").click(function () {
+          updateWidgetVisibility();
+        });
+        $("#setConnectionStrengthRadio").click(function () {
+          updateWidgetVisibility();
+        });
+        $("#dataBasedScoreRadio").click(function () {
+          updateWidgetVisibility();
+        });
+        $("#customScoreRadio").click(function () {
+          updateWidgetVisibility();
+        });
+
+        //$("#configureRanking").click(function () {
+        //
+        //});
+
         $("#addRanking").click(function () {
           $("#scriptText").val("var getScore = function(path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {\n" +
             "//insert code here\n" +
@@ -333,25 +376,24 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
           var label = $("#customScriptTitle").val();
           eval(rankScript);
 
-          if(getScore) {
+          if (getScore) {
             that.customSortingStrategies.push(new CustomSortingStrategy(getScore, label));
-            listeners.notify("CUSTOM_SORTING_STRATEGY_UPDATE", that.customSortingStrategies);
+            updateCustomSortingStrategyList();
+            $("#customScoreSelect").val(that.customSortingStrategies[that.customSortingStrategies.length - 1].id);
+            //listeners.notify("CUSTOM_SORTING_STRATEGY_UPDATE", that.customSortingStrategies);
           }
 
           //var getScore = function (path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {
-            var numSets = 0;
-            path.nodes.forEach(function (node) {
-              var sets = getSetsForNode(node);
-              if (sets) {
-                numSets += sets.length;
-              }
-            });
-
-            return numSets;
+          //  var numSets = 0;
+          //  path.nodes.forEach(function (node) {
+          //    var sets = getSetsForNode(node);
+          //    if (sets) {
+          //      numSets += sets.length;
+          //    }
+          //  });
+          //
+          //  return numSets;
           //};
-
-
-
 
 
           //if ($("#startOffsetButton").prop("checked")) {
@@ -362,6 +404,52 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
           //  that.removePosition();
           //}
           //$("#positionConfirm").off("click");
+        });
+      },
+
+      openConfigureSortingDialog: function (callback) {
+        var that = this;
+        var datasets = dataStore.getDataSets();
+
+        $("#dataBasedScore").css({
+          display: datasets.length > 0 ? "block" : "none"
+        });
+
+        var datasetSelect = $("#datasetSelect");
+        datasetSelect.empty();
+        datasets.forEach(function (dataset) {
+          datasetSelect.append("<option label='" + dataset.info.title + "'>" + dataset.info.name + "</option>");
+        });
+
+        updateWidgetVisibility();
+
+        $("#rankConfigModal").modal("show");
+
+        $("#rankConfigConfirm").click(function () {
+
+          if ($("#pathLengthRadio").prop("checked")) {
+            callback(sortingStrategies.pathLength);
+
+          } else if ($("#setConnectionStrengthRadio").prop("checked")) {
+            callback(sortingStrategies.setCountEdgeWeight);
+
+          } else if ($("#dataBasedScoreRadio").prop("checked")) {
+            var datasetId = $("#datasetSelect").val();
+            var stat = $("#statisticSelect").val();
+            var method = $("#methodSelect").val();
+            var scope = $("#scopeSelect").val();
+
+            callback(dataStore.getSortingStrategy(datasetId, stat, method, scope));
+          } else if ($("#customScoreRadio").prop("checked")) {
+            var sortingStrategyId = $("#customScoreSelect").val();
+            for (var i = 0; i < that.customSortingStrategies.length; i++) {
+              var strategy = that.customSortingStrategies[i];
+              if (strategy.id === sortingStrategyId) {
+                callback(strategy);
+                return;
+              }
+            }
+          }
         });
       },
 

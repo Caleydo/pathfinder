@@ -22,9 +22,8 @@
     <input type="checkbox" id="switchGraphLayout"/>
     <label>Switch Graph Layout</label>
     <input type="button" id="savePaths" value="Save Paths"/>
-    <input type="button" id="addRanking" value="Add Custom Ranking"/>
+    <input type="button" id="configureRanking" value="Configure Ranking"/>
     <select id="select_dump" style="display:block"></select>
-
   </header>
 
 
@@ -69,6 +68,100 @@
 </div>
 
 
+<div class="modal" id="rankConfigModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:800px">
+    <form class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+          aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Rank paths by</h4>
+      </div>
+      <div class="modal-body" id="pathLength">
+        <!--<form role="form">-->
+        <div class="radio">
+          <label for="pathLengthRadio" style="font-weight: bold" ><input type="radio" name="rankMethodRadio" id="pathLengthRadio"checked/>Path
+            length</label>
+        </div>
+        <div class="radio" id="setConnectionStrength">
+          <label for="setConnectionStrengthRadio" style="font-weight: bold" ><input type="radio" name="rankMethodRadio"
+                                                         id="setConnectionStrengthRadio"/>Set connection
+            strength</label>
+        </div>
+        <div class="radio" id="dataBasedScore">
+          <label for="dataBasedScoreRadio" style="font-weight: bold" ><input type="radio" name="rankMethodRadio" id="dataBasedScoreRadio"/>Data-based
+            score</label><br>
+
+          <div id="dataBasedScoreWidgets">
+            <div style="display:inline-block">
+              <label for="datasetSelect" style="padding: 0">Dataset</label><br>
+              <select id="datasetSelect" size="5"></select>
+            </div>
+            <div style="display:inline-block">
+              <label for="statisticSelect" style="padding: 0">Statistic</label><br>
+              <select id="statisticSelect" size="5">
+                <option label="Median">median</option>
+                <option label="Arithmetic mean">mean</option>
+                <option label="Standard-deviation">std</option>
+                <option label="Minimum">min</option>
+                <option label="Maximum">max</option>
+              </select>
+            </div>
+            <div style="display:inline-block">
+              <label for="methodSelect" style="padding: 0">Method</label><br>
+              <select id="methodSelect" size="5">
+                <option label="Simple Statistic">stat</option>
+                <option label="Min statistic difference in groups">minDiff</option>
+                <option label="Max statistic difference in groups">maxDiff</option>
+              </select>
+            </div>
+            <div style="display:inline-block">
+              <label for="scopeSelect" style="padding: 0">Scope</label><br>
+              <select id="scopeSelect" size="5">
+                <option label="Whole Path">path</option>
+                <option label="Node with min score">minNode</option>
+                <option label="Node with max score">maxNode</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="radio" id="customScore">
+          <label for="customScoreRadio" style="font-weight: bold" ><input type="radio" name="rankMethodRadio" id="customScoreRadio"/>Custom
+            score</label><br>
+
+          <div id="customScoreWidgets">
+            <label for="customScoreSelect" style="padding: 0">Available scores</label><br>
+            <select id="customScoreSelect" size="5" style="width:150px"></select><br>
+            <input type="button" id="addRanking" style="width:150px" value="Add Custom Score"/>
+          </div>
+
+        </div>
+        <!--</form>-->
+        <!--<form role="form">-->
+        <!--<div class="radio">-->
+        <!--<label for="startOffsetInput"><input type="radio" name="rankMethodRadio" id="startOffsetButton"/>Start + </label>-->
+        <!--<input type="number" id="startOffsetInput" style="width: 5em; position:absolute; left:70px;" maxlength="3"-->
+        <!--value="1" min="1" required="required">-->
+        <!--</div>-->
+        <!--<div class="radio">-->
+        <!--<label for="endOffsetInput"><input type="radio" name="rankMethodRadio" id="endOffsetButton"/>End - </label>-->
+        <!--<input type="number" id="endOffsetInput" style="width: 5em; position:absolute; left:70px;" maxlength="3"-->
+        <!--value="1" min="1" required="required">-->
+        <!--</div>-->
+        <!--<div class="radio">-->
+        <!--<label><input type="radio" name="rankMethodRadio" id="noPositionButton" checked/>None</label>-->
+        <!--</div>-->
+        <!--</form>-->
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="rankConfigConfirm" data-dismiss="modal">Ok</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
 <div class="modal" id="rankScriptModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -82,7 +175,7 @@
         <input type="text" id="customScriptTitle" value="Custom Score"><br><br>
 
         <label for="scriptText">Custom path score function</label><textarea id="scriptText" cols="68"
-                                                                             rows="15" spellcheck="false"></textarea>
+                                                                            rows="15" spellcheck="false"></textarea>
 
         <!--<form role="form">-->
         <!--<div class="radio">-->
