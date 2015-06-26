@@ -814,59 +814,59 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       getDataBasedPathSortingStrategies: function () {
 
         var strategies = [];
-        var datasets = Object.keys(allDatasets);
-
-        datasets.forEach(function (dataset) {
-          //var groups = Object.keys(allData[dataset.toString()].groups);
-          strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "median"));
-          strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "max"));
-          strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "min"));
-          strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "mean"));
-          strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "std"));
-
-          strategies.push(new PerNodeStatsSortingStrategy(dataset, "median", maxOfArray, "Max median per node"));
-          strategies.push(new PerNodeStatsSortingStrategy(dataset, "max", maxOfArray, "Max max per node"));
-          strategies.push(new PerNodeStatsSortingStrategy(dataset, "min", maxOfArray, "Max min per node"));
-          strategies.push(new PerNodeStatsSortingStrategy(dataset, "mean", maxOfArray, "Max mean per node"));
-          strategies.push(new PerNodeStatsSortingStrategy(dataset, "std", maxOfArray, "Max standard-deviation per node"));
-
-          strategies.push(new PerNodeStatsSortingStrategy(dataset, "median", minOfArray, "Min median per node"));
-          strategies.push(new PerNodeStatsSortingStrategy(dataset, "max", minOfArray, "Min max per node"));
-          strategies.push(new PerNodeStatsSortingStrategy(dataset, "min", minOfArray, "Min min per node"));
-          strategies.push(new PerNodeStatsSortingStrategy(dataset, "mean", minOfArray, "Min mean per node"));
-          strategies.push(new PerNodeStatsSortingStrategy(dataset, "std", minOfArray, "Min standard-deviation per node"));
-
-          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "median", maxDiff, "Max difference in median between groups"));
-          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "max", maxDiff, "Max difference in max between groups"));
-          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "min", maxDiff, "Max difference in min between groups"));
-          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "mean", maxDiff, "Max difference in mean between groups"));
-          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "std", maxDiff, "Max difference in standard-deviation between groups"));
-
-          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "median", minDiff, "Min difference in median between groups"));
-          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "max", minDiff, "Min difference in max between groups"));
-          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "min", minDiff, "Min difference in min between groups"));
-          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "mean", minDiff, "Min difference in mean between groups"));
-          strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "std", minDiff, "Min difference in standard-deviation between groups"));
-
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", maxDiff, maxOfArray, "Max of max median differences between groups per node"));
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "max", maxDiff, maxOfArray, "Max of max max differences between groups per node"));
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "min", maxDiff, maxOfArray, "Max of max min differences between groups per node"));
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "mean", maxDiff, maxOfArray, "Max of max mean differences between groups per node"));
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "std", maxDiff, maxOfArray, "Max of max standard-deviation differences between groups per node"));
-
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, minOfArray, "Min of min median differences between groups per node"));
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "max", minDiff, minOfArray, "Min of min max differences between groups per node"));
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "min", minDiff, minOfArray, "Min of min min differences between groups per node"));
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "mean", minDiff, minOfArray, "Min of min mean differences between groups per node"));
-          strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "std", minDiff, minOfArray, "Min of min standard-deviation differences between groups per node"));
-
-
-          //strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, maxOfArray, "Max of min median differences between groups per node"));
-          //groups.forEach(function (group) {
-          //  strategies.push(new GroupMedianSortingStrategy(dataset.toString(), group.toString()));
-
-          //});
-        });
+        //var datasets = Object.keys(allDatasets);
+        //
+        //datasets.forEach(function (dataset) {
+        //  //var groups = Object.keys(allData[dataset.toString()].groups);
+        //  strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "median"));
+        //  strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "max"));
+        //  strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "min"));
+        //  strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "mean"));
+        //  strategies.push(new OverallStatsSortingStrategy(dataset.toString(), "std"));
+        //
+        //  strategies.push(new PerNodeStatsSortingStrategy(dataset, "median", maxOfArray, "Max median per node"));
+        //  strategies.push(new PerNodeStatsSortingStrategy(dataset, "max", maxOfArray, "Max max per node"));
+        //  strategies.push(new PerNodeStatsSortingStrategy(dataset, "min", maxOfArray, "Max min per node"));
+        //  strategies.push(new PerNodeStatsSortingStrategy(dataset, "mean", maxOfArray, "Max mean per node"));
+        //  strategies.push(new PerNodeStatsSortingStrategy(dataset, "std", maxOfArray, "Max standard-deviation per node"));
+        //
+        //  strategies.push(new PerNodeStatsSortingStrategy(dataset, "median", minOfArray, "Min median per node"));
+        //  strategies.push(new PerNodeStatsSortingStrategy(dataset, "max", minOfArray, "Min max per node"));
+        //  strategies.push(new PerNodeStatsSortingStrategy(dataset, "min", minOfArray, "Min min per node"));
+        //  strategies.push(new PerNodeStatsSortingStrategy(dataset, "mean", minOfArray, "Min mean per node"));
+        //  strategies.push(new PerNodeStatsSortingStrategy(dataset, "std", minOfArray, "Min standard-deviation per node"));
+        //
+        //  strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "median", maxDiff, "Max difference in median between groups"));
+        //  strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "max", maxDiff, "Max difference in max between groups"));
+        //  strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "min", maxDiff, "Max difference in min between groups"));
+        //  strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "mean", maxDiff, "Max difference in mean between groups"));
+        //  strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "std", maxDiff, "Max difference in standard-deviation between groups"));
+        //
+        //  strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "median", minDiff, "Min difference in median between groups"));
+        //  strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "max", minDiff, "Min difference in max between groups"));
+        //  strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "min", minDiff, "Min difference in min between groups"));
+        //  strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "mean", minDiff, "Min difference in mean between groups"));
+        //  strategies.push(new OverallBetweenGroupsSortingStrategy(dataset, "std", minDiff, "Min difference in standard-deviation between groups"));
+        //
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", maxDiff, maxOfArray, "Max of max median differences between groups per node"));
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "max", maxDiff, maxOfArray, "Max of max max differences between groups per node"));
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "min", maxDiff, maxOfArray, "Max of max min differences between groups per node"));
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "mean", maxDiff, maxOfArray, "Max of max mean differences between groups per node"));
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "std", maxDiff, maxOfArray, "Max of max standard-deviation differences between groups per node"));
+        //
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, minOfArray, "Min of min median differences between groups per node"));
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "max", minDiff, minOfArray, "Min of min max differences between groups per node"));
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "min", minDiff, minOfArray, "Min of min min differences between groups per node"));
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "mean", minDiff, minOfArray, "Min of min mean differences between groups per node"));
+        //  strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "std", minDiff, minOfArray, "Min of min standard-deviation differences between groups per node"));
+        //
+        //
+        //  //strategies.push(new PerNodeBetweenGroupsSortingStrategy(dataset, "median", minDiff, maxOfArray, "Max of min median differences between groups per node"));
+        //  //groups.forEach(function (group) {
+        //  //  strategies.push(new GroupMedianSortingStrategy(dataset.toString(), group.toString()));
+        //
+        //  //});
+        //});
 
         return strategies;
       }

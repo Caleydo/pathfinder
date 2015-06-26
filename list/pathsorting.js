@@ -304,6 +304,27 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
 
     //sortingManager.setStrategyChain([sortingStrategies.getPathQueryStrategy(pathQuery), sortingStrategies.pathId]);
 
+    function updateWidgetVisibility() {
+      $("#dataBasedScoreWidgets").css({
+        display: $("#dataBasedScoreRadio").prop("checked") ? "block" : "none"
+      });
+
+      $("#customScoreWidgets").css({
+        display: $("#customScoreRadio").prop("checked") ? "block" : "none"
+      });
+    }
+
+    function validateDataBasedSortingConfig() {
+      var datasetId = $("#datasetSelect").val();
+      var stat = $("#statisticSelect").val();
+      var method = $("#methodSelect").val();
+      var scope = $("#scopeSelect").val();
+      return datasetId && stat && method && scope;
+    }
+
+    function validateCustomScoreConfig() {
+      return $("#customScoreSelect").val();
+    }
 
     sortingManager.setStrategyChain([sortingStrategies.pathQueryStrategy, sortingStrategies.selectionSortingStrategy, sortingStrategies.pathLength, sortingStrategies.pathId]);
 
@@ -327,15 +348,6 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
         //  });
         //});
 
-        function updateWidgetVisibility() {
-          $("#dataBasedScoreWidgets").css({
-            display: $("#dataBasedScoreRadio").prop("checked") ? "block" : "none"
-          });
-
-          $("#customScoreWidgets").css({
-            display: $("#customScoreRadio").prop("checked") ? "block" : "none"
-          });
-        }
 
         function updateCustomSortingStrategyList() {
           var customScoreSelect = $("#customScoreSelect");
@@ -347,15 +359,40 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
 
         $("#pathLengthRadio").click(function () {
           updateWidgetVisibility();
+          //$("#rankScriptConfirm").enable();
+          $("#rankConfigConfirm").prop("disabled", false);
         });
         $("#setConnectionStrengthRadio").click(function () {
           updateWidgetVisibility();
+          //$("#rankScriptConfirm").toggleEnabled(true);
+          $("#rankConfigConfirm").prop("disabled", false);
         });
         $("#dataBasedScoreRadio").click(function () {
           updateWidgetVisibility();
+          //$("#rankScriptConfirm").toggleEnabled(validateDataBasedSortingConfig());
+          $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
         });
         $("#customScoreRadio").click(function () {
           updateWidgetVisibility();
+          //$("#rankScriptConfirm").toggleEnabled(validateDataBasedSortingConfig());
+          $("#rankConfigConfirm").prop("disabled", !validateCustomScoreConfig());
+        });
+
+        $("#datasetSelect").on("change", function () {
+          $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
+        });
+        $("#statisticSelect").on("change", function () {
+          $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
+        });
+        $("#methodSelect").on("change", function () {
+          $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
+        });
+        $("#scopeSelect").on("change", function () {
+          $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
+        });
+
+        $("#customScoreSelect").on("change", function () {
+          $("#rankConfigConfirm").prop("disabled", !validateCustomScoreConfig());
         });
 
         //$("#configureRanking").click(function () {
@@ -380,6 +417,7 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
             that.customSortingStrategies.push(new CustomSortingStrategy(getScore, label));
             updateCustomSortingStrategyList();
             $("#customScoreSelect").val(that.customSortingStrategies[that.customSortingStrategies.length - 1].id);
+            $("#rankConfigConfirm").prop("disabled", !validateCustomScoreConfig());
             //listeners.notify("CUSTOM_SORTING_STRATEGY_UPDATE", that.customSortingStrategies);
           }
 
@@ -450,6 +488,8 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
               }
             }
           }
+
+          $("#rankConfigConfirm").off("click");
         });
       },
 

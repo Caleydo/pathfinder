@@ -14,7 +14,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     //var RANK_CRITERION_ELEMENT_HEIGHT = 22;
 
     var currentColumnID = 0;
-    var allColumns = [];
+    //var allColumns = [];
 
     function getTotalColumnWidth(columns, index) {
 
@@ -52,11 +52,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     }
 
 
-    function RankColumnHeader(priority, column, columnManager, selectedStrategyIndex) {
+    function RankColumnHeader(priority, column, columnManager, sortingStrategy) {
       this.priority = priority;
       this.column = column;
       this.columnManager = columnManager;
-      this.selectedStrategyIndex = selectedStrategyIndex || 0;
+      this.sortingStrategy = sortingStrategy;
+      //this.selectedStrategyIndex = selectedStrategyIndex || 0;
     }
 
     RankColumnHeader.prototype = {
@@ -107,7 +108,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           .attr("height", s.COLUMN_HEADER_HEIGHT);
 
         var tooltip = this.rootDomElement.append("title")
-          .text(this.columnManager.selectableSortingStrategies[this.selectedStrategyIndex].label);
+          .text(this.sortingStrategy.label);
 
         //this.rootDomElement.append("text")
         //  .classed("priority", true)
@@ -127,39 +128,39 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             "clip-path": "url(#columnHeaderClipPath" + this.column.id + ")"
           })
           .style({font: "12px 'Arial'"})
-          .text(this.columnManager.selectableSortingStrategies[this.selectedStrategyIndex].label);
+          .text(this.sortingStrategy.label);
 
-        var fo = this.rootDomElement.append("foreignObject")
-          .attr({
-            x: STRATEGY_SELECTOR_START,
-            y: 2,
-            width: DEFAULT_COLUMN_WIDTH - STRATEGY_SELECTOR_START - 2,
-            height: s.COLUMN_HEADER_HEIGHT - 4
-          }).append("xhtml:div")
-          .style("font", "12px 'Arial'")
-          .style("opacity", 0)
-          .html('<select class="strategySelector"></select>');
+        //var fo = this.rootDomElement.append("foreignObject")
+        //  .attr({
+        //    x: STRATEGY_SELECTOR_START,
+        //    y: 2,
+        //    width: DEFAULT_COLUMN_WIDTH - STRATEGY_SELECTOR_START - 2,
+        //    height: s.COLUMN_HEADER_HEIGHT - 4
+        //  }).append("xhtml:div")
+        //  .style("font", "12px 'Arial'")
+        //  .style("opacity", 0)
+        //  .html('<select class="strategySelector"></select>');
 
 
         var that = this;
-        var selector = this.rootDomElement.select("select.strategySelector");
-
-        this.columnManager.selectableSortingStrategies.forEach(function (strategy, i) {
-          selector.append("option")
-            .attr({
-              value: i
-            })
-            .text(strategy.label);
-        });
-
-        selector.append("title")
-          .text(function () {
-            return $(selector[0]).text;
-          });
-
-
-        $(selector[0]).width(RANK_CRITERION_SELECTOR_WIDTH);
-        $(selector[0]).val(this.selectedStrategyIndex);
+        //var selector = this.rootDomElement.select("select.strategySelector");
+        //
+        //this.columnManager.selectableSortingStrategies.forEach(function (strategy, i) {
+        //  selector.append("option")
+        //    .attr({
+        //      value: i
+        //    })
+        //    .text(strategy.label);
+        //});
+        //
+        //selector.append("title")
+        //  .text(function () {
+        //    return $(selector[0]).text;
+        //  });
+        //
+        //
+        //$(selector[0]).width(RANK_CRITERION_SELECTOR_WIDTH);
+        //$(selector[0]).val(this.selectedStrategyIndex);
 
 
         var sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 5, 3, 16, 16, that.orderButtonText(), 16 / 2, 16 - 3, "rgb(30,30,30)", false);
@@ -167,20 +168,20 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         sortingOrderButton
           .classed("sortOrderButton", true)
           .on("click", function () {
-            that.columnManager.selectableSortingStrategies[that.selectedStrategyIndex].ascending = !that.columnManager.selectableSortingStrategies[that.selectedStrategyIndex].ascending;
+            that.sortingStrategy.ascending = !that.sortingStrategy.ascending;
             that.columnManager.updateSortOrder();
             that.columnManager.notify();
           });
 
-        $(selector[0]).on("change", function () {
-          that.selectedStrategyIndex = this.value;
-          var sortingStrategy = that.columnManager.selectableSortingStrategies[that.selectedStrategyIndex];
-          label.text(sortingStrategy.label);
-          tooltip.text(sortingStrategy.label)
-          that.column.setSortingStrategy(sortingStrategy);
-          that.columnManager.updateSortOrder();
-          that.columnManager.notify();
-        });
+        //$(selector[0]).on("change", function () {
+        //  that.selectedStrategyIndex = this.value;
+        //  var sortingStrategy = that.columnManager.selectableSortingStrategies[that.selectedStrategyIndex];
+        //  label.text(sortingStrategy.label);
+        //  tooltip.text(sortingStrategy.label)
+        //  that.column.setSortingStrategy(sortingStrategy);
+        //  that.columnManager.updateSortOrder();
+        //  that.columnManager.notify();
+        //});
 
         var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 10 + 16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
 
@@ -191,51 +192,63 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           that.columnManager.removeColumn(that.column);
         });
 
+        $(this.rootDomElement[0]).dblclick(function () {
+          pathSorting.openConfigureSortingDialog(function (sortingStrategy) {
+            label.text(sortingStrategy.label);
+            tooltip.text(sortingStrategy.label);
+            that.sortingStrategy = sortingStrategy;
+            that.column.setSortingStrategy(sortingStrategy);
+            that.columnManager.updateSortOrder();
+            that.columnManager.notify();
+          });
+        });
+
+
         $(this.rootDomElement[0]).mouseenter(function () {
           removeButton.attr("display", "inline");
           //fo.attr("display", "inline");
           //fo.style("opacity", 1);
           //fo.attr("display", "inline");
-          label.attr("display", "none");
-          fo.style("opacity", 1);
+          //label.attr("display", "none");
+          //fo.style("opacity", 1);
         });
-
+        //
         $(this.rootDomElement[0]).mouseleave(function () {
           removeButton.attr("display", "none");
           //fo.attr("display", "none");
           //fo.style("opacity", 0);
           //selector.attr("display", "none");
-          label.attr("display", "inline");
-          fo.style("opacity", 0);
+          //label.attr("display", "inline");
+          //fo.style("opacity", 0);
         });
       },
 
       orderButtonText: function () {
-        return this.columnManager.selectableSortingStrategies[this.selectedStrategyIndex].ascending ? "\uf160" : "\uf161";
+        return this.sortingStrategy.ascending ? "\uf160" : "\uf161";
       },
 
       updateSortOrder: function () {
         this.rootDomElement.select("g.sortOrderButton").select("text").text(this.orderButtonText());
-      },
-
-      addSortingStrategies: function (newStrategies) {
-        var selector = this.rootDomElement.select("select.strategySelector");
-        var startIndex = this.columnManager.selectableSortingStrategies.length - newStrategies.length;
-        newStrategies.forEach(function (strategy, i) {
-          selector.append("option")
-            .attr({
-              value: startIndex + i
-            })
-            .text(strategy.label);
-        });
       }
+
+      //addSortingStrategies: function (newStrategies) {
+      //  var selector = this.rootDomElement.select("select.strategySelector");
+      //  var startIndex = this.columnManager.selectableSortingStrategies.length - newStrategies.length;
+      //  newStrategies.forEach(function (strategy, i) {
+      //    selector.append("option")
+      //      .attr({
+      //        value: startIndex + i
+      //      })
+      //      .text(strategy.label);
+      //  });
+      //}
     };
 
     function Column(columnManager, sortingStrategy, priority) {
       this.columnManager = columnManager;
       this.pathList = columnManager.pathList;
       this.id = currentColumnID++;
-      this.header = new RankColumnHeader(priority, this, columnManager, columnManager.selectableSortingStrategies.indexOf(sortingStrategy));
+      this.header = new RankColumnHeader(priority, this, columnManager, sortingStrategy);
       this.setSortingStrategy(sortingStrategy);
     }
 
@@ -499,7 +512,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         .attr({
           x: score < 0 ? barScale(score) : barScale(0),
           y: (s.PATH_HEIGHT - BAR_SIZE) / 2,
-          width: Math.abs(barScale(0) - barScale(score)),
+          width: Math.abs(barScale(0) - barScale(score))
         });
     };
 
@@ -546,12 +559,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var datasetId = column.sortingStrategy.datasetId;
       var groupId = column.sortingStrategy.groupId;
       var dataset = 0;
-      var index = 0;
+      var dsIndex = 0;
       for (var i = 0; i < pathWrapper.datasets.length; i++) {
         var d = pathWrapper.datasets[i];
         if (d.id === datasetId) {
           dataset = d;
-          index = i;
+          dsIndex = i;
           break;
         }
       }
@@ -566,7 +579,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var datasetWrappers = pathWrapper.datasets;
       var that = this;
 
-      for (var j = 0; j < index; j++) {
+      for (var j = 0; j < dsIndex; j++) {
         var datasetWrapper = datasetWrappers[j];
         if (datasetWrapper.canBeShown()) {
           posY += datasetWrapper.getHeight();
@@ -588,7 +601,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           width: Math.abs(barScale(0) - barScale(score)),
           height: BAR_SIZE
         })
-        .on("dblclick", function (d) {
+        .on("dblclick", function () {
           if (column.sortingStrategy.groupId) {
             s.decStickyDataGroupOwners(dataset.id, column.sortingStrategy.groupId);
           }
@@ -607,12 +620,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var datasetId = column.sortingStrategy.datasetId;
       var groupId = column.sortingStrategy.groupId;
       var dataset = 0;
-      var index = 0;
+      var dsIndex = 0;
       for (var i = 0; i < pathWrapper.datasets.length; i++) {
         var d = pathWrapper.datasets[i];
         if (d.id === datasetId) {
           dataset = d;
-          index = i;
+          dsIndex = i;
           break;
         }
       }
@@ -626,7 +639,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var posY = 0;
       var datasetWrappers = pathWrapper.datasets;
 
-      for (var j = 0; j < index; j++) {
+      for (var j = 0; j < dsIndex; j++) {
         var datasetWrapper = datasetWrappers[j];
         if (datasetWrapper.canBeShown()) {
           posY += datasetWrapper.getHeight();
@@ -679,7 +692,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
               height: SMALL_BAR_SIZE,
               transform: "translate(0," + posY + ")"
             })
-              .on("dblclick", function (d) {
+              .on("dblclick", function () {
                 if (column.sortingStrategy.groupId) {
                   s.decStickyDataGroupOwners(dataset.id, column.sortingStrategy.groupId);
                 }
@@ -768,53 +781,53 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
         initialPathSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
 
-        this.selectableSortingStrategies = [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy,
-          pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight].concat(pathSorting.customSortingStrategies);
-        this.selectableSortingStrategies = this.selectableSortingStrategies.concat(dataStore.getDataBasedPathSortingStrategies());
+        //this.selectableSortingStrategies = [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy,
+        //  pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight].concat(pathSorting.customSortingStrategies);
+        //this.selectableSortingStrategies = this.selectableSortingStrategies.concat(dataStore.getDataBasedPathSortingStrategies());
 
         this.columns = initialPathSortingStrategies.map(function (sortingStrategy, i) {
           return new Column(that, sortingStrategy, i + 1);
         });
 
-        listeners.add(function () {
+        //listeners.add(function () {
+        //
+        //  addNewStrategies(dataStore.getDataBasedPathSortingStrategies());
+        //
+        //}, listeners.updateType.DATASET_UPDATE);
+        //
+        //listeners.add(function (customStrategies) {
+        //
+        //  addNewStrategies(customStrategies);
+        //
+        //}, "CUSTOM_SORTING_STRATEGY_UPDATE");
 
-          addNewStrategies(dataStore.getDataBasedPathSortingStrategies());
-
-        }, listeners.updateType.DATASET_UPDATE);
-
-        listeners.add(function (customStrategies) {
-
-          addNewStrategies(customStrategies);
-
-        }, "CUSTOM_SORTING_STRATEGY_UPDATE");
-
-        function addNewStrategies(strategies) {
-          var newStrategies = strategies.filter(function (strategy) {
-            for (var i = 0; i < that.selectableSortingStrategies.length; i++) {
-              if (that.selectableSortingStrategies[i].id === strategy.id) {
-                return false;
-              }
-            }
-            return true;
-          });
-
-          if (newStrategies.length > 0) {
-            that.selectableSortingStrategies = that.selectableSortingStrategies.concat(newStrategies);
-            that.columns.forEach(function (column) {
-              column.header.addSortingStrategies(newStrategies);
-            });
-          }
-        }
+        //function addNewStrategies(strategies) {
+        //  var newStrategies = strategies.filter(function (strategy) {
+        //    for (var i = 0; i < that.selectableSortingStrategies.length; i++) {
+        //      if (that.selectableSortingStrategies[i].id === strategy.id) {
+        //        return false;
+        //      }
+        //    }
+        //    return true;
+        //  });
+        //
+        //  if (newStrategies.length > 0) {
+        //    that.selectableSortingStrategies = that.selectableSortingStrategies.concat(newStrategies);
+        //    that.columns.forEach(function (column) {
+        //      column.header.addSortingStrategies(newStrategies);
+        //    });
+        //  }
+        //}
 
 
       },
 
       getStrategyChain: function () {
         var chain = [];
-        var that = this;
+        //var that = this;
 
         this.columns.forEach(function (column) {
-          chain.push(that.selectableSortingStrategies[column.header.selectedStrategyIndex]);
+          chain.push(column.sortingStrategy);
         });
 
         return chain;
@@ -879,8 +892,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           this.addColumnButton
             .attr("display", "none")
             .on("click", function () {
-              that.columns.push(new Column(that, that.selectableSortingStrategies[0], that.columns.length + 1));
-              that.notify();
+              pathSorting.openConfigureSortingDialog(function (sortingStrategy) {
+                that.columns.push(new Column(that, sortingStrategy, that.columns.length + 1));
+                that.notify();
+              });
+
             });
 
 
