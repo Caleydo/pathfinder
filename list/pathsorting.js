@@ -484,6 +484,7 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
               var strategy = that.customSortingStrategies[i];
               if (strategy.id === sortingStrategyId) {
                 callback(strategy);
+                $("#rankConfigConfirm").off("click");
                 return;
               }
             }

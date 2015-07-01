@@ -11,6 +11,26 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
       return text;
     },
 
+    formatNumber: function (num, maxDecimals) {
+
+      maxDecimals = maxDecimals === 0 ? 0 : (maxDecimals || 4);
+
+
+      var match = ('' + num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+      if (!match) {
+        return 0;
+      }
+      var decimals = Math.max(
+        0,
+        // Number of digits right of decimal point.
+        (match[1] ? match[1].length : 0)
+          // Adjust for scientific notation.
+        - (match[2] ? +match[2] : 0));
+
+      var formatter = d3.format("." + Math.min(decimals, maxDecimals) + "f");
+      return formatter(num);
+    },
+
 
     createTemporalOverlayButton: function (parent, svg, callBack, text, x, y, small) {
       var that = this;

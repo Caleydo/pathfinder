@@ -65,76 +65,76 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
         .style("opacity", 0);
 
 
-      var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
-      initialPathSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
-      var selectablePathSortingStrategies = [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy,
-        pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight];
-      selectablePathSortingStrategies = selectablePathSortingStrategies.concat(dataStore.getDataBasedPathSortingStrategies());
-      var pathRankConfigView = new RankConfigView("#pathRankConfig",
-        selectablePathSortingStrategies
-        , initialPathSortingStrategies);
-      pathRankConfigView.addUpdateListener(function (view) {
-        var chain = view.getStrategyChain();
-        chain.push(pathSorting.sortingStrategies.pathId);
-        pathSorting.sortingManager.setStrategyChain(chain);
-        listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-      });
-      pathRankConfigView.init();
-      d3.select("#pathRankConfig svg").style({"vertical-align": "bottom"});
-
-      var initialAggregateSortingStrategies = Object.create(aggregateSorting.sortingManager.currentStrategyChain);
-      initialAggregateSortingStrategies.splice(aggregateSorting.sortingManager.currentStrategyChain.length - 1, 1);
-      var aggregateRankConfigView = new RankConfigView("#aggregateRankConfig",
-        [aggregateSorting.sortingStrategies.numPaths]
-        , initialAggregateSortingStrategies);
-      aggregateRankConfigView.addUpdateListener(function (view) {
-        var chain = view.getStrategyChain();
-        chain.push(aggregateSorting.sortingStrategies.aggregateId);
-        aggregateSorting.sortingManager.setStrategyChain(chain);
-        listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
-      });
-      aggregateRankConfigView.init();
-      d3.select("#aggregateRankConfig svg").style({"vertical-align": "bottom"});
-
-      d3.select("#aggregateWidgets").style({display: "none"});
+      //var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
+      //initialPathSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
+      //var selectablePathSortingStrategies = [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy,
+      //  pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight];
+      //selectablePathSortingStrategies = selectablePathSortingStrategies.concat(dataStore.getDataBasedPathSortingStrategies());
+      //var pathRankConfigView = new RankConfigView("#pathRankConfig",
+      //  selectablePathSortingStrategies
+      //  , initialPathSortingStrategies);
+      //pathRankConfigView.addUpdateListener(function (view) {
+      //  var chain = view.getStrategyChain();
+      //  chain.push(pathSorting.sortingStrategies.pathId);
+      //  pathSorting.sortingManager.setStrategyChain(chain);
+      //  listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+      //});
+      //pathRankConfigView.init();
+      //d3.select("#pathRankConfig svg").style({"vertical-align": "bottom"});
+      //
+      //var initialAggregateSortingStrategies = Object.create(aggregateSorting.sortingManager.currentStrategyChain);
+      //initialAggregateSortingStrategies.splice(aggregateSorting.sortingManager.currentStrategyChain.length - 1, 1);
+      //var aggregateRankConfigView = new RankConfigView("#aggregateRankConfig",
+      //  [aggregateSorting.sortingStrategies.numPaths]
+      //  , initialAggregateSortingStrategies);
+      //aggregateRankConfigView.addUpdateListener(function (view) {
+      //  var chain = view.getStrategyChain();
+      //  chain.push(aggregateSorting.sortingStrategies.aggregateId);
+      //  aggregateSorting.sortingManager.setStrategyChain(chain);
+      //  listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
+      //});
+      //aggregateRankConfigView.init();
+      //d3.select("#aggregateRankConfig svg").style({"vertical-align": "bottom"});
+      //
+      //d3.select("#aggregateWidgets").style({display: "none"});
 
 
       var that = this;
 
 
-      $("#aggregationType").on("change", function () {
-        if (this.value == '0' && !(that.aggregateList instanceof NoAggregationList)) {
-          changeAggregation(NoAggregationList);
-          d3.select("#aggregateWidgets").style({display: "none"});
-        }
-        if (this.value == '1' && !(that.aggregateList instanceof SetComboList)) {
-          changeAggregation(SetComboList);
-          d3.select("#aggregateWidgets").style({display: "block"});
-          updateAggregateRankConfigView();
-        }
-        if (this.value == '2' && !(that.aggregateList instanceof NodeTypeComboList)) {
-          changeAggregation(NodeTypeComboList);
-          d3.select("#aggregateWidgets").style({display: "block"});
-          updateAggregateRankConfigView();
-        }
-      });
-
-      function updateAggregateRankConfigView() {
-        var initialAggregateSortingStrategies = Object.create(aggregateSorting.sortingManager.currentStrategyChain);
-        initialAggregateSortingStrategies.splice(aggregateSorting.sortingManager.currentStrategyChain.length - 1, 1);
-        aggregateRankConfigView.reset([that.aggregateList.getNodeSelectionSortingStrategy(), aggregateSorting.sortingStrategies.numPaths], initialAggregateSortingStrategies);
-      }
-
-      function changeAggregation(constructor) {
-        that.aggregateList.destroy();
-        aggregateSorting.sortingManager.reset();
-        that.aggregateList = new constructor(that);
-        that.aggregateList.init();
-        that.aggregateList.addUpdateListener(function (list) {
-          that.updateViewSize();
-        });
-        that.render(that.paths);
-      }
+      //$("#aggregationType").on("change", function () {
+      //  if (this.value == '0' && !(that.aggregateList instanceof NoAggregationList)) {
+      //    changeAggregation(NoAggregationList);
+      //    d3.select("#aggregateWidgets").style({display: "none"});
+      //  }
+      //  if (this.value == '1' && !(that.aggregateList instanceof SetComboList)) {
+      //    changeAggregation(SetComboList);
+      //    d3.select("#aggregateWidgets").style({display: "block"});
+      //    updateAggregateRankConfigView();
+      //  }
+      //  if (this.value == '2' && !(that.aggregateList instanceof NodeTypeComboList)) {
+      //    changeAggregation(NodeTypeComboList);
+      //    d3.select("#aggregateWidgets").style({display: "block"});
+      //    updateAggregateRankConfigView();
+      //  }
+      //});
+      //
+      //function updateAggregateRankConfigView() {
+      //  var initialAggregateSortingStrategies = Object.create(aggregateSorting.sortingManager.currentStrategyChain);
+      //  initialAggregateSortingStrategies.splice(aggregateSorting.sortingManager.currentStrategyChain.length - 1, 1);
+      //  aggregateRankConfigView.reset([that.aggregateList.getNodeSelectionSortingStrategy(), aggregateSorting.sortingStrategies.numPaths], initialAggregateSortingStrategies);
+      //}
+      //
+      //function changeAggregation(constructor) {
+      //  that.aggregateList.destroy();
+      //  aggregateSorting.sortingManager.reset();
+      //  that.aggregateList = new constructor(that);
+      //  that.aggregateList.init();
+      //  that.aggregateList.addUpdateListener(function (list) {
+      //    that.updateViewSize();
+      //  });
+      //  that.render(that.paths);
+      //}
 
 
       //$("#pathSortingOptions").on("change", function () {

@@ -22,7 +22,6 @@
     <input type="checkbox" id="switchGraphLayout"/>
     <label>Switch Graph Layout</label>
     <input type="button" id="savePaths" value="Save Paths"/>
-    <input type="button" id="configureRanking" value="Configure Ranking"/>
     <select id="select_dump" style="display:block"></select>
   </header>
 
@@ -79,16 +78,19 @@
       <div class="modal-body" id="pathLength">
         <!--<form role="form">-->
         <div class="radio">
-          <label for="pathLengthRadio" style="font-weight: bold" ><input type="radio" name="rankMethodRadio" id="pathLengthRadio"checked/>Path
+          <label for="pathLengthRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
+                                                                        id="pathLengthRadio" checked/>Path
             length</label>
         </div>
         <div class="radio" id="setConnectionStrength">
-          <label for="setConnectionStrengthRadio" style="font-weight: bold" ><input type="radio" name="rankMethodRadio"
-                                                         id="setConnectionStrengthRadio"/>Set connection
+          <label for="setConnectionStrengthRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
+                                                                                   id="setConnectionStrengthRadio"/>Set
+            connection
             strength</label>
         </div>
         <div class="radio" id="dataBasedScore">
-          <label for="dataBasedScoreRadio" style="font-weight: bold" ><input type="radio" name="rankMethodRadio" id="dataBasedScoreRadio"/>Data-based
+          <label for="dataBasedScoreRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
+                                                                            id="dataBasedScoreRadio"/>Data-based
             score</label><br>
 
           <div id="dataBasedScoreWidgets">
@@ -125,7 +127,8 @@
           </div>
         </div>
         <div class="radio" id="customScore">
-          <label for="customScoreRadio" style="font-weight: bold" ><input type="radio" name="rankMethodRadio" id="customScoreRadio"/>Custom
+          <label for="customScoreRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
+                                                                         id="customScoreRadio"/>Custom
             score</label><br>
 
           <div id="customScoreWidgets">
@@ -155,7 +158,7 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="rankConfigConfirm" data-dismiss="modal" >Ok</button>
+        <button type="button" class="btn btn-primary" id="rankConfigConfirm" data-dismiss="modal">Ok</button>
       </div>
     </form>
 
@@ -199,6 +202,8 @@
     </div>
   </div>
 </div>
+
+<!--<svg width="100%" height="100%" display="inline"></svg>-->
 
 </body>
 </html>
