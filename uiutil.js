@@ -54,13 +54,14 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
     createTemporalMenuOverlayButton: function (parent, svg, x, y, small, items) {
       this.createTemporalOverlayButton(parent, svg, function () {
 
-        var coordinates = d3.mouse(svg[0][0]);
         if (typeof items === "function") {
           listOverlay.setItems(items());
         } else {
           listOverlay.setItems(items);
         }
-        listOverlay.show(svg, coordinates[0], coordinates[1]);
+
+        listOverlay.show(svg, 0, 0);
+        //listOverlay.show(svg, coordinates[0], coordinates[1]);
       }, "\uf013", x, y, small);
     },
 

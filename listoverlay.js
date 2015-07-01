@@ -39,16 +39,30 @@ define(['jquery', 'd3'], function ($, d3) {
     },
 
     show: function (domParent, x, y) {
+      var that = this;
+
       if (this.isShown) {
         this.hide();
       }
       this.isShown = true;
 
+      var coordinates = d3.mouse(d3.select("body")[0][0]);
+      var svg = d3.select("#overlaySVG")
+        .style({
+          display: "inline",
+          position: "absolute",
+          left: coordinates[0],
+          top: coordinates[1],
+          width: ITEM_WIDTH,
+          height: that.items.length * ITEM_HEIGHT
+        }
+      );
+
       var that = this;
 
-      this.rootElement = domParent.append("g")
-        .classed("listOverlay", true)
-        .attr("transform", "translate(" + x + "," + y + ")");
+      this.rootElement = svg.append("g")
+        .classed("listOverlay", true);
+        //.attr("transform", "translate(" + x + "," + y + ")");
 
       var listItem = this.rootElement.selectAll("g.listItem")
         .data(this.items)
@@ -112,13 +126,21 @@ define(['jquery', 'd3'], function ($, d3) {
     },
 
     hide: function () {
+
+      var svg = d3.select("#overlaySVG")
+        .style({
+          display: "none"
+        }
+      );
       if (typeof this.rootElement !== "undefined") {
         this.rootElement.remove();
       }
       this.isShown = false;
     }
-  };
+  }
+  ;
 
   return ListOverlay;
 
-});
+})
+;

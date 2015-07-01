@@ -428,11 +428,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       },
 
       getWidth: function () {
-        return BAR_COLUMN_WIDTH;
+        return this.itemRenderer.getWidth();
       }
     };
 
-    function PathItemRenderer() {
+    function PathItemRenderer(scoreRepresentation) {
+      this.scoreRepresentation = scoreRepresentation || new BarRepresentation();
     }
 
     PathItemRenderer.prototype = {
@@ -450,6 +451,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       destroy: function (column) {
 
+      },
+
+      getWidth: function () {
+        return this.scoreRepresentation.getWidth();
       }
     };
 
@@ -471,8 +476,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     }
 
     function SimplePathScoreRenderer(scoreRepresentation) {
-      PathItemRenderer.call(this);
-      this.scoreRepresentation = scoreRepresentation;
+      PathItemRenderer.call(this, scoreRepresentation);
     }
 
     SimplePathScoreRenderer.prototype = Object.create(PathItemRenderer.prototype);
@@ -697,9 +701,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
 //------------------------------
     function StatRenderer(tooltipTextAccessor, scoreRepresentation) {
-      PathItemRenderer.call(this);
+      PathItemRenderer.call(this, scoreRepresentation);
       this.tooltipTextAccessor = tooltipTextAccessor;
-      this.scoreRepresentation = scoreRepresentation;
     }
 
     StatRenderer.prototype = Object.create(PathItemRenderer.prototype);
@@ -940,17 +943,17 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         //this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = new StatRenderer(overallBetweenGroupsStatsTooltip, new BarRepresentation());
         //this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = new StatRenderer(perNodeBetweenGroupsStatsTooltip, new BarRepresentation());
         //
-        //this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = new SimplePathScoreRenderer(new HeatmapRepresentation());
-        //this.itemRenderers["OVERALL_STATS"] = new StatRenderer(overallStatsTooltip, new HeatmapRepresentation());
-        //this.itemRenderers["PER_NODE_STATS"] = new StatRenderer(perNodeStatsTooltip, new HeatmapRepresentation());
-        //this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = new StatRenderer(overallBetweenGroupsStatsTooltip, new HeatmapRepresentation());
-        //this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = new StatRenderer(perNodeBetweenGroupsStatsTooltip, new HeatmapRepresentation());
+        this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = new SimplePathScoreRenderer(new HeatmapRepresentation());
+        this.itemRenderers["OVERALL_STATS"] = new StatRenderer(overallStatsTooltip, new HeatmapRepresentation());
+        this.itemRenderers["PER_NODE_STATS"] = new StatRenderer(perNodeStatsTooltip, new HeatmapRepresentation());
+        this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = new StatRenderer(overallBetweenGroupsStatsTooltip, new HeatmapRepresentation());
+        this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = new StatRenderer(perNodeBetweenGroupsStatsTooltip, new HeatmapRepresentation());
 
-        this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = new SimplePathScoreRenderer(new TextRepresentation());
-        this.itemRenderers["OVERALL_STATS"] = new StatRenderer(overallStatsTooltip, new TextRepresentation());
-        this.itemRenderers["PER_NODE_STATS"] = new StatRenderer(perNodeStatsTooltip, new TextRepresentation());
-        this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = new StatRenderer(overallBetweenGroupsStatsTooltip, new TextRepresentation());
-        this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = new StatRenderer(perNodeBetweenGroupsStatsTooltip, new TextRepresentation());
+        //this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = new SimplePathScoreRenderer(new TextRepresentation());
+        //this.itemRenderers["OVERALL_STATS"] = new StatRenderer(overallStatsTooltip, new TextRepresentation());
+        //this.itemRenderers["PER_NODE_STATS"] = new StatRenderer(perNodeStatsTooltip, new TextRepresentation());
+        //this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = new StatRenderer(overallBetweenGroupsStatsTooltip, new TextRepresentation());
+        //this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = new StatRenderer(perNodeBetweenGroupsStatsTooltip, new TextRepresentation());
 
         var that = this;
         var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
