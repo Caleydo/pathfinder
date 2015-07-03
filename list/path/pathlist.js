@@ -139,7 +139,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             addSetForNode(setType, setId, i);
           });
         }
-        ;
+
 
         for (var i = 0; i < path.edges.length; i++) {
           var edge = path.edges[i];
@@ -269,13 +269,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       return function (d, i) {
         var pathWrapper = pathWrappers[d.pathIndex];
 
-        var posY = s.PATH_HEIGHT;
-        for (var typeIndex = 0; typeIndex < i; typeIndex++) {
-          var setType = pathWrapper.setTypes[typeIndex];
-          if (setType.canBeShown()) {
-            posY += setType.getHeight();
-          }
-        }
+        var posY = s.getSetTypeTranslateY(pathWrapper, i);
 
         return "translate(0," + posY + ")";
       }

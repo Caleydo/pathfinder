@@ -23,12 +23,14 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
     };
 
 
-    function SetCountEdgeWeightSortingStrategy() {
+    function SetConnectionStrengthSortingStrategy(setType) {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID, "Average set connection strength", "SET_COUNT_EDGE_WEIGHT");
+      this.ascending = false;
+      this.setType = setType;
     }
 
-    SetCountEdgeWeightSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
-    SetCountEdgeWeightSortingStrategy.prototype.compare = function (a, b) {
+    SetConnectionStrengthSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+    SetConnectionStrengthSortingStrategy.prototype.compare = function (a, b) {
       //function calcWeight(pathWrapper) {
       //  var totalWeight = 0;
       //
@@ -45,8 +47,8 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
       //  return totalWeight;
       //}
 
-      var weightA = this.getScore(a.path);
-      var weightB = this.getScore(b.path);
+      var weightA = this.getScore(a.path, this.setType);
+      var weightB = this.getScore(b.path, this.setType);
 
       if (this.ascending) {
         return d3.ascending(weightA, weightB);
@@ -54,17 +56,19 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
       return d3.descending(weightA, weightB);
     };
 
-    SetCountEdgeWeightSortingStrategy.prototype.getScore = function(path) {
+    SetConnectionStrengthSortingStrategy.prototype.getScore = function (path, setType) {
       var numSets = 0;
 
-        path.edges.forEach(function (edge) {
-            pathUtil.forEachEdgeSet(edge, function (type, setId) {
+      path.edges.forEach(function (edge) {
+          pathUtil.forEachEdgeSet(edge, function (type, setId) {
+            if (typeof setType === "undefined" || type === setType) {
               numSets++;
-            });
-          }
-        );
+            }
+          });
+        }
+      );
 
-        return numSets/path.nodes.length;
+      return path.edges.length > 0 ? numSets / path.edges.length : 0;
     };
 
     function PathPresenceSortingStrategy(pathIds) {
@@ -273,7 +277,7 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
         return pathWrapper.path.id
       }, "PATH_ID"),
 
-      setCountEdgeWeight: new SetCountEdgeWeightSortingStrategy(),
+      setCountEdgeWeight: new SetConnectionStrengthSortingStrategy(),
 
       selectionSortingStrategy: new SelectionSortingStrategy(),
 
@@ -482,7 +486,7 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
             callback(sortingStrategies.pathLength);
 
           } else if ($("#setConnectionStrengthRadio").prop("checked")) {
-            callback(sortingStrategies.setCountEdgeWeight);
+            callback(new SetConnectionStrengthSortingStrategy());
 
           } else if ($("#dataBasedScoreRadio").prop("checked")) {
             var datasetId = $("#datasetSelect").val();

@@ -80,6 +80,19 @@ define(["../../listeners"], function (listeners) {
         posY += pathWrappers[index].getHeight() + this.PATH_SPACING;
       }
       return posY;
+    },
+
+    getSetTypeTranslateY: function (pathWrapper, setTypeIndex) {
+
+      var posY = this.PATH_HEIGHT;
+      for (var typeIndex = 0; typeIndex < setTypeIndex; typeIndex++) {
+        var setType = pathWrapper.setTypes[typeIndex];
+        if (setType.canBeShown()) {
+          posY += setType.getHeight();
+        }
+      }
+
+      return posY;
     }
 
 

@@ -1,9 +1,9 @@
-define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pathsorting", "../../datastore", "../../config"],
-  function ($, d3, s, listeners, uiUtil, pathSorting, dataStore, config) {
+define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pathsorting", "../../datastore", "../../config", "../../setinfo"],
+  function ($, d3, s, listeners, uiUtil, pathSorting, dataStore, config, setInfo) {
 
     //var DEFAULT_COLUMN_WIDTH = 80;
     var COLUMN_SPACING = 5;
-    var BAR_SIZE = 12;
+    var BAR_SIZE = 8;
     var SMALL_BAR_SIZE = 8;
 
 
@@ -537,7 +537,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var score = column.sortingStrategy.getScore(pathWrapper.path);
 
       this.scoreRepresentation.setValueRange(valueRange);
-      this.scoreRepresentation.appendScore(item, score, s.PATH_HEIGHT);
+      this.scoreRepresentation.appendScore(item, score, s.PATH_HEIGHT, true);
 
 
       item.append("title")
@@ -549,7 +549,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       var score = column.sortingStrategy.getScore(pathWrapper.path);
       this.scoreRepresentation.setValueRange(valueRange);
-      this.scoreRepresentation.updateScore(item, score, s.PATH_HEIGHT);
+      this.scoreRepresentation.updateScore(item, score, s.PATH_HEIGHT, true);
     };
 
     function getPathDataScoreValueRange(pathWrappers, dataset, sortingStrategy) {
@@ -590,6 +590,35 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         this.scale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range([0, this.getWidth()]);
       },
 
+      appendSortingIndicator: function (parent, maxHeight, show) {
+        var that = this;
+        parent.append("rect")
+          .classed("sortingIndicator", true)
+          .attr({
+            x: 0,
+            y: 0,
+            fill: "black",
+            width: that.getWidth(),
+            height: maxHeight
+          })
+          .style({
+            opacity: show ? 0.2 : 0
+          });
+      },
+
+      updateSortingIndicator: function (parent, maxHeight, show) {
+        var that = this;
+        parent.select("rect.sortingIndicator")
+          .transition()
+          .attr({
+            width: that.getWidth(),
+            height: maxHeight
+          })
+          .style({
+            opacity: show ? 0.2 : 0
+          });
+      },
+
       getWidth: function () {
       },
 
@@ -617,9 +646,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       return BAR_COLUMN_WIDTH;
     };
 
-    BarRepresentation.prototype.appendScore = function (parent, score, maxHeight, color) {
+    BarRepresentation.prototype.appendScore = function (parent, score, maxHeight, showSortingIndicator, color) {
       var height = Math.min(BAR_SIZE, maxHeight);
       var that = this;
+      this.appendSortingIndicator(parent, maxHeight, showSortingIndicator);
+
       parent.append("rect")
         .classed("score", true)
         .attr({
@@ -631,9 +662,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         });
     };
 
-    BarRepresentation.prototype.updateScore = function (parent, score, maxHeight, color) {
+    BarRepresentation.prototype.updateScore = function (parent, score, maxHeight, showSortingIndicator, color) {
       var height = Math.min(BAR_SIZE, maxHeight);
       var that = this;
+      this.updateSortingIndicator(parent, maxHeight, showSortingIndicator);
+
       parent.select("rect.score")
         .transition()
         .attr({
@@ -662,9 +695,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       return HEATMAP_COLUMN_WIDTH;
     };
 
-    HeatmapRepresentation.prototype.appendScore = function (parent, score, maxHeight) {
+    HeatmapRepresentation.prototype.appendScore = function (parent, score, maxHeight, showSortingIndicator, color) {
       var size = Math.min(this.size, maxHeight);
       var that = this;
+      this.appendSortingIndicator(parent, maxHeight, showSortingIndicator);
+
       parent.append("rect")
         .classed("score", true)
         .attr({
@@ -677,9 +712,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         });
     };
 
-    HeatmapRepresentation.prototype.updateScore = function (parent, score, maxHeight) {
+    HeatmapRepresentation.prototype.updateScore = function (parent, score, maxHeight, showSortingIndicator, color) {
       var size = Math.min(this.size, maxHeight);
       var that = this;
+      this.updateSortingIndicator(parent, maxHeight, showSortingIndicator);
       parent.select("rect.score")
         .transition()
         .attr({
@@ -705,9 +741,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       return TEXT_COLUMN_WIDTH;
     };
 
-    TextRepresentation.prototype.appendScore = function (parent, score, maxHeight) {
+    TextRepresentation.prototype.appendScore = function (parent, score, maxHeight, showSortingIndicator, color) {
       var size = Math.min(this.size, maxHeight);
       var that = this;
+      this.appendSortingIndicator(parent, maxHeight, showSortingIndicator);
       parent.append("text")
         .classed("score", true)
         .attr({
@@ -717,9 +754,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         .text(uiUtil.formatNumber(score));
     };
 
-    TextRepresentation.prototype.updateScore = function (parent, score, maxHeight) {
+    TextRepresentation.prototype.updateScore = function (parent, score, maxHeight, showSortingIndicator, color) {
       var size = Math.min(this.size, maxHeight);
       var that = this;
+      this.updateSortingIndicator(parent, maxHeight, showSortingIndicator);
       parent.select("text.score")
         .transition()
         .attr({
@@ -729,16 +767,112 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         .text(uiUtil.formatNumber(score));
     };
 
+    //--------------------------------------
 
-//------------------------------
-    function StatRenderer(column, scoreRepresentation, tooltipTextAccessor) {
+    function SetItemRenderer(column, scoreRepresentation, tooltipTextAccessor) {
       PathItemRenderer.call(this, column, scoreRepresentation);
       this.tooltipTextAccessor = tooltipTextAccessor;
     }
 
-    StatRenderer.prototype = Object.create(PathItemRenderer.prototype);
+    SetItemRenderer.prototype = Object.create(PathItemRenderer.prototype);
 
-    StatRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
+    SetItemRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
+
+      var that = this;
+      var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
+
+      this.scoreRepresentation.setValueRange(valueRange);
+      if (pathWrapper.setTypes.length > 1) {
+
+        var score = column.sortingStrategy.getScore(pathWrapper.path);
+
+        var pathGroup = item.append("g").classed("path", true)
+          .on("dblclick", function () {
+            //if (column.sortingStrategy.setType) {
+            //  s.decStickyDataGroupOwners(dataset.id, column.sortingStrategy.groupId);
+            //}
+            delete column.sortingStrategy.setType;
+            listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+          });
+        this.scoreRepresentation.appendScore(pathGroup, score, s.PATH_HEIGHT, typeof column.sortingStrategy.setType === "undefined");
+
+
+        pathGroup.append("title")
+          .text(column.sortingStrategy.label + ": " + score);
+      }
+
+      var setTypes = item.selectAll("g.setType").data(pathWrapper.setTypes, function (d) {
+        return d.id;
+      }).enter()
+        .append("g")
+        .classed("setType", true);
+
+      setTypes.each(function (setType, i) {
+        var score = column.sortingStrategy.getScore(pathWrapper.path, setType.type);
+        d3.select(this).attr({
+          transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, i) + ")"
+        }).on("dblclick", function () {
+          //if (column.sortingStrategy.setType) {
+          //  s.decStickyDataGroupOwners(dataset.id, column.sortingStrategy.groupId);
+          //}
+          column.sortingStrategy.setType = setType.type;
+          listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+        });
+
+        that.scoreRepresentation.appendScore(d3.select(this), score, s.SET_TYPE_HEIGHT, column.sortingStrategy.setType === setType.type || pathWrapper.setTypes.length === 1, setInfo.getSetTypeInfo(setType.type).color);
+
+        d3.select(this).append("title")
+          .text(column.sortingStrategy.label + ": " + score);
+      });
+    };
+
+    SetItemRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
+      var that = this;
+      var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
+      this.scoreRepresentation.setValueRange(valueRange);
+
+      if (pathWrapper.setTypes.length > 1) {
+        var score = column.sortingStrategy.getScore(pathWrapper.path);
+        this.scoreRepresentation.updateScore(item, score, s.PATH_HEIGHT, typeof column.sortingStrategy.setType === "undefined");
+      }
+
+      var allSetTypes = item.selectAll("g.setType").data(pathWrapper.setTypes, function (d) {
+        return d.id;
+      });
+
+      allSetTypes.each(function (setType, i) {
+        var score = column.sortingStrategy.getScore(pathWrapper.path, setType.type);
+        d3.select(this).transition()
+          .attr({
+            transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, i) + ")"
+          });
+
+        that.scoreRepresentation.updateScore(d3.select(this), score, s.SET_TYPE_HEIGHT, column.sortingStrategy.setType === setType.type || pathWrapper.setTypes.length === 1, setInfo.getSetTypeInfo(setType.type).color);
+      });
+    };
+
+    SetItemRenderer.prototype.init = function () {
+      //if (this.column.sortingStrategy.groupId) {
+      //  s.incStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
+      //}
+    };
+
+    SetItemRenderer.prototype.destroy = function () {
+      //if (this.column.sortingStrategy.groupId) {
+      //  s.decStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
+      //}
+    };
+
+
+//------------------------------
+    function DatasetItemRenderer(column, scoreRepresentation, tooltipTextAccessor) {
+      PathItemRenderer.call(this, column, scoreRepresentation);
+      this.tooltipTextAccessor = tooltipTextAccessor;
+    }
+
+    DatasetItemRenderer.prototype = Object.create(PathItemRenderer.prototype);
+
+    DatasetItemRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
 
       var datasetId = column.sortingStrategy.datasetId;
       var groupId = column.sortingStrategy.groupId;
@@ -784,7 +918,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
         });
 
-      this.scoreRepresentation.appendScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined") ? dataset.color : d3.hsl(dataset.color).brighter(1).toString());
+      this.scoreRepresentation.appendScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), (typeof groupId === "undefined") ? dataset.color : d3.hsl(dataset.color).brighter(1).toString());
 
       //var bar = datasetGroup.append("rect")
       //  .classed("datasetScore", true)
@@ -802,7 +936,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     };
 
-    StatRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
+    DatasetItemRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
 
       var that = this;
       var datasetId = column.sortingStrategy.datasetId;
@@ -842,7 +976,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           transform: "translate(0," + datasetPosY + ")"
         });
 
-      this.scoreRepresentation.updateScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined") ? dataset.color : d3.hsl(dataset.color).brighter(1).toString());
+      this.scoreRepresentation.updateScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), dataset.color);
       //
       //datasetGroup.select("rect.datasetScore")
       //  .transition()
@@ -894,7 +1028,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
               });
 
-            that.scoreRepresentation.appendScore(d3.select(this), score, group.getBaseHeight(), (groupId === group.name) ? dataset.color : d3.hsl(dataset.color).brighter(1).toString());
+            that.scoreRepresentation.appendScore(d3.select(this), score, group.getBaseHeight(), (groupId === group.name), dataset.color);
 
             d3.select(this).append("title")
               .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
@@ -922,20 +1056,20 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             transform: "translate(0," + (datasetPosY + posY) + ")"
           });
 
-          that.scoreRepresentation.updateScore(d3.select(this), score, group.getBaseHeight(), (groupId === group.name) ? dataset.color : d3.hsl(dataset.color).brighter(1).toString());
+          that.scoreRepresentation.updateScore(d3.select(this), score, group.getBaseHeight(), (groupId === group.name), dataset.color);
         });
 
         allGroups.exit().remove();
       }
     };
 
-    StatRenderer.prototype.init = function () {
+    DatasetItemRenderer.prototype.init = function () {
       if (this.column.sortingStrategy.groupId) {
         s.incStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
       }
     };
 
-    StatRenderer.prototype.destroy = function () {
+    DatasetItemRenderer.prototype.destroy = function () {
       if (this.column.sortingStrategy.groupId) {
         s.decStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
       }
@@ -971,61 +1105,29 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = function (column) {
           return new SimplePathScoreRenderer(column, new TextRepresentation());
         };
+        this.itemRenderers["SET_COUNT_EDGE_WEIGHT"] = function (column) {
+          return new SetItemRenderer(column, new BarRepresentation());
+        };
         this.itemRenderers["OVERALL_STATS"] = function (column) {
-          return new StatRenderer(column, new BarRepresentation(), overallStatsTooltip);
+          return new DatasetItemRenderer(column, new BarRepresentation(), overallStatsTooltip);
         };
         this.itemRenderers["PER_NODE_STATS"] = function (column) {
-          return new StatRenderer(column, new BarRepresentation(), perNodeStatsTooltip);
+          return new DatasetItemRenderer(column, new BarRepresentation(), perNodeStatsTooltip);
         };
         this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = function (column) {
-          return new StatRenderer(column, new BarRepresentation(), overallBetweenGroupsStatsTooltip);
+          return new DatasetItemRenderer(column, new BarRepresentation(), overallBetweenGroupsStatsTooltip);
         };
         this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = function (column) {
-          return new StatRenderer(column, new BarRepresentation(), perNodeBetweenGroupsStatsTooltip);
+          return new DatasetItemRenderer(column, new BarRepresentation(), perNodeBetweenGroupsStatsTooltip);
         };
 
         var that = this;
         var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
         initialPathSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
 
-        //this.selectableSortingStrategies = [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy,
-        //  pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight].concat(pathSorting.customSortingStrategies);
-        //this.selectableSortingStrategies = this.selectableSortingStrategies.concat(dataStore.getDataBasedPathSortingStrategies());
-
         this.columns = initialPathSortingStrategies.map(function (sortingStrategy, i) {
           return new Column(that, sortingStrategy, i + 1);
         });
-
-        //listeners.add(function () {
-        //
-        //  addNewStrategies(dataStore.getDataBasedPathSortingStrategies());
-        //
-        //}, listeners.updateType.DATASET_UPDATE);
-        //
-        //listeners.add(function (customStrategies) {
-        //
-        //  addNewStrategies(customStrategies);
-        //
-        //}, "CUSTOM_SORTING_STRATEGY_UPDATE");
-
-        //function addNewStrategies(strategies) {
-        //  var newStrategies = strategies.filter(function (strategy) {
-        //    for (var i = 0; i < that.selectableSortingStrategies.length; i++) {
-        //      if (that.selectableSortingStrategies[i].id === strategy.id) {
-        //        return false;
-        //      }
-        //    }
-        //    return true;
-        //  });
-        //
-        //  if (newStrategies.length > 0) {
-        //    that.selectableSortingStrategies = that.selectableSortingStrategies.concat(newStrategies);
-        //    that.columns.forEach(function (column) {
-        //      column.header.addSortingStrategies(newStrategies);
-        //    });
-        //  }
-        //}
-
 
       },
 
