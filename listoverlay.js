@@ -38,7 +38,7 @@ define(['jquery', 'd3'], function ($, d3) {
       this.items.push(item);
     },
 
-    show: function (domParent, x, y) {
+    show: function () {
       var that = this;
 
       if (this.isShown) {
@@ -47,7 +47,7 @@ define(['jquery', 'd3'], function ($, d3) {
       this.isShown = true;
 
       var coordinates = d3.mouse(d3.select("body")[0][0]);
-      var svg = d3.select("#overlaySVG")
+      this.rootElement = d3.select("body").append("svg")
         .style({
           display: "inline",
           position: "absolute",
@@ -55,13 +55,12 @@ define(['jquery', 'd3'], function ($, d3) {
           top: coordinates[1],
           width: ITEM_WIDTH,
           height: that.items.length * ITEM_HEIGHT
-        }
-      );
+        });
 
       var that = this;
 
-      this.rootElement = svg.append("g")
-        .classed("listOverlay", true);
+      //this.rootElement = svg.append("g")
+      //  .classed("listOverlay", true);
         //.attr("transform", "translate(" + x + "," + y + ")");
 
       var listItem = this.rootElement.selectAll("g.listItem")
@@ -127,11 +126,6 @@ define(['jquery', 'd3'], function ($, d3) {
 
     hide: function () {
 
-      var svg = d3.select("#overlaySVG")
-        .style({
-          display: "none"
-        }
-      );
       if (typeof this.rootElement !== "undefined") {
         this.rootElement.remove();
       }

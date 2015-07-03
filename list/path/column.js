@@ -7,12 +7,15 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     var SMALL_BAR_SIZE = 8;
 
 
-    var RANK_CRITERION_SELECTOR_WIDTH = 50;
-    var COLUMN_ELEMENT_SPACING = 5;
-    var STRATEGY_SELECTOR_START = 5;
-    var BAR_COLUMN_WIDTH = STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 2 * COLUMN_ELEMENT_SPACING + 16 + 5;
+    //var RANK_CRITERION_SELECTOR_WIDTH = 50;
+    //var COLUMN_ELEMENT_SPACING = 5;
+    //var STRATEGY_SELECTOR_START = 5;
 
-    var HEATMAP_COLUMN_WIDTH = 20;
+    var HEADER_ELEMENT_SPACING = 5;
+    var HEADER_BUTTON_SIZE = 16;
+
+    var BAR_COLUMN_WIDTH = 90;
+    var HEATMAP_COLUMN_WIDTH = 40;
     var TEXT_COLUMN_WIDTH = 40;
     //var RANK_CRITERION_ELEMENT_HEIGHT = 22;
 
@@ -67,39 +70,54 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       setPriority: function (priority) {
         this.priority = priority;
-        //if (typeof this.rootDomElement !== "undefined") {
-        //  this.rootDomElement.select("text.priority")
-        //    .text(this.priority.toString() + ".")
-        //}
       },
 
       init: function (parent) {
+
+        var that = this;
+        var columnWidth = that.column.getWidth();
 
         this.rootDomElement = parent.append("g")
           .classed("rankCriterionElement", true);
 
         this.rootDomElement.append("rect")
+          .classed("colBg", true)
           .attr({
             x: 0,
-            y: 0,
-            width: BAR_COLUMN_WIDTH,
+            y: s.COLUMN_HEADER_HEIGHT / 2,
+            width: columnWidth,
             height: "100%"
           })
           .style({
             fill: "rgb(240,240,240)"
           });
 
-        this.rootDomElement.append("rect")
+        var columnGroup = this.rootDomElement.append("g");
+
+        var headerBackground = columnGroup.append("rect")
+          .classed("headerBg", true)
           .attr({
             x: 0,
             y: 0,
             rx: 5,
             ry: 5,
-            width: BAR_COLUMN_WIDTH,
+            width: columnWidth,
             height: s.COLUMN_HEADER_HEIGHT
           })
           .style({
             fill: "lightgray"
+          });
+
+
+        this.rootDomElement.on("mouseover", function () {
+          headerBackground.style({
+            fill: "rgb(180,180,180)"
+          });
+        })
+          .on("mouseout", function () {
+            headerBackground.style({
+              fill: "lightgray"
+            });
           });
 
         this.rootDomElement.append("clipPath")
@@ -107,123 +125,104 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           .append("rect")
           .attr("x", 3)
           .attr("y", 0)
-          .attr("width", RANK_CRITERION_SELECTOR_WIDTH)
+          .attr("width", columnWidth - (3 * HEADER_ELEMENT_SPACING + HEADER_BUTTON_SIZE))
           .attr("height", s.COLUMN_HEADER_HEIGHT);
 
-        var tooltip = this.rootDomElement.append("title")
+        var tooltip = columnGroup.append("title")
           .text(this.sortingStrategy.label);
 
-        //this.rootDomElement.append("text")
-        //  .classed("priority", true)
-        //  .attr({
-        //    x: 5,
-        //    y: s.COLUMN_HEADER_HEIGHT / 2 + 5
-        //  })
-        //  .style({
-        //    "font-size": "12px"
-        //  })
-        //  .text(this.priority.toString() + ".");
 
-        var label = this.rootDomElement.append("text")
+        var label = columnGroup.append("text")
           .attr({
-            x: STRATEGY_SELECTOR_START,
+            x: HEADER_ELEMENT_SPACING,
             y: s.COLUMN_HEADER_HEIGHT / 2 + 4,
             "clip-path": "url(#columnHeaderClipPath" + this.column.id + ")"
           })
           .style({font: "12px 'Arial'"})
           .text(this.sortingStrategy.label);
 
-        //var fo = this.rootDomElement.append("foreignObject")
-        //  .attr({
-        //    x: STRATEGY_SELECTOR_START,
-        //    y: 2,
-        //    width: DEFAULT_COLUMN_WIDTH - STRATEGY_SELECTOR_START - 2,
-        //    height: s.COLUMN_HEADER_HEIGHT - 4
-        //  }).append("xhtml:div")
-        //  .style("font", "12px 'Arial'")
-        //  .style("opacity", 0)
-        //  .html('<select class="strategySelector"></select>');
+        columnGroup.on("click.openOptions", function () {
+
+          uiUtil.showListOverlay([{
+            text: "Configure Score",
+            icon: "",
+            callback: function () {
+              pathSorting.openConfigureSortingDialog(function (sortingStrategy) {
+                label.text(sortingStrategy.label);
+                tooltip.text(sortingStrategy.label);
+                that.sortingStrategy = sortingStrategy;
+                that.column.setSortingStrategy(sortingStrategy);
+                that.columnManager.updateSortOrder();
+                that.columnManager.notify();
+              });
+            }
+          },
+            {
+              text: "Show as Bars",
+              icon: "",
+              callback: function () {
+                d3.selectAll("g.columnItem" + that.column.id).remove();
+                that.column.itemRenderer.setScoreRepresentation(new BarRepresentation());
+                that.updateWidth();
+                that.columnManager.notify();
+              }
+            },
+            {
+              text: "Show as Heatmap",
+              icon: "",
+              callback: function () {
+                d3.selectAll("g.columnItem" + that.column.id).remove();
+                that.column.itemRenderer.setScoreRepresentation(new HeatmapRepresentation());
+                that.updateWidth();
+                that.columnManager.notify();
+              }
+            },
+            {
+              text: "Show as Text",
+              icon: "",
+              callback: function () {
+                d3.selectAll("g.columnItem" + that.column.id).remove();
+                that.column.itemRenderer.setScoreRepresentation(new TextRepresentation());
+                that.updateWidth();
+                that.columnManager.notify();
+              }
+            }
+          ]);
 
 
-        var that = this;
-        //var selector = this.rootDomElement.select("select.strategySelector");
-        //
-        //this.columnManager.selectableSortingStrategies.forEach(function (strategy, i) {
-        //  selector.append("option")
-        //    .attr({
-        //      value: i
-        //    })
-        //    .text(strategy.label);
-        //});
-        //
-        //selector.append("title")
-        //  .text(function () {
-        //    return $(selector[0]).text;
-        //  });
-        //
-        //
-        //$(selector[0]).width(RANK_CRITERION_SELECTOR_WIDTH);
-        //$(selector[0]).val(this.selectedStrategyIndex);
+        });
 
 
-        var sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 5, 3, 16, 16, that.orderButtonText(), 16 / 2, 16 - 3, "rgb(30,30,30)", false);
+        that.sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, columnWidth - HEADER_ELEMENT_SPACING - HEADER_BUTTON_SIZE, 3,
+          HEADER_BUTTON_SIZE, HEADER_BUTTON_SIZE, that.orderButtonText(), 16 / 2, 16 - 3, "rgb(30,30,30)", false);
 
-        sortingOrderButton
+        that.sortingOrderButton
           .classed("sortOrderButton", true)
           .on("click", function () {
             that.sortingStrategy.ascending = !that.sortingStrategy.ascending;
             that.columnManager.updateSortOrder();
             that.columnManager.notify();
-          });
-
-        //$(selector[0]).on("change", function () {
-        //  that.selectedStrategyIndex = this.value;
-        //  var sortingStrategy = that.columnManager.selectableSortingStrategies[that.selectedStrategyIndex];
-        //  label.text(sortingStrategy.label);
-        //  tooltip.text(sortingStrategy.label)
-        //  that.column.setSortingStrategy(sortingStrategy);
-        //  that.columnManager.updateSortOrder();
-        //  that.columnManager.notify();
-        //});
-
-        var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 10 + 16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
+          }).append("title")
+          .text("Toggle sort order");
 
 
-        removeButton.attr("display", "none");
-
-        removeButton.on("click", function () {
-          that.columnManager.removeColumn(that.column);
-        });
-
-        $(this.rootDomElement[0]).dblclick(function () {
-          pathSorting.openConfigureSortingDialog(function (sortingStrategy) {
-            label.text(sortingStrategy.label);
-            tooltip.text(sortingStrategy.label);
-            that.sortingStrategy = sortingStrategy;
-            that.column.setSortingStrategy(sortingStrategy);
-            that.columnManager.updateSortOrder();
-            that.columnManager.notify();
-          });
-        });
-
-
-        $(this.rootDomElement[0]).mouseenter(function () {
-          removeButton.attr("display", "inline");
-          //fo.attr("display", "inline");
-          //fo.style("opacity", 1);
-          //fo.attr("display", "inline");
-          //label.attr("display", "none");
-          //fo.style("opacity", 1);
-        });
+        //var removeButton = uiUtil.addOverlayButton(this.rootDomElement, STRATEGY_SELECTOR_START + RANK_CRITERION_SELECTOR_WIDTH + 10 + 16, 3, 16, 16, "\uf00d", 16 / 2, 16 - 3, "red", true);
         //
-        $(this.rootDomElement[0]).mouseleave(function () {
-          removeButton.attr("display", "none");
-          //fo.attr("display", "none");
-          //fo.style("opacity", 0);
-          //selector.attr("display", "none");
-          //label.attr("display", "inline");
-          //fo.style("opacity", 0);
-        });
+        //
+        //removeButton.attr("display", "none");
+        //
+        //removeButton.on("click", function () {
+        //  that.columnManager.removeColumn(that.column);
+        //});
+        //
+        //
+        //$(this.rootDomElement[0]).mouseenter(function () {
+        //  removeButton.attr("display", "inline");
+        //});
+        ////
+        //$(this.rootDomElement[0]).mouseleave(function () {
+        //  removeButton.attr("display", "none");
+        //});
       },
 
       orderButtonText: function () {
@@ -232,19 +231,36 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       updateSortOrder: function () {
         this.rootDomElement.select("g.sortOrderButton").select("text").text(this.orderButtonText());
+      },
+
+
+      updateWidth: function () {
+
+        var width = this.column.getWidth();
+
+        this.rootDomElement.select("rect.colBg")
+          .transition()
+          .attr({
+            width: width
+          });
+
+        this.rootDomElement.select("rect.headerBg")
+          .transition()
+          .attr({
+            width: width
+          });
+
+        this.rootDomElement.select("#columnHeaderClipPath" + this.column.id).select("rect")
+          .transition()
+          .attr("width", width - (3 * HEADER_ELEMENT_SPACING + HEADER_BUTTON_SIZE));
+
+        this.sortingOrderButton
+          .transition()
+          .attr({
+            transform: "translate(" + (width - HEADER_BUTTON_SIZE - HEADER_ELEMENT_SPACING) + "," + (3) + ")"
+          });
       }
 
-      //addSortingStrategies: function (newStrategies) {
-      //  var selector = this.rootDomElement.select("select.strategySelector");
-      //  var startIndex = this.columnManager.selectableSortingStrategies.length - newStrategies.length;
-      //  newStrategies.forEach(function (strategy, i) {
-      //    selector.append("option")
-      //      .attr({
-      //        value: startIndex + i
-      //      })
-      //      .text(strategy.label);
-      //  });
-      //}
     };
 
     function Column(columnManager, sortingStrategy, priority) {
@@ -262,7 +278,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         }
         d3.selectAll("g.columnItem" + this.id).remove();
         this.sortingStrategy = sortingStrategy;
-        this.itemRenderer = this.columnManager.getItemRenderer(sortingStrategy);
+        this.itemRenderer = this.columnManager.getItemRenderer(sortingStrategy, this);
         this.itemRenderer.init(this);
       },
 
@@ -432,8 +448,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       }
     };
 
-    function PathItemRenderer(scoreRepresentation) {
+    function PathItemRenderer(column, scoreRepresentation) {
       this.scoreRepresentation = scoreRepresentation || new BarRepresentation();
+      this.column = column;
     }
 
     PathItemRenderer.prototype = {
@@ -441,15 +458,21 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       },
 
+      setScoreRepresentation: function (scoreRepresentation) {
+        this.destroy();
+        this.scoreRepresentation = scoreRepresentation;
+        this.init();
+      },
+
       update: function (item, pathWrapper, index, pathWrappers) {
 
       },
 
-      init: function (column) {
+      init: function () {
 
       },
 
-      destroy: function (column) {
+      destroy: function () {
 
       },
 
@@ -475,8 +498,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       return {min: min, max: max};
     }
 
-    function SimplePathScoreRenderer(scoreRepresentation) {
-      PathItemRenderer.call(this, scoreRepresentation);
+    function SimplePathScoreRenderer(column, scoreRepresentation) {
+      PathItemRenderer.call(this, column, scoreRepresentation);
     }
 
     SimplePathScoreRenderer.prototype = Object.create(PathItemRenderer.prototype);
@@ -484,22 +507,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     SimplePathScoreRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
 
       var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
-      //var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range([0, column.getWidth()]);
 
       var score = column.sortingStrategy.getScore(pathWrapper.path);
 
       this.scoreRepresentation.setValueRange(valueRange);
       this.scoreRepresentation.appendScore(item, score, s.PATH_HEIGHT);
 
-      //var bar = item.append("rect")
-      //  .classed("pathScore", true)
-      //  .attr({
-      //    x: score < 0 ? barScale(score) : barScale(0),
-      //    y: (s.PATH_HEIGHT - BAR_SIZE) / 2,
-      //    fill: "gray",
-      //    width: Math.abs(barScale(0) - barScale(score)),
-      //    height: BAR_SIZE
-      //  });
 
       item.append("title")
         .text(column.sortingStrategy.label + ": " + score);
@@ -507,18 +520,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     SimplePathScoreRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
       var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
-      //var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range([0, column.getWidth()]);
 
       var score = column.sortingStrategy.getScore(pathWrapper.path);
       this.scoreRepresentation.setValueRange(valueRange);
       this.scoreRepresentation.updateScore(item, score, s.PATH_HEIGHT);
-      //item.select("rect.pathScore")
-      //  .transition()
-      //  .attr({
-      //    x: score < 0 ? barScale(score) : barScale(0),
-      //    y: (s.PATH_HEIGHT - BAR_SIZE) / 2,
-      //    width: Math.abs(barScale(0) - barScale(score))
-      //  });
     };
 
     function getPathDataScoreValueRange(pathWrappers, dataset, sortingStrategy) {
@@ -700,8 +705,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
 
 //------------------------------
-    function StatRenderer(tooltipTextAccessor, scoreRepresentation) {
-      PathItemRenderer.call(this, scoreRepresentation);
+    function StatRenderer(column, scoreRepresentation, tooltipTextAccessor) {
+      PathItemRenderer.call(this, column, scoreRepresentation);
       this.tooltipTextAccessor = tooltipTextAccessor;
     }
 
@@ -898,15 +903,15 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       }
     };
 
-    StatRenderer.prototype.init = function (column) {
-      if (column.sortingStrategy.groupId) {
-        s.incStickyDataGroupOwners(column.sortingStrategy.datasetId, column.sortingStrategy.groupId);
+    StatRenderer.prototype.init = function () {
+      if (this.column.sortingStrategy.groupId) {
+        s.incStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
       }
     };
 
-    StatRenderer.prototype.destroy = function (column) {
-      if (column.sortingStrategy.groupId) {
-        s.decStickyDataGroupOwners(column.sortingStrategy.datasetId, column.sortingStrategy.groupId);
+    StatRenderer.prototype.destroy = function () {
+      if (this.column.sortingStrategy.groupId) {
+        s.decStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
       }
     };
 
@@ -937,23 +942,21 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       init: function (pathList) {
         this.pathList = pathList;
-        //this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = new SimplePathScoreRenderer(new BarRepresentation());
-        //this.itemRenderers["OVERALL_STATS"] = new StatRenderer(overallStatsTooltip, new BarRepresentation());
-        //this.itemRenderers["PER_NODE_STATS"] = new StatRenderer(perNodeStatsTooltip, new BarRepresentation());
-        //this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = new StatRenderer(overallBetweenGroupsStatsTooltip, new BarRepresentation());
-        //this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = new StatRenderer(perNodeBetweenGroupsStatsTooltip, new BarRepresentation());
-        //
-        this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = new SimplePathScoreRenderer(new HeatmapRepresentation());
-        this.itemRenderers["OVERALL_STATS"] = new StatRenderer(overallStatsTooltip, new HeatmapRepresentation());
-        this.itemRenderers["PER_NODE_STATS"] = new StatRenderer(perNodeStatsTooltip, new HeatmapRepresentation());
-        this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = new StatRenderer(overallBetweenGroupsStatsTooltip, new HeatmapRepresentation());
-        this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = new StatRenderer(perNodeBetweenGroupsStatsTooltip, new HeatmapRepresentation());
-
-        //this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = new SimplePathScoreRenderer(new TextRepresentation());
-        //this.itemRenderers["OVERALL_STATS"] = new StatRenderer(overallStatsTooltip, new TextRepresentation());
-        //this.itemRenderers["PER_NODE_STATS"] = new StatRenderer(perNodeStatsTooltip, new TextRepresentation());
-        //this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = new StatRenderer(overallBetweenGroupsStatsTooltip, new TextRepresentation());
-        //this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = new StatRenderer(perNodeBetweenGroupsStatsTooltip, new TextRepresentation());
+        this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = function (column) {
+          return new SimplePathScoreRenderer(column, new HeatmapRepresentation());
+        };
+        this.itemRenderers["OVERALL_STATS"] = function (column) {
+          return new StatRenderer(column, new HeatmapRepresentation(), overallStatsTooltip);
+        };
+        this.itemRenderers["PER_NODE_STATS"] = function (column) {
+          return new StatRenderer(column, new HeatmapRepresentation(), perNodeStatsTooltip);
+        };
+        this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = function (column) {
+          return new StatRenderer(column, new HeatmapRepresentation(), overallBetweenGroupsStatsTooltip);
+        };
+        this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = function (column) {
+          return new StatRenderer(column, new HeatmapRepresentation(), perNodeBetweenGroupsStatsTooltip);
+        };
 
         var that = this;
         var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
@@ -1009,20 +1012,24 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         });
 
         return chain;
-      },
+      }
+
+      ,
 
       notify: function () {
         var chain = this.getStrategyChain();
         chain.push(pathSorting.sortingStrategies.pathId);
         pathSorting.sortingManager.setStrategyChain(chain);
         listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-      },
+      }
+      ,
 
       updateSortOrder: function () {
         this.columns.forEach(function (column) {
           column.header.updateSortOrder();
         });
-      },
+      }
+      ,
 
       removeColumn: function (col) {
         var index = this.columns.indexOf(col);
@@ -1038,18 +1045,19 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       }
       ,
 
-      getItemRenderer: function (sortingStrategy) {
-        var renderer = this.itemRenderers[sortingStrategy.id];
-        if (renderer) {
-          return renderer;
+      getItemRenderer: function (sortingStrategy, column) {
+        var factory = this.itemRenderers[sortingStrategy.id];
+        if (factory) {
+          return factory(column);
         }
 
         if (sortingStrategy.id.indexOf("CUSTOM") === 0) {
-          return new SimplePathScoreRenderer(new BarRepresentation());
+          return new SimplePathScoreRenderer(column, new BarRepresentation());
         }
 
-        return new PathItemRenderer();
-      },
+        return new PathItemRenderer(column);
+      }
+      ,
 
       renderColumns: function (parent, pathWrappers) {
 

@@ -65,6 +65,16 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
       }, "\uf013", x, y, small);
     },
 
+    showListOverlay: function(items) {
+      if (typeof items === "function") {
+        listOverlay.setItems(items());
+      } else {
+        listOverlay.setItems(items);
+      }
+
+      listOverlay.show();
+    },
+
     addOverlayButton: function (parent, x, y, width, height, buttonText, textX, textY, color, showBg) {
 
       var button = parent.append("g")
