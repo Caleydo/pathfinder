@@ -45,8 +45,8 @@ define(['d3'], function (d3) {
 
   return {
 
-    getHumanReadableStat: function (stat) {
-      return humanReadableNames[stat];
+    getHumanReadableStat: function (stat, capitalized) {
+      return capitalized ? humanReadableNames[stat].charAt(0).toUpperCase() + humanReadableNames[stat].slice(1) : humanReadableNames[stat];
     },
 
     statisticsOf: function (data) {

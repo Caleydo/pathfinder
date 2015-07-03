@@ -1,5 +1,5 @@
-define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../listeners', '../query/pathquery', '../datastore'],
-  function ($, sorting, pathUtil, q, listeners, pathQuery, dataStore) {
+define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../listeners', '../query/pathquery', '../datastore', '../setinfo', '../config', '../statisticsutil'],
+  function ($, sorting, pathUtil, q, listeners, pathQuery, dataStore, setInfo, config, statisticsUtil) {
     var SortingStrategy = sorting.SortingStrategy;
 
     //TODO: fetch amount of sets from server
@@ -23,10 +23,11 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
     };
 
 
-    function SetConnectionStrengthSortingStrategy(setType) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID, "Average set connection strength", "SET_COUNT_EDGE_WEIGHT");
+    function SetConnectionStrengthSortingStrategy(stat, label, setType) {
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID, label, "SET_COUNT_EDGE_WEIGHT");
       this.ascending = false;
       this.setType = setType;
+      this.stat = stat;
     }
 
     SetConnectionStrengthSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
@@ -57,18 +58,22 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
     };
 
     SetConnectionStrengthSortingStrategy.prototype.getScore = function (path, setType) {
-      var numSets = 0;
+      var setsPerEdge = [];
 
       path.edges.forEach(function (edge) {
+          var numSets = 0;
           pathUtil.forEachEdgeSet(edge, function (type, setId) {
             if (typeof setType === "undefined" || type === setType) {
               numSets++;
             }
           });
+          setsPerEdge.push(numSets);
         }
       );
 
-      return path.edges.length > 0 ? numSets / path.edges.length : 0;
+      var stats = statisticsUtil.statisticsOf(setsPerEdge);
+
+      return stats[this.stat];
     };
 
     function PathPresenceSortingStrategy(pathIds) {
@@ -277,7 +282,7 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
         return pathWrapper.path.id
       }, "PATH_ID"),
 
-      setCountEdgeWeight: new SetConnectionStrengthSortingStrategy(),
+      //setCountEdgeWeight: new SetConnectionStrengthSortingStrategy(),
 
       selectionSortingStrategy: new SelectionSortingStrategy(),
 
@@ -322,6 +327,10 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
     //sortingManager.setStrategyChain([sortingStrategies.getPathQueryStrategy(pathQuery), sortingStrategies.pathId]);
 
     function updateWidgetVisibility() {
+      $("#setConnectionStrengthWidgets").css({
+        display: $("#setConnectionStrengthRadio").prop("checked") ? "block" : "none"
+      });
+
       $("#dataBasedScoreWidgets").css({
         display: $("#dataBasedScoreRadio").prop("checked") ? "block" : "none"
       });
@@ -331,10 +340,16 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
       });
     }
 
+    function validateSetBasedSortingConfig() {
+      var setType = $("#setTypeSelect").val();
+      var stat = $("#setStatSelect").val();
+      return setType && stat;
+    }
+
     function validateDataBasedSortingConfig() {
       var datasetId = $("#datasetSelect").val();
       var stat = $("#statisticSelect").val();
-      var method = $("#methodSelect").val();
+      var method = "stat"; //$("#methodSelect").val();
       var scope = $("#scopeSelect").val();
       return datasetId && stat && method && scope;
     }
@@ -382,7 +397,7 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
         $("#setConnectionStrengthRadio").click(function () {
           updateWidgetVisibility();
           //$("#rankScriptConfirm").toggleEnabled(true);
-          $("#rankConfigConfirm").prop("disabled", false);
+          $("#rankConfigConfirm").prop("disabled", !validateSetBasedSortingConfig());
         });
         $("#dataBasedScoreRadio").click(function () {
           updateWidgetVisibility();
@@ -393,6 +408,14 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
           updateWidgetVisibility();
           //$("#rankScriptConfirm").toggleEnabled(validateDataBasedSortingConfig());
           $("#rankConfigConfirm").prop("disabled", !validateCustomScoreConfig());
+        });
+
+        $("#setTypeSelect").on("change", function () {
+          $("#rankConfigConfirm").prop("disabled", !validateSetBasedSortingConfig());
+        });
+
+        $("#setStatSelect").on("change", function () {
+          $("#rankConfigConfirm").prop("disabled", !validateSetBasedSortingConfig());
         });
 
         $("#datasetSelect").on("change", function () {
@@ -472,8 +495,30 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
 
         var datasetSelect = $("#datasetSelect");
         datasetSelect.empty();
-        datasets.forEach(function (dataset) {
+        datasets.forEach(function (dataset, i) {
           datasetSelect.append("<option label='" + dataset.info.title + "'>" + dataset.info.name + "</option>");
+          if (i === 0) {
+            datasetSelect.val(dataset.info.name);
+          }
+        });
+
+        var setTypes = setInfo.getSetTypeInfos();
+
+        $("#setConnectionStrength").css({
+          display: setTypes.length > 0 ? "block" : "none"
+        });
+
+        var setTypeSelect = $("#setTypeSelect");
+        setTypeSelect.empty();
+        if (setTypes.length > 1) {
+          setTypeSelect.append("<option label='All'>all</option>");
+          setTypeSelect.val("all");
+        }
+        setTypes.forEach(function (setType) {
+          setTypeSelect.append("<option label='" + config.getSetTypeFromSetPropertyName(setType.type) + "'>" + setType.type + "</option>");
+          if (setTypes.length === 1) {
+            setTypeSelect.val(setType.type);
+          }
         });
 
         updateWidgetVisibility();
@@ -486,12 +531,15 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
             callback(sortingStrategies.pathLength);
 
           } else if ($("#setConnectionStrengthRadio").prop("checked")) {
-            callback(new SetConnectionStrengthSortingStrategy());
+            var setType = $("#setTypeSelect").val();
+            var stat = $("#setStatSelect").val();
+            var label = stat === "mean" ? "Average set connection strength" : (statisticsUtil.getHumanReadableStat(stat, true) + " set connection strength");
+            callback(setType === "all" ? new SetConnectionStrengthSortingStrategy(stat, label) : new SetConnectionStrengthSortingStrategy(stat, label, setType));
 
           } else if ($("#dataBasedScoreRadio").prop("checked")) {
             var datasetId = $("#datasetSelect").val();
             var stat = $("#statisticSelect").val();
-            var method = $("#methodSelect").val();
+            var method = "stat"; //$("#methodSelect").val();
             var scope = $("#scopeSelect").val();
 
             callback(dataStore.getSortingStrategy(datasetId, stat, method, scope));

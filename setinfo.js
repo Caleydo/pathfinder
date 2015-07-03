@@ -30,6 +30,13 @@ define(['d3', './listeners', './config', './colors'], function (d3, listeners, c
       }
     },
 
+    getSetTypeInfos: function () {
+      var that = this;
+      return Object.keys(this.setTypeInfos).map(function (key) {
+        return that.setTypeInfos[key];
+      });
+    },
+
     getSetTypeInfo: function (type) {
       return this.setTypeInfos[type];
     },

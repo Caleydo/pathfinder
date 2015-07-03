@@ -84,10 +84,25 @@
         </div>
         <div class="radio" id="setConnectionStrength">
           <label for="setConnectionStrengthRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
-                                                                                   id="setConnectionStrengthRadio"/>Average
-            set
+                                                                                   id="setConnectionStrengthRadio"/>Set
             connection
             strength</label>
+
+          <div id="setConnectionStrengthWidgets">
+            <div style="display:inline-block">
+              <label for="setTypeSelect" style="padding: 0">Set type</label><br>
+              <select id="setTypeSelect" size="5"></select>
+            </div>
+            <div style="display:inline-block">
+              <label for="setStatSelect" style="padding: 0">Method</label><br>
+              <select id="setStatSelect" size="5">
+                <option label="Average">mean</option>
+                <option label="Minimum">min</option>
+                <option label="Maximum">max</option>
+              </select>
+            </div>
+          </div>
+
         </div>
         <div class="radio" id="dataBasedScore">
           <label for="dataBasedScoreRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
@@ -109,14 +124,14 @@
                 <option label="Maximum">max</option>
               </select>
             </div>
-            <div style="display:inline-block">
-              <label for="methodSelect" style="padding: 0">Method</label><br>
-              <select id="methodSelect" size="5">
-                <option label="Simple Statistic">stat</option>
-                <option label="Min statistic difference in groups">minDiff</option>
-                <option label="Max statistic difference in groups">maxDiff</option>
-              </select>
-            </div>
+            <!--<div style="display:inline-block">-->
+            <!--<label for="methodSelect" style="padding: 0">Method</label><br>-->
+            <!--<select id="methodSelect" size="5">-->
+            <!--<option label="Simple Statistic">stat</option>-->
+            <!--<option label="Min statistic difference in groups">minDiff</option>-->
+            <!--<option label="Max statistic difference in groups">maxDiff</option>-->
+            <!--</select>-->
+            <!--</div>-->
             <div style="display:inline-block">
               <label for="scopeSelect" style="padding: 0">Scope</label><br>
               <select id="scopeSelect" size="5">
