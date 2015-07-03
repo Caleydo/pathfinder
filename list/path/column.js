@@ -144,7 +144,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         columnGroup.on("click.openOptions", function () {
 
           uiUtil.showListOverlay([{
-            text: "Configure Score",
+            text: "Rank by...",
             icon: "",
             callback: function () {
               pathSorting.openConfigureSortingDialog(function (sortingStrategy) {
@@ -186,11 +186,39 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 that.updateWidth();
                 that.columnManager.notify();
               }
+            },
+            {
+              text: "Sort ascending",
+              icon: "\uf160",
+              callback: function () {
+                updateSortOrder(true);
+              }
+            },
+            {
+              text: "Sort descending",
+              icon: "\uf161",
+              callback: function () {
+                updateSortOrder(false);
+              }
+            },
+            {
+              text: "Remove column",
+              icon: "\uf00d",
+              callback: function () {
+                that.columnManager.removeColumn(that.column);
+              }
             }
+
           ]);
 
 
         });
+
+        function updateSortOrder(ascending) {
+          that.sortingStrategy.ascending = ascending;
+          that.columnManager.updateSortOrder();
+          that.columnManager.notify();
+        }
 
 
         that.sortingOrderButton = uiUtil.addOverlayButton(this.rootDomElement, columnWidth - HEADER_ELEMENT_SPACING - HEADER_BUTTON_SIZE, 3,
@@ -199,9 +227,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         that.sortingOrderButton
           .classed("sortOrderButton", true)
           .on("click", function () {
-            that.sortingStrategy.ascending = !that.sortingStrategy.ascending;
-            that.columnManager.updateSortOrder();
-            that.columnManager.notify();
+            updateSortOrder(!that.sortingStrategy.ascending);
           }).append("title")
           .text("Toggle sort order");
 
@@ -943,19 +969,19 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       init: function (pathList) {
         this.pathList = pathList;
         this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = function (column) {
-          return new SimplePathScoreRenderer(column, new HeatmapRepresentation());
+          return new SimplePathScoreRenderer(column, new TextRepresentation());
         };
         this.itemRenderers["OVERALL_STATS"] = function (column) {
-          return new StatRenderer(column, new HeatmapRepresentation(), overallStatsTooltip);
+          return new StatRenderer(column, new BarRepresentation(), overallStatsTooltip);
         };
         this.itemRenderers["PER_NODE_STATS"] = function (column) {
-          return new StatRenderer(column, new HeatmapRepresentation(), perNodeStatsTooltip);
+          return new StatRenderer(column, new BarRepresentation(), perNodeStatsTooltip);
         };
         this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = function (column) {
-          return new StatRenderer(column, new HeatmapRepresentation(), overallBetweenGroupsStatsTooltip);
+          return new StatRenderer(column, new BarRepresentation(), overallBetweenGroupsStatsTooltip);
         };
         this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = function (column) {
-          return new StatRenderer(column, new HeatmapRepresentation(), perNodeBetweenGroupsStatsTooltip);
+          return new StatRenderer(column, new BarRepresentation(), perNodeBetweenGroupsStatsTooltip);
         };
 
         var that = this;
@@ -1083,7 +1109,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 that.notify();
               });
 
-            });
+            }).append("title").text("Add rank column");
 
 
           $(svg[0]).mouseenter(function () {
@@ -1100,7 +1126,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         });
 
         this.addColumnButton.transition().attr({
-          transform: "translate(" + ((this.columns.length > 0 && pathWrappers.length > 0) ? getColumnItemTranlateX(this.columns, this.columns[this.columns.length - 1], pathWrappers, 0) + this.columns[this.columns.length - 1].getWidth() + COLUMN_SPACING + 16 : 0) + ", 3)"
+          transform: "translate(" + ((this.columns.length > 0 && pathWrappers.length > 0) ? getColumnItemTranlateX(this.columns, this.columns[this.columns.length - 1], pathWrappers, 0) + this.columns[this.columns.length - 1].getWidth() + COLUMN_SPACING : 0) + ", 3)"
         });
       }
       ,

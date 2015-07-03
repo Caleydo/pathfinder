@@ -24,34 +24,47 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
 
 
     function SetCountEdgeWeightSortingStrategy() {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID, "Set count edge weight", "SET_COUNT_EDGE_WEIGHT");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ID, "Average set connection strength", "SET_COUNT_EDGE_WEIGHT");
     }
 
     SetCountEdgeWeightSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
     SetCountEdgeWeightSortingStrategy.prototype.compare = function (a, b) {
-      function calcWeight(pathWrapper) {
-        var totalWeight = 0;
+      //function calcWeight(pathWrapper) {
+      //  var totalWeight = 0;
+      //
+      //  pathWrapper.path.edges.forEach(function (edge) {
+      //      var numSets = 0;
+      //      pathUtil.forEachEdgeSet(edge, function (type, setId) {
+      //        numSets++;
+      //      });
+      //
+      //      totalWeight += (totalNumSets - numSets + 1) / totalNumSets;
+      //    }
+      //  );
+      //
+      //  return totalWeight;
+      //}
 
-        pathWrapper.path.edges.forEach(function (edge) {
-            var numSets = 0;
-            pathUtil.forEachEdgeSet(edge, function (type, setId) {
-              numSets++;
-            });
-
-            totalWeight += (totalNumSets - numSets + 1) / totalNumSets;
-          }
-        );
-
-        return totalWeight;
-      }
-
-      var weightA = calcWeight(a);
-      var weightB = calcWeight(b);
+      var weightA = this.getScore(a.path);
+      var weightB = this.getScore(b.path);
 
       if (this.ascending) {
         return d3.ascending(weightA, weightB);
       }
       return d3.descending(weightA, weightB);
+    };
+
+    SetCountEdgeWeightSortingStrategy.prototype.getScore = function(path) {
+      var numSets = 0;
+
+        path.edges.forEach(function (edge) {
+            pathUtil.forEachEdgeSet(edge, function (type, setId) {
+              numSets++;
+            });
+          }
+        );
+
+        return numSets/path.nodes.length;
     };
 
     function PathPresenceSortingStrategy(pathIds) {
