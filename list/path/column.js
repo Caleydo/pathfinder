@@ -487,7 +487,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var min = Number.POSITIVE_INFINITY;
 
       pathWrappers.forEach(function (pathWrapper) {
-        var score = sortingStrategy.getScore(pathWrapper.path);
+        var score = sortingStrategy.getScoreInfo(pathWrapper.path).score;
         if (score > max) {
           max = score;
         }
@@ -499,8 +499,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       return {min: min, max: max};
     }
 
-    function SimplePathScoreRenderer(column, scoreRepresentation) {
+    function SimplePathScoreRenderer(column, scoreRepresentation, tooltipTextAccessor) {
       PathItemRenderer.call(this, column, scoreRepresentation);
+      this.tooltipTextAccessor = tooltipTextAccessor;
     }
 
     SimplePathScoreRenderer.prototype = Object.create(PathItemRenderer.prototype);
@@ -509,20 +510,20 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
 
-      var score = column.sortingStrategy.getScore(pathWrapper.path);
+      var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
 
       this.scoreRepresentation.setValueRange(valueRange);
-      this.scoreRepresentation.appendScore(item, score, s.PATH_HEIGHT, true);
+      this.scoreRepresentation.appendScore(item, scoreInfo.score, s.PATH_HEIGHT, true);
 
 
       item.append("title")
-        .text(column.sortingStrategy.label + ": " + score);
+        .text(this.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
     };
 
     SimplePathScoreRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
       var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
 
-      var score = column.sortingStrategy.getScore(pathWrapper.path);
+      var score = column.sortingStrategy.getScoreInfo(pathWrapper.path).score;
       this.scoreRepresentation.setValueRange(valueRange);
       this.scoreRepresentation.updateScore(item, score, s.PATH_HEIGHT, true);
     };
@@ -801,7 +802,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       this.scoreRepresentation.setValueRange(valueRange);
       if (pathWrapper.setTypes.length > 1) {
 
-        var score = column.sortingStrategy.getScore(pathWrapper.path);
+        var score = column.sortingStrategy.getScoreInfo(pathWrapper.path).score;
 
         var pathGroup = item.append("g").classed("path", true)
           .on("dblclick", function () {
@@ -825,7 +826,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         .classed("setType", true);
 
       setTypes.each(function (setType, i) {
-        var score = column.sortingStrategy.getScore(pathWrapper.path, setType.type);
+        var score = column.sortingStrategy.getScoreInfo(pathWrapper.path, setType.type).score;
         d3.select(this).attr({
           transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, i) + ")"
         }).on("dblclick", function () {
@@ -849,7 +850,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       this.scoreRepresentation.setValueRange(valueRange);
 
       if (pathWrapper.setTypes.length > 1) {
-        var score = column.sortingStrategy.getScore(pathWrapper.path);
+        var score = column.sortingStrategy.getScoreInfo(pathWrapper.path).score;
         this.scoreRepresentation.updateScore(item, score, s.PATH_HEIGHT, typeof column.sortingStrategy.setType === "undefined");
       }
 
@@ -858,7 +859,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       });
 
       allSetTypes.each(function (setType, i) {
-        var score = column.sortingStrategy.getScore(pathWrapper.path, setType.type);
+        var score = column.sortingStrategy.getScoreInfo(pathWrapper.path, setType.type).score;
         d3.select(this).transition()
           .attr({
             transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, i) + ")"
@@ -1110,6 +1111,31 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       return strategy.stat + ": " + scoreInfo.score + " (Groups: " + scoreInfo.group1 + ", " + scoreInfo.group2 + ", Node: " + scoreInfo.node.properties[config.getNodeNameProperty(scoreInfo.node)] + ")";
     }
 
+    function simpleScoreTooltip(strategy, scoreInfo) {
+      return strategy.label + ": " + scoreInfo.score;
+    }
+
+    function simpleBooleanScoreTooltip(strategy) {
+      return strategy.label;
+    }
+
+    function nodePresenceTooltip(strategy, scoreInfo) {
+      var nodeNames = scoreInfo.nodeIds.map(function (nodeId) {
+        var node = dataStore.getNode(nodeId);
+        if (node) {
+          return node.properties[config.getNodeNameProperty(node)];
+        }
+      });
+      return "Present nodes: " + nodeNames.toString();
+    }
+
+    function setPresenceTooltip(strategy, scoreInfo) {
+      var setNames = scoreInfo.setIds.map(function (setId) {
+        return setInfo.getSetLabel(setId);
+      });
+      return "Present sets: " + setNames.toString();
+    }
+
     function ColumnManager() {
       var that = this;
       this.columns = [];
@@ -1144,7 +1170,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       init: function (pathList) {
         this.pathList = pathList;
         this.itemRenderers[pathSorting.sortingStrategies.pathLength.id] = function (column) {
-          return new SimplePathScoreRenderer(column, new TextRepresentation());
+          return new SimplePathScoreRenderer(column, new TextRepresentation(), simpleScoreTooltip);
         };
         this.itemRenderers["SET_COUNT_EDGE_WEIGHT"] = function (column) {
           return new SetItemRenderer(column, new BarRepresentation());
@@ -1162,13 +1188,13 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           return new DatasetItemRenderer(column, new BarRepresentation(), perNodeBetweenGroupsStatsTooltip);
         };
         this.itemRenderers["SELECTED_PATHS"] = function (column) {
-          return new SimplePathScoreRenderer(column, new BooleanRepresentation());
+          return new SimplePathScoreRenderer(column, new BooleanRepresentation(), simpleBooleanScoreTooltip);
         };
         this.itemRenderers["SELECTED_NODES"] = function (column) {
-          return new SimplePathScoreRenderer(column, new BooleanRepresentation());
+          return new SimplePathScoreRenderer(column, new BooleanRepresentation(), nodePresenceTooltip);
         };
         this.itemRenderers["SELECTED_SETS"] = function (column) {
-          return new SimplePathScoreRenderer(column, new BooleanRepresentation());
+          return new SimplePathScoreRenderer(column, new BooleanRepresentation(), setPresenceTooltip);
         };
 
 
@@ -1225,7 +1251,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         }
 
         if (sortingStrategy.id.indexOf("CUSTOM") === 0) {
-          return new SimplePathScoreRenderer(column, new BarRepresentation());
+          return new SimplePathScoreRenderer(column, new BarRepresentation(), simpleScoreTooltip);
         }
 
         return new PathItemRenderer(column);

@@ -18,8 +18,8 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
       return d3.descending(a.path.edges.length, b.path.edges.length);
     };
 
-    PathLengthSortingStrategy.prototype.getScore = function (path) {
-      return path.edges.length;
+    PathLengthSortingStrategy.prototype.getScoreInfo = function (path) {
+      return {score: path.edges.length};
     };
 
 
@@ -48,8 +48,8 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
       //  return totalWeight;
       //}
 
-      var weightA = this.getScore(a.path, this.setType);
-      var weightB = this.getScore(b.path, this.setType);
+      var weightA = this.getScoreInfo(a.path, this.setType).score;
+      var weightB = this.getScoreInfo(b.path, this.setType).score;
 
       if (this.ascending) {
         return d3.ascending(weightA, weightB);
@@ -57,7 +57,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
       return d3.descending(weightA, weightB);
     };
 
-    SetConnectionStrengthSortingStrategy.prototype.getScore = function (path, setType) {
+    SetConnectionStrengthSortingStrategy.prototype.getScoreInfo = function (path, setType) {
       var setsPerEdge = [];
 
       path.edges.forEach(function (edge) {
@@ -73,11 +73,11 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
       var stats = statisticsUtil.statisticsOf(setsPerEdge);
 
-      return stats[this.stat];
+      return {score: stats[this.stat]};
     };
 
     function PathPresenceSortingStrategy(pathIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected paths", "SELECTED_PATHS");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Specified paths", "SELECTED_PATHS");
       this.pathIds = pathIds;
       this.ascending = false;
     }
@@ -88,8 +88,8 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
     };
 
     PathPresenceSortingStrategy.prototype.compare = function (a, b) {
-      var pathPresentA = this.getScore(a.path);
-      var pathPresentB = this.getScore(b.path);
+      var pathPresentA = this.getScoreInfo(a.path).score;
+      var pathPresentB = this.getScoreInfo(b.path).score;
 
       if (this.ascending) {
         return d3.ascending(pathPresentA, pathPresentB);
@@ -98,17 +98,23 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
     };
 
-    PathPresenceSortingStrategy.prototype.getScore = function (path) {
+    PathPresenceSortingStrategy.prototype.getScoreInfo = function (path) {
       for (var i = 0; i < this.pathIds.length; i++) {
         if (path.id === this.pathIds[i]) {
-          return 1;
+          return {score: 1};
         }
       }
-      return 0;
+      return {score: 0};
     };
 
     function NodePresenceSortingStrategy(nodeIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected nodes", "SELECTED_NODES");
+      var nodeNames = nodeIds.map(function (nodeId) {
+        var node = dataStore.getNode(nodeId);
+        if (node) {
+          return node.properties[config.getNodeNameProperty(node)];
+        }
+      });
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Nodes: " + nodeNames.toString(), "SELECTED_NODES");
       this.nodeIds = nodeIds;
       this.ascending = false;
     }
@@ -119,8 +125,8 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
     };
 
     NodePresenceSortingStrategy.prototype.compare = function (a, b) {
-      var numNodesA = this.getScore(a.path);
-      var numNodesB = this.getScore(b.path);
+      var numNodesA = this.getScoreInfo(a.path).score;
+      var numNodesB = this.getScoreInfo(b.path).score;
 
       if (this.ascending) {
         return d3.ascending(numNodesA, numNodesB);
@@ -128,22 +134,31 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
       return d3.descending(numNodesA, numNodesB);
     };
 
-    NodePresenceSortingStrategy.prototype.getScore = function (path) {
+    NodePresenceSortingStrategy.prototype.getScoreInfo = function (path) {
       var numNodes = 0;
+      var ids = [];
       this.nodeIds.forEach(function (nodeId) {
         path.nodes.forEach(function (node) {
           if (node.id.toString() === nodeId.toString()) {
             numNodes++;
+            ids.push(node.id);
           }
         });
       });
 
-      return numNodes;
+      return {
+        score: numNodes,
+        nodeIds: ids
+      };
     };
 
 
     function SetPresenceSortingStrategy(setIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected sets", "SELECTED_SETS");
+
+      var setNames = setIds.map(function (setId) {
+        return setInfo.getSetLabel(setId);
+      });
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Sets: " + setNames.toString(), "SELECTED_SETS");
       this.ascending = false;
       this.setIds = setIds;
 
@@ -155,8 +170,8 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
     };
 
     SetPresenceSortingStrategy.prototype.compare = function (a, b) {
-      var setScoreA = this.getScore(a.path);
-      var setScoreB = this.getScore(b.path);
+      var setScoreA = this.getScoreInfo(a.path).score;
+      var setScoreB = this.getScoreInfo(b.path).score;
 
       if (this.ascending) {
         return d3.ascending(setScoreA, setScoreB);
@@ -165,8 +180,9 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
     };
 
-    SetPresenceSortingStrategy.prototype.getScore = function (path) {
+    SetPresenceSortingStrategy.prototype.getScoreInfo = function (path) {
       var numSets = 0;
+      var ids = [];
       this.setIds.forEach(function (setId) {
         var setFound = false;
         path.edges.forEach(function (edge) {
@@ -175,6 +191,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
             if (!setFound && sId === setId) {
               numSets++;
               setFound = true;
+              ids.push(setId);
             }
           });
         });
@@ -186,6 +203,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
               if (!setFound && sId === setId) {
                 numSets++;
                 setFound = true;
+                ids.push(setId);
               }
             });
 
@@ -193,7 +211,10 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
         }
       });
 
-      return numSets;
+      return {
+        score: numSets,
+        setIds: ids
+      };
     };
 
     function SelectionSortingStrategy() {
@@ -258,16 +279,16 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
     CustomSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
     CustomSortingStrategy.prototype.compare = function (a, b) {
 
-      var scoreA = this.getScore(a.path);
-      var scoreB = this.getScore(b.path);
+      var scoreA = this.getScoreInfo(a.path).score;
+      var scoreB = this.getScoreInfo(b.path).score;
       if (this.ascending) {
         return d3.ascending(scoreA, scoreB);
       }
       return d3.descending(scoreA, scoreB);
     };
 
-    CustomSortingStrategy.prototype.getScore = function (path) {
-      return this.userScoreFunction(path, dataStore.getDataSets(), (pathUtil.getAllSetInfosForNode).bind(pathUtil), (dataStore.getDataForNode).bind(dataStore), (dataStore.getStatsForNode).bind(dataStore));
+    CustomSortingStrategy.prototype.getScoreInfo = function (path) {
+      return {score: this.userScoreFunction(path, dataStore.getDataSets(), (pathUtil.getAllSetInfosForNode).bind(pathUtil), (dataStore.getDataForNode).bind(dataStore), (dataStore.getStatsForNode).bind(dataStore))};
     };
 
 
@@ -438,7 +459,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
         //});
 
         $("#addRanking").click(function () {
-          $("#scriptText").val("var getScore = function(path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {\n" +
+          $("#scriptText").val("var getScoreInfo = function(path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {\n" +
             "//insert code here\n" +
             "return 0;\n}");
 
@@ -459,7 +480,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
             //listeners.notify("CUSTOM_SORTING_STRATEGY_UPDATE", that.customSortingStrategies);
           }
 
-          //var getScore = function (path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {
+          //var getScoreInfo = function (path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {
           //  var numSets = 0;
           //  path.nodes.forEach(function (node) {
           //    var sets = getSetsForNode(node);

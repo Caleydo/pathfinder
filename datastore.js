@@ -4,6 +4,22 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
     var SortingStrategy = sorting.SortingStrategy;
 
     /**
+     *
+     * Data has been loaded for these nodes or data is currently loading.
+     */
+    var nodesWithData = {};
+
+    var allDatasets = {};
+
+    var stratification = {};
+
+    var paths = [];
+
+    var nodes = {};
+
+    var pathStats = {};
+
+    /**
      * Sort by stats for the whole dataset or a whole group.
      *
      * @param datasetId
@@ -301,11 +317,6 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       });
     }
 
-
-    var paths = [];
-
-    var pathStats = {};
-
     function getPathDatasetStats(path, dataset) {
       var data = [];
       pathStats[path.id] = pathStats[path.id] || {};
@@ -517,99 +528,6 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       });
 
 
-      //---------------------
-      //Fetch each group separately, don't wait for previous promise to be satisfied
-      //groupKeys.forEach(function (groupKey) {
-      //  dataset.groups[groupKey] = dataset.groups[groupKey] || {};
-      //  nodeIds.forEach(function (nodeId) {
-      //    dataset.groups[groupKey][nodeId] = dataset.groups[groupKey][nodeId] || {};
-      //  });
-      //
-      //  if (dsConfig["mapping_type"] === dataset.info.rowtype) {
-      //    ccle.data(key, nodeIds, stratification.groups[groupKey].ids).then(function (data) {
-      //      data.rows.forEach(function (row, i) {
-      //        dataset.groups[groupKey][row].data = data.data[i];
-      //      });
-      //      listeners.notify(listeners.updateType.DATASET_UPDATE);
-      //    });
-      //  } else {
-      //    ccle.data(key, stratification.groups[groupKey].ids, nodeIds).then(function (data) {
-      //      data.cols.forEach(function (col, i) {
-      //        var colData = [];
-      //        data.data.forEach(function (row) {
-      //          colData.push(row[i]);
-      //        });
-      //        dataset.groups[groupKey][col].data = colData;
-      //      });
-      //      listeners.notify(listeners.updateType.DATASET_UPDATE);
-      //    });
-      //  }
-      //});
-
-      //---------------------
-      //Fetch all groups at once
-      //var allGroupIds = [];
-      //
-      //groupKeys.forEach(function (groupKey) {
-      //  allGroupIds = allGroupIds.concat(stratification.groups[groupKey].ids);
-      //});
-      //
-      //ccle.data(key, nodeIds, allGroupIds).then(function (data) {
-      //  console.log("there")
-      //  //data.rows.forEach(function (row, i) {
-      //  //  dataset.groups[groupKey][row].data = data.data[i];
-      //  //});
-      //
-      //});
-      //---------------------
-
-      //---------------------
-      //Fetch each group separately, wait for previous promise to be satisfied
-      //var fetchData = function (groupKeyIndex) {
-      //  var groupKey = groupKeys[groupKeyIndex];
-      //
-      //  dataset.groups[groupKey] = dataset.groups[groupKey] || {};
-      //  nodeIds.forEach(function (nodeId) {
-      //    dataset.groups[groupKey][nodeId] = dataset.groups[groupKey][nodeId] || {};
-      //  });
-      //
-      //  if (dsConfig["mapping_type"] === dataset.info.rowtype) {
-      //    ccle.data(key, nodeIds, stratification.groups[groupKey].ids).then(function (data) {
-      //      data.rows.forEach(function (row, i) {
-      //        dataset.groups[groupKey][row].data = data.cols.length <= 1 ? [data.data[i]] : data.data[i];
-      //        dataset.groups[groupKey][row].stats = statisticsUtil.statisticsOf(data.cols.length <= 1 ? [data.data[i]] : data.data[i]);
-      //      });
-      //      listeners.notify(listeners.updateType.DATASET_UPDATE);
-      //      if (groupKeyIndex < groupKeys.length - 1) {
-      //        fetchData(groupKeyIndex + 1);
-      //      }
-      //    });
-      //  } else {
-      //    ccle.data(key, stratification.groups[groupKey].ids, nodeIds).then(function (data) {
-      //      data.cols.forEach(function (col, i) {
-      //        var colData = [];
-      //        data.data.forEach(function (row) {
-      //          colData.push(row[i]);
-      //        });
-      //        dataset.groups[groupKey][col].data = colData;
-      //        dataset.groups[groupKey][col].stats = statisticsUtil.statisticsOf(colData);
-      //      });
-      //      listeners.notify(listeners.updateType.DATASET_UPDATE);
-      //      if (groupKeyIndex < groupKeys.length - 1) {
-      //        fetchData(groupKeyIndex + 1);
-      //      }
-      //
-      //    });
-      //  }
-      //};
-      //
-      //if (groupKeys.length > 0) {
-      //  fetchData(0);
-      //}
-
-      //}
-      //)
-
     }
 
     function createRandomData(min, max, count) {
@@ -620,15 +538,6 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       return data;
     }
 
-    /**
-     *
-     * Data has been loaded for these nodes or data is currently loading.
-     */
-    var nodesWithData = {};
-
-    var allDatasets = {};
-
-    var stratification = {};
 
     return {
 
@@ -644,6 +553,16 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
                   delete pathStats[path.id];
                 }
               }
+
+              var remainingNodeIds = pathQuery.getRemainingNodeIds();
+              var remainingNodes = {};
+
+              remainingNodeIds.forEach(function (nodeId) {
+                remainingNodes[nodeId] = nodes[nodeId];
+              });
+
+              nodes = remainingNodes;
+
             }
           },
           listeners.updateType.QUERY_UPDATE);
@@ -737,9 +656,21 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         return paths;
       },
 
+      getNode: function (nodeId) {
+        return nodes[nodeId];
+      },
+
       addPath: function (path) {
         if (!pathExists(path)) {
           paths.push(path);
+
+          path.nodes.forEach(function (node) {
+            var n = nodes[node.id];
+            if (typeof n === "undefined") {
+              nodes[node.id] = node;
+            }
+          });
+
           fetchData();
           return true;
         }
@@ -748,6 +679,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
       reset: function () {
         paths = [];
+        nodes = {};
         pathStats = {};
       },
 
@@ -760,19 +692,6 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         });
 
         return datasets;
-        ////TODO: get real data
-        //return [{
-        //  name: "mRNAExpression",
-        //  minValue: -10,
-        //  maxValue: 10,
-        //  groups: ["breast", "lung", "ovary"]
-        //}, {
-        //  name: "CopyNumberVariation",
-        //  minValue: -10,
-        //  maxValue: 10,
-        //  groups: ["breast", "lung", "ovary"]
-        //}];
-        //return [];
       },
 
       getDataForNode: getDataForNode,
