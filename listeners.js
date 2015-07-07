@@ -20,11 +20,11 @@ define(function () {
       this[type].push(listener);
     },
 
-    notify: function (type, updatedObject) {
+    notify: function (type, updatedObject, source) {
 
       if (typeof this[type] !== "undefined") {
         this[type].forEach(function (listener) {
-          listener(updatedObject);
+          listener(updatedObject, source);
         });
       }
     },

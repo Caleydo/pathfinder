@@ -16,8 +16,13 @@ $overlayHoverColor: rgb(150, 200, 255);
 @mixin textIcon($fontSize) {
   font-family: FontAwesome, sans-serif;
   font-size: $fontSize;
-  cursor: pointer;
   text-anchor: middle;
+}
+
+
+@mixin selectableTextIcon($fontSize) {
+  @include textIcon($fontSize);
+  cursor: pointer;
 }
 
 svg text::selection {
@@ -41,7 +46,7 @@ text {
 }
 
 text.collapseIconSmall {
-  @include textIcon(10px);
+  @include selectableTextIcon(10px);
 }
 
 rect.filler {
@@ -113,8 +118,12 @@ g.listItem {
   }
 
   text.icon {
-    @include textIcon(14px);
+    @include selectableTextIcon(14px);
   }
+}
+
+text.scoreIcon {
+  @include textIcon(14px);
 }
 
 g.listItem.hovered {
@@ -200,7 +209,7 @@ g.edge.path_selected line,  g.edge.path_selected path {
 
 g.overlayButton {
   text {
-    @include textIcon(16px);
+    @include selectableTextIcon(16px);
   }
 
   rect {

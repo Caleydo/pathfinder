@@ -1,5 +1,5 @@
-define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config', '../setinfo', '../visibilitysettings', '../query/queryutil'],
-  function (hierarchyElements, listeners, pathSorting, pathQuery, config, setInfo, visibilitySettings, queryUtil) {
+define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config', '../setinfo', '../visibilitysettings', '../query/queryutil', '../selectionutil'],
+  function (hierarchyElements, listeners, pathSorting, pathQuery, config, setInfo, visibilitySettings, queryUtil, selectionUtil) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
 
@@ -48,7 +48,8 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
 
     NodeWrapper.prototype.onDoubleClick = function () {
       //pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getNodePresenceStrategy([this.node.id]));
-      pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([this.node.id]);
+      pathSorting.addSelectionBasedSortingStrategy(new pathSorting.NodePresenceSortingStrategy(selectionUtil.selections["node"]["selected"]));
+      //pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([this.node.id]);
       listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
     };
 
@@ -245,7 +246,10 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
 
     SetWrapper.prototype.onDoubleClick = function () {
       //pathSorting.sortingManager.addOrReplace(pathSorting.sortingStrategies.getSetPresenceStrategy([this.setId]));
-      pathSorting.sortingStrategies.selectionSortingStrategy.setSetIds([this.setId]);
+      //pathSorting.sortingStrategies.selectionSortingStrategy.setSetIds([this.setId]);
+
+      pathSorting.addSelectionBasedSortingStrategy(new pathSorting.SetPresenceSortingStrategy(selectionUtil.selections["set"]["selected"]));
+
       listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
     };
 
