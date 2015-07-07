@@ -1160,7 +1160,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         this.columns = [];
 
         var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
-        initialPathSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
+        //remove filter strategy
+        initialPathSortingStrategies.splice(0,1);
+        //remove path id strategy
+        initialPathSortingStrategies.splice(initialPathSortingStrategies.length - 1, 1);
 
         this.columns = initialPathSortingStrategies.map(function (sortingStrategy, i) {
           return new Column(that, sortingStrategy, i + 1);
@@ -1217,6 +1220,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       notify: function () {
         var chain = this.getStrategyChain();
+        chain.splice(0, 0, pathSorting.sortingStrategies.pathQueryStrategy);
         chain.push(pathSorting.sortingStrategies.pathId);
         pathSorting.sortingManager.setStrategyChain(chain);
         listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator, this);
@@ -1269,8 +1273,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           callback: function () {
             d3.selectAll("g.columnItem" + column.id).remove();
             column.itemRenderer.setScoreRepresentation(new BarRepresentation());
-            that.updateWidth();
-            that.columnManager.notify();
+            column.header.updateWidth();
+            that.notify();
           }
         },
           {
@@ -1279,8 +1283,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             callback: function () {
               d3.selectAll("g.columnItem" + column.id).remove();
               column.itemRenderer.setScoreRepresentation(new HeatmapRepresentation());
-              that.updateWidth();
-              that.columnManager.notify();
+              column.header.updateWidth();
+              that.notify();
             }
           },
           {
@@ -1289,8 +1293,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             callback: function () {
               d3.selectAll("g.columnItem" + column.id).remove();
               column.itemRenderer.setScoreRepresentation(new TextRepresentation());
-              that.updateWidth();
-              that.columnManager.notify();
+              column.header.updateWidth();
+              that.notify();
             }
           }];
       },

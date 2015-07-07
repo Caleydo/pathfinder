@@ -377,7 +377,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
       return $("#customScoreSelect").val();
     }
 
-    sortingManager.setStrategyChain([sortingStrategies.pathQueryStrategy, sortingStrategies.selectionSortingStrategy, sortingStrategies.pathLength, sortingStrategies.pathId]);
+    sortingManager.setStrategyChain([sortingStrategies.pathQueryStrategy, sortingStrategies.pathLength, sortingStrategies.pathId]);
 
 
     return {
@@ -579,7 +579,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
       },
 
       addSelectionBasedSortingStrategy: function (strategy) {
-        sortingManager.currentStrategyChain.splice(0, 0, strategy);
+        sortingManager.currentStrategyChain.splice(1, 0, strategy);
         sortingManager.setStrategyChain(sortingManager.currentStrategyChain);
       },
 
