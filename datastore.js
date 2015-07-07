@@ -406,23 +406,28 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
     function pathExists(path) {
       for (var i = 0; i < paths.length; i++) {
 
+        if (path.nodes.length === 1) {
+          if (paths[i].nodes.length === 1 && paths[i].nodes[0].id === path.nodes[0].id) {
+            return true;
+          }
+        } else {
+          var edges = paths[i].edges;
+          //checking edge ids should be enough to check for path equality
+          if (edges.length === path.edges.length) {
+            var allEdgesEqual = true;
+            for (var j = 0; j < edges.length; j++) {
+              var currentEdge = edges[j];
+              var currentPathEdge = path.edges[j];
 
-        var edges = paths[i].edges;
-        //checking edge ids should be enough to check for path equality
-        if (edges.length === path.edges.length) {
-          var allEdgesEqual = true;
-          for (var j = 0; j < edges.length; j++) {
-            var currentEdge = edges[j];
-            var currentPathEdge = path.edges[j];
-
-            if (currentEdge.id !== currentPathEdge.id) {
-              if (!isBidirectionalSetEdge(currentEdge, currentPathEdge)) {
-                allEdgesEqual = false;
+              if (currentEdge.id !== currentPathEdge.id) {
+                if (!isBidirectionalSetEdge(currentEdge, currentPathEdge)) {
+                  allEdgesEqual = false;
+                }
               }
             }
-          }
-          if (allEdgesEqual) {
-            return true;
+            if (allEdgesEqual) {
+              return true;
+            }
           }
         }
       }
