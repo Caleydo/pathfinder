@@ -398,6 +398,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         }
 
         var bgData = bgDataLeft.concat(bgDataRight);
+        if(pathWrappers.length === 0) {
+          this.bgRoot.selectAll("path").remove();
+          return;
+        }
 
         var allBg = this.bgRoot.selectAll("path")
           .data([bgData]);
