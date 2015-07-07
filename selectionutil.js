@@ -19,14 +19,15 @@ define(['d3', '../caleydo/main'], function (d3, C) {
     },
 
     addToSelection: function (ids, type) {
+      var that = this;
       if (typeof this[type] === "undefined") {
         this[type] = [];
       }
       if (ids instanceof Array) {
         this[type] = this[type].concat(ids);
         ids.forEach(function(id) {
-          if(this[type].indexOf(id) === -1) {
-            this[type].push(id);
+          if(that[type].indexOf(id) === -1) {
+            that[type].push(id);
           }
         });
       } else {

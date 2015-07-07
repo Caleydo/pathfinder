@@ -1,5 +1,5 @@
-define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pathsorting", "../../datastore", "../../config", "../../setinfo"],
-  function ($, d3, s, listeners, uiUtil, pathSorting, dataStore, config, setInfo) {
+define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pathsorting", "../../datastore", "../../config", "../../setinfo", '../../sorting'],
+  function ($, d3, s, listeners, uiUtil, pathSorting, dataStore, config, setInfo, sorting) {
 
     //var DEFAULT_COLUMN_WIDTH = 80;
     var COLUMN_SPACING = 5;
@@ -144,7 +144,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
         columnGroup.on("click.openOptions", function () {
 
-          uiUtil.showListOverlay([{
+          var listItems = [{
             text: "Rank by...",
             icon: "",
             callback: function () {
@@ -153,48 +153,20 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 tooltip.text(sortingStrategy.label);
                 that.sortingStrategy = sortingStrategy;
                 that.column.setSortingStrategy(sortingStrategy);
+                that.updateWidth();
                 that.columnManager.updateSortOrder();
                 that.columnManager.notify();
               });
             }
+          }];
+
+          listItems = listItems.concat(that.columnManager.getMultiFormListItems(that.column), [{
+            text: "Sort ascending",
+            icon: "\uf160",
+            callback: function () {
+              updateSortOrder(true);
+            }
           },
-            {
-              text: "Show as Bars",
-              icon: "",
-              callback: function () {
-                d3.selectAll("g.columnItem" + that.column.id).remove();
-                that.column.itemRenderer.setScoreRepresentation(new BarRepresentation());
-                that.updateWidth();
-                that.columnManager.notify();
-              }
-            },
-            {
-              text: "Show as Heatmap",
-              icon: "",
-              callback: function () {
-                d3.selectAll("g.columnItem" + that.column.id).remove();
-                that.column.itemRenderer.setScoreRepresentation(new HeatmapRepresentation());
-                that.updateWidth();
-                that.columnManager.notify();
-              }
-            },
-            {
-              text: "Show as Text",
-              icon: "",
-              callback: function () {
-                d3.selectAll("g.columnItem" + that.column.id).remove();
-                that.column.itemRenderer.setScoreRepresentation(new TextRepresentation());
-                that.updateWidth();
-                that.columnManager.notify();
-              }
-            },
-            {
-              text: "Sort ascending",
-              icon: "\uf160",
-              callback: function () {
-                updateSortOrder(true);
-              }
-            },
             {
               text: "Sort descending",
               icon: "\uf161",
@@ -210,8 +182,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 that.columnManager.notify();
               }
             }
-
           ]);
+
+          uiUtil.showListOverlay(listItems);
 
 
         });
@@ -1258,6 +1231,43 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         return new PathItemRenderer(column);
       }
       ,
+
+      getMultiFormListItems: function (column) {
+        if (column.sortingStrategy.type === sorting.SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE) {
+          return [];
+        }
+        var that = this;
+        return [{
+          text: "Show as Bars",
+          icon: "",
+          callback: function () {
+            d3.selectAll("g.columnItem" + column.id).remove();
+            column.itemRenderer.setScoreRepresentation(new BarRepresentation());
+            that.updateWidth();
+            that.columnManager.notify();
+          }
+        },
+          {
+            text: "Show as Heatmap",
+            icon: "",
+            callback: function () {
+              d3.selectAll("g.columnItem" + column.id).remove();
+              column.itemRenderer.setScoreRepresentation(new HeatmapRepresentation());
+              that.updateWidth();
+              that.columnManager.notify();
+            }
+          },
+          {
+            text: "Show as Text",
+            icon: "",
+            callback: function () {
+              d3.selectAll("g.columnItem" + column.id).remove();
+              column.itemRenderer.setScoreRepresentation(new TextRepresentation());
+              that.updateWidth();
+              that.columnManager.notify();
+            }
+          }];
+      },
 
       renderColumns: function (parent, pathWrappers) {
 

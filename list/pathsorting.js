@@ -1,4 +1,4 @@
-define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../listeners', '../query/pathquery', '../datastore', '../setinfo', '../config', '../statisticsutil'],
+define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listeners', '../query/pathquery', '../datastore', '../setinfo', '../config', '../statisticsutil'],
   function ($, sorting, pathUtil, q, listeners, pathQuery, dataStore, setInfo, config, statisticsUtil) {
     var SortingStrategy = sorting.SortingStrategy;
 
@@ -143,7 +143,7 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
 
 
     function SetPresenceSortingStrategy(setIds) {
-      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.FILTER, "Selected sets", "SELECTED_SETS");
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Selected sets", "SELECTED_SETS");
       this.ascending = false;
       this.setIds = setIds;
 
