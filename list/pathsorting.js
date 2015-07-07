@@ -88,22 +88,23 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
     };
 
     PathPresenceSortingStrategy.prototype.compare = function (a, b) {
-      var pathPresentA = 0;
-      var pathPresentB = 0;
-      this.pathIds.forEach(function (pathId) {
-        if (a.path.id === pathId) {
-          pathPresentA = 1;
-        }
-        if (b.path.id === pathId) {
-          pathPresentB = 1;
-        }
-      });
+      var pathPresentA = this.getScore(a.path);
+      var pathPresentB = this.getScore(b.path);
 
       if (this.ascending) {
         return d3.ascending(pathPresentA, pathPresentB);
       }
       return d3.descending(pathPresentA, pathPresentB);
 
+    };
+
+    PathPresenceSortingStrategy.prototype.getScore = function (path) {
+      for (var i = 0; i < this.pathIds.length; i++) {
+        if (path.id === this.pathIds[i]) {
+          return 1;
+        }
+      }
+      return 0;
     };
 
     function NodePresenceSortingStrategy(nodeIds) {
@@ -118,27 +119,26 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
     };
 
     NodePresenceSortingStrategy.prototype.compare = function (a, b) {
-      var numNodesA = 0;
-      var numNodesB = 0;
-      this.nodeIds.forEach(function (nodeId) {
-        a.path.nodes.forEach(function (node) {
-          if (node.id.toString() === nodeId.toString()) {
-            numNodesA++;
-          }
-        });
-
-        b.path.nodes.forEach(function (node) {
-          if (node.id.toString() === nodeId.toString()) {
-            numNodesB++;
-          }
-        });
-      });
+      var numNodesA = this.getScore(a.path);
+      var numNodesB = this.getScore(b.path);
 
       if (this.ascending) {
         return d3.ascending(numNodesA, numNodesB);
       }
       return d3.descending(numNodesA, numNodesB);
+    };
 
+    NodePresenceSortingStrategy.prototype.getScore = function (path) {
+      var numNodes = 0;
+      this.nodeIds.forEach(function (nodeId) {
+        path.nodes.forEach(function (node) {
+          if (node.id.toString() === nodeId.toString()) {
+            numNodes++;
+          }
+        });
+      });
+
+      return numNodes;
     };
 
 
@@ -155,47 +155,45 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
     };
 
     SetPresenceSortingStrategy.prototype.compare = function (a, b) {
-      var setScoreA = 0;
-      var setScoreB = 0;
-      this.setIds.forEach(function (setId) {
-
-        //TODO: this score is somewhat awkward as we add node and set occurrences
-        var setOccurrencesA = getSetOccurrences(a, setId);
-        setScoreA += setOccurrencesA / a.path.nodes.length;
-        var setOccurrencesB = getSetOccurrences(b, setId);
-        setScoreB += setOccurrencesB / b.path.nodes.length;
-      });
+      var setScoreA = this.getScore(a.path);
+      var setScoreB = this.getScore(b.path);
 
       if (this.ascending) {
         return d3.ascending(setScoreA, setScoreB);
       }
       return d3.descending(setScoreA, setScoreB);
 
-      function getSetOccurrences(pathWrapper, setId) {
-        var numSetOccurrences = 0;
-        pathWrapper.path.edges.forEach(function (edge) {
+    };
+
+    SetPresenceSortingStrategy.prototype.getScore = function (path) {
+      var numSets = 0;
+      this.setIds.forEach(function (setId) {
+        var setFound = false;
+        path.edges.forEach(function (edge) {
 
           pathUtil.forEachEdgeSet(edge, function (type, sId) {
-            if (sId === setId) {
-              numSetOccurrences++;
+            if (!setFound && sId === setId) {
+              numSets++;
+              setFound = true;
             }
           });
         });
 
-        pathWrapper.path.nodes.forEach(function (node) {
+        if (!setFound) {
+          path.nodes.forEach(function (node) {
 
-          pathUtil.forEachNodeSet(node, function (type, sId) {
-            if (sId === setId) {
-              numSetOccurrences++;
-            }
+            pathUtil.forEachNodeSet(node, function (type, sId) {
+              if (!setFound && sId === setId) {
+                numSets++;
+                setFound = true;
+              }
+            });
+
           });
+        }
+      });
 
-        });
-
-        return numSetOccurrences;
-
-      }
-
+      return numSets;
     };
 
     function SelectionSortingStrategy() {
@@ -559,9 +557,20 @@ define(['jquery', './../sorting', '../pathutil', '../query/querymodel', '../list
         });
       },
 
+      addSelectionBasedSortingStrategy: function (strategy) {
+        sortingManager.currentStrategyChain.splice(0, 0, strategy);
+        sortingManager.setStrategyChain(sortingManager.currentStrategyChain);
+      },
+
       sortingManager: sortingManager,
       sortingStrategies: sortingStrategies,
-      updateType: "UPDATE_PATH_SORTING"
+      updateType: "UPDATE_PATH_SORTING",
+
+      PathPresenceSortingStrategy: PathPresenceSortingStrategy,
+
+      NodePresenceSortingStrategy: NodePresenceSortingStrategy,
+
+      SetPresenceSortingStrategy: SetPresenceSortingStrategy
     }
 
   }

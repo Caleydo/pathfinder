@@ -262,7 +262,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .append("g")
         .classed("edgePath", true)
         .on("dblclick", function (d) {
-          pathSorting.sortingStrategies.selectionSortingStrategy.setPathIds(selectionUtil.selections["path"]["selected"]);
+          //pathSorting.sortingStrategies.selectionSortingStrategy.setPathIds(selectionUtil.selections["path"]["selected"]);
+          pathSorting.addSelectionBasedSortingStrategy(new pathSorting.PathPresenceSortingStrategy(selectionUtil.selections["path"]["selected"]));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
         });
 
@@ -447,7 +448,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           return "translate(" + d.x + ", " + d.y + ")";
         })
         .on("dblclick", function (d) {
-          pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([d.node.id]);
+          //pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([d.node.id]);
+          pathSorting.addSelectionBasedSortingStrategy(new pathSorting.NodePresenceSortingStrategy(selectionUtil.selections["node"]["selected"]));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
         });
 

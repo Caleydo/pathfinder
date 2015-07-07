@@ -17,6 +17,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     var BAR_COLUMN_WIDTH = 90;
     var HEATMAP_COLUMN_WIDTH = 40;
     var TEXT_COLUMN_WIDTH = 40;
+    var BOOLEAN_COLUMN_WIDTH = 40;
     //var RANK_CRITERION_ELEMENT_HEIGHT = 22;
 
     var currentColumnID = 0;
@@ -206,6 +207,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
               icon: "\uf00d",
               callback: function () {
                 that.columnManager.removeColumn(that.column);
+                that.columnManager.notify();
               }
             }
 
@@ -678,6 +680,48 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         });
     };
 
+    //------------------------------------------
+
+
+    function BooleanRepresentation(color) {
+      ScoreRepresentation.call(this);
+      this.color = color || "gray";
+    }
+
+    BooleanRepresentation.prototype = Object.create(ScoreRepresentation.prototype);
+
+    //BooleanRepresentation.prototype.setValueRange = function (valueRange) {
+    //this.scale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range([0, this.getWidth()]);
+    //};
+
+    BooleanRepresentation.prototype.getWidth = function () {
+      return BOOLEAN_COLUMN_WIDTH;
+    };
+
+    BooleanRepresentation.prototype.appendScore = function (parent, score, maxHeight, showSortingIndicator, color) {
+      var that = this;
+      this.appendSortingIndicator(parent, maxHeight, showSortingIndicator);
+      parent.append("text")
+        .classed("scoreIcon", true)
+        .attr({
+          x: that.getWidth() / 2,
+          y: maxHeight / 2 + 4
+        })
+        .text(score > 0 ? "\uf00c" : "");
+    };
+
+    BooleanRepresentation.prototype.updateScore = function (parent, score, maxHeight, showSortingIndicator, color) {
+      var that = this;
+      this.updateSortingIndicator(parent, maxHeight, showSortingIndicator);
+      parent.select("text.scoreIcon")
+        .transition()
+        .attr({
+          x: that.getWidth() / 2,
+          y: maxHeight / 2 + 4
+        })
+        .text(score > 0 ? "\uf00c" : "");
+    };
+
 //---------------------------------------
 
     function HeatmapRepresentation(size) {
@@ -1094,11 +1138,35 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     }
 
     function ColumnManager() {
+      var that = this;
       this.columns = [];
       this.itemRenderers = {};
+
+      listeners.add(function (comparator, source) {
+        if (source === that) {
+          return;
+        }
+        that.createColumnsFromCurrentStrategyChain();
+        that.notify();
+      }, pathSorting.updateType);
     }
 
     ColumnManager.prototype = {
+
+      createColumnsFromCurrentStrategyChain: function () {
+        var that = this;
+        this.columns.forEach(function (col) {
+          col.destroy();
+        });
+        this.columns = [];
+
+        var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
+        initialPathSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
+
+        this.columns = initialPathSortingStrategies.map(function (sortingStrategy, i) {
+          return new Column(that, sortingStrategy, i + 1);
+        });
+      },
 
       init: function (pathList) {
         this.pathList = pathList;
@@ -1120,14 +1188,18 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = function (column) {
           return new DatasetItemRenderer(column, new BarRepresentation(), perNodeBetweenGroupsStatsTooltip);
         };
+        this.itemRenderers["SELECTED_PATHS"] = function (column) {
+          return new SimplePathScoreRenderer(column, new BooleanRepresentation());
+        };
+        this.itemRenderers["SELECTED_NODES"] = function (column) {
+          return new SimplePathScoreRenderer(column, new BooleanRepresentation());
+        };
+        this.itemRenderers["SELECTED_SETS"] = function (column) {
+          return new SimplePathScoreRenderer(column, new BooleanRepresentation());
+        };
 
-        var that = this;
-        var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
-        initialPathSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
 
-        this.columns = initialPathSortingStrategies.map(function (sortingStrategy, i) {
-          return new Column(that, sortingStrategy, i + 1);
-        });
+        this.createColumnsFromCurrentStrategyChain();
 
       },
 
@@ -1148,7 +1220,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         var chain = this.getStrategyChain();
         chain.push(pathSorting.sortingStrategies.pathId);
         pathSorting.sortingManager.setStrategyChain(chain);
-        listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+        listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator, this);
       }
       ,
 
@@ -1168,7 +1240,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           this.columns.forEach(function (column, i) {
             column.header.setPriority(i + 1);
           });
-          this.pathList.renderPaths();
+          //this.pathList.renderPaths();
         }
       }
       ,

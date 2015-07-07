@@ -1511,7 +1511,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           var set = sc.append("g")
             .classed("set", true)
             .on("dblclick", function (d) {
-              pathSorting.sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
+              //pathSorting.sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
+              pathSorting.addSelectionBasedSortingStrategy(new pathSorting.SetPresenceSortingStrategy(selectionUtil.selections["set"]["selected"]));
               listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
             });
 
@@ -1716,7 +1717,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .attr("width", "100%")
           .attr("height", s.PATH_HEIGHT)
           .on("dblclick", function (d) {
-            pathSorting.sortingStrategies.selectionSortingStrategy.setPathIds(selectionUtil.selections["path"]["selected"]);
+            //pathSorting.sortingStrategies.selectionSortingStrategy.setPathIds(selectionUtil.selections["path"]["selected"]);
+            pathSorting.addSelectionBasedSortingStrategy(new pathSorting.PathPresenceSortingStrategy(selectionUtil.selections["path"]["selected"]));
             listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
           });
         //.on("click", function(d) {
@@ -1866,8 +1868,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .attr("class", "node")
 
           .on("dblclick.align", function (d) {
-            pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([d.node.id]);
+            //pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([d.node.id]);
             that.setPivotNode(d.node.id);
+            pathSorting.addSelectionBasedSortingStrategy(new pathSorting.NodePresenceSortingStrategy(selectionUtil.selections["node"]["selected"]));
             listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
 
           });

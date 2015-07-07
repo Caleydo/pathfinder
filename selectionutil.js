@@ -24,8 +24,15 @@ define(['d3', '../caleydo/main'], function (d3, C) {
       }
       if (ids instanceof Array) {
         this[type] = this[type].concat(ids);
+        ids.forEach(function(id) {
+          if(this[type].indexOf(id) === -1) {
+            this[type].push(id);
+          }
+        });
       } else {
-        this[type].push(ids);
+        if(this[type].indexOf(ids) === -1) {
+          this[type].push(ids);
+        }
       }
     },
 
