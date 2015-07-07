@@ -439,7 +439,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       destroy: function () {
         this.itemRenderer.destroy(this);
-        if (this.header) {
+        if (this.headerElement) {
           this.headerElement.remove();
         }
         if (this.bgRoot) {
@@ -814,7 +814,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             //  s.decStickyDataGroupOwners(dataset.id, column.sortingStrategy.groupId);
             //}
             delete column.sortingStrategy.setType;
-            listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+            listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator, that.column.columnManager);
           });
         this.scoreRepresentation.appendScore(pathGroup, score, s.PATH_HEIGHT, typeof column.sortingStrategy.setType === "undefined");
 
@@ -838,7 +838,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           //  s.decStickyDataGroupOwners(dataset.id, column.sortingStrategy.groupId);
           //}
           column.sortingStrategy.setType = setType.type;
-          listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+          listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator, that.column.columnManager);
         });
 
         that.scoreRepresentation.appendScore(d3.select(this), score, s.SET_TYPE_HEIGHT, column.sortingStrategy.setType === setType.type || pathWrapper.setTypes.length === 1, setInfo.getSetTypeInfo(setType.type).color);
@@ -937,7 +937,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             s.decStickyDataGroupOwners(dataset.id, column.sortingStrategy.groupId);
           }
           delete column.sortingStrategy.groupId;
-          listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+          listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator, that.column.columnManager);
         });
 
       this.scoreRepresentation.appendScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), (typeof groupId === "undefined") ? dataset.color : d3.hsl(dataset.color).brighter(1).toString());
@@ -1047,7 +1047,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 }
                 s.incStickyDataGroupOwners(dataset.id, group.name);
                 column.sortingStrategy.groupId = group.name;
-                listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+                listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator, that.column.columnManager);
               });
 
             that.scoreRepresentation.appendScore(d3.select(this), score, group.getBaseHeight(), (groupId === group.name), dataset.color);
