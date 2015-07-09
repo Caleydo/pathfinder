@@ -1340,50 +1340,6 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         allSetTypes.each(function (d, i) {
             var setTypeSummaryContainer = d3.select(this).select("g.setTypeSummary");
 
-            var allCircles = setTypeSummaryContainer.selectAll("circle")
-              .data(function () {
-                return d.setType.nodeIndices.map(function (index) {
-                  return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
-                });
-              });
-
-            var circle = allCircles.enter()
-              .append("circle")
-              .attr({
-                cx: function (d) {
-                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                },
-                cy: s.SET_TYPE_HEIGHT / 2,
-                r: function (d) {
-                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-
-                  return numSets == 0 ? 0 : nodeSetScale(numSets);
-                },
-                fill: function (d) {
-                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-                }
-              });
-
-            allCircles.transition()
-              .attr({
-                cx: function (d) {
-                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                },
-                r: function (d) {
-                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-
-                  return numSets == 0 ? 0 : nodeSetScale(numSets);
-                }
-              });
-
-            allCircles.exit().remove();
-
 
             var allLines = setTypeSummaryContainer.selectAll("line")
               .data(function () {
@@ -1417,6 +1373,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 }
               });
 
+            line.append("title").text(function (d) {
+              var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
+                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+              return "Number of connecting sets: " + numSets;
+            });
+
             allLines.transition()
               .attr({
                 x1: function (d) {
@@ -1439,7 +1401,72 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 }
               });
 
+            allLines.selectAll("title").text(function (d) {
+              var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
+                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+              return "Number of connecting sets: " + numSets;
+            });
+
             allLines.exit().remove();
+
+            var allCircles = setTypeSummaryContainer.selectAll("circle")
+              .data(function () {
+                return d.setType.nodeIndices.map(function (index) {
+                  return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
+                });
+              });
+
+            var circle = allCircles.enter()
+              .append("circle")
+              .attr({
+                cx: function (d) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                },
+                cy: s.SET_TYPE_HEIGHT / 2,
+                r: function (d) {
+                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+
+                  return numSets == 0 ? 0 : nodeSetScale(numSets);
+                },
+                fill: function (d) {
+                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                }
+              });
+
+            circle.append("title").text(function (d) {
+              var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+              return "Number of sets: " + numSets;
+            });
+
+            allCircles.transition()
+              .attr({
+                cx: function (d) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                },
+                r: function (d) {
+                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+
+                  return numSets == 0 ? 0 : nodeSetScale(numSets);
+                }
+              });
+
+            allCircles.selectAll("title").text(function (d) {
+              var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+              return "Number of sets: " + numSets;
+            });
+
+            allCircles.exit().remove();
+
+
+
           }
         );
 
