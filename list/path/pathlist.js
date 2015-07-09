@@ -1401,7 +1401,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 }
               });
 
-            allLines.selectAll("title").text(function (d) {
+            allLines.selectAll("title").data(function () {
+              return d.setType.relIndices.map(function (index) {
+                return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
+              });
+            }).text(function (d) {
               var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
                 that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
               return "Number of connecting sets: " + numSets;
@@ -1457,7 +1461,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 }
               });
 
-            allCircles.selectAll("title").text(function (d) {
+            allCircles.selectAll("title").data(function () {
+              return d.setType.nodeIndices.map(function (index) {
+                return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
+              });
+            }).text(function (d) {
               var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
                 that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
               return "Number of sets: " + numSets;

@@ -64,6 +64,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       this.column = column;
       this.columnManager = columnManager;
       this.sortingStrategy = sortingStrategy;
+      this.minHeight = s.COLUMN_HEADER_HEIGHT;
       //this.selectedStrategyIndex = selectedStrategyIndex || 0;
     }
 
@@ -71,6 +72,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       setPriority: function (priority) {
         this.priority = priority;
+      },
+
+      setMinHeight: function (height) {
+        this.minHeight = height;
+        this.columnManager.updateHeaderHeights();
       },
 
       init: function (parent) {
@@ -398,7 +404,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         }
 
         var bgData = bgDataLeft.concat(bgDataRight);
-        if(pathWrappers.length === 0) {
+        if (pathWrappers.length === 0) {
           this.bgRoot.selectAll("path").remove();
           return;
         }
@@ -474,11 +480,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       },
 
       init: function () {
-
+        this.scoreRepresentation.init(this.column);
       },
 
       destroy: function () {
-
+        this.scoreRepresentation.destroy(this.column);
       },
 
       getWidth: function () {
@@ -607,6 +613,14 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       updateScore: function (parent, score, maxHeight, color) {
 
+      },
+
+      init: function (column) {
+
+      },
+
+      destroy: function (column) {
+
       }
     };
 
@@ -619,7 +633,35 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     BarRepresentation.prototype = Object.create(ScoreRepresentation.prototype);
 
     BarRepresentation.prototype.setValueRange = function (valueRange) {
-      this.scale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range([0, this.getWidth()]);
+      var min = Math.min(0, valueRange.min);
+      var max = Math.max(0, valueRange.max);
+      this.scale = d3.scale.linear().domain([min, max]).range([0, this.getWidth()]);
+
+
+      var axis = d3.svg.axis()
+        .scale(this.scale)
+        .orient("top")
+        .tickValues([min, max])
+        //.tickFormat(d3.format(".2f"))
+        .tickSize(3, 3);
+
+      var ext = this.column.header.rootDomElement.select("g.scoreAxis");
+      if (ext.empty()) {
+        ext = this.column.header.rootDomElement.append("g")
+          .classed("scoreAxis", true)
+          .attr({
+            transform: function (d, i) {
+              return "translate(0," + (s.COLUMN_HEADER_HEIGHT + 15) + ")";
+            }
+          });
+
+      }
+      ext.call(axis);
+
+      ext.selectAll("text").each(function (d, i) {
+        d3.select(this).style({"text-anchor": i === 0 ? "start" : "end"});
+      })
+
     };
 
     BarRepresentation.prototype.getWidth = function () {
@@ -640,6 +682,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           width: Math.abs(that.scale(0) - that.scale(score)),
           height: height
         });
+
+
     };
 
     BarRepresentation.prototype.updateScore = function (parent, score, maxHeight, showSortingIndicator, color) {
@@ -656,6 +700,15 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           width: Math.abs(that.scale(0) - that.scale(score)),
           height: height
         });
+    };
+
+    BarRepresentation.prototype.init = function (column) {
+      this.column = column;
+      column.header.setMinHeight(s.COLUMN_HEADER_HEIGHT + 20);
+    };
+
+    BarRepresentation.prototype.destroy = function (column) {
+      this.column.header.rootDomElement.select("g.scoreAxis").remove();
     };
 
     //------------------------------------------
@@ -700,6 +753,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         .text(score > 0 ? "\uf00c" : "");
     };
 
+    BooleanRepresentation.prototype.init = function (column) {
+      column.header.setMinHeight(s.COLUMN_HEADER_HEIGHT);
+    };
+
+
 //---------------------------------------
 
     function HeatmapRepresentation(size) {
@@ -710,7 +768,76 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     HeatmapRepresentation.prototype = Object.create(ScoreRepresentation.prototype);
 
     HeatmapRepresentation.prototype.setValueRange = function (valueRange) {
-      this.scale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range(["black", "white"]);
+      var that = this;
+      var min = Math.min(0, valueRange.min);
+      var max = Math.max(0, valueRange.max);
+      this.scale = d3.scale.linear().domain([min, max]).range(["black", "white"]);
+
+
+      //var axisScale = d3.scale.linear().domain([min, max]).range([0, 35]);
+      //
+      //var axis = d3.svg.axis()
+      //  .scale(axisScale)
+      //  .orient("left")
+      //  .tickValues([min, max])
+      //  //.tickFormat(d3.format(".2f"))
+      //  .tickSize(3, 3);
+      //
+      var ext = this.column.header.rootDomElement.select("g.colorLegend");
+      if (ext.empty()) {
+        ext = this.column.header.rootDomElement.append("g")
+          .classed("colorLegend", true)
+          .attr({
+            transform: function (d, i) {
+              return "translate(0," + (s.COLUMN_HEADER_HEIGHT) + ")";
+            }
+          });
+
+        var gradient = ext.append("defs")
+          .append("linearGradient")
+          .attr({
+            id: "gradient" + that.column.id,
+            x1: "0%",
+            y1: "0%",
+            x2: "0%",
+            y2: "100%"
+          });
+
+        gradient.append("stop")
+          .attr({
+            offset: "0%"
+          })
+          .style({
+            "stop-color": "white",
+            "stop-opacity": 1
+          });
+        gradient.append("stop")
+          .attr({
+            offset: "100%"
+          })
+          .style({
+            "stop-color": "black",
+            "stop-opacity": 1
+          });
+
+        ext.append("rect")
+          .attr({
+            x: that.getWidth() / 2 - 5,
+            y: 2,
+            width: 10,
+            height: 36
+          })
+          .style({
+            stroke: "black",
+            fill: "url(#gradient" + that.column.id + ")"
+          })
+
+      }
+      //ext.call(axis);
+
+      //ext.selectAll("text").each(function (d, i) {
+      //  d3.select(this).style({"text-anchor": i === 0 ? "start" : "end"});
+      //})
     };
 
     HeatmapRepresentation.prototype.getWidth = function () {
@@ -750,6 +877,15 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         });
     };
 
+    HeatmapRepresentation.prototype.init = function (column) {
+      this.column = column;
+      column.header.setMinHeight(s.COLUMN_HEADER_HEIGHT + 40);
+    };
+
+    HeatmapRepresentation.prototype.destroy = function (column) {
+      this.column.header.rootDomElement.select("g.colorLegend").remove();
+    };
+
 
     //---------------------------------------
 
@@ -787,6 +923,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           y: maxHeight / 2 + 4
         })
         .text(uiUtil.formatNumber(score));
+    };
+
+    TextRepresentation.prototype.init = function (column) {
+      column.header.setMinHeight(s.COLUMN_HEADER_HEIGHT);
     };
 
     //--------------------------------------
@@ -873,17 +1013,17 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       });
     };
 
-    SetItemRenderer.prototype.init = function () {
-      //if (this.column.sortingStrategy.groupId) {
-      //  s.incStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
-      //}
-    };
+    //SetItemRenderer.prototype.init = function () {
+    //if (this.column.sortingStrategy.groupId) {
+    //  s.incStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
+    //}
+    //};
 
-    SetItemRenderer.prototype.destroy = function () {
-      //if (this.column.sortingStrategy.groupId) {
-      //  s.decStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
-      //}
-    };
+    //SetItemRenderer.prototype.destroy = function () {
+    //if (this.column.sortingStrategy.groupId) {
+    //  s.decStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
+    //}
+    //};
 
 
 //------------------------------
@@ -976,7 +1116,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       var valueRange = getPathDataScoreValueRange(pathWrappers, dataset, column.sortingStrategy);
       this.scoreRepresentation.setValueRange(valueRange);
-      var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range([0, column.getWidth()]);
+      //var barScale = d3.scale.linear().domain([Math.min(0, valueRange.min), Math.max(0, valueRange.max)]).range([0, column.getWidth()]);
 
       var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path, dataset.id);
       var score = scoreInfo.score;
@@ -1086,6 +1226,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     };
 
     DatasetItemRenderer.prototype.init = function () {
+      PathItemRenderer.prototype.init.call(this);
       if (this.column.sortingStrategy.groupId) {
         s.incStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
       }
@@ -1095,6 +1236,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       if (this.column.sortingStrategy.groupId) {
         s.decStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
       }
+      PathItemRenderer.prototype.destroy.call(this);
     };
 
 //----------------------
@@ -1165,7 +1307,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
         var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
         //remove filter strategy
-        initialPathSortingStrategies.splice(0,1);
+        initialPathSortingStrategies.splice(0, 1);
         //remove path id strategy
         initialPathSortingStrategies.splice(initialPathSortingStrategies.length - 1, 1);
 
@@ -1209,6 +1351,22 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       },
 
+      updateHeaderHeights: function () {
+        var maxHeight = Number.NEGATIVE_INFINITY;
+
+        this.columns.forEach(function (col) {
+          var height = col.header.minHeight;
+          if (height > maxHeight) {
+            maxHeight = height;
+          }
+        });
+
+        d3.select("#columnHeaders")
+          .style({height: maxHeight + "px"});
+        d3.select("#columnHeaders svg")
+          .attr({height: maxHeight});
+      },
+
       getStrategyChain: function () {
         var chain = [];
         //var that = this;
@@ -1218,9 +1376,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         });
 
         return chain;
-      }
-
-      ,
+      },
 
       notify: function () {
         var chain = this.getStrategyChain();
@@ -1247,6 +1403,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           this.columns.forEach(function (column, i) {
             column.header.setPriority(i + 1);
           });
+          this.updateHeaderHeights();
           //this.pathList.renderPaths();
         }
       }
@@ -1324,6 +1481,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             .on("click", function () {
               pathSorting.openConfigureSortingDialog(function (sortingStrategy) {
                 that.columns.push(new Column(that, sortingStrategy, that.columns.length + 1));
+                that.updateHeaderHeights();
                 that.notify();
               });
 

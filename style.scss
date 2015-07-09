@@ -317,7 +317,7 @@ path.crossConnection.selected, line.stub.selected {
 
 }
 
-g.boxPlotAxisX, g.boxPlotAxisY {
+g.boxPlotAxisX, g.boxPlotAxisY, g.scoreAxis {
   path, line {
     fill: none;
     stroke: $defaultStrokeColor;
@@ -335,7 +335,7 @@ g.boxPlotAxisX, g.boxPlotAxisY {
 #columnHeaders {
   margin: 0px;
   padding: 0px;
-  height: 22px;
+  //height: 22px;
 }
 
 #arrowRight {
