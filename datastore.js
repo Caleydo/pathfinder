@@ -1,4 +1,4 @@
-define(['d3', 'jquery', './listeners', './query/pathquery', './config', './statisticsutil', './sorting', '../pathfinder-ccle/ccle', './colors'],
+define(['d3', 'jquery', './listeners', './query/pathquery', './config', './statisticsutil', './sorting', '../pathfinder_ccle/ccle', './colors'],
   function (d3, $, listeners, pathQuery, config, statisticsUtil, sorting, ccle, colors) {
 
     var SortingStrategy = sorting.SortingStrategy;
