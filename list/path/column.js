@@ -771,6 +771,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var that = this;
       var min = Math.min(0, valueRange.min);
       var max = Math.max(0, valueRange.max);
+      var COLOR_LEGEND_HEIGHT = 36;
       this.scale = d3.scale.linear().domain([min, max]).range(["black", "white"]);
 
 
@@ -822,17 +823,41 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
         ext.append("rect")
           .attr({
-            x: that.getWidth() / 2 - 5,
+            x: that.getWidth() / 2,
             y: 2,
             width: 10,
-            height: 36
+            height: COLOR_LEGEND_HEIGHT
           })
           .style({
             stroke: "black",
             fill: "url(#gradient" + that.column.id + ")"
           })
 
+        ext.append("text")
+          .classed("top", true)
+          .attr({
+            x: that.getWidth() / 2 - 2,
+            y: 10
+          })
+          .style({
+            "text-anchor": "end"
+          });
+
+        ext.append("text")
+          .classed("bottom", true)
+          .attr({
+            x: that.getWidth() / 2 - 2,
+            y: 2 + COLOR_LEGEND_HEIGHT
+          })
+          .style({
+            "text-anchor": "end"
+          });
       }
+
+      ext.select("text.top")
+        .text(uiUtil.formatNumber(max));
+      ext.select("text.bottom")
+        .text(uiUtil.formatNumber(min));
       //ext.call(axis);
 
       //ext.selectAll("text").each(function (d, i) {
@@ -1291,8 +1316,21 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         if (source === that) {
           return;
         }
-        that.createColumnsFromCurrentStrategyChain();
-        that.notify();
+
+        var chain = that.getStrategyChain();
+        if (chain.length === pathSorting.sortingManager.currentStrategyChain.length)
+          var allEqual = true;
+        for (var i = 0; i < chain.length; i++) {
+          if (chain[i] !== pathSorting.sortingManager.currentStrategyChain[i]) {
+            allEqual = false;
+            break;
+          }
+        }
+
+        if (!allEqual) {
+          that.createColumnsFromCurrentStrategyChain();
+          that.notify();
+        }
       }, pathSorting.updateType);
     }
 
@@ -1375,13 +1413,14 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           chain.push(column.sortingStrategy);
         });
 
+        chain.splice(0, 0, pathSorting.sortingStrategies.pathQueryStrategy);
+        chain.push(pathSorting.sortingStrategies.pathId);
+
         return chain;
       },
 
       notify: function () {
         var chain = this.getStrategyChain();
-        chain.splice(0, 0, pathSorting.sortingStrategies.pathQueryStrategy);
-        chain.push(pathSorting.sortingStrategies.pathId);
         pathSorting.sortingManager.setStrategyChain(chain);
         listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator, this);
       }
