@@ -249,9 +249,9 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
           });
 
 
-        if (selectionType === "selected" && lastPath != 0 && source !== this) {
-          that.fixPath(lastPath);
-        }
+        //if (selectionType === "selected" && lastPath != 0 && source !== this) {
+        //  that.fixPath(lastPath);
+        //}
       },
 
       prepareLayoutChange: function () {

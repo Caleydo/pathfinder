@@ -76,7 +76,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       setMinHeight: function (height) {
         this.minHeight = height;
-        this.columnManager.updateHeaderHeights();
+        //this.columnManager.updateHeaderHeights();
       },
 
       init: function (parent) {
@@ -1352,6 +1352,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         this.columns = initialPathSortingStrategies.map(function (sortingStrategy, i) {
           return new Column(that, sortingStrategy, i + 1);
         });
+        this.updateHeaderHeights();
       },
 
       init: function (pathList) {
@@ -1474,6 +1475,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             d3.selectAll("g.columnItem" + column.id).remove();
             column.itemRenderer.setScoreRepresentation(new BarRepresentation());
             column.header.updateWidth();
+            that.updateHeaderHeights();
             that.notify();
           }
         },
@@ -1484,6 +1486,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
               d3.selectAll("g.columnItem" + column.id).remove();
               column.itemRenderer.setScoreRepresentation(new HeatmapRepresentation());
               column.header.updateWidth();
+              that.updateHeaderHeights();
               that.notify();
             }
           },
@@ -1494,6 +1497,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
               d3.selectAll("g.columnItem" + column.id).remove();
               column.itemRenderer.setScoreRepresentation(new TextRepresentation());
               column.header.updateWidth();
+              that.updateHeaderHeights();
               that.notify();
             }
           }];
