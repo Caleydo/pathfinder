@@ -622,8 +622,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
           height: scaleY(stats.quartile25) - scaleY(stats.quartile75)
         })
         .style({
-          fill: color ? color : "gray",
-          stroke: "black"
+          fill: color ? color : "gray"
         });
 
       parent.append("line")
@@ -635,7 +634,22 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
           y2: scaleY(stats.median)
         })
         .style({
+          "shape-rendering": "crispEdges",
           stroke: "white"
+        });
+
+      parent.append("rect")
+        .classed("boxFrame", true)
+        .attr({
+          x: -BOX_WIDTH / 2,
+          y: scaleY(stats.quartile75),
+          width: BOX_WIDTH,
+          height: scaleY(stats.quartile25) - scaleY(stats.quartile75)
+        })
+        .style({
+          "shape-rendering": "crispEdges",
+          fill:"rgba(0,0,0,0)",
+          stroke: "black"
         });
 
       appendWhiskerV(parent, stats.iqrMin, stats.quartile25, "lower", scaleY);
@@ -647,6 +661,14 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
 
       parent.select("rect.box")
+        .transition()
+        .attr({
+          x: -BOX_WIDTH / 2,
+          y: scaleY(stats.quartile75),
+          width: BOX_WIDTH,
+          height: scaleY(stats.quartile25) - scaleY(stats.quartile75)
+        });
+      parent.select("rect.boxFrame")
         .transition()
         .attr({
           x: -BOX_WIDTH / 2,
@@ -681,6 +703,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             y2: scaleY(iqr)
           })
           .style({
+            "shape-rendering": "crispEdges",
             stroke: "black"
           });
 
@@ -693,6 +716,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             y2: scaleY(quartile)
           })
           .style({
+            "shape-rendering": "crispEdges",
             stroke: "black"
           });
       }
@@ -733,8 +757,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
         })
         .style({
-          fill: color ? color : "gray",
-          stroke: "black"
+          fill: color ? color : "gray"
         });
 
       parent.append("line")
@@ -746,7 +769,24 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
           y2: BOX_WIDTH
         })
         .style({
+          "shape-rendering": "crispEdges",
           stroke: "white"
+        });
+
+      parent.append("rect")
+        .classed("boxFrame", true)
+        .attr({
+
+          x: scaleX(stats.quartile25),
+          y: 0,
+          width: scaleX(stats.quartile75) - scaleX(stats.quartile25),
+          height: BOX_WIDTH
+
+        })
+        .style({
+          fill: "rgba(0,0,0,0)",
+          "shape-rendering": "crispEdges",
+          stroke: "black"
         });
 
       appendWhiskerH(parent, stats.iqrMin, stats.quartile25, "lower", scaleX);
@@ -756,6 +796,15 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
     function updateBoxPlotH(parent, stats, scaleX) {
       parent.select("rect.box")
+        .transition()
+        .attr({
+          x: scaleX(stats.quartile25),
+          y: 0,
+          width: scaleX(stats.quartile75) - scaleX(stats.quartile25),
+          height: BOX_WIDTH
+        });
+
+      parent.select("rect.boxFrame")
         .transition()
         .attr({
           x: scaleX(stats.quartile25),
@@ -809,6 +858,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             y2: 3 * BOX_WIDTH / 4
           })
           .style({
+            "shape-rendering": "crispEdges",
             stroke: "black"
           });
 
@@ -821,6 +871,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             y2: BOX_WIDTH / 2
           })
           .style({
+            "shape-rendering": "crispEdges",
             stroke: "black"
           });
       }
