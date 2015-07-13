@@ -849,34 +849,106 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     BarRepresentation.prototype = Object.create(ScoreRepresentation.prototype);
 
     BarRepresentation.prototype.setValueRange = function (valueRange) {
+      var that = this;
       var min = Math.min(0, valueRange.min);
       var max = Math.max(0, valueRange.max);
-      this.scale = d3.scale.linear().domain([min, max]).range([0, this.getWidth() - (2 * BAR_SIDE_PADDING)]);
+      var maxWidth = this.getWidth() - (2 * BAR_SIDE_PADDING);
+      this.scale = d3.scale.linear().domain([min, max]).range([0, maxWidth]);
 
 
-      var axis = d3.svg.axis()
-        .scale(this.scale)
-        .orient("top")
-        .tickValues([min, max])
-        //.tickFormat(d3.format(".2f"))
-        .tickSize(3, 3);
+      //var axis = d3.svg.axis()
+      //  .scale(this.scale)
+      //  .orient("top")
+      //  .tickValues([min, max])
+      //  //.tickFormat(d3.format(".2f"))
+      //  .tickSize(3, 3);
 
       var ext = this.column.header.rootDomElement.select("g.scoreAxis");
       if (ext.empty()) {
+
         ext = this.column.header.rootDomElement.append("g")
           .classed("scoreAxis", true)
           .attr({
             transform: function (d, i) {
-              return "translate(" + BAR_SIDE_PADDING + "," + (s.COLUMN_HEADER_HEIGHT + 15) + ")";
+              return "translate(" + BAR_SIDE_PADDING + "," + (s.COLUMN_HEADER_HEIGHT + 4) + ")";
             }
           });
 
-      }
-      ext.call(axis);
+        ext.append("rect")
+          .classed("scoreFrameFill", true)
+          .attr({
+            x: 0,
+            y: 0,
+            width: maxWidth,
+            height: BAR_SIZE
+          })
+          .style({
+            fill: "rgb(200,200,200)"
+          });
 
-      ext.selectAll("text").each(function (d, i) {
-        d3.select(this).style({"text-anchor": i === 0 ? "start" : "end"});
-      })
+        ext.append("rect")
+          .classed("scoreFrame", true)
+          .attr({
+            x: 0,
+            y: 0,
+            width: maxWidth,
+            height: BAR_SIZE
+          })
+          .style({
+            "shape-rendering": "crispEdges",
+            fill: "rgba(0,0,0,0)",
+            stroke: "rgb(80,80,80)"
+          });
+
+        ext.append("line")
+          .classed("zero", true)
+          .attr({
+            x1: 0 + that.scale(0),
+            y1: 0,
+            x2: 0 + that.scale(0),
+            y2: BAR_SIZE
+          })
+          .style({
+            "shape-rendering": "crispEdges",
+            stroke: "rgb(80,80,80)"
+          });
+
+        ext.append("text")
+          .classed("left", true)
+          .attr({
+            x: 0,
+            y: BAR_SIZE + 10
+          })
+          .style({
+            "text-anchor": "start"
+          });
+
+        ext.append("text")
+          .classed("right", true)
+          .attr({
+            x: maxWidth,
+            y: BAR_SIZE + 10
+          })
+          .style({
+            "text-anchor": "end"
+          });
+
+      }
+
+      ext.select("line.zero").transition()
+        .attr({
+          x1: 0 + that.scale(0),
+          x2: 0 + that.scale(0)
+        });
+
+      ext.select("text.left").text(uiUtil.formatNumber(min, 2));
+      ext.select("text.right").text(uiUtil.formatNumber(max, 2));
+
+      //ext.call(axis);
+      //
+      //ext.selectAll("text").each(function (d, i) {
+      //  d3.select(this).style({"text-anchor": i === 0 ? "start" : "end"});
+      //})
 
     };
 
@@ -934,7 +1006,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           x2: BAR_SIDE_PADDING + that.scale(0),
           y2: (maxHeight + height) / 2
         })
-        .style( {
+        .style({
           "shape-rendering": "crispEdges",
           stroke: "rgb(80,80,80)"
         });
@@ -988,7 +1060,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     BarRepresentation.prototype.init = function (column) {
       this.column = column;
-      column.header.setMinHeight(s.COLUMN_HEADER_HEIGHT + 20);
+      column.header.setMinHeight(s.COLUMN_HEADER_HEIGHT + 30);
     };
 
     BarRepresentation.prototype.destroy = function (column) {
@@ -1107,20 +1179,21 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
         ext.append("rect")
           .attr({
-            x: that.getWidth() / 2,
+            x: that.getWidth() - 14,
             y: 2,
             width: 10,
             height: COLOR_LEGEND_HEIGHT
           })
           .style({
-            stroke: "black",
+            "shape-rendering": "crispEdges",
+            stroke: "rgb(80,80,80)",
             fill: "url(#gradient" + that.column.id + ")"
-          })
+          });
 
         ext.append("text")
           .classed("top", true)
           .attr({
-            x: that.getWidth() / 2 - 2,
+            x: that.getWidth() - 16,
             y: 10
           })
           .style({
@@ -1130,7 +1203,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         ext.append("text")
           .classed("bottom", true)
           .attr({
-            x: that.getWidth() / 2 - 2,
+            x: that.getWidth() - 16,
             y: 2 + COLOR_LEGEND_HEIGHT
           })
           .style({
@@ -1139,9 +1212,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       }
 
       ext.select("text.top")
-        .text(uiUtil.formatNumber(max));
+        .text(uiUtil.formatNumber(max, 2));
       ext.select("text.bottom")
-        .text(uiUtil.formatNumber(min));
+        .text(uiUtil.formatNumber(min, 2));
       //ext.call(axis);
 
       //ext.selectAll("text").each(function (d, i) {
@@ -1164,9 +1237,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           x: (that.getWidth() - that.size) / 2,
           y: (maxHeight - size) / 2,
           fill: that.scale(score),
-          stroke: "black",
           width: size,
           height: size
+        })
+        .style({
+          "shape-rendering": "crispEdges",
+          stroke: "rgb(80,80,80)"
         });
     };
 
@@ -1180,7 +1256,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           x: (that.getWidth() - that.size) / 2,
           y: (maxHeight - size) / 2,
           fill: that.scale(score),
-          stroke: "black",
           width: size,
           height: size
         });
