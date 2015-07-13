@@ -16,7 +16,7 @@ define(["../../listeners"], function (listeners) {
     PATH_HEIGHT: 30,
     EDGE_SIZE: 50,
     SET_HEIGHT: 10,
-    SET_TYPE_HEIGHT: 14,
+    SET_TYPE_HEIGHT: 18,
     PATH_SPACING: 15,
     COLUMN_HEADER_HEIGHT: 22,
 

@@ -14,6 +14,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     var HEADER_ELEMENT_SPACING = 5;
     var HEADER_BUTTON_SIZE = 16;
 
+    var BAR_SIDE_PADDING = 4;
     var BAR_COLUMN_WIDTH = 90;
     var HEATMAP_COLUMN_WIDTH = 40;
     var TEXT_COLUMN_WIDTH = 40;
@@ -161,6 +162,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 that.column.setSortingStrategy(sortingStrategy);
                 that.updateWidth();
                 that.columnManager.updateSortOrder();
+                that.columnManager.updateHeaderHeights();
                 that.columnManager.notify();
               });
             }
@@ -358,7 +360,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
               //return "translate(" + translateX + "," + translateY + ")";
             }
           });
-
 
 
         allColumnItems.each(function (pathWrapper, index) {
@@ -799,12 +800,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           .attr({
             x: 0,
             y: 0,
-            fill: "black",
             width: that.getWidth(),
             height: maxHeight
           })
           .style({
-            opacity: show ? 0.2 : 0
+            fill: show ? "rgba(170,170,170,1)" : "rgba(0,0,0,0)"
           });
       },
 
@@ -817,7 +817,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             height: maxHeight
           })
           .style({
-            opacity: show ? 0.2 : 0
+            fill: show ? "rgba(170,170,170,1)" : "rgba(0,0,0,0)"
           });
       },
 
@@ -851,7 +851,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     BarRepresentation.prototype.setValueRange = function (valueRange) {
       var min = Math.min(0, valueRange.min);
       var max = Math.max(0, valueRange.max);
-      this.scale = d3.scale.linear().domain([min, max]).range([0, this.getWidth()]);
+      this.scale = d3.scale.linear().domain([min, max]).range([0, this.getWidth() - (2 * BAR_SIDE_PADDING)]);
 
 
       var axis = d3.svg.axis()
@@ -867,7 +867,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           .classed("scoreAxis", true)
           .attr({
             transform: function (d, i) {
-              return "translate(0," + (s.COLUMN_HEADER_HEIGHT + 15) + ")";
+              return "translate(" + BAR_SIDE_PADDING + "," + (s.COLUMN_HEADER_HEIGHT + 15) + ")";
             }
           });
 
@@ -888,15 +888,55 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var height = Math.min(BAR_SIZE, maxHeight);
       var that = this;
       this.appendSortingIndicator(parent, maxHeight, showSortingIndicator);
+      var maxWidth = that.getWidth() - (2 * BAR_SIDE_PADDING);
+
+      parent.append("rect")
+        .classed("scoreFrameFill", true)
+        .attr({
+          x: BAR_SIDE_PADDING,
+          y: (maxHeight - height) / 2,
+          width: maxWidth,
+          height: height
+        })
+        .style({
+          fill: "rgb(200,200,200)"
+        });
 
       parent.append("rect")
         .classed("score", true)
         .attr({
-          x: score < 0 ? that.scale(score) : that.scale(0),
+          x: BAR_SIDE_PADDING + (score < 0 ? that.scale(score) : that.scale(0)),
           y: (maxHeight - height) / 2,
           fill: color || that.color,
           width: Math.abs(that.scale(0) - that.scale(score)),
           height: height
+        });
+
+      parent.append("rect")
+        .classed("scoreFrame", true)
+        .attr({
+          x: BAR_SIDE_PADDING,
+          y: (maxHeight - height) / 2,
+          width: maxWidth,
+          height: height
+        })
+        .style({
+          "shape-rendering": "crispEdges",
+          fill: "rgba(0,0,0,0)",
+          stroke: "rgb(80,80,80)"
+        });
+
+      parent.append("line")
+        .classed("zero", true)
+        .attr({
+          x1: BAR_SIDE_PADDING + that.scale(0),
+          y1: (maxHeight - height) / 2,
+          x2: BAR_SIDE_PADDING + that.scale(0),
+          y2: (maxHeight + height) / 2
+        })
+        .style( {
+          "shape-rendering": "crispEdges",
+          stroke: "rgb(80,80,80)"
         });
 
 
@@ -906,15 +946,43 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var height = Math.min(BAR_SIZE, maxHeight);
       var that = this;
       this.updateSortingIndicator(parent, maxHeight, showSortingIndicator);
+      var maxWidth = that.getWidth() - (2 * BAR_SIDE_PADDING);
+
+      parent.append("rect.scoreFrameFill")
+        .transition()
+        .attr({
+          x: BAR_SIDE_PADDING,
+          y: (maxHeight - height) / 2,
+          width: maxWidth,
+          height: height
+        });
 
       parent.select("rect.score")
         .transition()
         .attr({
-          x: score < 0 ? that.scale(score) : that.scale(0),
+          x: BAR_SIDE_PADDING + (score < 0 ? that.scale(score) : that.scale(0)),
           y: (maxHeight - height) / 2,
           fill: color || that.color,
           width: Math.abs(that.scale(0) - that.scale(score)),
           height: height
+        });
+
+      parent.select("rect.scoreFrame")
+        .transition()
+        .attr({
+          x: BAR_SIDE_PADDING,
+          y: (maxHeight - height) / 2,
+          width: maxWidth,
+          height: height
+        });
+
+      parent.select("line.zero")
+        .transition()
+        .attr({
+          x1: BAR_SIDE_PADDING + that.scale(0),
+          y1: (maxHeight - height) / 2,
+          x2: BAR_SIDE_PADDING + that.scale(0),
+          y2: (maxHeight + height) / 2
         });
     };
 
