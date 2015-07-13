@@ -93,6 +93,22 @@ define(["../../listeners"], function (listeners) {
       }
 
       return posY;
+    },
+
+    getSetTranslateY: function (setType, setIndex) {
+
+      var posY = this.SET_TYPE_HEIGHT;
+      var filteredSets = setType.sets.filter(function (s) {
+        return s.canBeShown();
+      });
+      for (var i = 0; i < setIndex; i++) {
+        var set = filteredSets[i];
+        //if (set.canBeShown()) {
+        posY += set.getHeight();
+        //}
+      }
+
+      return posY;
     }
 
 

@@ -293,6 +293,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         this.renderHeader(pathWrappers);
         this.renderBackground(parent, pathWrappers);
 
+        var gridStrokeColor = "white";
+        var gridFillColor = "rgba(0,0,0,0)"
+
         var that = this;
 
         var allColumnItems = parent.selectAll("g.columnItem" + this.id)
@@ -313,22 +316,235 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
         columnItem.each(function (pathWrapper, index) {
           var item = d3.select(this);
+          //item.append("rect")
+          //  .classed("bgPathItem", true)
+          //  .attr({
+          //    x: 0,
+          //    y: 0,
+          //    width: that.getWidth(),
+          //    height: pathWrapper.getHeight()
+          //  })
+          //  .style({
+          //    stroke: "black",
+          //    fill: "rgba(0,0,0,0)"
+          //  });
+
+          //item.append("rect")
+          //  .classed("bgPath", true)
+          //  .attr({
+          //    x: 0,
+          //    y: 0,
+          //    width: that.getWidth(),
+          //    height: s.PATH_HEIGHT
+          //  })
+          //  .style({
+          //    stroke: gridStrokeColor,
+          //    fill: gridFillColor,
+          //    "shape-rendering": "crispEdges"
+          //  });
+
           that.itemRenderer.enter(item, pathWrapper, index, pathWrappers, that);
         });
 
         allColumnItems.transition()
           .attr({
             transform: function (d, i) {
-              var pathWrapper = s.isAlignColumns() ? maxLengthPathWrapper : d;
-              var translateX = that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
-              translateX += getTotalColumnWidth(that.columnManager.columns, that.columnManager.columns.indexOf(that));
               var translateY = s.getPathContainerTranslateY(pathWrappers, i);
-              return "translate(" + translateX + "," + translateY + ")";
+              return "translate(" + getColumnItemTranlateX(that.columnManager.columns, that, pathWrappers, i) + "," + translateY + ")";
+              //var pathWrapper = s.isAlignColumns() ? maxLengthPathWrapper : d;
+              //var translateX = that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
+              //translateX += getTotalColumnWidth(that.columnManager.columns, that.columnManager.columns.indexOf(that));
+              //var translateY = s.getPathContainerTranslateY(pathWrappers, i);
+              //return "translate(" + translateX + "," + translateY + ")";
             }
           });
 
+
+
         allColumnItems.each(function (pathWrapper, index) {
           var item = d3.select(this);
+          //item.select("rect.bgPath").transition()
+          //  .attr({
+          //    width: that.getWidth()
+          //  });
+          //
+          //var allBgSetTypes = item.selectAll("g.bgSetType").data(pathWrapper.setTypes, function (d) {
+          //  return d.id;
+          //});
+          //
+          //var bgSetTypes = allBgSetTypes.enter().append("g")
+          //  .classed("bgSetType", true)
+          //  .attr({
+          //    transform: function (d, i) {
+          //      return "translate(0," + s.getSetTypeTranslateY(pathWrapper, i) + ")"
+          //    }
+          //  });
+          //
+          //bgSetTypes.each(function (setType, setTypeIndex) {
+          //  var bgSetType = d3.select(this);
+          //  bgSetType.attr({
+          //    transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, setTypeIndex) + ")"
+          //  });
+          //
+          //  bgSetType.append("rect")
+          //    .classed("bgSetTypeSummary", true)
+          //    .attr({
+          //      x: 0,
+          //      y: 0,
+          //      width: that.getWidth(),
+          //      height: s.SET_TYPE_HEIGHT
+          //    })
+          //    .style({
+          //      stroke: gridStrokeColor,
+          //      fill: gridFillColor,
+          //      "shape-rendering": "crispEdges"
+          //    });
+          //});
+          //
+          //allBgSetTypes.each(function (setType, setTypeIndex) {
+          //
+          //  var bgSetType = d3.select(this);
+          //
+          //  bgSetType.transition()
+          //    .attr({
+          //      transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, setTypeIndex) + ")"
+          //    });
+          //
+          //  bgSetType.select("rect.bgSetTypeSummary")
+          //    .attr({
+          //      width: that.getWidth(),
+          //      height: s.SET_TYPE_HEIGHT
+          //    });
+          //
+          //  var allBgSets = bgSetType.selectAll("rect.bgSet").data(setType.sets.filter(function (s) {
+          //    return s.canBeShown() && !setType.collapsed;
+          //  }), function (d) {
+          //    return d.id;
+          //  });
+          //
+          //  allBgSets.enter()
+          //    .append("rect")
+          //    .classed("bgSet", true)
+          //    .attr({
+          //      x: 0,
+          //      y: function (d, i) {
+          //        return s.getSetTranslateY(setType, i);
+          //      },
+          //      width: that.getWidth(),
+          //      height: function (d, i) {
+          //        return d.getHeight();
+          //      }
+          //    })
+          //    .style({
+          //      stroke: gridStrokeColor,
+          //      fill: gridFillColor,
+          //      "shape-rendering": "crispEdges"
+          //    });
+          //
+          //  allBgSets.transition()
+          //    .attr({
+          //      y: function (d, i) {
+          //        return s.getSetTranslateY(setType, i);
+          //      },
+          //      width: that.getWidth(),
+          //      height: function (d, i) {
+          //        return d.getHeight();
+          //      }
+          //    });
+          //
+          //  allBgSets.exit().remove();
+          //
+          //
+          //});
+          //
+          //allBgSetTypes.exit().remove();
+          //
+          //
+          //var allBgDatasets = item.selectAll("g.bgDataset").data(pathWrapper.datasets, function (d) {
+          //  return d.id;
+          //});
+          //
+          //var bgDatasets = allBgDatasets.enter().append("g")
+          //  .classed("bgDataset", true);
+          //
+          //bgDatasets.each(function (dataset, datasetIndex) {
+          //  var bgDataset = d3.select(this);
+          //  bgDataset.attr({
+          //    transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + dataset.getPosYRelativeToParent(pathWrapper.datasets)) + ")"
+          //  });
+          //
+          //  bgDataset.append("rect")
+          //    .classed("bgDatasetSummary", true)
+          //    .attr({
+          //      x: 0,
+          //      y: 0,
+          //      width: that.getWidth(),
+          //      height: dataset.getBaseHeight()
+          //    })
+          //    .style({
+          //      stroke: gridStrokeColor,
+          //      fill: gridFillColor,
+          //      "shape-rendering": "crispEdges"
+          //    });
+          //});
+          //
+          //allBgDatasets.each(function (dataset, datasetIndex) {
+          //
+          //  var bgDataset = d3.select(this);
+          //
+          //  bgDataset.transition()
+          //    .attr({
+          //      transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + dataset.getPosYRelativeToParent(pathWrapper.datasets)) + ")"
+          //    });
+          //
+          //  bgDataset.select("rect.bgDatasetSummary")
+          //    .attr({
+          //      width: that.getWidth(),
+          //      height: dataset.getBaseHeight()
+          //    });
+          //
+          //  var allGroups = bgDataset.selectAll("rect.bgGroup").data(dataset.getVisibleChildren(), function (d) {
+          //    return d.name;
+          //  });
+          //
+          //  allGroups.enter()
+          //    .append("rect")
+          //    .classed("bgGroup", true)
+          //    .attr({
+          //      x: 0,
+          //      y: function (d) {
+          //        return d.getPosYRelativeToParent();
+          //      },
+          //      width: that.getWidth(),
+          //      height: function (d) {
+          //        return d.getHeight();
+          //      }
+          //    })
+          //    .style({
+          //      stroke: gridStrokeColor,
+          //      fill: gridFillColor,
+          //      "shape-rendering": "crispEdges"
+          //    });
+          //
+          //  allGroups.transition()
+          //    .attr({
+          //      y: function (d) {
+          //        return d.getPosYRelativeToParent();
+          //      },
+          //      width: that.getWidth(),
+          //      height: function (d) {
+          //        return d.getHeight();
+          //      }
+          //    });
+          //
+          //  allGroups.exit().remove();
+          //
+          //
+          //});
+          //
+          //allBgDatasets.exit().remove();
+
+
           that.itemRenderer.update(item, pathWrapper, index, pathWrappers, that);
         });
 
@@ -1061,6 +1277,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     DatasetItemRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
 
+      var that = this;
+
       var datasetId = column.sortingStrategy.datasetId;
       var groupId = column.sortingStrategy.groupId;
       var dataset = 0;
@@ -1081,16 +1299,16 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path, dataset.id);
       var score = scoreInfo.score;
 
-      var posY = 0;
-      var datasetWrappers = pathWrapper.datasets;
-      var that = this;
+      var posY = dataset.getPosYRelativeToParent(pathWrapper.datasets);
+      //var datasetWrappers = pathWrapper.datasets;
 
-      for (var j = 0; j < dsIndex; j++) {
-        var datasetWrapper = datasetWrappers[j];
-        if (datasetWrapper.canBeShown()) {
-          posY += datasetWrapper.getHeight();
-        }
-      }
+      //
+      //for (var j = 0; j < dsIndex; j++) {
+      //  var datasetWrapper = datasetWrappers[j];
+      //  if (datasetWrapper.canBeShown()) {
+      //    posY += datasetWrapper.getHeight();
+      //  }
+      //}
 
       var datasetGroup = item.append("g")
         .classed("dataset", true)
@@ -1146,15 +1364,15 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path, dataset.id);
       var score = scoreInfo.score;
 
-      var posY = 0;
-      var datasetWrappers = pathWrapper.datasets;
-
-      for (var j = 0; j < dsIndex; j++) {
-        var datasetWrapper = datasetWrappers[j];
-        if (datasetWrapper.canBeShown()) {
-          posY += datasetWrapper.getHeight();
-        }
-      }
+      var posY = dataset.getPosYRelativeToParent(pathWrapper.datasets);
+      //var datasetWrappers = pathWrapper.datasets;
+      //
+      //for (var j = 0; j < dsIndex; j++) {
+      //  var datasetWrapper = datasetWrappers[j];
+      //  if (datasetWrapper.canBeShown()) {
+      //    posY += datasetWrapper.getHeight();
+      //  }
+      //}
 
       var datasetPosY = s.PATH_HEIGHT + pathWrapper.getSetHeight() + posY;
 
@@ -1204,7 +1422,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
               //fill: groupId === group.name ? "gray" : "rgb(180, 180,180)",
               //width: Math.abs(barScale(0) - barScale(score)),
               //height: SMALL_BAR_SIZE,
-              transform: "translate(0," + (datasetPosY + posY) + ")"
+              transform: "translate(0," + (datasetPosY + group.getPosYRelativeToParent()) + ")"
             })
               .on("dblclick", function () {
                 if (column.sortingStrategy.groupId) {
@@ -1240,7 +1458,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             //y: (group.getBaseHeight() - SMALL_BAR_SIZE) / 2,
             //fill: groupId === group.name ? "gray" : "rgb(180, 180,180)",
             //width: Math.abs(barScale(0) - barScale(score)),
-            transform: "translate(0," + (datasetPosY + posY) + ")"
+            transform: "translate(0," + (datasetPosY + group.getPosYRelativeToParent()) + ")"
           });
 
           that.scoreRepresentation.updateScore(d3.select(this), score, group.getBaseHeight(), (groupId === group.name), dataset.color);

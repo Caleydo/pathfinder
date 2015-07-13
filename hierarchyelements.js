@@ -10,20 +10,48 @@ define(function () {
     getHeight: function () {
       var height = this.getBaseHeight();
 
-      this.getVisibleChildren().forEach(function(child){
+      this.getVisibleChildren().forEach(function (child) {
         height += child.getHeight();
       });
       return height;
     },
 
-    getVisibleChildren: function() {
+    getVisibleChildren: function () {
       var that = this;
-      return this.children.filter(function(child) {
-        if(that.collapsed){
+      return this.children.filter(function (child) {
+        if (that.collapsed) {
           return child.isSticky() && child.canBeShown();
         }
         return child.canBeShown();
       })
+    },
+
+    getPosYRelativeToParent: function (parent) {
+
+      parent = parent || this.parent;
+
+      if (!parent || !(parent instanceof HierarchyElement || parent instanceof Array)) {
+        return;
+      }
+
+      var visibleSiblings = parent instanceof HierarchyElement ? parent.getVisibleChildren() : parent.filter(function (sibling) {
+        return sibling instanceof HierarchyElement && sibling.canBeShown();
+      });
+
+      var myIndex = visibleSiblings.indexOf(this);
+
+      if (myIndex === -1) {
+        return;
+      }
+
+      var posY =  parent instanceof HierarchyElement ? this.parent.getBaseHeight() : 0;
+
+      for (var i = 0; i < myIndex; i++) {
+        posY += visibleSiblings[i].getHeight();
+      }
+
+      return posY;
+
     },
 
     isSticky: function () {
