@@ -1806,11 +1806,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       $(this.myDomElements[0]).mouseenter(function () {
         var size = that.getSize();
 
-        addOrButton(that, [{
-          text: "Add Path", callback: function () {
+        addOrButton(that, function () {
             replaceWithContainer(that, OrContainer, false, PathContainer);
-          }
-        }], (size.width - OR_BUTTON_WIDTH) / 2, size.height - 5);
+          }, (size.width - OR_BUTTON_WIDTH) / 2, size.height - 5);
 
       });
     };
