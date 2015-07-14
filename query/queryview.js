@@ -1851,6 +1851,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       View.call(this, "#pathQuery");
       this.grabHSpace = false;
       this.grabVSpace = false;
+      this.advancedMode = false;
     }
 
     QueryView.prototype = Object.create(View.prototype);
@@ -1869,6 +1870,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     };
     QueryView.prototype.initImpl = function () {
       View.prototype.init.call(this);
+
+
 
       var $progress = $('.progress-bar');
       ServerSearch.on({
@@ -1906,6 +1909,23 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           return false;
         }
       );
+
+      $("#toggleQueryMode").click(function(){
+        that.advancedMode = !that.advancedMode;
+        if(that.advancedMode){
+          $(this).text("Less");
+          $("#advancedQueryWidgets").css({display:"inline-block"});
+          $("#pathQueryView").css({display:"inline-block"});
+          $("#simpleQueryWidgets").css({display:"none"});
+        } else {
+          $(this).text("More");
+          $("#advancedQueryWidgets").css({display:"none"});
+          $("#pathQueryView").css({display:"none"});
+          $("#simpleQueryWidgets").css({display:"inline-block"});
+        }
+
+
+      });
 
       $('#remove_filtered_paths').click(function () {
           pathQuery.setRemoveFilteredPaths($('#remove_filtered_paths').prop("checked"));

@@ -6,28 +6,10 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 5929,
+        "id": 453,
         "properties": {
           "idType": "ENTREZ",
           "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04015",
-            "hsa04020",
-            "hsa04060",
-            "hsa04066",
-            "hsa04068",
-            "hsa04144",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04520",
-            "hsa04540",
-            "hsa04810",
-            "hsa04912",
-            "hsa04915",
-            "hsa04921",
             "hsa05120",
             "hsa05160",
             "hsa05200",
@@ -41,7 +23,25 @@
             "hsa05219",
             "hsa05223",
             "hsa05230",
-            "hsa05231"
+            "hsa05231",
+            "hsa04060",
+            "hsa04066",
+            "hsa04068",
+            "hsa04144",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04520",
+            "hsa04540",
+            "hsa04810",
+            "hsa04912",
+            "hsa04915",
+            "hsa04921",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020"
           ],
           "id": "1956",
           "name": "EGFR"
@@ -52,13 +52,23 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 5917,
+        "id": 295,
         "properties": {
           "idType": "ENTREZ",
           "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05211",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05231",
             "hsa04062",
             "hsa04068",
             "hsa04151",
@@ -76,19 +86,9 @@
             "hsa04912",
             "hsa04915",
             "hsa04917",
-            "hsa05034",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05211",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05220",
-            "hsa05221",
-            "hsa05223",
-            "hsa05231"
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
           ],
           "id": "6654",
           "name": "SOS1"
@@ -97,25 +97,14 @@
     ],
     "edges": [
       {
-        "targetNodeId": 5917,
+        "targetNodeId": 295,
         "type": "Edge",
-        "sourceNodeId": 5929,
-        "id": 908342,
+        "sourceNodeId": 453,
+        "id": 40008,
         "properties": {
           "_isSetEdge": true,
           "_isNetworkEdge": true,
           "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04068",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04540",
-            "hsa04810",
-            "hsa04912",
-            "hsa04915",
             "hsa05160",
             "hsa05200",
             "hsa05205",
@@ -124,13 +113,24 @@
             "hsa05214",
             "hsa05215",
             "hsa05223",
-            "hsa05231"
+            "hsa05231",
+            "hsa04068",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04540",
+            "hsa04810",
+            "hsa04912",
+            "hsa04915",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
           ]
         }
       }
     ],
     "weight": 2,
-    "id": 20
+    "id": 0
   },
   {
     "nodes": [
@@ -139,28 +139,10 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 5929,
+        "id": 453,
         "properties": {
           "idType": "ENTREZ",
           "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04015",
-            "hsa04020",
-            "hsa04060",
-            "hsa04066",
-            "hsa04068",
-            "hsa04144",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04520",
-            "hsa04540",
-            "hsa04810",
-            "hsa04912",
-            "hsa04915",
-            "hsa04921",
             "hsa05120",
             "hsa05160",
             "hsa05200",
@@ -174,7 +156,25 @@
             "hsa05219",
             "hsa05223",
             "hsa05230",
-            "hsa05231"
+            "hsa05231",
+            "hsa04060",
+            "hsa04066",
+            "hsa04068",
+            "hsa04144",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04520",
+            "hsa04540",
+            "hsa04810",
+            "hsa04912",
+            "hsa04915",
+            "hsa04921",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020"
           ],
           "id": "1956",
           "name": "EGFR"
@@ -185,306 +185,49 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 8801,
+        "id": 294,
         "properties": {
           "idType": "ENTREZ",
           "pathways": [
-            "hsa04630",
-            "hsa05206"
-          ],
-          "id": "10253",
-          "name": "SPRY2"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5917,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04062",
-            "hsa04068",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04540",
-            "hsa04630",
-            "hsa04650",
-            "hsa04660",
-            "hsa04662",
-            "hsa04664",
-            "hsa04722",
-            "hsa04810",
-            "hsa04910",
-            "hsa04912",
-            "hsa04915",
-            "hsa04917",
             "hsa05034",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05211",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05220",
-            "hsa05221",
-            "hsa05223",
-            "hsa05231"
-          ],
-          "id": "6654",
-          "name": "SOS1"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 8801,
-        "type": "Edge",
-        "sourceNodeId": 5929,
-        "id": 388702817,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa05206"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 8801,
-        "type": "Edge",
-        "sourceNodeId": 5917,
-        "id": 387916385,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa05206",
-            "hsa04630"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 21
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5929,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04015",
-            "hsa04020",
-            "hsa04060",
-            "hsa04066",
-            "hsa04068",
-            "hsa04144",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04520",
-            "hsa04540",
-            "hsa04810",
-            "hsa04912",
-            "hsa04915",
-            "hsa04921",
-            "hsa05120",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05212",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05218",
-            "hsa05219",
-            "hsa05223",
-            "hsa05230",
-            "hsa05231"
-          ],
-          "id": "1956",
-          "name": "EGFR"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 8807,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04630",
-            "hsa05206",
-            "hsa05221"
-          ],
-          "id": "5292",
-          "name": "PIM1"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5917,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04062",
-            "hsa04068",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04540",
-            "hsa04630",
-            "hsa04650",
-            "hsa04660",
-            "hsa04662",
-            "hsa04664",
-            "hsa04722",
-            "hsa04810",
-            "hsa04910",
-            "hsa04912",
-            "hsa04915",
-            "hsa04917",
-            "hsa05034",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05211",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05220",
-            "hsa05221",
-            "hsa05223",
-            "hsa05231"
-          ],
-          "id": "6654",
-          "name": "SOS1"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 8807,
-        "type": "Edge",
-        "sourceNodeId": 5929,
-        "id": 388702823,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa05206"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 8807,
-        "type": "Edge",
-        "sourceNodeId": 5917,
-        "id": 387916391,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa05221",
-            "hsa05206",
-            "hsa04630"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 22
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5929,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04015",
-            "hsa04020",
-            "hsa04060",
-            "hsa04066",
-            "hsa04068",
-            "hsa04144",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04520",
-            "hsa04540",
-            "hsa04810",
-            "hsa04912",
-            "hsa04915",
-            "hsa04921",
-            "hsa05120",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05212",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05218",
-            "hsa05219",
-            "hsa05223",
-            "hsa05230",
-            "hsa05231"
-          ],
-          "id": "1956",
-          "name": "EGFR"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 8778,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04622",
-            "hsa04623",
             "hsa05160",
             "hsa05161",
-            "hsa05162",
-            "hsa05164",
-            "hsa05168"
+            "hsa05200",
+            "hsa05203",
+            "hsa05205",
+            "hsa05206",
+            "hsa05211",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05231",
+            "hsa04062",
+            "hsa04068",
+            "hsa04151",
+            "hsa04320",
+            "hsa04380",
+            "hsa04510",
+            "hsa04540",
+            "hsa04550",
+            "hsa04630",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04722",
+            "hsa04910",
+            "hsa04912",
+            "hsa04915",
+            "hsa04917",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
           ],
-          "id": "57506",
-          "name": "VISA"
+          "id": "2885",
+          "name": "GRB2"
         }
       },
       {
@@ -492,13 +235,23 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 5917,
+        "id": 295,
         "properties": {
           "idType": "ENTREZ",
           "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05211",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05231",
             "hsa04062",
             "hsa04068",
             "hsa04151",
@@ -516,6 +269,56 @@
             "hsa04912",
             "hsa04915",
             "hsa04917",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
+          ],
+          "id": "6654",
+          "name": "SOS1"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 294,
+        "type": "Edge",
+        "sourceNodeId": 453,
+        "id": 4147,
+        "properties": {
+          "_isSetEdge": true,
+          "_isNetworkEdge": true,
+          "pathways": [
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05223",
+            "hsa05231",
+            "hsa04068",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04540",
+            "hsa04912",
+            "hsa04915",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 295,
+        "type": "Edge",
+        "sourceNodeId": 294,
+        "id": 4129,
+        "properties": {
+          "_isSetEdge": true,
+          "_isNetworkEdge": true,
+          "pathways": [
             "hsa05034",
             "hsa05160",
             "hsa05200",
@@ -528,128 +331,7 @@
             "hsa05220",
             "hsa05221",
             "hsa05223",
-            "hsa05231"
-          ],
-          "id": "6654",
-          "name": "SOS1"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 8778,
-        "type": "Edge",
-        "sourceNodeId": 5929,
-        "id": 388702794,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa05160"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 8778,
-        "type": "Edge",
-        "sourceNodeId": 5917,
-        "id": 387916362,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa05160"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 23
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5929,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04015",
-            "hsa04020",
-            "hsa04060",
-            "hsa04066",
-            "hsa04068",
-            "hsa04144",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04520",
-            "hsa04540",
-            "hsa04810",
-            "hsa04912",
-            "hsa04915",
-            "hsa04921",
-            "hsa05120",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05212",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05218",
-            "hsa05219",
-            "hsa05223",
-            "hsa05230",
-            "hsa05231"
-          ],
-          "id": "1956",
-          "name": "EGFR"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 51,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa00010",
-            "hsa00051",
-            "hsa00052",
-            "hsa00500",
-            "hsa00520",
-            "hsa00524",
-            "hsa01200",
-            "hsa04066",
-            "hsa04910",
-            "hsa04930",
-            "hsa04973",
-            "hsa05230"
-          ],
-          "id": "3101",
-          "name": "HK3"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5917,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
+            "hsa05231",
             "hsa04062",
             "hsa04068",
             "hsa04151",
@@ -662,59 +344,19 @@
             "hsa04662",
             "hsa04664",
             "hsa04722",
-            "hsa04810",
             "hsa04910",
             "hsa04912",
             "hsa04915",
             "hsa04917",
-            "hsa05034",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05211",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05220",
-            "hsa05221",
-            "hsa05223",
-            "hsa05231"
-          ],
-          "id": "6654",
-          "name": "SOS1"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 51,
-        "type": "Edge",
-        "sourceNodeId": 5929,
-        "id": 3479337,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa05230",
-            "hsa04066"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 51,
-        "type": "Edge",
-        "sourceNodeId": 5917,
-        "id": 3479325,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa04910"
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
           ]
         }
       }
     ],
     "weight": 3,
-    "id": 24
+    "id": 1
   },
   {
     "nodes": [
@@ -723,28 +365,10 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 5929,
+        "id": 453,
         "properties": {
           "idType": "ENTREZ",
           "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04015",
-            "hsa04020",
-            "hsa04060",
-            "hsa04066",
-            "hsa04068",
-            "hsa04144",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04520",
-            "hsa04540",
-            "hsa04810",
-            "hsa04912",
-            "hsa04915",
-            "hsa04921",
             "hsa05120",
             "hsa05160",
             "hsa05200",
@@ -758,132 +382,7 @@
             "hsa05219",
             "hsa05223",
             "hsa05230",
-            "hsa05231"
-          ],
-          "id": "1956",
-          "name": "EGFR"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 50,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa00010",
-            "hsa00051",
-            "hsa00052",
-            "hsa00500",
-            "hsa00520",
-            "hsa00524",
-            "hsa01200",
-            "hsa04066",
-            "hsa04910",
-            "hsa04930",
-            "hsa04973",
-            "hsa05230"
-          ],
-          "id": "3099",
-          "name": "HK2"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5917,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04062",
-            "hsa04068",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04540",
-            "hsa04630",
-            "hsa04650",
-            "hsa04660",
-            "hsa04662",
-            "hsa04664",
-            "hsa04722",
-            "hsa04810",
-            "hsa04910",
-            "hsa04912",
-            "hsa04915",
-            "hsa04917",
-            "hsa05034",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05211",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05220",
-            "hsa05221",
-            "hsa05223",
-            "hsa05231"
-          ],
-          "id": "6654",
-          "name": "SOS1"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 50,
-        "type": "Edge",
-        "sourceNodeId": 5929,
-        "id": 3413801,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa05230",
-            "hsa04066"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 50,
-        "type": "Edge",
-        "sourceNodeId": 5917,
-        "id": 3413789,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa04910"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 25
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5929,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04015",
-            "hsa04020",
+            "hsa05231",
             "hsa04060",
             "hsa04066",
             "hsa04068",
@@ -897,172 +396,11 @@
             "hsa04912",
             "hsa04915",
             "hsa04921",
-            "hsa05120",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05212",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05218",
-            "hsa05219",
-            "hsa05223",
-            "hsa05230",
-            "hsa05231"
-          ],
-          "id": "1956",
-          "name": "EGFR"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 49,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa00010",
-            "hsa00051",
-            "hsa00052",
-            "hsa00500",
-            "hsa00520",
-            "hsa00524",
-            "hsa01200",
-            "hsa04066",
-            "hsa04910",
-            "hsa04930",
-            "hsa04973",
-            "hsa05230"
-          ],
-          "id": "3098",
-          "name": "HK1"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5917,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04062",
-            "hsa04068",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04540",
-            "hsa04630",
-            "hsa04650",
-            "hsa04660",
-            "hsa04662",
-            "hsa04664",
-            "hsa04722",
-            "hsa04810",
-            "hsa04910",
-            "hsa04912",
-            "hsa04915",
-            "hsa04917",
-            "hsa05034",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05211",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05220",
-            "hsa05221",
-            "hsa05223",
-            "hsa05231"
-          ],
-          "id": "6654",
-          "name": "SOS1"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 49,
-        "type": "Edge",
-        "sourceNodeId": 5929,
-        "id": 3348265,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa05230",
-            "hsa04066"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 49,
-        "type": "Edge",
-        "sourceNodeId": 5917,
-        "id": 3348253,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa04910"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 26
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5929,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
             "hsa04010",
             "hsa04012",
             "hsa04014",
             "hsa04015",
-            "hsa04020",
-            "hsa04060",
-            "hsa04066",
-            "hsa04068",
-            "hsa04144",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04520",
-            "hsa04540",
-            "hsa04810",
-            "hsa04912",
-            "hsa04915",
-            "hsa04921",
-            "hsa05120",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05212",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05218",
-            "hsa05219",
-            "hsa05223",
-            "hsa05230",
-            "hsa05231"
+            "hsa04020"
           ],
           "id": "1956",
           "name": "EGFR"
@@ -1073,176 +411,37 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 55,
+        "id": 2,
         "properties": {
           "idType": "ENTREZ",
           "pathways": [
-            "hsa00010",
-            "hsa00052",
-            "hsa00500",
-            "hsa04068",
-            "hsa04151",
-            "hsa04152",
-            "hsa04910",
-            "hsa04920",
-            "hsa04973"
-          ],
-          "id": "2538",
-          "name": "G6PC"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5917,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04062",
-            "hsa04068",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04540",
-            "hsa04630",
-            "hsa04650",
-            "hsa04660",
-            "hsa04662",
-            "hsa04664",
-            "hsa04722",
-            "hsa04810",
-            "hsa04910",
-            "hsa04912",
-            "hsa04915",
-            "hsa04917",
-            "hsa05034",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05211",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05220",
-            "hsa05221",
-            "hsa05223",
-            "hsa05231"
-          ],
-          "id": "6654",
-          "name": "SOS1"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 55,
-        "type": "Edge",
-        "sourceNodeId": 5929,
-        "id": 3741481,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa04151",
-            "hsa04068"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 55,
-        "type": "Edge",
-        "sourceNodeId": 5917,
-        "id": 3741469,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa04910",
-            "hsa04151",
-            "hsa04068"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 27
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 5929,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04015",
-            "hsa04020",
-            "hsa04060",
-            "hsa04066",
-            "hsa04068",
-            "hsa04144",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04520",
-            "hsa04540",
-            "hsa04810",
-            "hsa04912",
-            "hsa04915",
-            "hsa04921",
-            "hsa05120",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05212",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05218",
-            "hsa05219",
-            "hsa05223",
-            "hsa05230",
-            "hsa05231"
-          ],
-          "id": "1956",
-          "name": "EGFR"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 53,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa00010",
-            "hsa00052",
-            "hsa00500",
-            "hsa00520",
-            "hsa00524",
-            "hsa01200",
-            "hsa04910",
+            "hsa05031",
+            "hsa05410",
+            "hsa05412",
+            "hsa05414",
+            "hsa04022",
+            "hsa04024",
+            "hsa04260",
+            "hsa04261",
+            "hsa04270",
+            "hsa04713",
+            "hsa04720",
+            "hsa04723",
+            "hsa04724",
+            "hsa04725",
+            "hsa04726",
+            "hsa04727",
+            "hsa04728",
             "hsa04911",
-            "hsa04917",
+            "hsa04912",
+            "hsa04921",
             "hsa04930",
-            "hsa04950",
-            "hsa05230"
+            "hsa05010",
+            "hsa04010",
+            "hsa04020"
           ],
-          "id": "2645",
-          "name": "GCK"
+          "id": "775",
+          "name": "CACNA1C"
         }
       },
       {
@@ -1250,13 +449,23 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 5917,
+        "id": 295,
         "properties": {
           "idType": "ENTREZ",
           "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05211",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05231",
             "hsa04062",
             "hsa04068",
             "hsa04151",
@@ -1274,19 +483,9 @@
             "hsa04912",
             "hsa04915",
             "hsa04917",
-            "hsa05034",
-            "hsa05160",
-            "hsa05200",
-            "hsa05205",
-            "hsa05206",
-            "hsa05211",
-            "hsa05213",
-            "hsa05214",
-            "hsa05215",
-            "hsa05220",
-            "hsa05221",
-            "hsa05223",
-            "hsa05231"
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
           ],
           "id": "6654",
           "name": "SOS1"
@@ -1295,33 +494,36 @@
     ],
     "edges": [
       {
-        "targetNodeId": 53,
+        "targetNodeId": 2,
         "type": "Edge",
-        "sourceNodeId": 5929,
-        "id": 3610409,
+        "sourceNodeId": 453,
+        "id": 262597,
         "properties": {
           "_isSetEdge": true,
           "pathways": [
-            "hsa05230"
+            "hsa04020",
+            "hsa04010",
+            "hsa04921",
+            "hsa04912"
           ]
         }
       },
       {
-        "targetNodeId": 53,
+        "targetNodeId": 2,
         "type": "Edge",
-        "sourceNodeId": 5917,
-        "id": 3610397,
+        "sourceNodeId": 295,
+        "id": 262439,
         "properties": {
           "_isSetEdge": true,
           "pathways": [
-            "hsa04917",
-            "hsa04910"
+            "hsa04010",
+            "hsa04912"
           ]
         }
       }
     ],
     "weight": 3,
-    "id": 28
+    "id": 2
   },
   {
     "nodes": [
@@ -1330,28 +532,10 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 5929,
+        "id": 453,
         "properties": {
           "idType": "ENTREZ",
           "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
-            "hsa04015",
-            "hsa04020",
-            "hsa04060",
-            "hsa04066",
-            "hsa04068",
-            "hsa04144",
-            "hsa04151",
-            "hsa04320",
-            "hsa04510",
-            "hsa04520",
-            "hsa04540",
-            "hsa04810",
-            "hsa04912",
-            "hsa04915",
-            "hsa04921",
             "hsa05120",
             "hsa05160",
             "hsa05200",
@@ -1365,7 +549,25 @@
             "hsa05219",
             "hsa05223",
             "hsa05230",
-            "hsa05231"
+            "hsa05231",
+            "hsa04060",
+            "hsa04066",
+            "hsa04068",
+            "hsa04144",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04520",
+            "hsa04540",
+            "hsa04810",
+            "hsa04912",
+            "hsa04915",
+            "hsa04921",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020"
           ],
           "id": "1956",
           "name": "EGFR"
@@ -1376,25 +578,15 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 52,
+        "id": 4403,
         "properties": {
           "idType": "ENTREZ",
           "pathways": [
-            "hsa00010",
-            "hsa00051",
-            "hsa00052",
-            "hsa00500",
-            "hsa00520",
-            "hsa00524",
-            "hsa01200",
-            "hsa04066",
-            "hsa04910",
-            "hsa04930",
-            "hsa04973",
-            "hsa05230"
+            "hsa04530",
+            "hsa04010"
           ],
-          "id": "80201",
-          "name": "HKDC1"
+          "id": "51776",
+          "name": "ZAK"
         }
       },
       {
@@ -1402,13 +594,23 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 5917,
+        "id": 295,
         "properties": {
           "idType": "ENTREZ",
           "pathways": [
-            "hsa04010",
-            "hsa04012",
-            "hsa04014",
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05211",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05231",
             "hsa04062",
             "hsa04068",
             "hsa04151",
@@ -1426,6 +628,139 @@
             "hsa04912",
             "hsa04915",
             "hsa04917",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
+          ],
+          "id": "6654",
+          "name": "SOS1"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 4403,
+        "type": "Edge",
+        "sourceNodeId": 453,
+        "id": 29823283,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04010"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 4403,
+        "type": "Edge",
+        "sourceNodeId": 295,
+        "id": 19468595,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04010"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 3
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 453,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05120",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05219",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231",
+            "hsa04060",
+            "hsa04066",
+            "hsa04068",
+            "hsa04144",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04520",
+            "hsa04540",
+            "hsa04810",
+            "hsa04912",
+            "hsa04915",
+            "hsa04921",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020"
+          ],
+          "id": "1956",
+          "name": "EGFR"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 3,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05031",
+            "hsa05410",
+            "hsa05412",
+            "hsa05414",
+            "hsa04022",
+            "hsa04024",
+            "hsa04260",
+            "hsa04261",
+            "hsa04270",
+            "hsa04713",
+            "hsa04723",
+            "hsa04724",
+            "hsa04725",
+            "hsa04726",
+            "hsa04727",
+            "hsa04728",
+            "hsa04911",
+            "hsa04912",
+            "hsa04921",
+            "hsa04930",
+            "hsa04973",
+            "hsa05010",
+            "hsa04010",
+            "hsa04020"
+          ],
+          "id": "776",
+          "name": "CACNA1D"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 295,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
             "hsa05034",
             "hsa05160",
             "hsa05200",
@@ -1438,7 +773,27 @@
             "hsa05220",
             "hsa05221",
             "hsa05223",
-            "hsa05231"
+            "hsa05231",
+            "hsa04062",
+            "hsa04068",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04540",
+            "hsa04630",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04722",
+            "hsa04810",
+            "hsa04910",
+            "hsa04912",
+            "hsa04915",
+            "hsa04917",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
           ],
           "id": "6654",
           "name": "SOS1"
@@ -1447,32 +802,809 @@
     ],
     "edges": [
       {
-        "targetNodeId": 52,
+        "targetNodeId": 3,
         "type": "Edge",
-        "sourceNodeId": 5929,
-        "id": 3544873,
+        "sourceNodeId": 453,
+        "id": 328133,
         "properties": {
           "_isSetEdge": true,
           "pathways": [
-            "hsa05230",
-            "hsa04066"
+            "hsa04020",
+            "hsa04010",
+            "hsa04921",
+            "hsa04912"
           ]
         }
       },
       {
-        "targetNodeId": 52,
+        "targetNodeId": 3,
         "type": "Edge",
-        "sourceNodeId": 5917,
-        "id": 3544861,
+        "sourceNodeId": 295,
+        "id": 327975,
         "properties": {
           "_isSetEdge": true,
           "pathways": [
-            "hsa04910"
+            "hsa04010",
+            "hsa04912"
           ]
         }
       }
     ],
     "weight": 3,
-    "id": 29
+    "id": 4
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 453,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05120",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05219",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231",
+            "hsa04060",
+            "hsa04066",
+            "hsa04068",
+            "hsa04144",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04520",
+            "hsa04540",
+            "hsa04810",
+            "hsa04912",
+            "hsa04915",
+            "hsa04921",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020"
+          ],
+          "id": "1956",
+          "name": "EGFR"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 6,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05031",
+            "hsa05033",
+            "hsa05034",
+            "hsa04024",
+            "hsa04080",
+            "hsa04713",
+            "hsa04720",
+            "hsa04724",
+            "hsa05010",
+            "hsa05014",
+            "hsa05016",
+            "hsa05030",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020"
+          ],
+          "id": "2902",
+          "name": "GRIN1"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 295,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05211",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05231",
+            "hsa04062",
+            "hsa04068",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04540",
+            "hsa04630",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04722",
+            "hsa04810",
+            "hsa04910",
+            "hsa04912",
+            "hsa04915",
+            "hsa04917",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
+          ],
+          "id": "6654",
+          "name": "SOS1"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 6,
+        "type": "Edge",
+        "sourceNodeId": 453,
+        "id": 524741,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04020",
+            "hsa04015",
+            "hsa04014"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 6,
+        "type": "Edge",
+        "sourceNodeId": 295,
+        "id": 524583,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04014",
+            "hsa05034"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 5
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 453,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05120",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05219",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231",
+            "hsa04060",
+            "hsa04066",
+            "hsa04068",
+            "hsa04144",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04520",
+            "hsa04540",
+            "hsa04810",
+            "hsa04912",
+            "hsa04915",
+            "hsa04921",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020"
+          ],
+          "id": "1956",
+          "name": "EGFR"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 7,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05031",
+            "hsa05033",
+            "hsa05034",
+            "hsa05322",
+            "hsa04024",
+            "hsa04080",
+            "hsa04713",
+            "hsa04720",
+            "hsa04724",
+            "hsa04728",
+            "hsa05010",
+            "hsa05014",
+            "hsa05030",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020"
+          ],
+          "id": "2903",
+          "name": "GRIN2A"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 295,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05211",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05231",
+            "hsa04062",
+            "hsa04068",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04540",
+            "hsa04630",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04722",
+            "hsa04810",
+            "hsa04910",
+            "hsa04912",
+            "hsa04915",
+            "hsa04917",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
+          ],
+          "id": "6654",
+          "name": "SOS1"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 7,
+        "type": "Edge",
+        "sourceNodeId": 453,
+        "id": 590277,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04020",
+            "hsa04015",
+            "hsa04014"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 7,
+        "type": "Edge",
+        "sourceNodeId": 295,
+        "id": 590119,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04014",
+            "hsa05034"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 6
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 453,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05120",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05219",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231",
+            "hsa04060",
+            "hsa04066",
+            "hsa04068",
+            "hsa04144",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04520",
+            "hsa04540",
+            "hsa04810",
+            "hsa04912",
+            "hsa04915",
+            "hsa04921",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020"
+          ],
+          "id": "1956",
+          "name": "EGFR"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 8,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05031",
+            "hsa05033",
+            "hsa05034",
+            "hsa05322",
+            "hsa04024",
+            "hsa04080",
+            "hsa04713",
+            "hsa04720",
+            "hsa04724",
+            "hsa04728",
+            "hsa05010",
+            "hsa05014",
+            "hsa05016",
+            "hsa05030",
+            "hsa04014",
+            "hsa04015"
+          ],
+          "id": "2904",
+          "name": "GRIN2B"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 295,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05211",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05231",
+            "hsa04062",
+            "hsa04068",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04540",
+            "hsa04630",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04722",
+            "hsa04810",
+            "hsa04910",
+            "hsa04912",
+            "hsa04915",
+            "hsa04917",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
+          ],
+          "id": "6654",
+          "name": "SOS1"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 8,
+        "type": "Edge",
+        "sourceNodeId": 453,
+        "id": 655813,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04015",
+            "hsa04014"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 8,
+        "type": "Edge",
+        "sourceNodeId": 295,
+        "id": 655655,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04014",
+            "hsa05034"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 7
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 453,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05120",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05219",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231",
+            "hsa04060",
+            "hsa04066",
+            "hsa04068",
+            "hsa04144",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04520",
+            "hsa04540",
+            "hsa04810",
+            "hsa04912",
+            "hsa04915",
+            "hsa04921",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020"
+          ],
+          "id": "1956",
+          "name": "EGFR"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 9,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05031",
+            "hsa05033",
+            "hsa05034",
+            "hsa04024",
+            "hsa04080",
+            "hsa04713",
+            "hsa04720",
+            "hsa04724",
+            "hsa05010",
+            "hsa05014",
+            "hsa05030",
+            "hsa04020"
+          ],
+          "id": "2905",
+          "name": "GRIN2C"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 295,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05211",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05231",
+            "hsa04062",
+            "hsa04068",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04540",
+            "hsa04630",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04722",
+            "hsa04810",
+            "hsa04910",
+            "hsa04912",
+            "hsa04915",
+            "hsa04917",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
+          ],
+          "id": "6654",
+          "name": "SOS1"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 9,
+        "type": "Edge",
+        "sourceNodeId": 453,
+        "id": 721349,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04020"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 9,
+        "type": "Edge",
+        "sourceNodeId": 295,
+        "id": 721191,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa05034"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 8
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 453,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05120",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05212",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05218",
+            "hsa05219",
+            "hsa05223",
+            "hsa05230",
+            "hsa05231",
+            "hsa04060",
+            "hsa04066",
+            "hsa04068",
+            "hsa04144",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04520",
+            "hsa04540",
+            "hsa04810",
+            "hsa04912",
+            "hsa04915",
+            "hsa04921",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014",
+            "hsa04015",
+            "hsa04020"
+          ],
+          "id": "1956",
+          "name": "EGFR"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 10,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05031",
+            "hsa05033",
+            "hsa05034",
+            "hsa04024",
+            "hsa04080",
+            "hsa04713",
+            "hsa04720",
+            "hsa04724",
+            "hsa05010",
+            "hsa05014",
+            "hsa05030",
+            "hsa04020"
+          ],
+          "id": "2906",
+          "name": "GRIN2D"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 295,
+        "properties": {
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa05034",
+            "hsa05160",
+            "hsa05200",
+            "hsa05205",
+            "hsa05206",
+            "hsa05211",
+            "hsa05213",
+            "hsa05214",
+            "hsa05215",
+            "hsa05220",
+            "hsa05221",
+            "hsa05223",
+            "hsa05231",
+            "hsa04062",
+            "hsa04068",
+            "hsa04151",
+            "hsa04320",
+            "hsa04510",
+            "hsa04540",
+            "hsa04630",
+            "hsa04650",
+            "hsa04660",
+            "hsa04662",
+            "hsa04664",
+            "hsa04722",
+            "hsa04810",
+            "hsa04910",
+            "hsa04912",
+            "hsa04915",
+            "hsa04917",
+            "hsa04010",
+            "hsa04012",
+            "hsa04014"
+          ],
+          "id": "6654",
+          "name": "SOS1"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 10,
+        "type": "Edge",
+        "sourceNodeId": 453,
+        "id": 786885,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04020"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 10,
+        "type": "Edge",
+        "sourceNodeId": 295,
+        "id": 786727,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa05034"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 9
   }
 ]

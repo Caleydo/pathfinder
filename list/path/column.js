@@ -1053,7 +1053,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       this.updateSortingIndicator(parent, maxHeight, showSortingIndicator);
       var maxWidth = that.getWidth() - (2 * BAR_SIDE_PADDING);
 
-      parent.append("rect.scoreFrameFill")
+      parent.select("rect.scoreFrameFill")
         .transition()
         .attr({
           x: BAR_SIDE_PADDING,
