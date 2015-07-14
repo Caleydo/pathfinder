@@ -904,30 +904,59 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           .classed("zero", true)
           .attr({
             x1: 0 + that.scale(0),
-            y1: 0,
+            y1: -4,
             x2: 0 + that.scale(0),
-            y2: BAR_SIZE
+            y2: BAR_SIZE + 4
+          })
+          .style({
+            "opacity": min < 0 && max > 0 ? 1 : 0,
+            "shape-rendering": "crispEdges",
+            stroke: "rgb(80,80,80)"
+          });
+
+        ext.append("line")
+          .classed("tickMin", true)
+          .attr({
+            x1: 0,
+            y1: BAR_SIZE,
+            x2: 0,
+            y2: BAR_SIZE +4
           })
           .style({
             "shape-rendering": "crispEdges",
             stroke: "rgb(80,80,80)"
           });
 
+        ext.append("line")
+          .classed("tickMax", true)
+          .attr({
+            x1: maxWidth,
+            y1: BAR_SIZE,
+            x2: maxWidth,
+            y2: BAR_SIZE + 4
+          })
+          .style({
+            "shape-rendering": "crispEdges",
+            stroke: "rgb(80,80,80)"
+          });
+
+
+
         ext.append("text")
-          .classed("left", true)
+          .classed("min", true)
           .attr({
             x: 0,
-            y: BAR_SIZE + 10
+            y: BAR_SIZE + 14
           })
           .style({
             "text-anchor": "start"
           });
 
         ext.append("text")
-          .classed("right", true)
+          .classed("max", true)
           .attr({
             x: maxWidth,
-            y: BAR_SIZE + 10
+            y: BAR_SIZE + 14
           })
           .style({
             "text-anchor": "end"
@@ -939,10 +968,13 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         .attr({
           x1: 0 + that.scale(0),
           x2: 0 + that.scale(0)
+        })
+        .style({
+          "opacity": min < 0 && max > 0 ? 1 : 0
         });
 
-      ext.select("text.left").text(uiUtil.formatNumber(min, 2));
-      ext.select("text.right").text(uiUtil.formatNumber(max, 2));
+      ext.select("text.min").text(uiUtil.formatNumber(min, 2));
+      ext.select("text.max").text(uiUtil.formatNumber(max, 2));
 
       //ext.call(axis);
       //
@@ -1002,11 +1034,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         .classed("zero", true)
         .attr({
           x1: BAR_SIDE_PADDING + that.scale(0),
-          y1: (maxHeight - height) / 2,
+          y1: (maxHeight - height) / 2 - 4,
           x2: BAR_SIDE_PADDING + that.scale(0),
-          y2: (maxHeight + height) / 2
+          y2: (maxHeight + height) / 2 + 4
         })
         .style({
+          "opacity": (that.scale.domain()[0] < 0 && that.scale.domain()[1] > 0) ? 1 : 0,
           "shape-rendering": "crispEdges",
           stroke: "rgb(80,80,80)"
         });
@@ -1052,9 +1085,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         .transition()
         .attr({
           x1: BAR_SIDE_PADDING + that.scale(0),
-          y1: (maxHeight - height) / 2,
+          y1: (maxHeight - height) / 2 - 4,
           x2: BAR_SIDE_PADDING + that.scale(0),
-          y2: (maxHeight + height) / 2
+          y2: (maxHeight + height) / 2 + 4
+        })
+        .style({
+          "opacity": (that.scale.domain()[0] < 0 && that.scale.domain()[1] > 0) ? 1 : 0
         });
     };
 
