@@ -699,6 +699,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         return datasets;
       },
 
+      getDataSet: function (datasetId) {
+        return allDatasets[datasetId];
+      },
+
       getDataForNode: getDataForNode,
 
       getStatsForNode: getStatsForNode,
@@ -707,14 +711,14 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
       getPathGroupStats: getPathGroupStats,
 
-      getSortingStrategy: function (datasetId, stat, method, scope) {
+      getSortingStrategy: function (datasetId, stat, method, scope, groupId) {
         if (method === "stat") {
           if (scope === "path") {
-            return new OverallStatsSortingStrategy(datasetId, stat);
+            return new OverallStatsSortingStrategy(datasetId, stat, groupId);
           } else if (scope === "minNode") {
-            return new PerNodeStatsSortingStrategy(datasetId, stat, minOfArray, "Max " + statisticsUtil.getHumanReadableStat(stat) + " per node");
+            return new PerNodeStatsSortingStrategy(datasetId, stat, minOfArray, "Max " + statisticsUtil.getHumanReadableStat(stat) + " per node", groupId);
           } else {
-            return new PerNodeStatsSortingStrategy(datasetId, stat, maxOfArray, "Max " + statisticsUtil.getHumanReadableStat(stat) + " per node");
+            return new PerNodeStatsSortingStrategy(datasetId, stat, maxOfArray, "Max " + statisticsUtil.getHumanReadableStat(stat) + " per node", groupId);
           }
         } else if (method === "minDiff") {
           if (scope === "path") {

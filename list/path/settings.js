@@ -16,7 +16,7 @@ define(["../../listeners"], function (listeners) {
     PATH_HEIGHT: 30,
     EDGE_SIZE: 50,
     SET_HEIGHT: 10,
-    SET_TYPE_HEIGHT: 14,
+    SET_TYPE_HEIGHT: 18,
     PATH_SPACING: 15,
     COLUMN_HEADER_HEIGHT: 22,
 
@@ -90,6 +90,22 @@ define(["../../listeners"], function (listeners) {
         if (setType.canBeShown()) {
           posY += setType.getHeight();
         }
+      }
+
+      return posY;
+    },
+
+    getSetTranslateY: function (setType, setIndex) {
+
+      var posY = this.SET_TYPE_HEIGHT;
+      var filteredSets = setType.sets.filter(function (s) {
+        return s.canBeShown();
+      });
+      for (var i = 0; i < setIndex; i++) {
+        var set = filteredSets[i];
+        //if (set.canBeShown()) {
+        posY += set.getHeight();
+        //}
       }
 
       return posY;

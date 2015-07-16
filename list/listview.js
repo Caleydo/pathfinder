@@ -39,10 +39,12 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
         .attr("width", 90)
         .attr("height", 20);
 
-      d3.select("#columnHeaders").append("svg")
+      d3.select("#columnHeaders")
+        .style({height: pathSettings.COLUMN_HEADER_HEIGHT + "px"})
+        .append("svg")
         .attr({
           width: "100%",
-          height: pathSettings.COLUMN_HEADER_HEIGHT
+          height: "100%"
         }
       );
 

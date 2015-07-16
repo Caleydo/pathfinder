@@ -16,6 +16,12 @@ define(['jquery', 'd3'], function ($, d3) {
         that.hide();
       }
     }, false);
+    //
+    //d3.select("body").on("click.hideOverlay", function () {
+    //  if (that.isShown) {
+    //    that.hide();
+    //  }
+    //});
 
     //window.onkeyup = function (e) {
     //  var key = e.keyCode ? e.keyCode : e.which;
@@ -61,7 +67,7 @@ define(['jquery', 'd3'], function ($, d3) {
 
       //this.rootElement = svg.append("g")
       //  .classed("listOverlay", true);
-        //.attr("transform", "translate(" + x + "," + y + ")");
+      //.attr("transform", "translate(" + x + "," + y + ")");
 
       var listItem = this.rootElement.selectAll("g.listItem")
         .data(this.items)

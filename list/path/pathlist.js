@@ -279,16 +279,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       return function (d, i) {
         var setType = pathWrappers[d.pathIndex].setTypes[d.setTypeIndex];
 
-        var posY = s.SET_TYPE_HEIGHT;
-        var filteredSets = setType.sets.filter(function (s) {
-          return s.canBeShown();
-        });
-        for (var setIndex = 0; setIndex < i; setIndex++) {
-          var set = filteredSets[setIndex];
-          //if (set.canBeShown()) {
-          posY += set.getHeight();
-          //}
-        }
+        var posY = s.getSetTranslateY(setType, i);
+
         return "translate(0," + posY + ")";
       }
 
@@ -661,6 +653,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         columns.renderColumns(that.parent, that.pathWrappers);
 
 
+        this.renderLineGrid();
         this.renderCrossConnections();
 
         this.notifyUpdateListeners();
@@ -698,6 +691,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         if (typeof this.parent === "undefined")
           return;
 
+        this.parent.selectAll("g.lineGridContainer")
+          .remove();
+
         this.parent.selectAll("g.crossConnectionContainer")
           .remove();
 
@@ -724,6 +720,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       render: function (parent) {
         if (typeof this.parent === "undefined") {
           this.parent = parent;
+          this.parent.append("g")
+            .classed("lineGridContainer", true);
           this.parent.append("g")
             .classed("crossConnectionContainer", true);
         }
@@ -1340,50 +1338,6 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         allSetTypes.each(function (d, i) {
             var setTypeSummaryContainer = d3.select(this).select("g.setTypeSummary");
 
-            var allCircles = setTypeSummaryContainer.selectAll("circle")
-              .data(function () {
-                return d.setType.nodeIndices.map(function (index) {
-                  return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
-                });
-              });
-
-            var circle = allCircles.enter()
-              .append("circle")
-              .attr({
-                cx: function (d) {
-                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                },
-                cy: s.SET_TYPE_HEIGHT / 2,
-                r: function (d) {
-                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-
-                  return numSets == 0 ? 0 : nodeSetScale(numSets);
-                },
-                fill: function (d) {
-                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
-                }
-              });
-
-            allCircles.transition()
-              .attr({
-                cx: function (d) {
-                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                },
-                r: function (d) {
-                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-
-                  return numSets == 0 ? 0 : nodeSetScale(numSets);
-                }
-              });
-
-            allCircles.exit().remove();
-
 
             var allLines = setTypeSummaryContainer.selectAll("line")
               .data(function () {
@@ -1417,6 +1371,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 }
               });
 
+            line.append("title").text(function (d) {
+              var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
+                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+              return "Number of connecting sets: " + numSets;
+            });
+
             allLines.transition()
               .attr({
                 x1: function (d) {
@@ -1439,7 +1399,77 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 }
               });
 
+            allLines.selectAll("title").data(function () {
+              return d.setType.relIndices.map(function (index) {
+                return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
+              });
+            }).text(function (d) {
+              var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
+                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+              return "Number of connecting sets: " + numSets;
+            });
+
             allLines.exit().remove();
+
+            var allCircles = setTypeSummaryContainer.selectAll("circle")
+              .data(function () {
+                return d.setType.nodeIndices.map(function (index) {
+                  return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
+                });
+              });
+
+            var circle = allCircles.enter()
+              .append("circle")
+              .attr({
+                cx: function (d) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                },
+                cy: s.SET_TYPE_HEIGHT / 2,
+                r: function (d) {
+                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+
+                  return numSets == 0 ? 0 : nodeSetScale(numSets);
+                },
+                fill: function (d) {
+                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                }
+              });
+
+            circle.append("title").text(function (d) {
+              var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+              return "Number of sets: " + numSets;
+            });
+
+            allCircles.transition()
+              .attr({
+                cx: function (d) {
+                  var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                  var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+                  return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                },
+                r: function (d) {
+                  var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                    that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+
+                  return numSets == 0 ? 0 : nodeSetScale(numSets);
+                }
+              });
+
+            allCircles.selectAll("title").data(function () {
+              return d.setType.nodeIndices.map(function (index) {
+                return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
+              });
+            }).text(function (d) {
+              var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
+                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+              return "Number of sets: " + numSets;
+            });
+
+            allCircles.exit().remove();
           }
         );
 
@@ -1656,6 +1686,248 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + (centerPosition ? s.NODE_WIDTH / 2 : 0);
       },
 
+      renderLineGrid: function() {
+        var gridStrokeColor = "white";
+        var gridFillColor = "rgba(0,0,0,0)"
+
+        var that = this;
+
+        var lineGridContainer = this.parent.select("g.lineGridContainer");
+
+        var allBgPathWrappers = lineGridContainer.selectAll("g.bgPathWrapper" + this.id)
+          .data(that.pathWrappers, function (d) {
+            return d.path.id
+          });
+
+        var bgPathWrapper = allBgPathWrappers.enter()
+          .append("g")
+          .classed("bgPathWrapper" + this.id, true)
+          .attr({
+            transform: function (d, i) {
+              var translateY = s.getPathContainerTranslateY(that.pathWrappers, i);
+              return "translate(0," + translateY + ")";
+            }
+          });
+
+        bgPathWrapper.each(function (pathWrapper, index) {
+          var item = d3.select(this);
+          //item.append("rect")
+          //  .classed("bgPathItem", true)
+          //  .attr({
+          //    x: 0,
+          //    y: 0,
+          //    width: that.getWidth(),
+          //    height: pathWrapper.getHeight()
+          //  })
+          //  .style({
+          //    stroke: "black",
+          //    fill: "rgba(0,0,0,0)"
+          //  });
+
+          item.append("rect")
+            .classed("bgPath", true)
+            .attr({
+              x: 0,
+              y: 0,
+              width: "100%",
+              height: s.PATH_HEIGHT
+            })
+            .style({
+              stroke: gridStrokeColor,
+              fill: gridFillColor,
+              "shape-rendering": "crispEdges"
+            });
+        });
+
+        allBgPathWrappers.transition()
+          .attr({
+            transform: function (d, i) {
+              var translateY = s.getPathContainerTranslateY(that.pathWrappers, i);
+              return "translate(0," + translateY + ")";
+            }
+          });
+
+
+
+        allBgPathWrappers.each(function (pathWrapper, index) {
+          var item = d3.select(this);
+
+          var allBgSetTypes = item.selectAll("g.bgSetType").data(pathWrapper.setTypes, function (d) {
+            return d.id;
+          });
+
+          var bgSetTypes = allBgSetTypes.enter().append("g")
+            .classed("bgSetType", true)
+            .attr({
+              transform: function (d, i) {
+                return "translate(0," + s.getSetTypeTranslateY(pathWrapper, i) + ")"
+              }
+            });
+
+          bgSetTypes.each(function (setType, setTypeIndex) {
+            var bgSetType = d3.select(this);
+            bgSetType.attr({
+              transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, setTypeIndex) + ")"
+            });
+
+            bgSetType.append("rect")
+              .classed("bgSetTypeSummary", true)
+              .attr({
+                x: 0,
+                y: 0,
+                width: "100%",
+                height: s.SET_TYPE_HEIGHT
+              })
+              .style({
+                stroke: gridStrokeColor,
+                fill: gridFillColor,
+                "shape-rendering": "crispEdges"
+              });
+          });
+
+          allBgSetTypes.each(function (setType, setTypeIndex) {
+
+            var bgSetType = d3.select(this);
+
+            bgSetType.transition()
+              .attr({
+                transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, setTypeIndex) + ")"
+              });
+
+            bgSetType.select("rect.bgSetTypeSummary")
+              .attr({
+                height: s.SET_TYPE_HEIGHT
+              });
+
+            var allBgSets = bgSetType.selectAll("rect.bgSet").data(setType.sets.filter(function (s) {
+              return s.canBeShown() && !setType.collapsed;
+            }), function (d) {
+              return d.id;
+            });
+
+            allBgSets.enter()
+              .append("rect")
+              .classed("bgSet", true)
+              .attr({
+                x: 0,
+                y: function (d, i) {
+                  return s.getSetTranslateY(setType, i);
+                },
+                width: "100%",
+                height: function (d, i) {
+                  return d.getHeight();
+                }
+              })
+              .style({
+                stroke: gridStrokeColor,
+                fill: gridFillColor,
+                "shape-rendering": "crispEdges"
+              });
+
+            allBgSets.transition()
+              .attr({
+                y: function (d, i) {
+                  return s.getSetTranslateY(setType, i);
+                },
+                height: function (d, i) {
+                  return d.getHeight();
+                }
+              });
+
+            allBgSets.exit().remove();
+
+
+          });
+
+          allBgSetTypes.exit().remove();
+
+
+          var allBgDatasets = item.selectAll("g.bgDataset").data(pathWrapper.datasets, function (d) {
+            return d.id;
+          });
+
+          var bgDatasets = allBgDatasets.enter().append("g")
+            .classed("bgDataset", true);
+
+          bgDatasets.each(function (dataset, datasetIndex) {
+            var bgDataset = d3.select(this);
+            bgDataset.attr({
+              transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + dataset.getPosYRelativeToParent(pathWrapper.datasets)) + ")"
+            });
+
+            bgDataset.append("rect")
+              .classed("bgDatasetSummary", true)
+              .attr({
+                x: 0,
+                y: 0,
+                width: "100%",
+                height: dataset.getBaseHeight()
+              })
+              .style({
+                stroke: gridStrokeColor,
+                fill: gridFillColor,
+                "shape-rendering": "crispEdges"
+              });
+          });
+
+          allBgDatasets.each(function (dataset, datasetIndex) {
+
+            var bgDataset = d3.select(this);
+
+            bgDataset.transition()
+              .attr({
+                transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + dataset.getPosYRelativeToParent(pathWrapper.datasets)) + ")"
+              });
+
+            bgDataset.select("rect.bgDatasetSummary")
+              .attr({
+                height: dataset.getBaseHeight()
+              });
+
+            var allGroups = bgDataset.selectAll("rect.bgGroup").data(dataset.getVisibleChildren(), function (d) {
+              return d.name;
+            });
+
+            allGroups.enter()
+              .append("rect")
+              .classed("bgGroup", true)
+              .attr({
+                x: 0,
+                y: function (d) {
+                  return d.getPosYRelativeToParent();
+                },
+                width: "100%",
+                height: function (d) {
+                  return d.getHeight();
+                }
+              })
+              .style({
+                stroke: gridStrokeColor,
+                fill: gridFillColor,
+                "shape-rendering": "crispEdges"
+              });
+
+            allGroups.transition()
+              .attr({
+                y: function (d) {
+                  return d.getPosYRelativeToParent();
+                },
+                height: function (d) {
+                  return d.getHeight();
+                }
+              });
+
+            allGroups.exit().remove();
+
+
+          });
+
+          allBgDatasets.exit().remove();
+        });
+
+        allBgPathWrappers.exit().remove();
+      },
+
       renderPaths: function () {
 
         var that = this;
@@ -1666,6 +1938,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
         this.calcCrossConnections();
         this.calcNodePositions();
+
+        this.renderLineGrid();
         this.renderCrossConnections();
 
         that.updateDataBinding();
