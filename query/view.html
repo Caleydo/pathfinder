@@ -10,31 +10,24 @@
 
 
   <div style="display: inline-block" id="simpleQueryWidgets">
-    <label for="startNode">From </label>
+    <label for="startNode">Start </label>
     <input type="text" id="startNode" style="width: 7em;">
 
-    <label for="endNode">To </label>
+    <label for="endNode">End </label>
     <input type="text" id="endNode" style="width: 7em;">
   </div>
 
   <div style="display:none" id="advancedQueryWidgets">
 
-    <label for="at_most_k">Return At Most </label>
+    <label for="at_most_k">Max paths </label>
 
-    <div class="input-group">
-      <input type="number" class="form-control" id="at_most_k" style="width: 5em;" maxlength="3" placeholder="k"
-             value="10" required="required">
+    <input type="number" id="at_most_k" style="width: 5em;" maxlength="3" placeholder="k"
+           value="10" min="1" required="required">
 
-      <div class="input-group-addon">paths</div>
-    </div>
-    <label for="longest_path">Max Path Length </label>
+    <label for="longest_path">Max length </label>
 
-    <div class="input-group">
-      <input type="number" class="form-control" style="width: 5em;" id="longest_path" maxlength="3"
-             placeholder="max length" value="5" required="required">
-
-      <div class="input-group-addon">nodes</div>
-    </div>
+    <input type="number" style="width: 5em;" id="longest_path" maxlength="3"
+           placeholder="max length" value="5" min="1" required="required">
 
     <div class="checkbox">
       <label>
@@ -46,7 +39,6 @@
   <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
   <button id="filter_query" class="btn btn-default"><i class="fa fa-filter"></i></button>
   <button type="button" id="toggleQueryMode" class="btn btn-default">More</button>
-
 
 
   <!--<div class="form-group form-inline">-->
