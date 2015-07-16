@@ -148,7 +148,7 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
           listView.init().then(function () {
 
             pathStatsView.init();
-            //C.getJSON("dump/egfr-sos1.json", function (paths) {
+            //C.getJSON("dump/egfr-ptk2-sos1.json", function (paths) {
             //
             //  var i = 0;
             //

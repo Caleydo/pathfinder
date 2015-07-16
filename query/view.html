@@ -1,5 +1,6 @@
 <form class="form-inline">
-  <div id="pathQueryView">
+
+  <div id="pathQueryView" style="display:none">
     <div class="outer">
       <div class="inner">
         <div id="pathQuery"></div>
@@ -7,17 +8,25 @@
     </div>
   </div>
 
-  <div class="form-group form-inline">
+
+  <div style="display: inline-block" id="simpleQueryWidgets">
+    <label for="startNode">Start</label>
+    <input type="text" id="startNode" style="width: 5em;">
+
+    <label for="endNode">End</label>
+    <input type="text" id="endNode" style="width: 5em;">
+  </div>
+
+  <div style="display:none" id="advancedQueryWidgets">
+
     <label for="at_most_k">Return At Most </label>
 
     <div class="input-group">
       <input type="number" class="form-control" id="at_most_k" style="width: 5em;" maxlength="3" placeholder="k"
-             value="20" required="required">
+             value="10" required="required">
 
       <div class="input-group-addon">paths</div>
     </div>
-  </div>
-  <div class="form-group form-inline">
     <label for="longest_path">Max Path Length </label>
 
     <div class="input-group">
@@ -26,14 +35,18 @@
 
       <div class="input-group-addon">nodes</div>
     </div>
+
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" id="just_network_edges" value="true"> Network edges only
+      </label>
+    </div>
   </div>
-  <div class="checkbox">
-    <label>
-      <input type="checkbox" id="just_network_edges" value="true"> Just Network Edges
-    </label>
-  </div>
+
   <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
   <button id="filter_query" class="btn btn-default"><i class="fa fa-filter"></i></button>
+  <button type="button" id="toggleQueryMode" class="btn btn-default">More</button>
+
 
 
   <!--<div class="form-group form-inline">-->
