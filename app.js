@@ -15,6 +15,7 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
     //var jsonPaths = require('./testpaths1.json');
 
     var currentPathId = 0;
+    var showSettings = false;
 
 
     $(document).ready(function () {
@@ -141,10 +142,27 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
         C.getAPIJSON('/pathway/config.json').then(function (data) {
           config.setConfig(data);
 
+          $("#toggleSettingsButton").click(function () {
+            showSettings = !showSettings;
+            $(this).toggleClass("btn-active");
+            $(this).toggleClass("btn-default");
+
+
+            if (showSettings) {
+              $("#settings").css({display: "inline-block"});
+              $("#mainContent").css({"margin-right": 255});
+            } else {
+              $("#settings").css({display: "none"});
+              $("#mainContent").css({"margin-right": 0});
+            }
+          });
+
           dataStore.init();
           pathSorting.init();
           queryView.init();
           overviewGraph.init();
+
+
           listView.init().then(function () {
 
             pathStatsView.init();

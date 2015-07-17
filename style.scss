@@ -416,7 +416,7 @@ path.nodeTypeSymbol {
 #mainContent {
   //display: inline-block;
   position: relative;
-  margin-right: 250px;
+  //margin-right: 250px;
   //width: 100% -250px;
 }
 
@@ -424,11 +424,11 @@ path.nodeTypeSymbol {
   position: relative;
 }
 
-#settingsCol {
+#settings {
   position: absolute;
   right: 0px;
   top: 0px;
-  display: inline-block;
+  display: none;
   width: 250px;
   height: 100vh;
   overflow: auto;
