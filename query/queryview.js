@@ -1755,9 +1755,17 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         that.advancedMode = !that.advancedMode;
         if (that.advancedMode) {
           $(this).text("Less");
-          $("#advancedQueryWidgets").css({display: "inline-block"});
-          $("#pathQueryView").css({display: "inline-block"});
-          $("#simpleQueryWidgets").css({display: "none"});
+
+          $("#advancedQueryWidgets").show(500, "linear", function(){
+            $("#advancedQueryWidgets").css({display: "inline-block"});
+          });
+          $("#pathQueryView").show(500, "linear", function(){
+            $("#pathQueryView").css({display: "inline-block"});
+          });
+          $("#simpleQueryWidgets").hide();
+
+
+          //$("#simpleQueryWidgets").css({display: "none"});
         } else {
           $(this).text("More");
           $("#advancedQueryWidgets").css({display: "none"});
@@ -1822,7 +1830,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
 
       $('#remove_filtered_paths').click(function () {
-          pathQuery.setRemoveFilteredPaths($('#remove_filtered_paths').prop("checked"));
+          pathQuery.setRemoveFilteredPaths(!($('#remove_filtered_paths').prop("checked")));
         }
       );
 

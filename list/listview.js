@@ -2,7 +2,7 @@
  * Created by Christian on 23.02.2015.
  */
 define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist',
-    './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview', '../config', '../visibilitysettings', './path/settings', '../datastore'],
+    './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview', '../config', '../settings/visibilitysettings', './path/settings', '../datastore'],
   function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView, config, visibilitySettings, pathSettings, dataStore) {
 
     //var listView = new view("#pathlist");
@@ -156,7 +156,7 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
       //});
 
       $("#hideNonRelSets").on("click", function () {
-        visibilitySettings.showNonEdgeSets(!this.checked);
+        visibilitySettings.showNonEdgeSets(this.checked);
       });
 
       $("#alignPathNodes").on("click", function () {
@@ -164,13 +164,20 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
         //listeners.notify("ALIGN_PATH_NODES", this.checked);
       });
 
-      $("#tiltAttributes").on("click", function () {
-        pathSettings.tiltAttributes(this.checked);
-        //listeners.notify("TILT_ATTRIBUTES", this.checked);
-      });
+
 
       $("#alignColumns").on("click", function () {
         pathSettings.alignColumns(this.checked);
+        //listeners.notify("TILT_ATTRIBUTES", this.checked);
+      });
+
+      $("#horizontalOrientation").click(function () {
+        pathSettings.tiltAttributes(false);
+        //listeners.notify("TILT_ATTRIBUTES", this.checked);
+      });
+
+      $("#verticalOrientation").click( function () {
+        pathSettings.tiltAttributes(true);
         //listeners.notify("TILT_ATTRIBUTES", this.checked);
       });
 

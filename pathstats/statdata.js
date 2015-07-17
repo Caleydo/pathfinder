@@ -1,4 +1,4 @@
-define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config', '../setinfo', '../visibilitysettings', '../query/queryutil', '../selectionutil'],
+define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config', '../setinfo', '../settings/visibilitysettings', '../query/queryutil', '../selectionutil'],
   function (hierarchyElements, listeners, pathSorting, pathQuery, config, setInfo, visibilitySettings, queryUtil, selectionUtil) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
