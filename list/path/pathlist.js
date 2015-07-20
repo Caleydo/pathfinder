@@ -666,7 +666,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             var value = node.properties[property];
 
             if (!scale) {
-              that.numericalPropertyScales[property] = d3.scale.linear().domain([Math.min(0, value), Math.max(0, value)]).range([0, s.NODE_WIDTH + s.EDGE_SIZE / 2]);
+              that.numericalPropertyScales[property] = d3.scale.linear().domain([Math.min(0, value), Math.max(0, value)]).range([0, s.NODE_WIDTH]);
             } else {
               scale.domain([Math.min(0, Math.min(scale.domain()[0], value)), Math.max(0, Math.max(scale.domain()[1], value))]);
             }
@@ -1396,7 +1396,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .attr("x", 10)
           .attr("y", (s.SET_TYPE_HEIGHT - 10) / 2 + 9)
           .style("fill", function (d) {
-            return setInfo.getSetTypeInfo(d.setType.type).color;
+            return config.getSetColorFromSetTypePropertyName(d.setType.type);
           })
           .attr("clip-path", "url(#SetLabelClipPath)");
 
@@ -1436,7 +1436,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 },
                 y2: s.SET_TYPE_HEIGHT / 2,
                 stroke: function (d) {
-                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                  return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
                 },
                 "stroke-width": function (d) {
                   var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
@@ -1464,7 +1464,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                   return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
                 },
                 stroke: function (d) {
-                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                  return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
                 },
                 "stroke-width": function (d) {
                   var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
@@ -1508,7 +1508,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                   return numSets == 0 ? 0 : nodeSetScale(numSets);
                 },
                 fill: function (d) {
-                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                  return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
                 }
               });
 
@@ -1634,7 +1634,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             .attr("x", s.SET_TYPE_INDENT)
             .attr("y", s.SET_HEIGHT)
             .style("fill", function (d) {
-              return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+              return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
             })
             .attr("clip-path", "url(#SetLabelClipPath)");
 
@@ -1668,7 +1668,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 },
                 r: 2,
                 fill: function (d) {
-                  return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                  return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
                 }
               });
 
@@ -1699,7 +1699,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
               })
               .attr("stroke", function (d) {
-                return setInfo.getSetTypeInfo(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type).color;
+                return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
               });
 
             allLines.exit().remove();
@@ -1761,8 +1761,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       },
 
       renderLineGrid: function () {
-        var gridStrokeColor = "black";
-        var gridFillColor = "rgba(0,0,0,0)"
+        var gridStrokeColor = "white";
+        var gridFillColor = "rgba(0,0,0,0)";
 
         var that = this;
 
@@ -1914,6 +1914,37 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
           allBgSetTypes.exit().remove();
 
+          var allBgNodeProperties = item.selectAll("rect.bgNodeProperty").data(pathWrapper.properties, function (d) {
+            return d.name
+          });
+
+          var bgNodeProperties = allBgNodeProperties.enter().append("rect")
+            .classed("bgSetType", true);
+
+
+          bgNodeProperties.each(function (property) {
+            d3.select(this).attr({
+              transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + property.getPosYRelativeToParent(pathWrapper.properties)) + ")",
+              x: 0,
+              y: 0,
+              width: "100%",
+              height: property.getBaseHeight()
+            })
+              .style({
+                stroke: gridStrokeColor,
+                fill: gridFillColor,
+                "shape-rendering": "crispEdges"
+              });
+
+          });
+
+          allBgNodeProperties.each(function (property) {
+            d3.select(this).attr({
+              transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + property.getPosYRelativeToParent(pathWrapper.properties)) + ")",
+              height: property.getBaseHeight()
+            });
+          });
+
 
           var allBgDatasets = item.selectAll("g.bgDataset").data(pathWrapper.datasets, function (d) {
             return d.id;
@@ -1925,7 +1956,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           bgDatasets.each(function (dataset, datasetIndex) {
             var bgDataset = d3.select(this);
             bgDataset.attr({
-              transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + dataset.getPosYRelativeToParent(pathWrapper.datasets)) + ")"
+              transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight() + dataset.getPosYRelativeToParent(pathWrapper.datasets)) + ")"
             });
 
             bgDataset.append("rect")
@@ -1949,7 +1980,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
             bgDataset.transition()
               .attr({
-                transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + dataset.getPosYRelativeToParent(pathWrapper.datasets)) + ")"
+                transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight() + dataset.getPosYRelativeToParent(pathWrapper.datasets)) + ")"
               });
 
             bgDataset.select("rect.bgDatasetSummary")
@@ -2041,7 +2072,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               .text(property.name)
               .attr("x", 10)
               .attr("y", (property.getBaseHeight() - 10) / 2 + 9)
-              .style("fill", "black")
+              .style("fill", config.getNodePropertyColorFromPropertyName(property.name))
               .attr("clip-path", "url(#SetLabelClipPath)")
               .append("title").text(property.name);
 
@@ -2069,7 +2100,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
               if (typeof value !== "undefined") {
 
-                var posX = that.getNodePositionX(pathWrapper, nodeIndex, false) - s.EDGE_SIZE / 4;
+                var posX = that.getNodePositionX(pathWrapper, nodeIndex, false);
                 var scale = that.numericalPropertyScales[property.name];
 
                 bar.append("rect")
@@ -2089,7 +2120,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                   .attr({
                     x: posX + (value < 0 ? scale(value) : scale(0)),
                     y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2,
-                    fill: "gray",
+                    fill:  config.getNodePropertyColorFromPropertyName(property.name),
                     width: Math.abs(scale(0) - scale(value)),
                     height: s.DEFAULT_BAR_SIZE
                   });
@@ -2133,7 +2164,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               if (typeof value !== "undefined") {
                 var bar = d3.select(this);
 
-                var posX = that.getNodePositionX(pathWrapper, nodeIndex, false) - s.EDGE_SIZE / 4;
+                var posX = that.getNodePositionX(pathWrapper, nodeIndex, false);
                 var scale = that.numericalPropertyScales[property.name];
 
                 bar.select("rect.valueBg").transition()

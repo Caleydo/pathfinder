@@ -630,7 +630,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
             var fetchDataset = function (index) {
               var info = datasetInfos[index];
               ccle.stats(info.name).then(function (stats) {
-                info.color = colors.nextColor();
+                info.color = config.getDatasetColorFromDatasetId(info.name);
                 allDatasets[info.name] = {
                   info: info,
                   stats: stats,
