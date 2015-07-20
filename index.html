@@ -180,6 +180,26 @@
           </div>
 
         </div>
+        <div class="radio" id="nodeProperty">
+          <label for="nodePropertyRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
+                                                                                   id="nodePropertyRadio"/>Node property</label>
+
+          <div id="nodePropertyWidgets">
+            <div style="display:inline-block">
+              <label for="propertySelect" style="padding: 0">Property</label><br>
+              <select id="propertySelect" size="5"></select>
+            </div>
+            <div style="display:inline-block">
+              <label for="propertyStatSelect" style="padding: 0">Method</label><br>
+              <select id="propertyStatSelect" size="5">
+                <option label="Average">mean</option>
+                <option label="Minimum">min</option>
+                <option label="Maximum">max</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
         <div class="radio" id="dataBasedScore">
           <label for="dataBasedScoreRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
                                                                             id="dataBasedScoreRadio"/>Data-based

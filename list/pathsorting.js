@@ -76,6 +76,42 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
       return {score: stats[this.stat]};
     };
 
+
+    function NumericalNodePropertySortingStrategy(stat, label, property) {
+      SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, label, "NUMERICAL_PROPERTY");
+      this.ascending = false;
+      this.property = property;
+      this.stat = stat;
+    }
+
+    NumericalNodePropertySortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+    NumericalNodePropertySortingStrategy.prototype.compare = function (a, b) {
+      var scoreA = this.getScoreInfo(a.path).score;
+      var scoreB = this.getScoreInfo(b.path).score;
+
+      if (this.ascending) {
+        return d3.ascending(scoreA, scoreB);
+      }
+      return d3.descending(scoreA, scoreB);
+    };
+
+    NumericalNodePropertySortingStrategy.prototype.getScoreInfo = function (path) {
+      var that = this;
+      var propertyValues = [];
+
+      path.nodes.forEach(function (node) {
+          var value = node.properties[that.property];
+          if (typeof value !== "undefined") {
+            propertyValues.push(value);
+          }
+        }
+      );
+
+      var stats = statisticsUtil.statisticsOf(propertyValues);
+      return {score: stats[this.stat]};
+    };
+
+
     function PathPresenceSortingStrategy(pathIds) {
       SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Specified paths", "SELECTED_PATHS");
       this.pathIds = pathIds;
@@ -350,6 +386,10 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
         display: $("#setConnectionStrengthRadio").prop("checked") ? "block" : "none"
       });
 
+      $("#nodePropertyWidgets").css({
+        display: $("#nodePropertyRadio").prop("checked") ? "block" : "none"
+      });
+
       $("#dataBasedScoreWidgets").css({
         display: $("#dataBasedScoreRadio").prop("checked") ? "block" : "none"
       });
@@ -372,6 +412,12 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
       var method = "stat"; //$("#methodSelect").val();
       var scope = $("#scopeSelect").val();
       return datasetId && groupId && stat && method && scope;
+    }
+
+    function validateNodePropertySortingConfig() {
+      var property = $("#propertySelect").val();
+      var stat = $("#propertyStatSelect").val();
+      return property && stat;
     }
 
     function validateCustomScoreConfig() {
@@ -430,6 +476,11 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
           //$("#rankScriptConfirm").toggleEnabled(true);
           $("#rankConfigConfirm").prop("disabled", !validateSetBasedSortingConfig());
         });
+        $("#nodePropertyRadio").click(function () {
+          updateWidgetVisibility();
+          //$("#rankScriptConfirm").toggleEnabled(true);
+          $("#rankConfigConfirm").prop("disabled", !validateNodePropertySortingConfig());
+        });
         $("#dataBasedScoreRadio").click(function () {
           updateWidgetVisibility();
           //$("#rankScriptConfirm").toggleEnabled(validateDataBasedSortingConfig());
@@ -444,9 +495,15 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
         $("#setTypeSelect").on("change", function () {
           $("#rankConfigConfirm").prop("disabled", !validateSetBasedSortingConfig());
         });
-
         $("#setStatSelect").on("change", function () {
           $("#rankConfigConfirm").prop("disabled", !validateSetBasedSortingConfig());
+        });
+
+        $("#propertySelect").on("change", function () {
+          $("#rankConfigConfirm").prop("disabled", !validateNodePropertySortingConfig());
+        });
+        $("#propertyStatSelect").on("change", function () {
+          $("#rankConfigConfirm").prop("disabled", !validateNodePropertySortingConfig());
         });
 
         $("#datasetSelect").on("change", function () {
@@ -558,6 +615,22 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
           }
         });
 
+        var properties = dataStore.getAllNodeProperties();
+
+        $("#nodeProperty").css({
+          display: properties.length > 0 ? "block" : "none"
+        });
+
+        var propertySelect = $("#propertySelect");
+        propertySelect.empty();
+        properties.forEach(function (property) {
+          propertySelect.append("<option label='" + property + "'>" + property + "</option>");
+          if (properties.length === 1) {
+            propertySelect.val(property);
+          }
+        });
+
+
         updateWidgetVisibility();
 
         $("#rankConfigModal").modal("show");
@@ -572,6 +645,12 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
             var stat = $("#setStatSelect").val();
             var label = stat === "mean" ? "Average set connection strength" : (statisticsUtil.getHumanReadableStat(stat, true) + " set connection strength");
             callback(setType === "all" ? new SetConnectionStrengthSortingStrategy(stat, label) : new SetConnectionStrengthSortingStrategy(stat, label, setType));
+
+          } else if ($("#nodePropertyRadio").prop("checked")) {
+            var property = $("#propertySelect").val();
+            var stat = $("#propertyStatSelect").val();
+            var label = stat === "mean" ? "Average " + property : (statisticsUtil.getHumanReadableStat(stat, true) + " " + property);
+            callback(new NumericalNodePropertySortingStrategy(stat, label, property));
 
           } else if ($("#dataBasedScoreRadio").prop("checked")) {
             var datasetId = $("#datasetSelect").val();
@@ -613,7 +692,9 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
       NodePresenceSortingStrategy: NodePresenceSortingStrategy,
 
-      SetPresenceSortingStrategy: SetPresenceSortingStrategy
+      SetPresenceSortingStrategy: SetPresenceSortingStrategy,
+
+      NumericalNodePropertySortingStrategy: NumericalNodePropertySortingStrategy
     }
 
   }
