@@ -53,6 +53,17 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       }
     };
 
+    function NodeProperty(name) {
+      hierarchyElements.HierarchyElement.call(this);
+      this.name = name;
+    }
+
+    NodeProperty.prototype = Object.create(hierarchyElements.HierarchyElement.prototype);
+
+    NodeProperty.prototype.getBaseHeight = function () {
+      return s.SET_TYPE_HEIGHT;
+    };
+
 
     function PathWrapper(path) {
       this.path = path;
@@ -60,6 +71,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       this.rank = "?.";
       this.datasets = [];
       this.addPathSets(path);
+      this.addPathProperties(path);
       this.updateDatasets();
     }
 
@@ -68,6 +80,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       getHeight: function () {
         var height = s.PATH_HEIGHT;
         height += this.getSetHeight();
+        height += this.getPropertyHeight();
         height += this.getDatasetHeight();
         return height;
       },
@@ -77,6 +90,16 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         this.setTypes.forEach(function (setType) {
           if (setType.canBeShown()) {
             height += setType.getHeight();
+          }
+        });
+        return height;
+      },
+
+      getPropertyHeight: function () {
+        var height = 0;
+        this.properties.forEach(function (prop) {
+          if (prop.canBeShown()) {
+            height += prop.getHeight();
           }
         });
         return height;
@@ -124,6 +147,24 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           });
         });
 
+
+      },
+
+      addPathProperties: function (path) {
+        var numericalProperties = {};
+
+        path.nodes.forEach(function (node) {
+          var props = config.getNumericalNodeProperties(node);
+          props.forEach(function (prop) {
+            if (!numericalProperties[prop]) {
+              numericalProperties[prop] = new NodeProperty(prop);
+            }
+          });
+        });
+
+        this.properties = Object.keys(numericalProperties).map(function (key) {
+          return numericalProperties[key];
+        });
 
       },
 
@@ -328,6 +369,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       this.maxNumEdgeSets = 0;
       this.pivotNodeId = -1;
       this.pivotNodeIndex = 0;
+      this.numericalPropertyScales = {};
       this.datasetRenderer = new dr.DatasetRenderer(this);
       var that = this;
 
@@ -582,6 +624,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           that.pathWrappers.push(new PathWrapper(path));
         });
 
+        this.updateNumericalPropertyScales();
         this.updateMaxSets();
 
         this.renderPaths();
@@ -602,6 +645,33 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         var that = this;
         this.pathWrappers.forEach(function (pathWrapper) {
           that.updateMaxSetsForPathWrapper(pathWrapper);
+        });
+      },
+
+      updateNumericalPropertyScales: function () {
+        var that = this;
+        this.numericalPropertyScales = {};
+        this.pathWrappers.forEach(function (pathWrapper) {
+          that.updateNumericalPropertyScales();
+        });
+
+      },
+
+      updateNumericalPropertyScalesForPathWrapper: function (pathWrapper) {
+        var that = this;
+        pathWrapper.path.nodes.forEach(function (node) {
+
+          config.getNumericalNodeProperties(node).forEach(function (property) {
+            var scale = that.numericalPropertyScales[property];
+            var value = node.properties[property];
+
+            if (!scale) {
+              that.numericalPropertyScales[property] = d3.scale.linear().domain([Math.min(0, value), Math.max(0, value)]).range([0, s.NODE_WIDTH + s.EDGE_SIZE / 2]);
+            } else {
+              scale.domain([Math.min(0, Math.min(scale.domain()[0], value)), Math.max(0, Math.max(scale.domain()[1], value))]);
+            }
+          });
+
         });
       },
 
@@ -648,6 +718,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           });
 
         that.renderSets(that.parent.selectAll("g.pathContainer").data(that.pathWrappers, getPathKey));
+
+        that.renderNodeProperties();
         //that.renderDatasets();
         that.datasetRenderer.render();
         columns.renderColumns(that.parent, that.pathWrappers);
@@ -714,6 +786,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         this.maxNumNodeSets = 0;
         this.crossConnections = [];
         this.connectionStubs = [];
+        that.numericalPropertyScales = {};
       },
 
 
@@ -767,6 +840,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           var pathWrapper = new PathWrapper(path);
           this.pathWrappers.push(pathWrapper);
           this.updateMaxSetsForPathWrapper(pathWrapper);
+          this.updateNumericalPropertyScalesForPathWrapper(pathWrapper);
         }
 
       },
@@ -1686,7 +1760,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + (centerPosition ? s.NODE_WIDTH / 2 : 0);
       },
 
-      renderLineGrid: function() {
+      renderLineGrid: function () {
         var gridStrokeColor = "white";
         var gridFillColor = "rgba(0,0,0,0)"
 
@@ -1746,7 +1820,6 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               return "translate(0," + translateY + ")";
             }
           });
-
 
 
         allBgPathWrappers.each(function (pathWrapper, index) {
@@ -1926,6 +1999,175 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         });
 
         allBgPathWrappers.exit().remove();
+      },
+
+      renderNodeProperties: function () {
+        var that = this;
+
+        var allPropertyGroups = this.parent.selectAll("g.pathContainer g.propertyGroup")
+          .data(this.pathWrappers, getPathKey);
+
+        allPropertyGroups.each(function (pathWrapper) {
+
+          d3.select(this).transition().
+            attr({
+              transform: "translate(0, " + (s.PATH_HEIGHT + pathWrapper.getSetHeight()) + ")"
+            });
+
+          var allProperties = d3.select(this).selectAll("g.property")
+            .data(pathWrapper.properties, function (d) {
+              return d.name
+            });
+
+          var properties = allProperties.enter().append("g")
+            .classed("property", true);
+
+          properties.each(function (property) {
+
+            var prop = d3.select(this);
+            prop.attr({
+              transform: "translate(0," + property.getPosYRelativeToParent(pathWrapper.properties) + ")"
+            });
+
+            prop.append("text")
+              .text(property.name)
+              .attr("x", 10)
+              .attr("y", property.getBaseHeight())
+              .style("fill", "black")
+              .attr("clip-path", "url(#SetLabelClipPath)");
+
+          });
+
+          allProperties.each(function (property) {
+            var prop = d3.select(this);
+            prop.transition()
+              .attr({
+                transform: "translate(0," + property.getPosYRelativeToParent(pathWrapper.properties) + ")"
+              });
+
+            var allBars = prop.selectAll("g.bar").data(pathWrapper.path.nodes, function (d) {
+              return d.id
+            });
+
+            var bars = allBars.enter().append("g")
+              .classed("bar", true);
+
+            bars.each(function (node, nodeIndex) {
+
+              var bar = d3.select(this);
+
+              var value = node.properties[property.name];
+
+              if (typeof value !== "undefined") {
+
+                var posX = that.getNodePositionX(pathWrapper, nodeIndex, false) - s.EDGE_SIZE / 4;
+                var scale = that.numericalPropertyScales[property.name];
+
+                bar.append("rect")
+                  .classed("valueBg", true)
+                  .attr({
+                    x: posX,
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2,
+                    width: scale.range()[1],
+                    height: s.DEFAULT_BAR_SIZE
+                  })
+                  .style({
+                    fill: "white"
+                  });
+
+                bar.append("rect")
+                  .classed("value", true)
+                  .attr({
+                    x: posX + (value < 0 ? scale(value) : scale(0)),
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2,
+                    fill: "gray",
+                    width: Math.abs(scale(0) - scale(value)),
+                    height: s.DEFAULT_BAR_SIZE
+                  });
+
+                bar.append("rect")
+                  .classed("valueFrame", true)
+                  .attr({
+                    x: posX,
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2,
+                    width: scale.range()[1],
+                    height: s.DEFAULT_BAR_SIZE
+                  })
+                  .style({
+                    "shape-rendering": "crispEdges",
+                    fill: "rgba(0,0,0,0)",
+                    stroke: "rgb(80,80,80)"
+                  });
+
+                bar.append("line")
+                  .classed("zero", true)
+                  .attr({
+                    x1: posX + scale(0),
+                    y1: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2 - 4,
+                    x2: posX + scale(0),
+                    y2: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2 + 4
+                  })
+                  .style({
+                    "opacity": (scale.domain()[0] < 0 && scale.domain()[1] > 0) ? 1 : 0,
+                    "shape-rendering": "crispEdges",
+                    stroke: "rgb(80,80,80)"
+                  });
+
+                bar.append("title").text(property.name + ": " + uiUtil.formatNumber(value));
+              }
+
+            });
+
+            allBars.each(function (node, nodeIndex) {
+              var value = node.properties[property.name];
+
+              if (typeof value !== "undefined") {
+                var bar = d3.select(this);
+
+                var posX = that.getNodePositionX(pathWrapper, nodeIndex, false) - s.EDGE_SIZE / 4;
+                var scale = that.numericalPropertyScales[property.name];
+
+                bar.select("rect.valueBg").transition()
+                  .attr({
+                    x: posX,
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2
+                  });
+
+                bar.select("rect.value").transition()
+                  .attr({
+                    x: posX + (node.properties < 0 ? scale(value) : scale(0)),
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2,
+                    width: Math.abs(scale(0) - scale(value))
+                  });
+
+                bar.select("rect.valueFrame").transition()
+                  .attr({
+                    x: posX,
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2
+                  });
+
+                bar.select("line.zero").transition()
+                  .attr({
+                    x1: posX + scale(0),
+                    y1: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2 - 4,
+                    x2: posX + scale(0),
+                    y2: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2 + 4
+                  })
+                  .style({
+                    "opacity": (scale.domain()[0] < 0 && scale.domain()[1] > 0) ? 1 : 0
+                  });
+              }
+            });
+
+            allBars.exit().remove();
+
+
+          });
+
+          allProperties.exit().remove();
+        });
+
+
       },
 
       renderPaths: function () {
@@ -2166,11 +2408,16 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         var setGroup = pathContainer.append("g")
           .attr("class", "setGroup");
 
+        var setGroup = pathContainer.append("g")
+          .attr("class", "propertyGroup");
+
         var datasetGroup = pathContainer.append("g")
           .attr("class", "datasetGroup");
 
 
         that.renderSets(allPathContainers);
+
+        that.renderNodeProperties();
 
         that.datasetRenderer.render();
 

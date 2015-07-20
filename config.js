@@ -70,7 +70,7 @@ define(['d3'], function (d3) {
       return false;
     },
 
-    getSetProperties: function(node) {
+    getSetProperties: function (node) {
 
     },
 
@@ -246,6 +246,32 @@ define(['d3'], function (d3) {
           return key;
         }
       }
+    },
+
+    isNumericalNodeProperty: function (node, property) {
+
+      var nodeConfig = this.getNodeConfig(node);
+      var keys = Object.keys(nodeConfig.properties);
+
+      for (var i = 0; i < keys.length; i++) {
+        var key = key[i];
+        if (nodeConfig.properties[key] === "numerical" && key === property) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    getNumericalNodeProperties: function (node) {
+      var nodeConfig = this.getNodeConfig(node);
+      var properties = [];
+      Object.keys(nodeConfig.properties).forEach(function(prop){
+        if(nodeConfig.properties[prop] === "numerical" && typeof node.properties[prop] !== "undefined") {
+          properties.push(prop);
+        }
+      });
+      return properties;
     },
 
     getSetNameProperty: function (setNode) {

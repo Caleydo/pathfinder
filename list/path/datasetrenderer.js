@@ -59,7 +59,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
         allDatasetGroups.attr({
           transform: function (d) {
-            return "translate(0," + (s.PATH_HEIGHT + d.getSetHeight()) + ")";
+            return "translate(0," + (s.PATH_HEIGHT + d.getSetHeight()+ d.getPropertyHeight()) + ")";
           }
         });
 

@@ -35,7 +35,10 @@
         "chi_papers": {
           "type": "set",
           "set": "chi"
-        }
+        },
+        "cited": "numerical",
+        "tvcg_publications": "numerical",
+        "chi_publications": "numerical"
       }
     }
   ],

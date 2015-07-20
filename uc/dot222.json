@@ -1,6 +1,6 @@
 {
   "settings": {
-    "port": 7475,
+    "port": 7476,
     "node_label": "_Network_Node",
     "set_label": "_Set_Node",
     "directions": {

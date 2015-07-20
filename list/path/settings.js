@@ -19,6 +19,7 @@ define(["../../listeners"], function (listeners) {
     SET_TYPE_HEIGHT: 18,
     PATH_SPACING: 15,
     COLUMN_HEADER_HEIGHT: 22,
+    DEFAULT_BAR_SIZE: 8,
 
     pathListUpdateTypes: {
       ALIGN_PATH_NODES: "ALIGN_PATH_NODES",
@@ -94,6 +95,7 @@ define(["../../listeners"], function (listeners) {
 
       return posY;
     },
+
 
     getSetTranslateY: function (setType, setIndex) {
 

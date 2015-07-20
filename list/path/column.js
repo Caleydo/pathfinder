@@ -3,7 +3,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     //var DEFAULT_COLUMN_WIDTH = 80;
     var COLUMN_SPACING = 5;
-    var BAR_SIZE = 8;
+    var BAR_SIZE = s.DEFAULT_BAR_SIZE;
     var SMALL_BAR_SIZE = 8;
 
 
@@ -920,7 +920,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             x1: 0,
             y1: BAR_SIZE,
             x2: 0,
-            y2: BAR_SIZE +4
+            y2: BAR_SIZE + 4
           })
           .style({
             "shape-rendering": "crispEdges",
@@ -939,7 +939,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             "shape-rendering": "crispEdges",
             stroke: "rgb(80,80,80)"
           });
-
 
 
         ext.append("text")
@@ -1492,7 +1491,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var datasetGroup = item.append("g")
         .classed("dataset", true)
         .attr({
-          transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + posY) + ")"
+          transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight() + posY) + ")"
         })
         .on("dblclick", function () {
           if (column.sortingStrategy.groupId) {
@@ -1553,7 +1552,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       //  }
       //}
 
-      var datasetPosY = s.PATH_HEIGHT + pathWrapper.getSetHeight() + posY;
+      var datasetPosY = s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight()+ posY;
 
       var datasetGroup = item.select("g.dataset")
         .attr({
