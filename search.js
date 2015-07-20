@@ -62,6 +62,14 @@ define(['../caleydo/main', '../caleydo/event'],function(C, events) {
     this.send('query', msg);
   };
 
+  ServerSearch.prototype.loadNeighbors = function(node_id, just_network_edges) {
+    var msg = {
+      node : node_id,
+      just_network_edges : just_network_edges || false
+    };
+    this.send('neighbor', msg);
+  };
+
   ServerSearch.prototype.clearSearchCache = function() {
     this.search_cache = {};
   };
