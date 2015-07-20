@@ -413,6 +413,29 @@ path.nodeTypeSymbol {
   float: right;
 }
 
+#mainContent {
+  //display: inline-block;
+  position: relative;
+  //margin-right: 250px;
+  //width: 100% -250px;
+}
+
+#container {
+  position: relative;
+}
+
+#settings {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  display: none;
+  width: 250px;
+  height: 100vh;
+  overflow: auto;
+  vertical-align: top;
+  float: right;
+}
+
 #overviewRow {
   //  overflow: auto;
   display: -webkit-flex;

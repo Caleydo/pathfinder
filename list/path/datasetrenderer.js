@@ -609,7 +609,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       updateBoxPlotV($nodeData, statData.stats, scaleY);
     };
 
-    function appendBoxPlotV(parent, stats, scaleY) {
+    function appendBoxPlotV(parent, stats, scaleY, color) {
 
       appendToolTip(parent, stats);
 

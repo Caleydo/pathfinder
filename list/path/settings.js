@@ -2,7 +2,7 @@ define(["../../listeners"], function (listeners) {
 
   var alignPathNodes = false;
   var tiltAttributes = false;
-  var alignColumns = false;
+  var alignColumns = true;
 
   var stickyDataGroup = {};
 

@@ -161,7 +161,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
           d3.select("#queryOverlay").selectAll("g.overlayButton")
             .remove();
-          pathQuery.setQuery(queryView.container.getPathQuery(), false);
+          queryView.updateQuery();
+          //pathQuery.setQuery(queryView.container.getPathQuery(), false);
 
         }
       );
@@ -179,12 +180,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       if (typeof  ElementConstructor !== "undefined") {
         var el = new ElementConstructor(container)
         container.add(el);
+        queryView.updateQuery();
         return el;
       } else {
         container.updateParent();
       }
 
-      pathQuery.setQuery(queryView.container.getPathQuery(), false);
+      queryView.updateQuery();
+      //pathQuery.setQuery(queryView.container.getPathQuery(), false);
 
     }
 
@@ -281,13 +284,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       this.childDomElements = this.rootElement.append("g")
         .classed("childDomElements", true);
 
-    },
+    };
 
-      ElementContainer.prototype.add = function (childElement) {
-        this.children.push(childElement);
-        childElement.init(this.childDomElements);
-        this.updateParent();
-      };
+    ElementContainer.prototype.add = function (childElement) {
+      this.children.push(childElement);
+      childElement.init(this.childDomElements);
+      this.updateParent();
+    };
 
     ElementContainer.prototype.insert = function (index, childElement) {
       this.children.splice(index, 0, childElement);
@@ -541,6 +544,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     };
 
+    ConstraintElement.prototype.getText = function () {
+      return $(this.myDomElements[0]).find("input").val();
+    };
+
+    ConstraintElement.prototype.setText = function (text) {
+      return $(this.myDomElements[0]).find("input").val(text);
+    };
+
     ConstraintElement.prototype.setCaption = function (text) {
       $(this.myDomElements[0]).find("text.caption").text(text);
     };
@@ -566,6 +577,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       var that = this;
     };
 
+
     MultiConstraintElement.prototype.addInput = function (domParent, initialText) {
       ConstraintElement.prototype.addInput.call(this, domParent, initialText);
 
@@ -576,7 +588,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         source: that.autoCompleteSource,
         select: function (event, ui) {
 
-          that.setInfo(ui.item);
+          that.onSelect(ui);
           //that.id = ui.item.value;
           //pathQuery.setQuery(queryView.container.getPathQuery(), false);
           return false; // Prevent the widget from inserting the value.
@@ -588,18 +600,28 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         }
       });
 
-      input.keypress(function (e) {
+      input.on("input", function (e) {
         that.setCaption("");
         delete that.info;
-        //return false;
       });
     };
 
-    MultiConstraintElement.prototype.setInfo = function (info) {
-      this.info = info;
-      $(this.myDomElements[0]).find("input").val(info.label);
-      this.setCaption(info.category);
-      pathQuery.setQuery(queryView.container.getPathQuery(), false);
+    MultiConstraintElement.prototype.onSelect = function (ui) {
+      this.setInfo(ui.item);
+    };
+
+    MultiConstraintElement.prototype.setInfo = function (info, updateSimpleUINodes) {
+      if (!info) {
+        delete this.info;
+        this.setCaption("");
+        //$(this.myDomElements[0]).find("input").val("");
+      } else {
+        this.info = info;
+        $(this.myDomElements[0]).find("input").val(info.label);
+        this.setCaption(info.category);
+      }
+      queryView.updateQuery(typeof updateSimpleUINodes === "undefined" ? true : false);
+      //pathQuery.setQuery(queryView.container.getPathQuery(), false);
     };
 
 
@@ -659,100 +681,6 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     };
 
-    //-------------------------------------------
-
-    //function EdgeConstraintElement(parent) {
-    //  ConstraintElement.call(this, parent);
-    //}
-    //
-    //EdgeConstraintElement.prototype = Object.create(ConstraintElement.prototype);
-    //
-    //EdgeConstraintElement.prototype.addInput = function (domParent, initialText) {
-    //  ConstraintElement.prototype.addInput.call(this, domParent, initialText);
-    //
-    //  var that = this;
-    //
-    //  $(domParent[0]).mouseenter(function () {
-    //    addEdgeConstraintBooleanButtons(that);
-    //  });
-    //};
-    //
-    //function addEdgeConstraintBooleanButtons(element) {
-    //  var size = element.getSize();
-    //
-    //  addBooleanButtonsWithListOptions(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [
-    //      {
-    //        text: "Add Set", callback: function () {
-    //        replaceWithContainer(element, AndContainer, true, EdgeSetElement);
-    //      }
-    //      }],
-    //    [{
-    //      text: "Add Set", callback: function () {
-    //        replaceWithContainer(element, OrContainer, false, EdgeSetElement);
-    //      }
-    //    }], function () {
-    //      replaceWithContainer(element, NotContainer, false);
-    //    }
-    //  );
-    //
-    //}
-
-    //-------------------------------------------
-
-    //function NodeConstraintElement(parent) {
-    //  ConstraintElement.call(this, parent);
-    //}
-    //
-    //NodeConstraintElement.prototype = Object.create(ConstraintElement.prototype);
-    //
-    //NodeConstraintElement.prototype.addInput = function (domParent, initialText) {
-    //  ConstraintElement.prototype.addInput.call(this, domParent, initialText);
-    //
-    //  var that = this;
-    //
-    //  $(domParent[0]).mouseenter(function () {
-    //    addNodeConstraintBooleanButtons(that);
-    //  });
-    //};
-    //
-    //function addNodeConstraintBooleanButtons(element) {
-    //  var size = element.getSize();
-    //
-    //  addBooleanButtons(element, (size.width - AND_BUTTON_WIDTH - OR_BUTTON_WIDTH - NOT_BUTTON_WIDTH) / 2, size.height - 5, [{
-    //      text: "Add Node Name", callback: function () {
-    //        replaceWithContainer(element, AndContainer, true, NodeNameElement);
-    //      }
-    //    },
-    //      {
-    //        text: "Add Set", callback: function () {
-    //        replaceWithContainer(element, AndContainer, true, NodeSetElement);
-    //      }
-    //      },
-    //      {
-    //        text: "Add Node Type", callback: function () {
-    //        replaceWithContainer(element, AndContainer, true, NodeTypeElement);
-    //      }
-    //      }],
-    //    [{
-    //      text: "Add Node Name", callback: function () {
-    //        replaceWithContainer(element, OrContainer, false, NodeNameElement);
-    //      }
-    //    },
-    //      {
-    //        text: "Add Set", callback: function () {
-    //        replaceWithContainer(element, OrContainer, false, NodeSetElement);
-    //      }
-    //      },
-    //      {
-    //        text: "Add Node Type", callback: function () {
-    //        replaceWithContainer(element, OrContainer, false, NodeTypeElement);
-    //      }
-    //      }], function () {
-    //      replaceWithContainer(element, NotContainer, false);
-    //    }
-    //  );
-    //}
-
 
 //----------------------------------------
 
@@ -773,37 +701,40 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       });
     }
 
+    function nodeAutoCompleteSource(request, response) {
+      var term = request.term;
+      ServerSearch.search(term, 'name', '_Network_Node').then(function (nameResults) {
+        nameResults.forEach(function (element) {
+          element.category = "Name";
+        });
+
+        var nodeTypes = config.getNodeTypes();
+        nodeTypes = nodeTypes.filter(function (type) {
+          var res = type.search(new RegExp(term, "i"));
+          return res !== -1;
+        });
+        var typeResults = nodeTypes.map(function (type) {
+          return {
+            label: type,
+            value: type,
+            category: "Type"
+          }
+        });
+
+        var setNodeLabels = config.getSetNodeLabels();
+        if (setNodeLabels.length > 0) {
+          fetchSetsOfType(term, 0, nameResults.concat(typeResults), setNodeLabels, response);
+        } else {
+          response(nameResults.concat(typeResults));
+        }
+
+      });
+    }
+
     function NodeConstraintElement(parent) {
       MultiConstraintElement.call(this, parent);
-      this.autoCompleteSource = function (request, response) {
-        var term = request.term;
-        ServerSearch.search(term, 'name', '_Network_Node').then(function (nameResults) {
-          nameResults.forEach(function (element) {
-            element.category = "Name";
-          });
+      this.autoCompleteSource = nodeAutoCompleteSource;
 
-          var nodeTypes = config.getNodeTypes();
-          nodeTypes = nodeTypes.filter(function (type) {
-            var res = type.search(new RegExp(term, "i"));
-            return res !== -1;
-          });
-          var typeResults = nodeTypes.map(function (type) {
-            return {
-              label: type,
-              value: type,
-              category: "Type"
-            }
-          });
-
-          var setNodeLabels = config.getSetNodeLabels();
-          if (setNodeLabels.length > 0) {
-            fetchSetsOfType(term, 0, nameResults.concat(typeResults), setNodeLabels, response);
-          } else {
-            response(nameResults.concat(typeResults));
-          }
-
-        });
-      }
     }
 
     NodeConstraintElement.prototype = Object.create(MultiConstraintElement.prototype);
@@ -816,6 +747,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       $(domParent[0]).mouseenter(function () {
         addNodeConstraintBooleanButtons(that);
       });
+
+      $(this.myDomElements.select("input")[0]).on("input.sync", function () {
+        setSimpleQueryUINodeText(this.value, that);
+      })
     };
 
     function addNodeConstraintBooleanButtons(element) {
@@ -848,155 +783,23 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       return new q.NodeTypeConstraint(this.info.label);
     };
 
-//----------------------------------------
+    NodeConstraintElement.prototype.onSelect = function (ui) {
+      MultiConstraintElement.prototype.onSelect.call(this, ui);
+      //setSimpleQueryUINodeText($(this.myDomElements.select("input")[0]).val(), this);
+    };
 
-    //function NodeNameElement(parent) {
-    //  NodeConstraintElement.call(this, parent);
-    //}
-    //
-    //NodeNameElement.prototype = Object.create(NodeConstraintElement.prototype);
-    //
-    //NodeNameElement.prototype.init = function (domParent) {
-    //  NodeConstraintElement.prototype.init.call(this, domParent);
-    //
-    //  this.addInput(this.myDomElements, "Name");
-    //
-    //  var that = this;
-    //
-    //  var inputField = $(this.myDomElements[0]).find("input");
-    //  inputField.autocomplete({
-    //    minLength: 3,
-    //    source: function (request, response) {
-    //      var term = request.term;
-    //      ServerSearch.search(term, 'name', '_Network_Node').then(function (results) {
-    //        response(results);
-    //      })
-    //    },
-    //    select: function (event, ui) {
-    //      inputField.val(ui.item.label);
-    //      that.id = ui.item.value;
-    //      pathQuery.setQuery(queryView.container.getPathQuery(), false);
-    //      return false; // Prevent the widget from inserting the value.
-    //    },
-    //    focus: function (event, ui) {
-    //      inputField.val(ui.item.label);
-    //      that.id = ui.item.value;
-    //      return false; // Prevent the widget from inserting the value.
-    //    }
-    //  });
-    //
-    //
-    //  //inputField.on('autocompletechange change', function () {
-    //  //  inputField.text(this.label);
-    //  //  //$('#tagsname').html('You selected: ' + this.value);
-    //  //});
-    //};
-    //
-    //NodeNameElement.prototype.getPathQuery = function () {
-    //  var el = this.myDomElements.select("input");
-    //  var val = $(el[0]).val();
-    //
-    //  return val === "" ? new q.Constraint() : new q.NodeNameConstraint(val);
-    //};
+    function setSimpleQueryUINodeText(text, c) {
+      var constraint = queryView.findUnambiguousPathNodeConstraint(true);
+      if (constraint && constraint === c) {
+        $("#startNode").val(text);
+      } else {
+        constraint = queryView.findUnambiguousPathNodeConstraint(false);
+        if (constraint && constraint === c) {
+          $("#endNode").val(text);
+        }
+      }
+    }
 
-
-//-----------------------------------
-
-    //function getSetAutoComplete(inputField, element) {
-    //  return {
-    //    minLength: 3,
-    //    source: function (request, response) {
-    //      var term = request.term;
-    //      ServerSearch.search(term, 'name', '_Set_Node').then(function (results) {
-    //        response(results);
-    //      })
-    //    },
-    //    select: function (event, ui) {
-    //      inputField.val(ui.item.label);
-    //      element.id = ui.item.id;
-    //      pathQuery.setQuery(queryView.container.getPathQuery(), false);
-    //      return false; // Prevent the widget from inserting the value.
-    //    },
-    //    focus: function (event, ui) {
-    //      inputField.val(ui.item.label);
-    //      element.id = ui.item.id;
-    //      return false; // Prevent the widget from inserting the value.
-    //    }
-    //  }
-    //}
-    //
-    //
-    //function NodeSetElement(parent) {
-    //  NodeConstraintElement.call(this, parent);
-    //}
-    //
-    //NodeSetElement.prototype = Object.create(NodeConstraintElement.prototype);
-    //
-    //NodeSetElement.prototype.init = function (domParent) {
-    //  NodeConstraintElement.prototype.init.call(this, domParent);
-    //
-    //  this.addInput(this.myDomElements, "Set");
-    //
-    //  var that = this;
-    //
-    //  var inputField = $(this.myDomElements[0]).find("input");
-    //  inputField.autocomplete(getSetAutoComplete(inputField, that));
-    //};
-    //
-    //NodeSetElement.prototype.getPathQuery = function () {
-    //  var el = this.myDomElements.select("input");
-    //  var val = $(el[0]).val();
-    //
-    //  return val === "" ? new q.Constraint() : new q.NodeSetPresenceConstraint(this.id);
-    //};
-
-//-----------------------------------
-
-    //function NodeTypeElement(parent) {
-    //  NodeConstraintElement.call(this, parent);
-    //
-    //}
-    //
-    //NodeTypeElement.prototype = Object.create(NodeConstraintElement.prototype);
-    //
-    //NodeTypeElement.prototype.init = function (domParent) {
-    //  NodeConstraintElement.prototype.init.call(this, domParent);
-    //
-    //  this.addInput(this.myDomElements, "Type");
-    //};
-    //
-    //NodeTypeElement.prototype.getPathQuery = function () {
-    //  var el = this.myDomElements.select("input");
-    //  var val = $(el[0]).val();
-    //
-    //  return val === "" ? new q.Constraint() : new q.NodeTypeConstraint(val);
-    //};
-
-    //-----------------------------------
-
-    //function EdgeSetElement(parent) {
-    //  EdgeConstraintElement.call(this, parent);
-    //}
-    //
-    //EdgeSetElement.prototype = Object.create(EdgeConstraintElement.prototype);
-    //
-    //EdgeSetElement.prototype.init = function (domParent) {
-    //  EdgeConstraintElement.prototype.init.call(this, domParent);
-    //
-    //  this.addInput(this.myDomElements, "Set");
-    //
-    //  var that = this;
-    //
-    //  var inputField = $(this.myDomElements[0]).find("input");
-    //  inputField.autocomplete(getSetAutoComplete(inputField, that));
-    //};
-    //
-    //EdgeSetElement.prototype.getPathQuery = function () {
-    //  var el = this.myDomElements.select("input");
-    //  var val = $(el[0]).val();
-    //
-    //  return val === "" ? new q.Constraint() : new q.EdgeSetPresenceConstraint(val);
-    //};
 
 //--------------------------------------
 
@@ -1135,7 +938,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           addAddButton(that, function () {
             that.add(new NodeConstraintElement(that));
             d3.select(this).remove();
-            pathQuery.setQuery(queryView.container.getPathQuery(), false);
+            queryView.updateQuery();
+            //pathQuery.setQuery(queryView.container.getPathQuery(), false);
           }, (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
         }
@@ -1143,7 +947,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         if (!that.hasPosition && !(that.parent instanceof UnorderedContainer)) {
           addPositionButton(that, function () {
             that.showPositionDialog();
-            pathQuery.setQuery(queryView.container.getPathQuery(), false);
+            queryView.updateQuery();
+            //pathQuery.setQuery(queryView.container.getPathQuery(), false);
           }, (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, 0);
         }
 
@@ -1155,7 +960,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
               if (that.parent instanceof SequenceContainer) {
                 that.parent.insert(index + 1, new SequenceFiller(that.parent));
               }
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
+              queryView.updateQuery();
+              //pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }, {
             text: "Add Edge", callback: function () {
@@ -1170,7 +976,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 }
               }
               that.parent.insert(index + 1, new EdgeContainer(that.parent));
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
+              queryView.updateQuery();
+              //pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
         }
@@ -1345,7 +1152,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           addAddButton(that, function () {
             that.add(new EdgeConstraintElement(that));
             d3.select(this).remove();
-            pathQuery.setQuery(queryView.container.getPathQuery(), false);
+            queryView.updateQuery();
+            //pathQuery.setQuery(queryView.container.getPathQuery(), false);
           }, (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
         }
@@ -1363,7 +1171,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
               }
             }
             that.parent.insert(index + 1, new NodeContainer(that.parent));
-            pathQuery.setQuery(queryView.container.getPathQuery(), false);
+            queryView.updateQuery();
+            //pathQuery.setQuery(queryView.container.getPathQuery(), false);
           }
         }, {
           text: "Add Edge", callback: function () {
@@ -1373,7 +1182,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
             if (that.parent instanceof SequenceContainer) {
               that.parent.insert(index + 1, new SequenceFiller(that.parent));
             }
-            pathQuery.setQuery(queryView.container.getPathQuery(), false);
+            queryView.updateQuery();
+            //pathQuery.setQuery(queryView.container.getPathQuery(), false);
           }
         }], size.width - DEFAULT_OVERLAY_BUTTON_SIZE, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
@@ -1427,12 +1237,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           addAddButtonWithListOptions(that, [{
             text: "Add Node", callback: function () {
               that.add(new NodeContainer(that, true));
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
+              queryView.updateQuery();
+              //pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }, {
             text: "Add Edge", callback: function () {
               that.add(new EdgeContainer(that));
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
+              queryView.updateQuery();
+              //pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
         }
@@ -1556,12 +1368,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           addAddButtonWithListOptions(that, [{
             text: "Add Sequence", callback: function () {
               that.parent.replace(that, new SequenceContainer(that.parent));
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
+              queryView.updateQuery();
+              //pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }, {
             text: "Add Unordered", callback: function () {
               that.parent.replace(that, new UnorderedContainer(that.parent));
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
+              queryView.updateQuery();
+              //pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
 
@@ -1573,7 +1387,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
               if (index === 0 && that.parent.children.length === 1) {
                 that.parent.replace(that, new NodeContainer(that.parent, true));
-                pathQuery.setQuery(queryView.container.getPathQuery(), false);
+                queryView.updateQuery();
+                //pathQuery.setQuery(queryView.container.getPathQuery(), false);
                 return;
               }
 
@@ -1582,14 +1397,16 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 var nextChild = that.parent.children[index + 1];
                 if (prevChild instanceof EdgeContainer && nextChild instanceof EdgeContainer) {
                   that.parent.replace(that, new NodeContainer(that.parent, true));
-                  pathQuery.setQuery(queryView.container.getPathQuery(), false);
+                  queryView.updateQuery();
+                  //pathQuery.setQuery(queryView.container.getPathQuery(), false);
                   return;
                 }
               }
 
               that.parent.insert(index, new NodeContainer(that.parent, true));
               that.parent.insert(index, new SequenceFiller(that.parent));
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
+              queryView.updateQuery();
+              //pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }, {
             text: "Add Edge", callback: function () {
@@ -1597,7 +1414,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
               if (index === 0 && that.parent.children.length === 1) {
                 that.parent.replace(that, new EdgeContainer(that.parent));
-                pathQuery.setQuery(queryView.container.getPathQuery(), false);
+                queryView.updateQuery();
+                //pathQuery.setQuery(queryView.container.getPathQuery(), false);
                 return;
               }
 
@@ -1606,14 +1424,16 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 var nextChild = that.parent.children[index + 1];
                 if (prevChild instanceof NodeContainer && nextChild instanceof NodeContainer) {
                   that.parent.replace(that, new EdgeContainer(that.parent));
-                  pathQuery.setQuery(queryView.container.getPathQuery(), false);
+                  queryView.updateQuery();
+                  //pathQuery.setQuery(queryView.container.getPathQuery(), false);
                   return;
                 }
               }
 
               that.parent.insert(index, new EdgeContainer(that.parent));
               that.parent.insert(index, new SequenceFiller(that.parent));
-              pathQuery.setQuery(queryView.container.getPathQuery(), false);
+              queryView.updateQuery();
+              //pathQuery.setQuery(queryView.container.getPathQuery(), false);
             }
           }], (size.width - DEFAULT_OVERLAY_BUTTON_SIZE) / 2, (size.height - DEFAULT_OVERLAY_BUTTON_SIZE) / 2);
         }
@@ -1638,7 +1458,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
             return false;
           }
         }
-        if(index === 0 && this.parent.children.length === 1) {
+        if (index === 0 && this.parent.children.length === 1) {
           return false;
         }
       }
@@ -1807,8 +1627,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         var size = that.getSize();
 
         addOrButton(that, function () {
-            replaceWithContainer(that, OrContainer, false, PathContainer);
-          }, (size.width - OR_BUTTON_WIDTH) / 2, size.height - 5);
+          replaceWithContainer(that, OrContainer, false, PathContainer);
+        }, (size.width - OR_BUTTON_WIDTH) / 2, size.height - 5);
 
       });
     };
@@ -1854,6 +1674,29 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     QueryView.prototype = Object.create(View.prototype);
 
+    QueryView.prototype.updateQuery = function (updateSimpleUINodes) {
+      var that = this;
+      pathQuery.setQuery(this.container.getPathQuery(), false);
+      if (updateSimpleUINodes || typeof updateSimpleUINodes === "undefined") {
+        updateSimpleUINodeText(true);
+        updateSimpleUINodeText(false);
+      }
+
+      function updateSimpleUINodeText(isStartNode) {
+        var constraint = that.findUnambiguousPathNodeConstraint(isStartNode);
+        if (constraint) {
+          var input = $(isStartNode ? "#startNode" : "#endNode");
+          input.val(constraint.getText());
+          input.prop("disabled", false);
+
+        } else {
+          var input = $(isStartNode ? "#startNode" : "#endNode");
+          input.val("Advanced definition");
+          input.prop("disabled", true);
+        }
+      }
+    };
+
     QueryView.prototype.getMinSize = function () {
       if (typeof this.container === "undefined") {
         return {width: 200, height: 100};
@@ -1870,7 +1713,6 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       View.prototype.init.call(this);
 
 
-
       var $progress = $('.progress-bar');
       ServerSearch.on({
         query_start: function () {
@@ -1882,7 +1724,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           d3.select($progress[0]).transition().duration(100).style('width', d3.round(i / k * 100, 0) + '%');
         },
         query_done: function () {
-          d3.select($progress[0]).transition().duration(100).style('width','100%');
+          d3.select($progress[0]).transition().duration(100).style('width', '100%');
           $progress.parent();
         }
       });
@@ -1901,32 +1743,95 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       $('#filter_query').click(function () {
           //that.addNodeFilter("type", "Compound", true);
 
-          var query = that.container.getPathQuery();
-
-          pathQuery.setQuery(query, false);
+          that.updateQuery();
+          //var query = that.container.getPathQuery();
+          //
+          //pathQuery.setQuery(query, false);
           return false;
         }
       );
 
-      $("#toggleQueryMode").click(function(){
+
+      $("#toggleQueryMode").click(function () {
         that.advancedMode = !that.advancedMode;
-        if(that.advancedMode){
-          $(this).text("Less");
-          $("#advancedQueryWidgets").css({display:"inline-block"});
-          $("#pathQueryView").css({display:"inline-block"});
-          $("#simpleQueryWidgets").css({display:"none"});
+        $(this).toggleClass("btn-active");
+        $(this).toggleClass("btn-default");
+
+        if (that.advancedMode) {
+          //$("#advancedQueryWidgets").show(500, "linear", function(){
+          $("#advancedQueryWidgets").css({display: "inline-block"});
+          //});
+          //$("#pathQueryView").show(500, "linear", function(){
+          $("#pathQueryView").css({display: "inline-block"});
+          //});
+          $("#simpleQueryWidgets").hide();
+
+
+          //$("#simpleQueryWidgets").css({display: "none"});
         } else {
-          $(this).text("More");
-          $("#advancedQueryWidgets").css({display:"none"});
-          $("#pathQueryView").css({display:"none"});
-          $("#simpleQueryWidgets").css({display:"inline-block"});
+          $("#advancedQueryWidgets").css({display: "none"});
+          $("#pathQueryView").css({display: "none"});
+          $("#simpleQueryWidgets").css({display: "inline-block"});
         }
-
-
       });
 
+
+      var startInput = $("#startNode");
+      startInput.typedAutocomplete({
+        minLength: 3,
+        source: nodeAutoCompleteSource,
+        select: function (event, ui) {
+          startInput.val(ui.item.label);
+          setNodeInfo(true, ui.item);
+
+          return false; // Prevent the widget from inserting the value.
+        },
+        focus: function (event, ui) {
+          return false; // Prevent the widget from inserting the value.
+        }
+      });
+
+      startInput.on("input", function (e) {
+        var constraint = that.findUnambiguousPathNodeConstraint(true);
+        if (constraint) {
+          constraint.setText(this.value);
+          constraint.setInfo(null, false);
+        }
+      });
+
+
+      var endInput = $("#endNode");
+      endInput.typedAutocomplete({
+        minLength: 3,
+        source: nodeAutoCompleteSource,
+        select: function (event, ui) {
+          endInput.val(ui.item.label);
+          setNodeInfo(false, ui.item);
+          return false; // Prevent the widget from inserting the value.
+        },
+        focus: function (event, ui) {
+          return false; // Prevent the widget from inserting the value.
+        }
+      });
+
+      endInput.on("input", function (e) {
+        var constraint = that.findUnambiguousPathNodeConstraint(false);
+        if (constraint) {
+          constraint.setText(this.value);
+          constraint.setInfo(null, false);
+        }
+      });
+
+      function setNodeInfo(isStartNode, info) {
+        var constraint = that.findUnambiguousPathNodeConstraint(isStartNode);
+        if (constraint) {
+          constraint.setInfo(info);
+        }
+      }
+
+
       $('#remove_filtered_paths').click(function () {
-          pathQuery.setRemoveFilteredPaths($('#remove_filtered_paths').prop("checked"));
+          pathQuery.setRemoveFilteredPaths(!($('#remove_filtered_paths').prop("checked")));
         }
       );
 
@@ -1954,6 +1859,23 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
         return false;
       });
+    };
+    /**
+     * Finds the unambiguous start or end node constraint in the path query if it exists.
+     * @param isStartNode
+     * @returns {NodeConstraintElement}
+     */
+    QueryView.prototype.findUnambiguousPathNodeConstraint = function (isStartNode) {
+      var pathContainers = [];
+      this.findPathContainers(this.container, pathContainers);
+      if (pathContainers.length === 1) {
+        var pathContainer = pathContainers[0];
+        var startNodeContainer = pathContainer.children[isStartNode ? 0 : pathContainer.children.length - 1];
+        var constraint = startNodeContainer.children[0];
+        if (constraint && constraint instanceof NodeConstraintElement) {
+          return constraint;
+        }
+      }
     };
 
     QueryView.prototype.findPathContainers = function (parent, pathContainers) {
