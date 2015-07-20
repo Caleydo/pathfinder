@@ -1328,7 +1328,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         setType.append("text")
           .attr("class", "collapseIconSmall")
           .attr("x", 5)
-          .attr("y", s.SET_TYPE_HEIGHT);
+          .attr("y", (s.SET_TYPE_HEIGHT - 10) / 2 + 9);
 
         allSetTypes.selectAll("text.collapseIconSmall")
           .text(function (d) {
@@ -1394,7 +1394,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             return config.getSetTypeFromSetPropertyName(d.setType.type);
           })
           .attr("x", 10)
-          .attr("y", s.SET_TYPE_HEIGHT)
+          .attr("y", (s.SET_TYPE_HEIGHT - 10) / 2 + 9)
           .style("fill", function (d) {
             return setInfo.getSetTypeInfo(d.setType.type).color;
           })
@@ -1761,7 +1761,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       },
 
       renderLineGrid: function () {
-        var gridStrokeColor = "white";
+        var gridStrokeColor = "black";
         var gridFillColor = "rgba(0,0,0,0)"
 
         var that = this;
@@ -2029,12 +2029,21 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               transform: "translate(0," + property.getPosYRelativeToParent(pathWrapper.properties) + ")"
             });
 
+            //prop.append("rect")
+            //  .attr({
+            //    x: 0,
+            //    y: 0,
+            //    width: "100%",
+            //    height: property.getBaseHeight()
+            //  }).style({stroke: "black", fill:"white"});
+
             prop.append("text")
               .text(property.name)
               .attr("x", 10)
-              .attr("y", property.getBaseHeight())
+              .attr("y", (property.getBaseHeight() - 10) / 2 + 9)
               .style("fill", "black")
-              .attr("clip-path", "url(#SetLabelClipPath)");
+              .attr("clip-path", "url(#SetLabelClipPath)")
+              .append("title").text(property.name);
 
           });
 
