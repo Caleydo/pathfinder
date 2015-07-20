@@ -116,6 +116,12 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
           },
           query_path: function (event, data) {
             addPath(data.path);
+          },
+          neighbor_neighbor: function(event, data) {
+            addNeighbor(data.node,data.path);
+          },
+          neighbor_done: function(event, data) {
+            console.log(data.node, data.neighbors);
           }
         });
 
@@ -233,6 +239,10 @@ require(['jquery', 'd3', '../caleydo/main', './listeners', './list/listview', '.
             overviewGraph.addPath(path);
           }
 
+        }
+
+        function addNeighbor(node, neighbor) {
+          console.log(node, neighbor);
         }
 
         function loadPaths(paths) {

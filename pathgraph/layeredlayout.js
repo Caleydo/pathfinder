@@ -1,5 +1,5 @@
-define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../view', '../overviewgraph', '../pathutil'],
-  function ($, d3, webcola, dagre, listeners, selectionUtil, pathSorting, pathQuery, config, View, forceGraph, pathUtil) {
+define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../view', '../overviewgraph', '../pathutil', '../search'],
+  function ($, d3, webcola, dagre, listeners, selectionUtil, pathSorting, pathQuery, config, View, forceGraph, pathUtil, ServerSearch) {
     'use strict';
 
     function getEdgeKey(d) {
@@ -265,6 +265,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           //pathSorting.sortingStrategies.selectionSortingStrategy.setPathIds(selectionUtil.selections["path"]["selected"]);
           pathSorting.addSelectionBasedSortingStrategy(new pathSorting.PathPresenceSortingStrategy(selectionUtil.selections["path"]["selected"]));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+
+          ServerSearch.loadNeighbors(d.node.id, false);
         });
 
       var line = d3.svg.line()
@@ -451,6 +453,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           //pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([d.node.id]);
           pathSorting.addSelectionBasedSortingStrategy(new pathSorting.NodePresenceSortingStrategy(selectionUtil.selections["node"]["selected"]));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+          ServerSearch.loadNeighbors(d.node.id, false);
         });
 
       selectionUtil.removeListeners(that.nodeSelectionListener, "node");
