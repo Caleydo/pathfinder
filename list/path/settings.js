@@ -2,7 +2,7 @@ define(["../../listeners"], function (listeners) {
 
   var alignPathNodes = false;
   var tiltAttributes = false;
-  var alignColumns = false;
+  var alignColumns = true;
 
   var stickyDataGroup = {};
 
@@ -16,9 +16,10 @@ define(["../../listeners"], function (listeners) {
     PATH_HEIGHT: 30,
     EDGE_SIZE: 50,
     SET_HEIGHT: 10,
-    SET_TYPE_HEIGHT: 18,
+    SET_TYPE_HEIGHT: 14,
     PATH_SPACING: 15,
     COLUMN_HEADER_HEIGHT: 22,
+    DEFAULT_BAR_SIZE: 8,
 
     pathListUpdateTypes: {
       ALIGN_PATH_NODES: "ALIGN_PATH_NODES",
@@ -94,6 +95,7 @@ define(["../../listeners"], function (listeners) {
 
       return posY;
     },
+
 
     getSetTranslateY: function (setType, setIndex) {
 

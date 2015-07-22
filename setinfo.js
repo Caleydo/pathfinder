@@ -22,7 +22,7 @@ define(['d3', './listeners', './config', './colors'], function (d3, listeners, c
     addToType: function (setType, setId) {
       var t = this.setTypeInfos[setType];
       if (typeof t === "undefined") {
-        t = {type: setType, sets: [setId], color: colors.nextColor()};
+        t = {type: setType, sets: [setId]};
         this.setTypeInfos[setType] = t;
       } else {
         if (t.sets.indexOf(setId) === -1)

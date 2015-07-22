@@ -3,7 +3,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     //var DEFAULT_COLUMN_WIDTH = 80;
     var COLUMN_SPACING = 5;
-    var BAR_SIZE = 8;
+    var BAR_SIZE = s.DEFAULT_BAR_SIZE;
     var SMALL_BAR_SIZE = 8;
 
 
@@ -920,7 +920,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             x1: 0,
             y1: BAR_SIZE,
             x2: 0,
-            y2: BAR_SIZE +4
+            y2: BAR_SIZE + 4
           })
           .style({
             "shape-rendering": "crispEdges",
@@ -939,7 +939,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             "shape-rendering": "crispEdges",
             stroke: "rgb(80,80,80)"
           });
-
 
 
         ext.append("text")
@@ -1433,18 +1432,66 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       });
     };
 
-    //SetItemRenderer.prototype.init = function () {
-    //if (this.column.sortingStrategy.groupId) {
-    //  s.incStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
-    //}
-    //};
 
-    //SetItemRenderer.prototype.destroy = function () {
-    //if (this.column.sortingStrategy.groupId) {
-    //  s.decStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
-    //}
-    //};
+    //--------------------------
 
+    function PropertyItemRenderer(column, scoreRepresentation, tooltipTextAccessor) {
+      PathItemRenderer.call(this, column, scoreRepresentation);
+      this.tooltipTextAccessor = tooltipTextAccessor;
+    }
+
+    PropertyItemRenderer.prototype = Object.create(PathItemRenderer.prototype);
+
+    PropertyItemRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
+
+      var that = this;
+      var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
+
+      var propertyIndex = -1;
+      for (var i = 0; i < pathWrapper.properties.length; i++) {
+        if (pathWrapper.properties[i].name === column.sortingStrategy.property) {
+          propertyIndex = i;
+          break;
+        }
+      }
+      var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
+      if (propertyIndex >= 0) {
+        var property = pathWrapper.properties[propertyIndex];
+        var p = item.append("g")
+          .classed("property", true)
+          .attr({
+            transform: "translate(0, " + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + property.getPosYRelativeToParent(pathWrapper.properties)) + ")"
+          });
+        this.scoreRepresentation.setValueRange(valueRange);
+        that.scoreRepresentation.appendScore(p, scoreInfo.score, property.getHeight(), true, config.getNodePropertyColorFromPropertyName(property.name));
+
+        p.append("title")
+          .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
+      }
+    };
+
+    PropertyItemRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
+      var that = this;
+      var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
+
+      var propertyIndex = -1;
+      for (var i = 0; i < pathWrapper.properties.length; i++) {
+        if (pathWrapper.properties[i].name === column.sortingStrategy.property) {
+          propertyIndex = i;
+          break;
+        }
+      }
+      var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
+      if (propertyIndex >= 0) {
+        var property = pathWrapper.properties[propertyIndex];
+        var p = item.select("g.property").transition()
+          .attr({
+            transform: "translate(0, " + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + property.getPosYRelativeToParent(pathWrapper.properties)) + ")"
+          });
+        this.scoreRepresentation.setValueRange(valueRange);
+        that.scoreRepresentation.updateScore(p, scoreInfo.score, property.getHeight(), true, config.getNodePropertyColorFromPropertyName(property.name));
+      }
+    };
 
 //------------------------------
     function DatasetItemRenderer(column, scoreRepresentation, tooltipTextAccessor) {
@@ -1492,7 +1539,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var datasetGroup = item.append("g")
         .classed("dataset", true)
         .attr({
-          transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + posY) + ")"
+          transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight() + posY) + ")"
         })
         .on("dblclick", function () {
           if (column.sortingStrategy.groupId) {
@@ -1553,7 +1600,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       //  }
       //}
 
-      var datasetPosY = s.PATH_HEIGHT + pathWrapper.getSetHeight() + posY;
+      var datasetPosY = s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight() + posY;
 
       var datasetGroup = item.select("g.dataset")
         .attr({
@@ -1759,6 +1806,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         };
         this.itemRenderers["SET_COUNT_EDGE_WEIGHT"] = function (column) {
           return new SetItemRenderer(column, new BarRepresentation());
+        };
+        this.itemRenderers["NUMERICAL_PROPERTY"] = function (column) {
+          return new PropertyItemRenderer(column, new BarRepresentation(), simpleScoreTooltip);
         };
         this.itemRenderers["OVERALL_STATS"] = function (column) {
           return new DatasetItemRenderer(column, new BarRepresentation(), overallStatsTooltip);

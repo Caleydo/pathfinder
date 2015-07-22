@@ -15,6 +15,7 @@ require(['jquery', 'd3', '../caleydo_web/main', './listeners', './list/listview'
     //var jsonPaths = require('./testpaths1.json');
 
     var currentPathId = 0;
+    var showSettings = false;
 
 
     $(document).ready(function () {
@@ -115,6 +116,12 @@ require(['jquery', 'd3', '../caleydo_web/main', './listeners', './list/listview'
           },
           query_path: function (event, data) {
             addPath(data.path);
+          },
+          neighbor_neighbor: function(event, data) {
+            addNeighbor(data.node,data.path);
+          },
+          neighbor_done: function(event, data) {
+            console.log(data.node, data.neighbors);
           }
         });
 
@@ -141,10 +148,27 @@ require(['jquery', 'd3', '../caleydo_web/main', './listeners', './list/listview'
         C.getAPIJSON('/pathway/config.json').then(function (data) {
           config.setConfig(data);
 
+          $("#toggleSettingsButton").click(function () {
+            showSettings = !showSettings;
+            $(this).toggleClass("btn-active");
+            $(this).toggleClass("btn-default");
+
+
+            if (showSettings) {
+              $("#settings").css({display: "inline-block"});
+              $("#mainContent").css({"margin-right": 255});
+            } else {
+              $("#settings").css({display: "none"});
+              $("#mainContent").css({"margin-right": 0});
+            }
+          });
+
           dataStore.init();
           pathSorting.init();
           queryView.init();
           overviewGraph.init();
+
+
           listView.init().then(function () {
 
             pathStatsView.init();
@@ -164,6 +188,23 @@ require(['jquery', 'd3', '../caleydo_web/main', './listeners', './list/listview'
             //  }, 100);
             //
             //});
+
+            C.getJSON("dump/partl-shneiderman.json", function (paths) {
+
+              var i = 0;
+
+              var interval = setInterval(function () {
+
+                if (i >= paths.length) {
+                  clearInterval(interval);
+                  return;
+                }
+                addPath(paths[i]);
+                i++;
+
+              }, 100);
+
+            });
           });
 
 
@@ -198,6 +239,10 @@ require(['jquery', 'd3', '../caleydo_web/main', './listeners', './list/listview'
             overviewGraph.addPath(path);
           }
 
+        }
+
+        function addNeighbor(node, neighbor) {
+          console.log(node, neighbor);
         }
 
         function loadPaths(paths) {

@@ -1,4 +1,4 @@
-define(['d3'], function (d3) {
+define(['d3', "colors"], function (d3, colors) {
 
   var DEFAULT_NODE_WIDTH = 60;
   var DEFAULT_NODE_HEIGHT = 20;
@@ -13,6 +13,10 @@ define(['d3'], function (d3) {
 
   var nodeTypeSymbols = {};
 
+  var setTypeColors = {};
+  var propertyColors = {};
+  var datasetColors = {};
+
 
   return {
     setConfig: function (c) {
@@ -20,6 +24,13 @@ define(['d3'], function (d3) {
 
       var symbols = d3.svg.symbolTypes;
 
+      if (config.sets) {
+        assignColors(config.sets, function (setConfig) {
+          return setConfig["set_property"]
+        }, setTypeColors);
+      }
+
+      var numericalNodeProperties = [];
       config.nodes.forEach(function (nodeConfig, i) {
 
         Object.keys(nodeConfig.properties).forEach(function (key) {
@@ -36,9 +47,34 @@ define(['d3'], function (d3) {
           if (config.nodes.length > 1) {
             nodeTypeSymbols[nodeConfig["node_label"]] = symbols[i];
           }
-        });
 
+          if (prop === "numerical") {
+            numericalNodeProperties.push(key);
+          }
+
+        });
       });
+
+      assignColors(numericalNodeProperties, function (property) {
+        return property;
+      }, propertyColors);
+      if (config.datasets) {
+        assignColors(config.datasets, function (dataset) {
+          return dataset["id"]
+        }, datasetColors);
+      }
+
+      function assignColors(array, idAccessor, map) {
+        if (array.length <= colors.colorsLeft) {
+          array.forEach(function (el) {
+            map[idAccessor(el)] = colors.nextColor();
+          });
+        } else {
+          array.forEach(function (el) {
+            map[idAccessor(el)] = "gray";
+          });
+        }
+      }
 
       config.edges.forEach(function (edgeConfig) {
 
@@ -70,9 +106,18 @@ define(['d3'], function (d3) {
       return false;
     },
 
-    getSetProperties: function(node) {
-
+    getSetColorFromSetTypePropertyName: function (name) {
+      return setTypeColors[name];
     },
+
+    getDatasetColorFromDatasetId: function (id) {
+      return datasetColors[id];
+    },
+
+    getNodePropertyColorFromPropertyName: function (name) {
+      return propertyColors[name];
+    },
+
 
     getSetTypeFromSetPropertyName: function (id) {
       for (var i = 0; i < config.sets.length; i++) {
@@ -246,6 +291,32 @@ define(['d3'], function (d3) {
           return key;
         }
       }
+    },
+
+    isNumericalNodeProperty: function (node, property) {
+
+      var nodeConfig = this.getNodeConfig(node);
+      var keys = Object.keys(nodeConfig.properties);
+
+      for (var i = 0; i < keys.length; i++) {
+        var key = key[i];
+        if (nodeConfig.properties[key] === "numerical" && key === property) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    getNumericalNodeProperties: function (node) {
+      var nodeConfig = this.getNodeConfig(node);
+      var properties = [];
+      Object.keys(nodeConfig.properties).forEach(function (prop) {
+        if (nodeConfig.properties[prop] === "numerical" && typeof node.properties[prop] !== "undefined") {
+          properties.push(prop);
+        }
+      });
+      return properties;
     },
 
     getSetNameProperty: function (setNode) {

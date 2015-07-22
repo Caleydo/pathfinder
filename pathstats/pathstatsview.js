@@ -580,12 +580,12 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       if (idType === "set") {
         typeLabel.style("fill", function (d) {
-          return setInfo.getSetTypeInfo(d.type).color;
+          return  config.getSetColorFromSetTypePropertyName(d.type);
         });
       }
 
       addPathOccurrenceBar(typeCont, idType === "set" ? function (d) {
-        return setInfo.getSetTypeInfo(d.type).color;
+        return  config.getSetColorFromSetTypePropertyName(d.type);
       } : function (d) {
         return "gray";
       });
@@ -652,7 +652,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         });
       if (idType === "set") {
         setLabel.style("fill", function (d) {
-          return setInfo.getSetTypeInfo(d.parent.type).color;
+          return config.getSetColorFromSetTypePropertyName(d.parent.type);
         });
       }
 
@@ -672,7 +672,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         });
 
       addPathOccurrenceBar(stats, idType === "set" ? function (d) {
-        return setInfo.getSetTypeInfo(d.parent.type).color;
+        return  config.getSetColorFromSetTypePropertyName(d.parent.type);
       } : function (d) {
         return "gray";
       });

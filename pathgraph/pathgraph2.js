@@ -92,10 +92,18 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
       this.currentGraphLayout.init();
 
-      $("#switchGraphLayout").on("click", function () {
+      $("#layeredLayout").on("click", function () {
         //that.currentGraphLayout.reset();
         that.currentGraphLayout.prepareLayoutChange();
-        that.currentGraphLayout = this.checked ? that.forceLayout : that.layeredLayout;
+        that.currentGraphLayout = that.layeredLayout;
+        that.render(that.paths);
+        that.updateViewSize();
+      });
+
+      $("#forceLayout").on("click", function () {
+        //that.currentGraphLayout.reset();
+        that.currentGraphLayout.prepareLayoutChange();
+        that.currentGraphLayout = that.forceLayout;
         that.render(that.paths);
         that.updateViewSize();
       });

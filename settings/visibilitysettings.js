@@ -1,4 +1,4 @@
-define(["./listeners"], function (listeners) {
+define(["./../listeners"], function (listeners) {
   var showNonEdgeSets = false;
 
   return {

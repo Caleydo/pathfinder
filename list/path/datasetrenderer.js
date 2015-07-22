@@ -59,7 +59,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
         allDatasetGroups.attr({
           transform: function (d) {
-            return "translate(0," + (s.PATH_HEIGHT + d.getSetHeight()) + ")";
+            return "translate(0," + (s.PATH_HEIGHT + d.getSetHeight() + d.getPropertyHeight()) + ")";
           }
         });
 
@@ -75,11 +75,15 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             dataset.each(function (dataset, datasetIndex) {
               var $dataset = d3.select(this);
               $dataset.append("text")
-                .attr("class", "collapseIconSmall");
+                .classed("collapseIconSmall", true)
+                .attr({
+                  x: 5,
+                  y: (dataset.getBaseHeight() - 10) / 2 + 9
+                });
               var datasetLabel = $dataset.append("text")
                 .attr({
                   x: s.SET_TYPE_INDENT,
-                  y: 14,
+                  y: (dataset.getBaseHeight() - 10) / 2 + 9,
                   "clip-path": "url(#SetLabelClipPath)"
                 })
                 .style({
@@ -102,8 +106,6 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
               var $dataset = d3.select(this);
 
               $dataset.select("text.collapseIconSmall")
-                .attr("x", 5)
-                .attr("y", s.SET_TYPE_HEIGHT)
                 .text(function (d) {
                   return d.collapsed ? "\uf0da" : "\uf0dd";
                 })
@@ -171,7 +173,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                 var groupLabel = $group.append("text")
                   .attr({
                     x: s.SET_TYPE_INDENT,
-                    y: 14,
+                    y: (group.getBaseHeight() - 10) / 2 + 9,
                     "clip-path": "url(#SetLabelClipPath)"
                   })
                   .style({
@@ -609,7 +611,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       updateBoxPlotV($nodeData, statData.stats, scaleY);
     };
 
-    function appendBoxPlotV(parent, stats, scaleY) {
+    function appendBoxPlotV(parent, stats, scaleY, color) {
 
       appendToolTip(parent, stats);
 
@@ -648,7 +650,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         })
         .style({
           "shape-rendering": "crispEdges",
-          fill:"rgba(0,0,0,0)",
+          fill: "rgba(0,0,0,0)",
           stroke: "black"
         });
 

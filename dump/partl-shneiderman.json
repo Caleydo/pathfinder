@@ -1,0 +1,3053 @@
+[
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 655,
+        "properties": {
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexPKSGWSP13"
+          ],
+          "cited": 4,
+          "id": "Christian_Partl",
+          "name": "Christian Partl",
+          "tvcg_publications": 4
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 155,
+        "properties": {
+          "name": "Hanspeter Pfister",
+          "chi_papers": [
+            "conf/chi/KimBBOGP15"
+          ],
+          "cited": 40,
+          "tvcg_publications": 25,
+          "tvcg_papers": [
+            "journals/tvcg/HadwigerBJP12",
+            "journals/tvcg/GratzlGLPS14",
+            "journals/tvcg/HaehnKRBKLP14",
+            "journals/tvcg/MeyerWKLP08",
+            "journals/tvcg/ZwickerPBG02",
+            "journals/tvcg/JohnsonDAPFM11",
+            "journals/tvcg/MeyerMDP10",
+            "journals/tvcg/BorkinGPMMRFP11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LedergerberGMBP08",
+            "journals/tvcg/JeongBHVPW09",
+            "journals/tvcg/MeyerMP09",
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/SunkavalliJKCP12",
+            "journals/tvcg/GratzlLGPS13",
+            "journals/tvcg/BorkinVBISOP13",
+            "journals/tvcg/LexGSVP14",
+            "journals/tvcg/JeongSTFMWRLP10",
+            "journals/tvcg/RayPSC99",
+            "journals/tvcg/Al-AwamiBSKLPH14",
+            "journals/tvcg/BorkinYBMGSP13",
+            "journals/tvcg/ChoiCQHPJ14",
+            "journals/tvcg/FeketeHMMP10",
+            "journals/tvcg/BeyerAKLPH13",
+            "journals/tvcg/WeyrichPG05"
+          ],
+          "chi_publications": 1,
+          "id": "Hanspeter_Pfister"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 327,
+        "properties": {
+          "tvcg_papers": [
+            "journals/tvcg/HamWV09",
+            "journals/tvcg/HamMMSW11",
+            "journals/tvcg/HamP09",
+            "journals/tvcg/ViegasWHKM07",
+            "journals/tvcg/HamWW02",
+            "journals/tvcg/FeketeHMMP10",
+            "journals/tvcg/HamR08",
+            "journals/tvcg/AbelloHK06"
+          ],
+          "cited": 56,
+          "id": "Frank_van_Ham",
+          "name": "Frank van Ham",
+          "tvcg_publications": 8
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1699,
+        "properties": {
+          "name": "Adam Perer",
+          "chi_papers": [
+            "conf/chi/2008beliv",
+            "conf/chi/BertiniLP10",
+            "conf/chi/BertiniPPS08",
+            "conf/chi/PererG13",
+            "conf/chi/Perer06",
+            "conf/chi/PererS08",
+            "conf/chi/MullerEMPRG12",
+            "conf/chi/GuyPDGT11"
+          ],
+          "cited": 13,
+          "tvcg_publications": 5,
+          "tvcg_papers": [
+            "journals/tvcg/KrausePB14",
+            "journals/tvcg/PererS06",
+            "journals/tvcg/HamP09",
+            "journals/tvcg/PererGURJ13",
+            "journals/tvcg/StolperPG14"
+          ],
+          "chi_publications": 8,
+          "id": "Adam_Perer"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1180,
+        "properties": {
+          "name": "Ben Shneiderman",
+          "chi_papers": [
+            "conf/chi/MillerMS97",
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/HourcadeBFNSZ11",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/KangS03",
+            "conf/chi/ScholtzJSHGPW02",
+            "conf/chi/AhlbergS94b",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/ButlerPSBZ11",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/JamesLSBMNS02",
+            "conf/chi/AhlbergS94a",
+            "conf/chi/PlaisantS95",
+            "conf/chi/HochheiserS02",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/AhlbergS94",
+            "conf/chi/FischerJMRS09",
+            "conf/chi/BusseBMHNPSN13",
+            "conf/chi/AsahiTS95",
+            "conf/chi/DunneS13",
+            "conf/chi/MyersCMSS91",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/PererS08",
+            "conf/chi/FriedmanLSSW94",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/AhlbergS94c",
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/AhlbergWS92",
+            "conf/chi/ShneidermanCNTW02",
+            "conf/chi/PlaisantS91",
+            "conf/chi/ShneidermanWA92",
+            "conf/chi/KandoganS97",
+            "conf/chi/RieckenMSS95",
+            "conf/chi/AhlbergS94d",
+            "conf/chi/DonBLS92",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 52,
+          "tvcg_publications": 8,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/KangGSBL08",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/PererS06",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/ShneidermanA06",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/SeoS06"
+          ],
+          "chi_publications": 38,
+          "id": "Ben_Shneiderman"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 155,
+        "type": "CoAuthor",
+        "sourceNodeId": 655,
+        "id": 10289807,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/PartlLSSWPS14"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 327,
+        "type": "CoAuthor",
+        "sourceNodeId": 155,
+        "id": 10289479,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/FeketeHMMP10"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 1699,
+        "type": "CoAuthor",
+        "sourceNodeId": 327,
+        "id": 21563043,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/HamP09"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 1699,
+        "type": "CoAuthor",
+        "sourceNodeId": 1180,
+        "id": 77465251,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/PererS06"
+          ],
+          "chi_papers": [
+            "conf/chi/PererS08"
+          ]
+        }
+      }
+    ],
+    "weight": 5,
+    "id": 0
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 655,
+        "properties": {
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexPKSGWSP13"
+          ],
+          "cited": 4,
+          "id": "Christian_Partl",
+          "name": "Christian Partl",
+          "tvcg_publications": 4
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 155,
+        "properties": {
+          "name": "Hanspeter Pfister",
+          "chi_papers": [
+            "conf/chi/KimBBOGP15"
+          ],
+          "cited": 40,
+          "tvcg_publications": 25,
+          "tvcg_papers": [
+            "journals/tvcg/HadwigerBJP12",
+            "journals/tvcg/GratzlGLPS14",
+            "journals/tvcg/HaehnKRBKLP14",
+            "journals/tvcg/MeyerWKLP08",
+            "journals/tvcg/ZwickerPBG02",
+            "journals/tvcg/JohnsonDAPFM11",
+            "journals/tvcg/MeyerMDP10",
+            "journals/tvcg/BorkinGPMMRFP11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LedergerberGMBP08",
+            "journals/tvcg/JeongBHVPW09",
+            "journals/tvcg/MeyerMP09",
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/SunkavalliJKCP12",
+            "journals/tvcg/GratzlLGPS13",
+            "journals/tvcg/BorkinVBISOP13",
+            "journals/tvcg/LexGSVP14",
+            "journals/tvcg/JeongSTFMWRLP10",
+            "journals/tvcg/RayPSC99",
+            "journals/tvcg/Al-AwamiBSKLPH14",
+            "journals/tvcg/BorkinYBMGSP13",
+            "journals/tvcg/ChoiCQHPJ14",
+            "journals/tvcg/FeketeHMMP10",
+            "journals/tvcg/BeyerAKLPH13",
+            "journals/tvcg/WeyrichPG05"
+          ],
+          "chi_publications": 1,
+          "id": "Hanspeter_Pfister"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 6199,
+        "properties": {
+          "name": "Krzysztof Z. Gajos",
+          "chi_papers": [
+            "conf/chi/KimBBOGP15",
+            "conf/chi/GajosETCW08",
+            "conf/chi/ReineckeG14",
+            "conf/chi/SpauldingGJKBH09",
+            "conf/chi/KimMG13",
+            "conf/chi/GajosWW08",
+            "conf/chi/JayatilakaBSG11",
+            "conf/chi/AmirGGSS15",
+            "conf/chi/KimNWGMG14",
+            "conf/chi/FlatlaRGG13a",
+            "conf/chi/FlatlaRGG13",
+            "conf/chi/KomarovRG13",
+            "conf/chi/ReineckeYMMZLG13",
+            "conf/chi/ReineckeFSGGH13"
+          ],
+          "tvcg_publications": 1,
+          "tvcg_papers": [
+            "journals/tvcg/BorkinYBMGSP13"
+          ],
+          "chi_publications": 14,
+          "id": "Krzysztof_Z._Gajos"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 299,
+        "properties": {
+          "name": "Desney S. Tan",
+          "chi_papers": [
+            "conf/chi/2008a",
+            "conf/chi/FogartyTKW08",
+            "conf/chi/HinckleyZSBCST07",
+            "conf/chi/TanRC01",
+            "conf/chi/VardoulakisKMSGT12",
+            "conf/chi/AdarTT13",
+            "conf/chi/AmershiFKT10",
+            "conf/chi/HarrisonTM10",
+            "conf/chi/NijholtTAMG08",
+            "conf/chi/KendallMT15",
+            "conf/chi/GrimesTHSR08",
+            "conf/chi/GajosETCW08",
+            "conf/chi/2011",
+            "conf/chi/KimCZT12",
+            "conf/chi/2008",
+            "conf/chi/KapoorLTH10",
+            "conf/chi/MatthewsCRT06",
+            "conf/chi/LeeSRCT09",
+            "conf/chi/TanPSP02",
+            "conf/chi/TanMC04",
+            "conf/chi/SaponasTMB08",
+            "conf/chi/2011a",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/TanCR03",
+            "conf/chi/WilcoxMTG10",
+            "conf/chi/TanGSP04",
+            "conf/chi/TanP02",
+            "conf/chi/ShenoyT08",
+            "conf/chi/CohnMPT11",
+            "conf/chi/TanGSP03",
+            "conf/chi/SeukenJTC10",
+            "conf/chi/WilcoxMTGH11",
+            "conf/chi/GirouardSMTNJ10",
+            "conf/chi/TalbotLKT09",
+            "conf/chi/BiehlBBTIC08",
+            "conf/chi/SaponasTMTL10",
+            "conf/chi/BadshahGMPT12",
+            "conf/chi/GuptaMPT12",
+            "conf/chi/TanC03",
+            "conf/chi/CzerwinskiTR02",
+            "conf/chi/CzerwinskiRMSRT06",
+            "conf/chi/schraefelWAT09",
+            "conf/chi/BrushMTC07",
+            "conf/chi/CohnMPT12"
+          ],
+          "cited": 6,
+          "tvcg_publications": 2,
+          "tvcg_papers": [
+            "journals/tvcg/SmithCMRRT06",
+            "journals/tvcg/TanSLR07"
+          ],
+          "chi_publications": 44,
+          "id": "Desney_S._Tan"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1180,
+        "properties": {
+          "name": "Ben Shneiderman",
+          "chi_papers": [
+            "conf/chi/MillerMS97",
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/HourcadeBFNSZ11",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/KangS03",
+            "conf/chi/ScholtzJSHGPW02",
+            "conf/chi/AhlbergS94b",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/ButlerPSBZ11",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/JamesLSBMNS02",
+            "conf/chi/AhlbergS94a",
+            "conf/chi/PlaisantS95",
+            "conf/chi/HochheiserS02",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/AhlbergS94",
+            "conf/chi/FischerJMRS09",
+            "conf/chi/BusseBMHNPSN13",
+            "conf/chi/AsahiTS95",
+            "conf/chi/DunneS13",
+            "conf/chi/MyersCMSS91",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/PererS08",
+            "conf/chi/FriedmanLSSW94",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/AhlbergS94c",
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/AhlbergWS92",
+            "conf/chi/ShneidermanCNTW02",
+            "conf/chi/PlaisantS91",
+            "conf/chi/ShneidermanWA92",
+            "conf/chi/KandoganS97",
+            "conf/chi/RieckenMSS95",
+            "conf/chi/AhlbergS94d",
+            "conf/chi/DonBLS92",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 52,
+          "tvcg_publications": 8,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/KangGSBL08",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/PererS06",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/ShneidermanA06",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/SeoS06"
+          ],
+          "chi_publications": 38,
+          "id": "Ben_Shneiderman"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 155,
+        "type": "CoAuthor",
+        "sourceNodeId": 655,
+        "id": 10289807,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/PartlLSSWPS14"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 6199,
+        "type": "CoAuthor",
+        "sourceNodeId": 155,
+        "id": 10295351,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/BorkinYBMGSP13"
+          ],
+          "chi_papers": [
+            "conf/chi/KimBBOGP15"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 299,
+        "type": "CoAuthor",
+        "sourceNodeId": 6199,
+        "id": 19732535,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/GajosETCW08"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 299,
+        "type": "CoAuthor",
+        "sourceNodeId": 1180,
+        "id": 19727516,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/schraefelAWTBCJKDMMSSW09"
+          ]
+        }
+      }
+    ],
+    "weight": 5,
+    "id": 1
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 655,
+        "properties": {
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexPKSGWSP13"
+          ],
+          "cited": 4,
+          "id": "Christian_Partl",
+          "name": "Christian Partl",
+          "tvcg_publications": 4
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 657,
+        "properties": {
+          "name": "Dieter Schmalstieg",
+          "chi_papers": [
+            "conf/chi/WaldnerSGS11",
+            "conf/chi/GrubertHQS15",
+            "conf/chi/MohrKDSK15",
+            "conf/chi/GeymayerSLSS14",
+            "conf/chi/MulloniSDBS12",
+            "conf/chi/SchauflerMS96",
+            "conf/chi/VeasMFS11"
+          ],
+          "cited": 16,
+          "tvcg_publications": 15,
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/KalkofenMS09",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/StreitSLSS12",
+            "journals/tvcg/Schmalstieg13",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/VenturaARS14",
+            "journals/tvcg/CoquillartLS13a",
+            "journals/tvcg/CoquillartLS13",
+            "journals/tvcg/VeasGKS12",
+            "journals/tvcg/KhlebnikovKMS11",
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/WagnerRMDS10",
+            "journals/tvcg/SteinbergerWSLS11",
+            "journals/tvcg/KhlebnikovKSS13"
+          ],
+          "chi_publications": 7,
+          "id": "Dieter_Schmalstieg"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 8883,
+        "properties": {
+          "chi_publications": 59,
+          "id": "Patrick_Baudisch",
+          "chi_papers": [
+            "conf/chi/HinckleyZSBCST07",
+            "conf/chi/ChanMRB12",
+            "conf/chi/BaudischR03",
+            "conf/chi/BaudischG04",
+            "conf/chi/AshbrookBW11",
+            "conf/chi/HuynhDBW05",
+            "conf/chi/BenkoWB06",
+            "conf/chi/BaudischCHG04",
+            "conf/chi/ChengLLSB14a",
+            "conf/chi/BranzelHHSKLM0B13a",
+            "conf/chi/GustafsonRB13",
+            "conf/chi/VogelB07",
+            "conf/chi/SchmidtRPJKPRRSSYB14",
+            "conf/chi/BranzelHHSKLM0B13",
+            "conf/chi/MuellerMGFRB14",
+            "conf/chi/MuellerBMGTPGFC15",
+            "conf/chi/ZhaoDCBB07",
+            "conf/chi/BaudischG02",
+            "conf/chi/LopesB13",
+            "conf/chi/RichterHB12",
+            "conf/chi/RoudautRSPLB13",
+            "conf/chi/SchmidtFKMPRSWB15",
+            "conf/chi/LopesIMHJB15",
+            "conf/chi/TerrenghiMBMPTB06",
+            "conf/chi/SchmidtKMUKCB15a",
+            "conf/chi/BaudischC09",
+            "conf/chi/GoodSBB02",
+            "conf/chi/BoringBBGB10",
+            "conf/chi/BaudischGBS02",
+            "conf/chi/HinckleyGBSAC06",
+            "conf/chi/BaudischBR10",
+            "conf/chi/GrossmanHBAB06",
+            "conf/chi/MulloniSDBS12",
+            "conf/chi/MuellerLKKB13",
+            "conf/chi/SchmidtKMUKCB15",
+            "conf/chi/BaudischPRWLKKSH14",
+            "conf/chi/MuellerKB13",
+            "conf/chi/LamB05",
+            "conf/chi/MuellerMGFB14",
+            "conf/chi/LiBH08",
+            "conf/chi/HolzB11",
+            "conf/chi/LopesIMHJB15a",
+            "conf/chi/ChengLLSB14",
+            "conf/chi/RudeckB12",
+            "conf/chi/BaudischCHE05",
+            "conf/chi/ZellwegerMGSB03",
+            "conf/chi/GustafsonBGI08",
+            "conf/chi/HolzB10",
+            "conf/chi/IonWB15",
+            "conf/chi/BaudischSW07",
+            "conf/chi/HoffmannBW08",
+            "conf/chi/RoudautPB11",
+            "conf/chi/MullerKB13",
+            "conf/chi/BaudischPB04",
+            "conf/chi/SmithsB05",
+            "conf/chi/LopesJB15",
+            "conf/chi/BeyerGMCB15",
+            "conf/chi/MuellerMGFB14a",
+            "conf/chi/HinckleyBRG05"
+          ],
+          "name": "Patrick Baudisch"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 299,
+        "properties": {
+          "name": "Desney S. Tan",
+          "chi_papers": [
+            "conf/chi/2008a",
+            "conf/chi/FogartyTKW08",
+            "conf/chi/HinckleyZSBCST07",
+            "conf/chi/TanRC01",
+            "conf/chi/VardoulakisKMSGT12",
+            "conf/chi/AdarTT13",
+            "conf/chi/AmershiFKT10",
+            "conf/chi/HarrisonTM10",
+            "conf/chi/NijholtTAMG08",
+            "conf/chi/KendallMT15",
+            "conf/chi/GrimesTHSR08",
+            "conf/chi/GajosETCW08",
+            "conf/chi/2011",
+            "conf/chi/KimCZT12",
+            "conf/chi/2008",
+            "conf/chi/KapoorLTH10",
+            "conf/chi/MatthewsCRT06",
+            "conf/chi/LeeSRCT09",
+            "conf/chi/TanPSP02",
+            "conf/chi/TanMC04",
+            "conf/chi/SaponasTMB08",
+            "conf/chi/2011a",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/TanCR03",
+            "conf/chi/WilcoxMTG10",
+            "conf/chi/TanGSP04",
+            "conf/chi/TanP02",
+            "conf/chi/ShenoyT08",
+            "conf/chi/CohnMPT11",
+            "conf/chi/TanGSP03",
+            "conf/chi/SeukenJTC10",
+            "conf/chi/WilcoxMTGH11",
+            "conf/chi/GirouardSMTNJ10",
+            "conf/chi/TalbotLKT09",
+            "conf/chi/BiehlBBTIC08",
+            "conf/chi/SaponasTMTL10",
+            "conf/chi/BadshahGMPT12",
+            "conf/chi/GuptaMPT12",
+            "conf/chi/TanC03",
+            "conf/chi/CzerwinskiTR02",
+            "conf/chi/CzerwinskiRMSRT06",
+            "conf/chi/schraefelWAT09",
+            "conf/chi/BrushMTC07",
+            "conf/chi/CohnMPT12"
+          ],
+          "cited": 6,
+          "tvcg_publications": 2,
+          "tvcg_papers": [
+            "journals/tvcg/SmithCMRRT06",
+            "journals/tvcg/TanSLR07"
+          ],
+          "chi_publications": 44,
+          "id": "Desney_S._Tan"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1180,
+        "properties": {
+          "name": "Ben Shneiderman",
+          "chi_papers": [
+            "conf/chi/MillerMS97",
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/HourcadeBFNSZ11",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/KangS03",
+            "conf/chi/ScholtzJSHGPW02",
+            "conf/chi/AhlbergS94b",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/ButlerPSBZ11",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/JamesLSBMNS02",
+            "conf/chi/AhlbergS94a",
+            "conf/chi/PlaisantS95",
+            "conf/chi/HochheiserS02",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/AhlbergS94",
+            "conf/chi/FischerJMRS09",
+            "conf/chi/BusseBMHNPSN13",
+            "conf/chi/AsahiTS95",
+            "conf/chi/DunneS13",
+            "conf/chi/MyersCMSS91",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/PererS08",
+            "conf/chi/FriedmanLSSW94",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/AhlbergS94c",
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/AhlbergWS92",
+            "conf/chi/ShneidermanCNTW02",
+            "conf/chi/PlaisantS91",
+            "conf/chi/ShneidermanWA92",
+            "conf/chi/KandoganS97",
+            "conf/chi/RieckenMSS95",
+            "conf/chi/AhlbergS94d",
+            "conf/chi/DonBLS92",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 52,
+          "tvcg_publications": 8,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/KangGSBL08",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/PererS06",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/ShneidermanA06",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/SeoS06"
+          ],
+          "chi_publications": 38,
+          "id": "Ben_Shneiderman"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 657,
+        "type": "CoAuthor",
+        "sourceNodeId": 655,
+        "id": 43057809,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/LexSPKS10"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 8883,
+        "type": "CoAuthor",
+        "sourceNodeId": 657,
+        "id": 43197107,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/MulloniSDBS12"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 299,
+        "type": "CoAuthor",
+        "sourceNodeId": 8883,
+        "id": 19735219,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/HinckleyZSBCST07"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 299,
+        "type": "CoAuthor",
+        "sourceNodeId": 1180,
+        "id": 19727516,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/schraefelAWTBCJKDMMSSW09"
+          ]
+        }
+      }
+    ],
+    "weight": 5,
+    "id": 2
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 655,
+        "properties": {
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexPKSGWSP13"
+          ],
+          "cited": 4,
+          "id": "Christian_Partl",
+          "name": "Christian Partl",
+          "tvcg_publications": 4
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 155,
+        "properties": {
+          "name": "Hanspeter Pfister",
+          "chi_papers": [
+            "conf/chi/KimBBOGP15"
+          ],
+          "cited": 40,
+          "tvcg_publications": 25,
+          "tvcg_papers": [
+            "journals/tvcg/HadwigerBJP12",
+            "journals/tvcg/GratzlGLPS14",
+            "journals/tvcg/HaehnKRBKLP14",
+            "journals/tvcg/MeyerWKLP08",
+            "journals/tvcg/ZwickerPBG02",
+            "journals/tvcg/JohnsonDAPFM11",
+            "journals/tvcg/MeyerMDP10",
+            "journals/tvcg/BorkinGPMMRFP11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LedergerberGMBP08",
+            "journals/tvcg/JeongBHVPW09",
+            "journals/tvcg/MeyerMP09",
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/SunkavalliJKCP12",
+            "journals/tvcg/GratzlLGPS13",
+            "journals/tvcg/BorkinVBISOP13",
+            "journals/tvcg/LexGSVP14",
+            "journals/tvcg/JeongSTFMWRLP10",
+            "journals/tvcg/RayPSC99",
+            "journals/tvcg/Al-AwamiBSKLPH14",
+            "journals/tvcg/BorkinYBMGSP13",
+            "journals/tvcg/ChoiCQHPJ14",
+            "journals/tvcg/FeketeHMMP10",
+            "journals/tvcg/BeyerAKLPH13",
+            "journals/tvcg/WeyrichPG05"
+          ],
+          "chi_publications": 1,
+          "id": "Hanspeter_Pfister"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 140,
+        "properties": {
+          "name": "Jean-Daniel Fekete",
+          "chi_papers": [
+            "conf/chi/BoyDF15",
+            "conf/chi/FeketeP99",
+            "conf/chi/PerinVF14",
+            "conf/chi/JansenDF12",
+            "conf/chi/AppertF06",
+            "conf/chi/IsenbergKLFD12",
+            "conf/chi/ChevalierDBF10",
+            "conf/chi/AlperBRIF13",
+            "conf/chi/RooneyEFHN13",
+            "conf/chi/BachPF14",
+            "conf/chi/MackayABCDFG07",
+            "conf/chi/JansenDF13",
+            "conf/chi/SwaminathanSJDOF14",
+            "conf/chi/ElmqvistHRF08",
+            "conf/chi/DragicevicBJEF11",
+            "conf/chi/FeketeEG09",
+            "conf/chi/MoscovichCHPF09",
+            "conf/chi/SwaminathanSJDOF14a",
+            "conf/chi/PerinVF13"
+          ],
+          "cited": 91,
+          "tvcg_publications": 21,
+          "tvcg_papers": [
+            "journals/tvcg/BattistaFQ12",
+            "journals/tvcg/ElmqvistDF08",
+            "journals/tvcg/HenryF06",
+            "journals/tvcg/HuronVF13",
+            "journals/tvcg/MicallefDF12",
+            "journals/tvcg/BezerianosDFBW10",
+            "journals/tvcg/IsenbergDWBF13",
+            "journals/tvcg/BoukhelifaBIF12",
+            "journals/tvcg/BachPF14",
+            "journals/tvcg/HenryBF08",
+            "journals/tvcg/IsenbergB11",
+            "journals/tvcg/ElmqvistDF11",
+            "journals/tvcg/BoyRBF14",
+            "journals/tvcg/ElmqvistRRF10",
+            "journals/tvcg/HenryFM07",
+            "journals/tvcg/GoffinWFI14",
+            "journals/tvcg/FeketeHMMP10",
+            "journals/tvcg/PerinDF14",
+            "journals/tvcg/PerinVF13",
+            "journals/tvcg/ElmqvistF10",
+            "journals/tvcg/PlaisantFG08"
+          ],
+          "chi_publications": 19,
+          "id": "Jean-Daniel_Fekete"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1179,
+        "properties": {
+          "name": "Catherine Plaisant",
+          "chi_papers": [
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/FeketeP99",
+            "conf/chi/2008beliv",
+            "conf/chi/PlaisantMBKC97",
+            "conf/chi/HutchinsonMWBDPBCEHRE03",
+            "conf/chi/PlaisantDH02",
+            "conf/chi/1994c",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/BertiniPPS08",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/PlaisantS95",
+            "conf/chi/PlaisantJ94",
+            "conf/chi/PlaisantW92",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/EllisRP97",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/PlaisantS91",
+            "conf/chi/HurterGRP11",
+            "conf/chi/PlaisantCH93",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 12,
+          "tvcg_publications": 7,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/LeePPBVGK06",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/LamBIPC12",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/PlaisantFG08"
+          ],
+          "chi_publications": 22,
+          "id": "Catherine_Plaisant"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1180,
+        "properties": {
+          "name": "Ben Shneiderman",
+          "chi_papers": [
+            "conf/chi/MillerMS97",
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/HourcadeBFNSZ11",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/KangS03",
+            "conf/chi/ScholtzJSHGPW02",
+            "conf/chi/AhlbergS94b",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/ButlerPSBZ11",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/JamesLSBMNS02",
+            "conf/chi/AhlbergS94a",
+            "conf/chi/PlaisantS95",
+            "conf/chi/HochheiserS02",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/AhlbergS94",
+            "conf/chi/FischerJMRS09",
+            "conf/chi/BusseBMHNPSN13",
+            "conf/chi/AsahiTS95",
+            "conf/chi/DunneS13",
+            "conf/chi/MyersCMSS91",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/PererS08",
+            "conf/chi/FriedmanLSSW94",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/AhlbergS94c",
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/AhlbergWS92",
+            "conf/chi/ShneidermanCNTW02",
+            "conf/chi/PlaisantS91",
+            "conf/chi/ShneidermanWA92",
+            "conf/chi/KandoganS97",
+            "conf/chi/RieckenMSS95",
+            "conf/chi/AhlbergS94d",
+            "conf/chi/DonBLS92",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 52,
+          "tvcg_publications": 8,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/KangGSBL08",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/PererS06",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/ShneidermanA06",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/SeoS06"
+          ],
+          "chi_publications": 38,
+          "id": "Ben_Shneiderman"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 155,
+        "type": "CoAuthor",
+        "sourceNodeId": 655,
+        "id": 10289807,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/PartlLSSWPS14"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 140,
+        "type": "CoAuthor",
+        "sourceNodeId": 155,
+        "id": 9306267,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/FeketeHMMP10"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 1179,
+        "type": "CoAuthor",
+        "sourceNodeId": 140,
+        "id": 9307291,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/PlaisantFG08"
+          ],
+          "chi_papers": [
+            "conf/chi/FeketeP99"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 1179,
+        "type": "CoAuthor",
+        "sourceNodeId": 1180,
+        "id": 77399196,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/WangPSSRMMS09"
+          ],
+          "chi_papers": [
+            "conf/chi/WangPQSMS08",
+            "conf/chi/PlaisantS91",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/FreirePSG10",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/PlaisantS95",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/WongsuphasawatGPWTS11a"
+          ]
+        }
+      }
+    ],
+    "weight": 5,
+    "id": 3
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 655,
+        "properties": {
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexPKSGWSP13"
+          ],
+          "cited": 4,
+          "id": "Christian_Partl",
+          "name": "Christian Partl",
+          "tvcg_publications": 4
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 155,
+        "properties": {
+          "name": "Hanspeter Pfister",
+          "chi_papers": [
+            "conf/chi/KimBBOGP15"
+          ],
+          "cited": 40,
+          "tvcg_publications": 25,
+          "tvcg_papers": [
+            "journals/tvcg/HadwigerBJP12",
+            "journals/tvcg/GratzlGLPS14",
+            "journals/tvcg/HaehnKRBKLP14",
+            "journals/tvcg/MeyerWKLP08",
+            "journals/tvcg/ZwickerPBG02",
+            "journals/tvcg/JohnsonDAPFM11",
+            "journals/tvcg/MeyerMDP10",
+            "journals/tvcg/BorkinGPMMRFP11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LedergerberGMBP08",
+            "journals/tvcg/JeongBHVPW09",
+            "journals/tvcg/MeyerMP09",
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/SunkavalliJKCP12",
+            "journals/tvcg/GratzlLGPS13",
+            "journals/tvcg/BorkinVBISOP13",
+            "journals/tvcg/LexGSVP14",
+            "journals/tvcg/JeongSTFMWRLP10",
+            "journals/tvcg/RayPSC99",
+            "journals/tvcg/Al-AwamiBSKLPH14",
+            "journals/tvcg/BorkinYBMGSP13",
+            "journals/tvcg/ChoiCQHPJ14",
+            "journals/tvcg/FeketeHMMP10",
+            "journals/tvcg/BeyerAKLPH13",
+            "journals/tvcg/WeyrichPG05"
+          ],
+          "chi_publications": 1,
+          "id": "Hanspeter_Pfister"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 2366,
+        "properties": {
+          "name": "Krzysztof Gajos",
+          "chi_papers": [
+            "conf/chi/ZhangLMGPH12",
+            "conf/chi/OhFKAGMD02",
+            "conf/chi/RichterNGS06",
+            "conf/chi/HurstGFWST11",
+            "conf/chi/GajosRH12"
+          ],
+          "cited": 3,
+          "tvcg_publications": 1,
+          "tvcg_papers": [
+            "journals/tvcg/BorkinGPMMRFP11"
+          ],
+          "chi_publications": 5,
+          "id": "Krzysztof_Gajos"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 12561,
+        "properties": {
+          "chi_publications": 15,
+          "id": "Jeffrey_Nichols",
+          "chi_papers": [
+            "conf/chi/MyersBNPKML02",
+            "conf/chi/BrooksGNPP12",
+            "conf/chi/NicholsCM07",
+            "conf/chi/NicholsMHHHRL03",
+            "conf/chi/ShamiNC14",
+            "conf/chi/RichterNGS06",
+            "conf/chi/WiltseN09",
+            "conf/chi/CypherLND09",
+            "conf/chi/NicholsMR06",
+            "conf/chi/PalanquePNNM13",
+            "conf/chi/ZhouNDLGP14",
+            "conf/chi/HsiehCMN14",
+            "conf/chi/WilsonMCBN12",
+            "conf/chi/LiNLDC10",
+            "conf/chi/Nichols02"
+          ],
+          "name": "Jeffrey Nichols"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 7652,
+        "properties": {
+          "chi_publications": 15,
+          "id": "Jennifer_Golbeck",
+          "chi_papers": [
+            "conf/chi/Golbeck12a",
+            "conf/chi/ShrotRGK14",
+            "conf/chi/Golbeck12",
+            "conf/chi/WalshG10",
+            "conf/chi/GolbeckRT11",
+            "conf/chi/GolbeckN12",
+            "conf/chi/WalshG14",
+            "conf/chi/FreirePSG10",
+            "conf/chi/HansenG09",
+            "conf/chi/ZhouNDLGP14",
+            "conf/chi/GolbeckN12a",
+            "conf/chi/GolbeckH11",
+            "conf/chi/GolbeckW07",
+            "conf/chi/schraefelGDBR08",
+            "conf/chi/Golbeck09"
+          ],
+          "name": "Jennifer Golbeck"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1180,
+        "properties": {
+          "name": "Ben Shneiderman",
+          "chi_papers": [
+            "conf/chi/MillerMS97",
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/HourcadeBFNSZ11",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/KangS03",
+            "conf/chi/ScholtzJSHGPW02",
+            "conf/chi/AhlbergS94b",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/ButlerPSBZ11",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/JamesLSBMNS02",
+            "conf/chi/AhlbergS94a",
+            "conf/chi/PlaisantS95",
+            "conf/chi/HochheiserS02",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/AhlbergS94",
+            "conf/chi/FischerJMRS09",
+            "conf/chi/BusseBMHNPSN13",
+            "conf/chi/AsahiTS95",
+            "conf/chi/DunneS13",
+            "conf/chi/MyersCMSS91",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/PererS08",
+            "conf/chi/FriedmanLSSW94",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/AhlbergS94c",
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/AhlbergWS92",
+            "conf/chi/ShneidermanCNTW02",
+            "conf/chi/PlaisantS91",
+            "conf/chi/ShneidermanWA92",
+            "conf/chi/KandoganS97",
+            "conf/chi/RieckenMSS95",
+            "conf/chi/AhlbergS94d",
+            "conf/chi/DonBLS92",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 52,
+          "tvcg_publications": 8,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/KangGSBL08",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/PererS06",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/ShneidermanA06",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/SeoS06"
+          ],
+          "chi_publications": 38,
+          "id": "Ben_Shneiderman"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 155,
+        "type": "CoAuthor",
+        "sourceNodeId": 655,
+        "id": 10289807,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/PartlLSSWPS14"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 2366,
+        "type": "CoAuthor",
+        "sourceNodeId": 155,
+        "id": 10291518,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/BorkinGPMMRFP11"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 12561,
+        "type": "CoAuthor",
+        "sourceNodeId": 2366,
+        "id": 155201809,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/RichterNGS06"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 12561,
+        "type": "CoAuthor",
+        "sourceNodeId": 7652,
+        "id": 501625105,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/ZhouNDLGP14"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 7652,
+        "type": "CoAuthor",
+        "sourceNodeId": 1180,
+        "id": 77471204,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/FreirePSG10"
+          ]
+        }
+      }
+    ],
+    "weight": 6,
+    "id": 4
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 655,
+        "properties": {
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexPKSGWSP13"
+          ],
+          "cited": 4,
+          "id": "Christian_Partl",
+          "name": "Christian Partl",
+          "tvcg_publications": 4
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 657,
+        "properties": {
+          "name": "Dieter Schmalstieg",
+          "chi_papers": [
+            "conf/chi/WaldnerSGS11",
+            "conf/chi/GrubertHQS15",
+            "conf/chi/MohrKDSK15",
+            "conf/chi/GeymayerSLSS14",
+            "conf/chi/MulloniSDBS12",
+            "conf/chi/SchauflerMS96",
+            "conf/chi/VeasMFS11"
+          ],
+          "cited": 16,
+          "tvcg_publications": 15,
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/KalkofenMS09",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/StreitSLSS12",
+            "journals/tvcg/Schmalstieg13",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/VenturaARS14",
+            "journals/tvcg/CoquillartLS13a",
+            "journals/tvcg/CoquillartLS13",
+            "journals/tvcg/VeasGKS12",
+            "journals/tvcg/KhlebnikovKMS11",
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/WagnerRMDS10",
+            "journals/tvcg/SteinbergerWSLS11",
+            "journals/tvcg/KhlebnikovKSS13"
+          ],
+          "chi_publications": 7,
+          "id": "Dieter_Schmalstieg"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 332,
+        "properties": {
+          "name": "Steven Feiner",
+          "chi_papers": [
+            "conf/chi/WhiteF10",
+            "conf/chi/WhiteMF07",
+            "conf/chi/WilcoxLLFJ09",
+            "conf/chi/OdaF10",
+            "conf/chi/IshakF07",
+            "conf/chi/BlaskoF04",
+            "conf/chi/BaurBF12",
+            "conf/chi/KurlanderF91",
+            "conf/chi/WilcoxLLFJ10",
+            "conf/chi/ZhouF98",
+            "conf/chi/KurlanderF92",
+            "conf/chi/Feiner96",
+            "conf/chi/WhiteF09",
+            "conf/chi/BlaskoNF06",
+            "conf/chi/BenkoF05",
+            "conf/chi/FeinerM91",
+            "conf/chi/VeasMFS11",
+            "conf/chi/OlwalFH08",
+            "conf/chi/SukanF12"
+          ],
+          "tvcg_publications": 4,
+          "tvcg_papers": [
+            "journals/tvcg/CoquillartFK12",
+            "journals/tvcg/LuDFZ14",
+            "journals/tvcg/HendersonF11",
+            "journals/tvcg/HendersonF10"
+          ],
+          "chi_publications": 19,
+          "id": "Steven_Feiner"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 3817,
+        "properties": {
+          "name": "Michelle X. Zhou",
+          "chi_papers": [
+            "conf/chi/LiaoPZM10",
+            "conf/chi/YaroshMZ12",
+            "conf/chi/ChiZYXYS10",
+            "conf/chi/GouZY14",
+            "conf/chi/ZhouF98",
+            "conf/chi/WangGXZYB15",
+            "conf/chi/MatthewsWBSMEZL13",
+            "conf/chi/ZhouNDLGP14",
+            "conf/chi/ChiZXYW11"
+          ],
+          "cited": 1,
+          "tvcg_publications": 1,
+          "tvcg_papers": [
+            "journals/tvcg/WenZ08"
+          ],
+          "chi_publications": 9,
+          "id": "Michelle_X._Zhou"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 7652,
+        "properties": {
+          "chi_publications": 15,
+          "id": "Jennifer_Golbeck",
+          "chi_papers": [
+            "conf/chi/Golbeck12a",
+            "conf/chi/ShrotRGK14",
+            "conf/chi/Golbeck12",
+            "conf/chi/WalshG10",
+            "conf/chi/GolbeckRT11",
+            "conf/chi/GolbeckN12",
+            "conf/chi/WalshG14",
+            "conf/chi/FreirePSG10",
+            "conf/chi/HansenG09",
+            "conf/chi/ZhouNDLGP14",
+            "conf/chi/GolbeckN12a",
+            "conf/chi/GolbeckH11",
+            "conf/chi/GolbeckW07",
+            "conf/chi/schraefelGDBR08",
+            "conf/chi/Golbeck09"
+          ],
+          "name": "Jennifer Golbeck"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1180,
+        "properties": {
+          "name": "Ben Shneiderman",
+          "chi_papers": [
+            "conf/chi/MillerMS97",
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/HourcadeBFNSZ11",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/KangS03",
+            "conf/chi/ScholtzJSHGPW02",
+            "conf/chi/AhlbergS94b",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/ButlerPSBZ11",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/JamesLSBMNS02",
+            "conf/chi/AhlbergS94a",
+            "conf/chi/PlaisantS95",
+            "conf/chi/HochheiserS02",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/AhlbergS94",
+            "conf/chi/FischerJMRS09",
+            "conf/chi/BusseBMHNPSN13",
+            "conf/chi/AsahiTS95",
+            "conf/chi/DunneS13",
+            "conf/chi/MyersCMSS91",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/PererS08",
+            "conf/chi/FriedmanLSSW94",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/AhlbergS94c",
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/AhlbergWS92",
+            "conf/chi/ShneidermanCNTW02",
+            "conf/chi/PlaisantS91",
+            "conf/chi/ShneidermanWA92",
+            "conf/chi/KandoganS97",
+            "conf/chi/RieckenMSS95",
+            "conf/chi/AhlbergS94d",
+            "conf/chi/DonBLS92",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 52,
+          "tvcg_publications": 8,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/KangGSBL08",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/PererS06",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/ShneidermanA06",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/SeoS06"
+          ],
+          "chi_publications": 38,
+          "id": "Ben_Shneiderman"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 657,
+        "type": "CoAuthor",
+        "sourceNodeId": 655,
+        "id": 43057809,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/LexSPKS10"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 332,
+        "type": "CoAuthor",
+        "sourceNodeId": 657,
+        "id": 21889681,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/VeasMFS11"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 3817,
+        "type": "CoAuthor",
+        "sourceNodeId": 332,
+        "id": 21892841,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/ZhouF98"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 3817,
+        "type": "CoAuthor",
+        "sourceNodeId": 7652,
+        "id": 250289636,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/ZhouNDLGP14"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 7652,
+        "type": "CoAuthor",
+        "sourceNodeId": 1180,
+        "id": 77471204,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/FreirePSG10"
+          ]
+        }
+      }
+    ],
+    "weight": 6,
+    "id": 5
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 655,
+        "properties": {
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexPKSGWSP13"
+          ],
+          "cited": 4,
+          "id": "Christian_Partl",
+          "name": "Christian Partl",
+          "tvcg_publications": 4
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 155,
+        "properties": {
+          "name": "Hanspeter Pfister",
+          "chi_papers": [
+            "conf/chi/KimBBOGP15"
+          ],
+          "cited": 40,
+          "tvcg_publications": 25,
+          "tvcg_papers": [
+            "journals/tvcg/HadwigerBJP12",
+            "journals/tvcg/GratzlGLPS14",
+            "journals/tvcg/HaehnKRBKLP14",
+            "journals/tvcg/MeyerWKLP08",
+            "journals/tvcg/ZwickerPBG02",
+            "journals/tvcg/JohnsonDAPFM11",
+            "journals/tvcg/MeyerMDP10",
+            "journals/tvcg/BorkinGPMMRFP11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LedergerberGMBP08",
+            "journals/tvcg/JeongBHVPW09",
+            "journals/tvcg/MeyerMP09",
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/SunkavalliJKCP12",
+            "journals/tvcg/GratzlLGPS13",
+            "journals/tvcg/BorkinVBISOP13",
+            "journals/tvcg/LexGSVP14",
+            "journals/tvcg/JeongSTFMWRLP10",
+            "journals/tvcg/RayPSC99",
+            "journals/tvcg/Al-AwamiBSKLPH14",
+            "journals/tvcg/BorkinYBMGSP13",
+            "journals/tvcg/ChoiCQHPJ14",
+            "journals/tvcg/FeketeHMMP10",
+            "journals/tvcg/BeyerAKLPH13",
+            "journals/tvcg/WeyrichPG05"
+          ],
+          "chi_publications": 1,
+          "id": "Hanspeter_Pfister"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 140,
+        "properties": {
+          "name": "Jean-Daniel Fekete",
+          "chi_papers": [
+            "conf/chi/BoyDF15",
+            "conf/chi/FeketeP99",
+            "conf/chi/PerinVF14",
+            "conf/chi/JansenDF12",
+            "conf/chi/AppertF06",
+            "conf/chi/IsenbergKLFD12",
+            "conf/chi/ChevalierDBF10",
+            "conf/chi/AlperBRIF13",
+            "conf/chi/RooneyEFHN13",
+            "conf/chi/BachPF14",
+            "conf/chi/MackayABCDFG07",
+            "conf/chi/JansenDF13",
+            "conf/chi/SwaminathanSJDOF14",
+            "conf/chi/ElmqvistHRF08",
+            "conf/chi/DragicevicBJEF11",
+            "conf/chi/FeketeEG09",
+            "conf/chi/MoscovichCHPF09",
+            "conf/chi/SwaminathanSJDOF14a",
+            "conf/chi/PerinVF13"
+          ],
+          "cited": 91,
+          "tvcg_publications": 21,
+          "tvcg_papers": [
+            "journals/tvcg/BattistaFQ12",
+            "journals/tvcg/ElmqvistDF08",
+            "journals/tvcg/HenryF06",
+            "journals/tvcg/HuronVF13",
+            "journals/tvcg/MicallefDF12",
+            "journals/tvcg/BezerianosDFBW10",
+            "journals/tvcg/IsenbergDWBF13",
+            "journals/tvcg/BoukhelifaBIF12",
+            "journals/tvcg/BachPF14",
+            "journals/tvcg/HenryBF08",
+            "journals/tvcg/IsenbergB11",
+            "journals/tvcg/ElmqvistDF11",
+            "journals/tvcg/BoyRBF14",
+            "journals/tvcg/ElmqvistRRF10",
+            "journals/tvcg/HenryFM07",
+            "journals/tvcg/GoffinWFI14",
+            "journals/tvcg/FeketeHMMP10",
+            "journals/tvcg/PerinDF14",
+            "journals/tvcg/PerinVF13",
+            "journals/tvcg/ElmqvistF10",
+            "journals/tvcg/PlaisantFG08"
+          ],
+          "chi_publications": 19,
+          "id": "Jean-Daniel_Fekete"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1179,
+        "properties": {
+          "name": "Catherine Plaisant",
+          "chi_papers": [
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/FeketeP99",
+            "conf/chi/2008beliv",
+            "conf/chi/PlaisantMBKC97",
+            "conf/chi/HutchinsonMWBDPBCEHRE03",
+            "conf/chi/PlaisantDH02",
+            "conf/chi/1994c",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/BertiniPPS08",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/PlaisantS95",
+            "conf/chi/PlaisantJ94",
+            "conf/chi/PlaisantW92",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/EllisRP97",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/PlaisantS91",
+            "conf/chi/HurterGRP11",
+            "conf/chi/PlaisantCH93",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 12,
+          "tvcg_publications": 7,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/LeePPBVGK06",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/LamBIPC12",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/PlaisantFG08"
+          ],
+          "chi_publications": 22,
+          "id": "Catherine_Plaisant"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 7652,
+        "properties": {
+          "chi_publications": 15,
+          "id": "Jennifer_Golbeck",
+          "chi_papers": [
+            "conf/chi/Golbeck12a",
+            "conf/chi/ShrotRGK14",
+            "conf/chi/Golbeck12",
+            "conf/chi/WalshG10",
+            "conf/chi/GolbeckRT11",
+            "conf/chi/GolbeckN12",
+            "conf/chi/WalshG14",
+            "conf/chi/FreirePSG10",
+            "conf/chi/HansenG09",
+            "conf/chi/ZhouNDLGP14",
+            "conf/chi/GolbeckN12a",
+            "conf/chi/GolbeckH11",
+            "conf/chi/GolbeckW07",
+            "conf/chi/schraefelGDBR08",
+            "conf/chi/Golbeck09"
+          ],
+          "name": "Jennifer Golbeck"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1180,
+        "properties": {
+          "name": "Ben Shneiderman",
+          "chi_papers": [
+            "conf/chi/MillerMS97",
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/HourcadeBFNSZ11",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/KangS03",
+            "conf/chi/ScholtzJSHGPW02",
+            "conf/chi/AhlbergS94b",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/ButlerPSBZ11",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/JamesLSBMNS02",
+            "conf/chi/AhlbergS94a",
+            "conf/chi/PlaisantS95",
+            "conf/chi/HochheiserS02",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/AhlbergS94",
+            "conf/chi/FischerJMRS09",
+            "conf/chi/BusseBMHNPSN13",
+            "conf/chi/AsahiTS95",
+            "conf/chi/DunneS13",
+            "conf/chi/MyersCMSS91",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/PererS08",
+            "conf/chi/FriedmanLSSW94",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/AhlbergS94c",
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/AhlbergWS92",
+            "conf/chi/ShneidermanCNTW02",
+            "conf/chi/PlaisantS91",
+            "conf/chi/ShneidermanWA92",
+            "conf/chi/KandoganS97",
+            "conf/chi/RieckenMSS95",
+            "conf/chi/AhlbergS94d",
+            "conf/chi/DonBLS92",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 52,
+          "tvcg_publications": 8,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/KangGSBL08",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/PererS06",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/ShneidermanA06",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/SeoS06"
+          ],
+          "chi_publications": 38,
+          "id": "Ben_Shneiderman"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 155,
+        "type": "CoAuthor",
+        "sourceNodeId": 655,
+        "id": 10289807,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/PartlLSSWPS14"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 140,
+        "type": "CoAuthor",
+        "sourceNodeId": 155,
+        "id": 9306267,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/FeketeHMMP10"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 1179,
+        "type": "CoAuthor",
+        "sourceNodeId": 140,
+        "id": 9307291,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/PlaisantFG08"
+          ],
+          "chi_papers": [
+            "conf/chi/FeketeP99"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 1179,
+        "type": "CoAuthor",
+        "sourceNodeId": 7652,
+        "id": 77405668,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/FreirePSG10"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 7652,
+        "type": "CoAuthor",
+        "sourceNodeId": 1180,
+        "id": 77471204,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/FreirePSG10"
+          ]
+        }
+      }
+    ],
+    "weight": 6,
+    "id": 6
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 655,
+        "properties": {
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexPKSGWSP13"
+          ],
+          "cited": 4,
+          "id": "Christian_Partl",
+          "name": "Christian Partl",
+          "tvcg_publications": 4
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 657,
+        "properties": {
+          "name": "Dieter Schmalstieg",
+          "chi_papers": [
+            "conf/chi/WaldnerSGS11",
+            "conf/chi/GrubertHQS15",
+            "conf/chi/MohrKDSK15",
+            "conf/chi/GeymayerSLSS14",
+            "conf/chi/MulloniSDBS12",
+            "conf/chi/SchauflerMS96",
+            "conf/chi/VeasMFS11"
+          ],
+          "cited": 16,
+          "tvcg_publications": 15,
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/KalkofenMS09",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/StreitSLSS12",
+            "journals/tvcg/Schmalstieg13",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/VenturaARS14",
+            "journals/tvcg/CoquillartLS13a",
+            "journals/tvcg/CoquillartLS13",
+            "journals/tvcg/VeasGKS12",
+            "journals/tvcg/KhlebnikovKMS11",
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/WagnerRMDS10",
+            "journals/tvcg/SteinbergerWSLS11",
+            "journals/tvcg/KhlebnikovKSS13"
+          ],
+          "chi_publications": 7,
+          "id": "Dieter_Schmalstieg"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 8883,
+        "properties": {
+          "chi_publications": 59,
+          "id": "Patrick_Baudisch",
+          "chi_papers": [
+            "conf/chi/HinckleyZSBCST07",
+            "conf/chi/ChanMRB12",
+            "conf/chi/BaudischR03",
+            "conf/chi/BaudischG04",
+            "conf/chi/AshbrookBW11",
+            "conf/chi/HuynhDBW05",
+            "conf/chi/BenkoWB06",
+            "conf/chi/BaudischCHG04",
+            "conf/chi/ChengLLSB14a",
+            "conf/chi/BranzelHHSKLM0B13a",
+            "conf/chi/GustafsonRB13",
+            "conf/chi/VogelB07",
+            "conf/chi/SchmidtRPJKPRRSSYB14",
+            "conf/chi/BranzelHHSKLM0B13",
+            "conf/chi/MuellerMGFRB14",
+            "conf/chi/MuellerBMGTPGFC15",
+            "conf/chi/ZhaoDCBB07",
+            "conf/chi/BaudischG02",
+            "conf/chi/LopesB13",
+            "conf/chi/RichterHB12",
+            "conf/chi/RoudautRSPLB13",
+            "conf/chi/SchmidtFKMPRSWB15",
+            "conf/chi/LopesIMHJB15",
+            "conf/chi/TerrenghiMBMPTB06",
+            "conf/chi/SchmidtKMUKCB15a",
+            "conf/chi/BaudischC09",
+            "conf/chi/GoodSBB02",
+            "conf/chi/BoringBBGB10",
+            "conf/chi/BaudischGBS02",
+            "conf/chi/HinckleyGBSAC06",
+            "conf/chi/BaudischBR10",
+            "conf/chi/GrossmanHBAB06",
+            "conf/chi/MulloniSDBS12",
+            "conf/chi/MuellerLKKB13",
+            "conf/chi/SchmidtKMUKCB15",
+            "conf/chi/BaudischPRWLKKSH14",
+            "conf/chi/MuellerKB13",
+            "conf/chi/LamB05",
+            "conf/chi/MuellerMGFB14",
+            "conf/chi/LiBH08",
+            "conf/chi/HolzB11",
+            "conf/chi/LopesIMHJB15a",
+            "conf/chi/ChengLLSB14",
+            "conf/chi/RudeckB12",
+            "conf/chi/BaudischCHE05",
+            "conf/chi/ZellwegerMGSB03",
+            "conf/chi/GustafsonBGI08",
+            "conf/chi/HolzB10",
+            "conf/chi/IonWB15",
+            "conf/chi/BaudischSW07",
+            "conf/chi/HoffmannBW08",
+            "conf/chi/RoudautPB11",
+            "conf/chi/MullerKB13",
+            "conf/chi/BaudischPB04",
+            "conf/chi/SmithsB05",
+            "conf/chi/LopesJB15",
+            "conf/chi/BeyerGMCB15",
+            "conf/chi/MuellerMGFB14a",
+            "conf/chi/HinckleyBRG05"
+          ],
+          "name": "Patrick Baudisch"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1190,
+        "properties": {
+          "name": "Benjamin B. Bederson",
+          "chi_papers": [
+            "conf/chi/DruinCFBRR009",
+            "conf/chi/BedersonLJHK06",
+            "conf/chi/BedersonQ11",
+            "conf/chi/DruinSPBH97",
+            "conf/chi/BedersonSH94",
+            "conf/chi/HutchinsonMWBDPBCEHRE03",
+            "conf/chi/HuRKB12",
+            "conf/chi/FurnasB95",
+            "conf/chi/BedersonLSHN03",
+            "conf/chi/SelkerFBMN03",
+            "conf/chi/Bederson95",
+            "conf/chi/HourcadeDSBRCOW02",
+            "conf/chi/BenfordBABDHHINOSSST00",
+            "conf/chi/GoodSBB02",
+            "conf/chi/BedersonH95",
+            "conf/chi/KarlsonB08",
+            "conf/chi/HourcadeBD04",
+            "conf/chi/KarlsonBS05",
+            "conf/chi/StewartBD99",
+            "conf/chi/LeeCRB05",
+            "conf/chi/QuinnB11",
+            "conf/chi/HuBRK11",
+            "conf/chi/HourcadeBDT02",
+            "conf/chi/BedersonCCR03",
+            "conf/chi/KleinB05",
+            "conf/chi/LazarHJKB08",
+            "conf/chi/QuinnHARB08",
+            "conf/chi/LeeMISAB12"
+          ],
+          "tvcg_publications": 1,
+          "tvcg_papers": [
+            "journals/tvcg/LeePPBVGK06"
+          ],
+          "chi_publications": 28,
+          "id": "Benjamin_B._Bederson"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 7655,
+        "properties": {
+          "chi_publications": 39,
+          "id": "Clifford_Nass",
+          "chi_papers": [
+            "conf/chi/LeeN03",
+            "conf/chi/DahlbackWNA07",
+            "conf/chi/JonssonZHN05",
+            "conf/chi/JonssonHN08",
+            "conf/chi/TakayamaGN09",
+            "conf/chi/JuNEN05",
+            "conf/chi/JettmarN02",
+            "conf/chi/SukumaranROKMEBN09",
+            "conf/chi/WangN05",
+            "conf/chi/HuWNMI07",
+            "conf/chi/SelkerFBMN03",
+            "conf/chi/KapteinNM10",
+            "conf/chi/LeeJN14",
+            "conf/chi/NassST94a",
+            "conf/chi/JamesLSBMNS02",
+            "conf/chi/JonssonNERHTCK04",
+            "conf/chi/SukumaranN10",
+            "conf/chi/TakayamaSLWCNN09",
+            "conf/chi/TanBNT03",
+            "conf/chi/IsbisterNIN00",
+            "conf/chi/KrumMNPS07",
+            "conf/chi/NowakRNLMR09",
+            "conf/chi/NassKL98",
+            "conf/chi/NassL00",
+            "conf/chi/PearsonHBPN06",
+            "conf/chi/NassR97",
+            "conf/chi/PicardWN02",
+            "conf/chi/HarrisN11",
+            "conf/chi/NassMFRD95",
+            "conf/chi/SukumaranVMN11",
+            "conf/chi/NowakN12",
+            "conf/chi/NassJHREBT05",
+            "conf/chi/FoggN97",
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/NassSTR93",
+            "conf/chi/RoblesSRN06",
+            "conf/chi/SkellyFLNR94",
+            "conf/chi/RaoHNJ09",
+            "conf/chi/NassST94"
+          ],
+          "name": "Clifford Nass"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1180,
+        "properties": {
+          "name": "Ben Shneiderman",
+          "chi_papers": [
+            "conf/chi/MillerMS97",
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/HourcadeBFNSZ11",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/KangS03",
+            "conf/chi/ScholtzJSHGPW02",
+            "conf/chi/AhlbergS94b",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/ButlerPSBZ11",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/JamesLSBMNS02",
+            "conf/chi/AhlbergS94a",
+            "conf/chi/PlaisantS95",
+            "conf/chi/HochheiserS02",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/AhlbergS94",
+            "conf/chi/FischerJMRS09",
+            "conf/chi/BusseBMHNPSN13",
+            "conf/chi/AsahiTS95",
+            "conf/chi/DunneS13",
+            "conf/chi/MyersCMSS91",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/PererS08",
+            "conf/chi/FriedmanLSSW94",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/AhlbergS94c",
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/AhlbergWS92",
+            "conf/chi/ShneidermanCNTW02",
+            "conf/chi/PlaisantS91",
+            "conf/chi/ShneidermanWA92",
+            "conf/chi/KandoganS97",
+            "conf/chi/RieckenMSS95",
+            "conf/chi/AhlbergS94d",
+            "conf/chi/DonBLS92",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 52,
+          "tvcg_publications": 8,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/KangGSBL08",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/PererS06",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/ShneidermanA06",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/SeoS06"
+          ],
+          "chi_publications": 38,
+          "id": "Ben_Shneiderman"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 657,
+        "type": "CoAuthor",
+        "sourceNodeId": 655,
+        "id": 43057809,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/LexSPKS10"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 8883,
+        "type": "CoAuthor",
+        "sourceNodeId": 657,
+        "id": 43197107,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/MulloniSDBS12"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 1190,
+        "type": "CoAuthor",
+        "sourceNodeId": 8883,
+        "id": 78127795,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/GoodSBB02"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 1190,
+        "type": "CoAuthor",
+        "sourceNodeId": 7655,
+        "id": 78126567,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/SelkerFBMN03"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 7655,
+        "type": "CoAuthor",
+        "sourceNodeId": 1180,
+        "id": 77471207,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/JamesLSBMNS02"
+          ]
+        }
+      }
+    ],
+    "weight": 6,
+    "id": 7
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 655,
+        "properties": {
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexPKSGWSP13"
+          ],
+          "cited": 4,
+          "id": "Christian_Partl",
+          "name": "Christian Partl",
+          "tvcg_publications": 4
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 657,
+        "properties": {
+          "name": "Dieter Schmalstieg",
+          "chi_papers": [
+            "conf/chi/WaldnerSGS11",
+            "conf/chi/GrubertHQS15",
+            "conf/chi/MohrKDSK15",
+            "conf/chi/GeymayerSLSS14",
+            "conf/chi/MulloniSDBS12",
+            "conf/chi/SchauflerMS96",
+            "conf/chi/VeasMFS11"
+          ],
+          "cited": 16,
+          "tvcg_publications": 15,
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/KalkofenMS09",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/StreitSLSS12",
+            "journals/tvcg/Schmalstieg13",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/VenturaARS14",
+            "journals/tvcg/CoquillartLS13a",
+            "journals/tvcg/CoquillartLS13",
+            "journals/tvcg/VeasGKS12",
+            "journals/tvcg/KhlebnikovKMS11",
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/WagnerRMDS10",
+            "journals/tvcg/SteinbergerWSLS11",
+            "journals/tvcg/KhlebnikovKSS13"
+          ],
+          "chi_publications": 7,
+          "id": "Dieter_Schmalstieg"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 11111,
+        "properties": {
+          "chi_publications": 8,
+          "id": "Aaron_J._Quigley",
+          "chi_papers": [
+            "conf/chi/ShannonQN09",
+            "conf/chi/QuigleyDMIS13",
+            "conf/chi/GrubertHQS15",
+            "conf/chi/AylettQ15",
+            "conf/chi/JetterDRQBH13",
+            "conf/chi/DostalKQ13",
+            "conf/chi/ShannonQN10",
+            "conf/chi/AptedKQ06"
+          ],
+          "name": "Aaron J. Quigley"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 7625,
+        "properties": {
+          "chi_publications": 37,
+          "id": "Wendy_E._Mackay",
+          "chi_papers": [
+            "conf/chi/WagnerNGHM13",
+            "conf/chi/LiuHDMB12",
+            "conf/chi/MackayB98",
+            "conf/chi/QuigleyDMIS13",
+            "conf/chi/NancelWPCM11",
+            "conf/chi/HutchinsonMWBDPBCEHRE03",
+            "conf/chi/ChalmersMMCRM11",
+            "conf/chi/EisenbergMDLR96",
+            "conf/chi/JalalMM15",
+            "conf/chi/GarciaBSM13",
+            "conf/chi/MackayKT09",
+            "conf/chi/LottridgeMM09",
+            "conf/chi/WagnerM10",
+            "conf/chi/TsandilasLM09",
+            "conf/chi/WagnerHM12",
+            "conf/chi/MackayFFM98",
+            "conf/chi/MackayABCDFG07",
+            "conf/chi/2013a",
+            "conf/chi/EisensteinM06",
+            "conf/chi/Mackay91a",
+            "conf/chi/SatyanarayanSKBM13",
+            "conf/chi/TerrenghiMBMPTB06",
+            "conf/chi/BernsteinCDKKKLMTWY12",
+            "conf/chi/GarciaTAM12",
+            "conf/chi/ZhangACKDMMB13",
+            "conf/chi/MackayPFILBP95",
+            "conf/chi/TabardMRL07",
+            "conf/chi/Mackay95",
+            "conf/chi/WilsonMCBRT11",
+            "conf/chi/2013",
+            "conf/chi/MarkopoulosRM05",
+            "conf/chi/ZuckermanUHIFRMR06",
+            "conf/chi/LiuCBLM14",
+            "conf/chi/OehlbergWM15",
+            "conf/chi/Mackay91",
+            "conf/chi/BauPM09",
+            "conf/chi/WilsonMCBN12"
+          ],
+          "name": "Wendy E. Mackay"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 10997,
+        "properties": {
+          "chi_publications": 16,
+          "id": "Ed_Huai-hsin_Chi",
+          "chi_papers": [
+            "conf/chi/KammererNPC09",
+            "conf/chi/WoodruffGPCC00",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/ChiPCP01",
+            "conf/chi/ChiPP00",
+            "conf/chi/KairamBHC12",
+            "conf/chi/BierIC06",
+            "conf/chi/ChiRSWRCRDCC03",
+            "conf/chi/HongCC05",
+            "conf/chi/BellottiBCDFIKNPPRRSW08",
+            "conf/chi/HeerC02",
+            "conf/chi/CardHMC04",
+            "conf/chi/ChenNC11",
+            "conf/chi/ChiPMPGC98",
+            "conf/chi/ChiHHC04",
+            "conf/chi/WilsonMCBN12"
+          ],
+          "name": "Ed Huai-hsin Chi"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1180,
+        "properties": {
+          "name": "Ben Shneiderman",
+          "chi_papers": [
+            "conf/chi/MillerMS97",
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/HourcadeBFNSZ11",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/KangS03",
+            "conf/chi/ScholtzJSHGPW02",
+            "conf/chi/AhlbergS94b",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/ButlerPSBZ11",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/JamesLSBMNS02",
+            "conf/chi/AhlbergS94a",
+            "conf/chi/PlaisantS95",
+            "conf/chi/HochheiserS02",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/AhlbergS94",
+            "conf/chi/FischerJMRS09",
+            "conf/chi/BusseBMHNPSN13",
+            "conf/chi/AsahiTS95",
+            "conf/chi/DunneS13",
+            "conf/chi/MyersCMSS91",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/PererS08",
+            "conf/chi/FriedmanLSSW94",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/AhlbergS94c",
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/AhlbergWS92",
+            "conf/chi/ShneidermanCNTW02",
+            "conf/chi/PlaisantS91",
+            "conf/chi/ShneidermanWA92",
+            "conf/chi/KandoganS97",
+            "conf/chi/RieckenMSS95",
+            "conf/chi/AhlbergS94d",
+            "conf/chi/DonBLS92",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 52,
+          "tvcg_publications": 8,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/KangGSBL08",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/PererS06",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/ShneidermanA06",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/SeoS06"
+          ],
+          "chi_publications": 38,
+          "id": "Ben_Shneiderman"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 657,
+        "type": "CoAuthor",
+        "sourceNodeId": 655,
+        "id": 43057809,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/LexSPKS10"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 11111,
+        "type": "CoAuthor",
+        "sourceNodeId": 657,
+        "id": 43199335,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/GrubertHQS15"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 7625,
+        "type": "CoAuthor",
+        "sourceNodeId": 11111,
+        "id": 499854183,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/QuigleyDMIS13"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 7625,
+        "type": "CoAuthor",
+        "sourceNodeId": 10997,
+        "id": 499854069,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/WilsonMCBN12"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 10997,
+        "type": "CoAuthor",
+        "sourceNodeId": 1180,
+        "id": 77474549,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/RotmanVYCPSPG11"
+          ]
+        }
+      }
+    ],
+    "weight": 6,
+    "id": 8
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 655,
+        "properties": {
+          "tvcg_papers": [
+            "journals/tvcg/LexSPKS10",
+            "journals/tvcg/LexSSPS11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LexPKSGWSP13"
+          ],
+          "cited": 4,
+          "id": "Christian_Partl",
+          "name": "Christian Partl",
+          "tvcg_publications": 4
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 155,
+        "properties": {
+          "name": "Hanspeter Pfister",
+          "chi_papers": [
+            "conf/chi/KimBBOGP15"
+          ],
+          "cited": 40,
+          "tvcg_publications": 25,
+          "tvcg_papers": [
+            "journals/tvcg/HadwigerBJP12",
+            "journals/tvcg/GratzlGLPS14",
+            "journals/tvcg/HaehnKRBKLP14",
+            "journals/tvcg/MeyerWKLP08",
+            "journals/tvcg/ZwickerPBG02",
+            "journals/tvcg/JohnsonDAPFM11",
+            "journals/tvcg/MeyerMDP10",
+            "journals/tvcg/BorkinGPMMRFP11",
+            "journals/tvcg/PartlLSSWPS14",
+            "journals/tvcg/LedergerberGMBP08",
+            "journals/tvcg/JeongBHVPW09",
+            "journals/tvcg/MeyerMP09",
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/SunkavalliJKCP12",
+            "journals/tvcg/GratzlLGPS13",
+            "journals/tvcg/BorkinVBISOP13",
+            "journals/tvcg/LexGSVP14",
+            "journals/tvcg/JeongSTFMWRLP10",
+            "journals/tvcg/RayPSC99",
+            "journals/tvcg/Al-AwamiBSKLPH14",
+            "journals/tvcg/BorkinYBMGSP13",
+            "journals/tvcg/ChoiCQHPJ14",
+            "journals/tvcg/FeketeHMMP10",
+            "journals/tvcg/BeyerAKLPH13",
+            "journals/tvcg/WeyrichPG05"
+          ],
+          "chi_publications": 1,
+          "id": "Hanspeter_Pfister"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 140,
+        "properties": {
+          "name": "Jean-Daniel Fekete",
+          "chi_papers": [
+            "conf/chi/BoyDF15",
+            "conf/chi/FeketeP99",
+            "conf/chi/PerinVF14",
+            "conf/chi/JansenDF12",
+            "conf/chi/AppertF06",
+            "conf/chi/IsenbergKLFD12",
+            "conf/chi/ChevalierDBF10",
+            "conf/chi/AlperBRIF13",
+            "conf/chi/RooneyEFHN13",
+            "conf/chi/BachPF14",
+            "conf/chi/MackayABCDFG07",
+            "conf/chi/JansenDF13",
+            "conf/chi/SwaminathanSJDOF14",
+            "conf/chi/ElmqvistHRF08",
+            "conf/chi/DragicevicBJEF11",
+            "conf/chi/FeketeEG09",
+            "conf/chi/MoscovichCHPF09",
+            "conf/chi/SwaminathanSJDOF14a",
+            "conf/chi/PerinVF13"
+          ],
+          "cited": 91,
+          "tvcg_publications": 21,
+          "tvcg_papers": [
+            "journals/tvcg/BattistaFQ12",
+            "journals/tvcg/ElmqvistDF08",
+            "journals/tvcg/HenryF06",
+            "journals/tvcg/HuronVF13",
+            "journals/tvcg/MicallefDF12",
+            "journals/tvcg/BezerianosDFBW10",
+            "journals/tvcg/IsenbergDWBF13",
+            "journals/tvcg/BoukhelifaBIF12",
+            "journals/tvcg/BachPF14",
+            "journals/tvcg/HenryBF08",
+            "journals/tvcg/IsenbergB11",
+            "journals/tvcg/ElmqvistDF11",
+            "journals/tvcg/BoyRBF14",
+            "journals/tvcg/ElmqvistRRF10",
+            "journals/tvcg/HenryFM07",
+            "journals/tvcg/GoffinWFI14",
+            "journals/tvcg/FeketeHMMP10",
+            "journals/tvcg/PerinDF14",
+            "journals/tvcg/PerinVF13",
+            "journals/tvcg/ElmqvistF10",
+            "journals/tvcg/PlaisantFG08"
+          ],
+          "chi_publications": 19,
+          "id": "Jean-Daniel_Fekete"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 7625,
+        "properties": {
+          "chi_publications": 37,
+          "id": "Wendy_E._Mackay",
+          "chi_papers": [
+            "conf/chi/WagnerNGHM13",
+            "conf/chi/LiuHDMB12",
+            "conf/chi/MackayB98",
+            "conf/chi/QuigleyDMIS13",
+            "conf/chi/NancelWPCM11",
+            "conf/chi/HutchinsonMWBDPBCEHRE03",
+            "conf/chi/ChalmersMMCRM11",
+            "conf/chi/EisenbergMDLR96",
+            "conf/chi/JalalMM15",
+            "conf/chi/GarciaBSM13",
+            "conf/chi/MackayKT09",
+            "conf/chi/LottridgeMM09",
+            "conf/chi/WagnerM10",
+            "conf/chi/TsandilasLM09",
+            "conf/chi/WagnerHM12",
+            "conf/chi/MackayFFM98",
+            "conf/chi/MackayABCDFG07",
+            "conf/chi/2013a",
+            "conf/chi/EisensteinM06",
+            "conf/chi/Mackay91a",
+            "conf/chi/SatyanarayanSKBM13",
+            "conf/chi/TerrenghiMBMPTB06",
+            "conf/chi/BernsteinCDKKKLMTWY12",
+            "conf/chi/GarciaTAM12",
+            "conf/chi/ZhangACKDMMB13",
+            "conf/chi/MackayPFILBP95",
+            "conf/chi/TabardMRL07",
+            "conf/chi/Mackay95",
+            "conf/chi/WilsonMCBRT11",
+            "conf/chi/2013",
+            "conf/chi/MarkopoulosRM05",
+            "conf/chi/ZuckermanUHIFRMR06",
+            "conf/chi/LiuCBLM14",
+            "conf/chi/OehlbergWM15",
+            "conf/chi/Mackay91",
+            "conf/chi/BauPM09",
+            "conf/chi/WilsonMCBN12"
+          ],
+          "name": "Wendy E. Mackay"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 10997,
+        "properties": {
+          "chi_publications": 16,
+          "id": "Ed_Huai-hsin_Chi",
+          "chi_papers": [
+            "conf/chi/KammererNPC09",
+            "conf/chi/WoodruffGPCC00",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/ChiPCP01",
+            "conf/chi/ChiPP00",
+            "conf/chi/KairamBHC12",
+            "conf/chi/BierIC06",
+            "conf/chi/ChiRSWRCRDCC03",
+            "conf/chi/HongCC05",
+            "conf/chi/BellottiBCDFIKNPPRRSW08",
+            "conf/chi/HeerC02",
+            "conf/chi/CardHMC04",
+            "conf/chi/ChenNC11",
+            "conf/chi/ChiPMPGC98",
+            "conf/chi/ChiHHC04",
+            "conf/chi/WilsonMCBN12"
+          ],
+          "name": "Ed Huai-hsin Chi"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Author"
+        ],
+        "id": 1180,
+        "properties": {
+          "name": "Ben Shneiderman",
+          "chi_papers": [
+            "conf/chi/MillerMS97",
+            "conf/chi/WongsuphasawatGPWTS11a",
+            "conf/chi/RotmanVYCPSPG11",
+            "conf/chi/HourcadeBFNSZ11",
+            "conf/chi/PlaisantBSD97",
+            "conf/chi/KangS03",
+            "conf/chi/ScholtzJSHGPW02",
+            "conf/chi/AhlbergS94b",
+            "conf/chi/PlaisantMRWS96",
+            "conf/chi/ButlerPSBZ11",
+            "conf/chi/MonroeLOSPM13",
+            "conf/chi/JamesLSBMNS02",
+            "conf/chi/AhlbergS94a",
+            "conf/chi/PlaisantS95",
+            "conf/chi/HochheiserS02",
+            "conf/chi/schraefelAWTBCJKDMMSSW09",
+            "conf/chi/AhlbergS94",
+            "conf/chi/FischerJMRS09",
+            "conf/chi/BusseBMHNPSN13",
+            "conf/chi/AsahiTS95",
+            "conf/chi/DunneS13",
+            "conf/chi/MyersCMSS91",
+            "conf/chi/WongsuphasawatGPWTS11",
+            "conf/chi/PererS08",
+            "conf/chi/FriedmanLSSW94",
+            "conf/chi/FreirePSG10",
+            "conf/chi/ZhaoPS05",
+            "conf/chi/AhlbergS94c",
+            "conf/chi/ShneidermanBFLMN06",
+            "conf/chi/AhlbergWS92",
+            "conf/chi/ShneidermanCNTW02",
+            "conf/chi/PlaisantS91",
+            "conf/chi/ShneidermanWA92",
+            "conf/chi/KandoganS97",
+            "conf/chi/RieckenMSS95",
+            "conf/chi/AhlbergS94d",
+            "conf/chi/DonBLS92",
+            "conf/chi/WangPQSMS08"
+          ],
+          "cited": 52,
+          "tvcg_publications": 8,
+          "tvcg_papers": [
+            "journals/tvcg/WangPSSRMMS09",
+            "journals/tvcg/KangGSBL08",
+            "journals/tvcg/MonroeLLPS13",
+            "journals/tvcg/PererS06",
+            "journals/tvcg/AhnPS14",
+            "journals/tvcg/ShneidermanA06",
+            "journals/tvcg/GomezPPS13",
+            "journals/tvcg/SeoS06"
+          ],
+          "chi_publications": 38,
+          "id": "Ben_Shneiderman"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 155,
+        "type": "CoAuthor",
+        "sourceNodeId": 655,
+        "id": 10289807,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/LexPKSGWSP13",
+            "journals/tvcg/PartlLSSWPS14"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 140,
+        "type": "CoAuthor",
+        "sourceNodeId": 155,
+        "id": 9306267,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "tvcg_papers": [
+            "journals/tvcg/FeketeHMMP10"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 7625,
+        "type": "CoAuthor",
+        "sourceNodeId": 140,
+        "id": 9313737,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/MackayABCDFG07"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 7625,
+        "type": "CoAuthor",
+        "sourceNodeId": 10997,
+        "id": 499854069,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/WilsonMCBN12"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 10997,
+        "type": "CoAuthor",
+        "sourceNodeId": 1180,
+        "id": 77474549,
+        "properties": {
+          "_isCoAuthorEdge": true,
+          "chi_papers": [
+            "conf/chi/RotmanVYCPSPG11"
+          ]
+        }
+      }
+    ],
+    "weight": 6,
+    "id": 9
+  }
+]

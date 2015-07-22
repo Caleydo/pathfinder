@@ -17,6 +17,8 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
     var nodes = {};
 
+    var nodeProperties = {};
+
     var pathStats = {};
 
     /**
@@ -543,6 +545,13 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       return data;
     }
 
+    function addNodeProperties(node) {
+      var properties = config.getNumericalNodeProperties(node);
+      properties.forEach(function (property) {
+        nodeProperties[property] = true;
+      });
+    }
+
 
     return {
 
@@ -561,9 +570,11 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
               var remainingNodeIds = pathQuery.getRemainingNodeIds();
               var remainingNodes = {};
+              nodeProperties = {};
 
               remainingNodeIds.forEach(function (nodeId) {
                 remainingNodes[nodeId] = nodes[nodeId];
+                addNodeProperties(nodes[nodeId]);
               });
 
               nodes = remainingNodes;
@@ -630,7 +641,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
             var fetchDataset = function (index) {
               var info = datasetInfos[index];
               ccle.stats(info.name).then(function (stats) {
-                info.color = colors.nextColor();
+                info.color = config.getDatasetColorFromDatasetId(info.name);
                 allDatasets[info.name] = {
                   info: info,
                   stats: stats,
@@ -665,6 +676,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         return nodes[nodeId];
       },
 
+      getAllNodeProperties: function () {
+        return Object.keys(nodeProperties);
+      },
+
       addPath: function (path) {
         if (!pathExists(path)) {
           paths.push(path);
@@ -673,6 +688,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
             var n = nodes[node.id];
             if (typeof n === "undefined") {
               nodes[node.id] = node;
+              addNodeProperties(node);
             }
           });
 
@@ -685,8 +701,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       reset: function () {
         paths = [];
         nodes = {};
+        nodeProperties = {};
         pathStats = {};
       },
+
 
       getDataSets: function () {
 
