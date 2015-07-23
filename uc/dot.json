@@ -1,25 +1,6 @@
 {
   "settings": {
-    "port": 7476,
-    "node_label": "_Network_Node",
-    "set_label": "_Set_Node",
-    "directions": {
-      "Edge": "out",
-      "SetEdge": "both"
-    },
-    "inline": {
-      "inline": "SetEdge",
-      "type": "Edge",
-      "undirectional": false,
-      "flag": "_isSetEdge",
-      "aggregate": {
-        "TargetClass": "targetclasses",
-        "Pathway": "pathways",
-        "Disease": "diseases",
-        "Phenotype": "phenotypes"
-      },
-      "toaggregate": "id"
-    }
+
   },
   "nodes": [
     {
@@ -28,10 +9,6 @@
       "properties": {
         "id": "id",
         "name": "name",
-        "targetclasses": {
-          "type": "set",
-          "set": "targetclass"
-        },
         "pathways": {
           "type": "set",
           "set": "pathways"
@@ -49,16 +26,12 @@
   ],
   "edges": [
     {
-      "label": "Edge",
+      "label": "LinkTo",
       "properties": {
         "_isNetworkEdge": "flag_network",
         "_isSetEdge": {
           "type": "flag",
-          "set": "targetclass"
-        },
-        "targetclasses": {
-          "type": "set",
-          "set": "targetclass"
+          "set": "pathways"
         },
         "pathways": {
           "type": "set",
@@ -77,20 +50,6 @@
   ],
   "sets": [
     {
-      "id": "targetclass",
-      "name": "Target Class",
-      "node_label": "TargetClass",
-      "properties": {
-        "name": "name"
-      },
-      "inline": {
-        "source": "SetEdge",
-        "target": "Edge"
-      },
-      "flag_property": "_isSetEdge",
-      "set_property": "targetclasses"
-    },
-    {
       "id": "pathways",
       "name": "Pathways",
       "node_label": "Pathway",
@@ -100,8 +59,8 @@
       },
 
       "inline": {
-        "source": "SetEdge",
-        "target": "Edge"
+        "source": "ConsistsOfEdge",
+        "target": "LinkTo"
       },
       "flag_property": "_isSetEdge",
       "set_property": "pathways"
@@ -116,8 +75,8 @@
       },
 
       "inline": {
-        "source": "SetEdge",
-        "target": "Edge"
+        "source": "ConsistsOfEdge",
+        "target": "LinkTo"
       },
       "flag_property": "_isSetEdge",
       "set_property": "diseases"
@@ -132,8 +91,8 @@
       },
 
       "inline": {
-        "source": "SetEdge",
-        "target": "Edge"
+        "source": "ConsistsOfEdge",
+        "target": "LinkTo"
       },
       "flag_property": "_isSetEdge",
       "set_property": "phenotypes"

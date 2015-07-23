@@ -1,23 +1,5 @@
 {
   "settings": {
-    "port": 7474,
-    "node_label": "Author",
-    "set_label": "Publication",
-    "directions": {
-      "CoAuthor": "out",
-      "AuthoredBy": "both"
-    },
-    "inline": {
-      "inline": "AuthoredBy",
-      "type": "CoAuthor",
-      "undirectional": false,
-      "flag": "_isCoAuthorEdge",
-      "aggregate": {
-        "TVCG": "tvcg_papers",
-        "CHI": "chi_papers"
-      },
-      "toaggregate": "id"
-    },
     "node_width": 90,
     "edge_size": 30
   },
