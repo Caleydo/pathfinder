@@ -1,75 +1,44 @@
 {
-  "name": "pathfinder",
+  "name" : "caleydo-pathfinder",
   "version": "0.0.1",
   "dependencies": {
-    "caleydo_web": "*",
-    "pathfinder_ccle": "*",
-    "pathfinder_graph": "*"
+    "d3": "~3.5.5",
+    "font-awesome": ">=4.3.0",
+    "webcola": "~3.1.0",
+    "jquery-ui": "~1.11.4",
+    "bootstrap" : "~3.3.4",
+    "lodash" : "~2.4.1",
+    "graphlib" : "~1.0.1",
+    "dagre" : "~0.7.1",
+    "dagre-d3" : "~0.4.3"
   },
-  "peerDependencies": {
-    "caleydo_web": "*",
-    "pathfinder_ccle": "*",
-    "pathfinder_graph": "*"
-  },
-  "caleydo": {
-    "dependencies": {
-      "web": {
-        "d3": "~3.5.5",
-        "font-awesome": ">=4.3.0",
-        "webcola": "~3.1.0",
-        "jquery-ui": "~1.11.4",
-        "bootstrap": "~3.3.4",
-        "graphlib": "~1.0.1",
-        "dagre": "~0.7.1",
-        "dagre-d3": "~0.4.3"
-      }
-    },
+  "caleydo" : {
+    "plugins": [
+    ],
     "requirejs-config": {
       "paths": {
         "bootstrap": "${baseUrl}/bootstrap/dist/js/bootstrap",
         "lodash": "${baseUrl}/lodash/dist/lodash",
         "graphlib": "${baseUrl}/graphlib/dist/graphlib.core",
         "dagre": "${baseUrl}/dagre/dist/dagre.core",
-        "dagre-d3": "${baseUrl}/dagre-d3/dist/dagre-d3.core"
+        "dagre-d3" : "${baseUrl}/dagre-d3/dist/dagre-d3.core"
       },
       "shim": {
         "webcola": {
-          "deps": [
-            "d3"
-          ],
+          "deps": ["d3"],
           "exports": "cola"
         },
-        "graphlib": {
-          "deps": [ "lodash" ],
-          "exports": "graphlib"
-        },
         "dagre": {
-          "deps": [
-            "lodash",
-            "graphlib"
-          ],
+          "deps": ["lodash", "graphlib"],
           "exports": "dagre"
         },
         "dagre-d3": {
-          "deps": [
-            "d3",
-            "lodash",
-            "graphlib",
-            "dagre"
-          ],
+          "deps": ["d3","lodash", "graphlib", "dagre"],
           "exports": "dagre-d3"
         },
-        "jquery-ui": [
-          "css!${baseUrl}/jquery-ui/themes/smoothness/jquery-ui.css",
-          "jquery"
-        ],
-        "bootstrap": [
-          "css!${baseUrl}/bootstrap/dist/css/bootstrap"
-        ]
+        "jquery-ui": ["css!${baseUrl}/jquery-ui/themes/smoothness/jquery-ui.css", "jquery"],
+        "bootstrap": ["css!${baseUrl}/bootstrap/dist/css/bootstrap"]
       }
     }
-  },
-  "publishConfig": {
-    "registry": "http://dev.caleydo.org/nexus/content/repositories/caleydo-web/"
   }
 }

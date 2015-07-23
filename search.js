@@ -1,7 +1,7 @@
 /**
  * Created by sam on 13.03.2015.
  */
-define(['../caleydo_web/main', '../caleydo_web/event'],function(C, events) {
+define(['../caleydo/main', '../caleydo/event'],function(C, events) {
   'use strict';
 
   function ServerSearch() {
