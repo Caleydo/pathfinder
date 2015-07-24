@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../../listeners', '../path/pathlist', '../../sorting', '../../setinfo', '../../selectionutil', '../../pathUtil', '../../config', './aggregatesorting', './aggregate', '../../uiutil'],
+define(['jquery', 'd3', '../../listeners', '../path/pathlist', '../../sorting', '../../setinfo', '../../selectionutil', '../../pathutil', '../../config', './aggregatesorting', './aggregate', '../../uiutil'],
   function ($, d3, listeners, pathList, sorting, setInfo, selectionUtil, pathUtil, config, aggregateSorting, a, uiUtil) {
     'use strict';
 
