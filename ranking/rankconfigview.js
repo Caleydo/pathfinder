@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../view', '../uiUtil'], function ($, d3, View, uiUtil) {
+define(['jquery', 'd3', '../view', '../uiutil'], function ($, d3, View, uiUtil) {
 
 
   var RANK_CRITERION_SELECTOR_WIDTH = 130;
