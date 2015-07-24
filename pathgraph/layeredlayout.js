@@ -1,4 +1,4 @@
-define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../view', '../overviewgraph', '../pathutil', '../search'],
+define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../view', '../overviewgraph', '../pathutil', '../../pathfinder_graph/search'],
   function ($, d3, webcola, dagre, listeners, selectionUtil, pathSorting, pathQuery, config, View, forceGraph, pathUtil, ServerSearch) {
     'use strict';
 

@@ -2,15 +2,11 @@
  * Created by Christian on 11.12.2014.
  */
 require(['jquery', 'd3', '../caleydo_web/main', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
-    './pathstats/pathstatsview', './search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
+    './pathstats/pathstatsview', '../pathfinder_graph/search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
     '../pathfinder_ccle/ccle', 'font-awesome', 'bootstrap'],
   function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting, statisticsUtil, ccle) {
 
     'use strict';
-
-    //set a cookie such that it will be transferred to the server
-    document.cookie = 'uc=' + C.hash.getProp('uc', 'dblp') + '; path=/';
-
 
     //var jsonPaths = require('./testpaths1.json');
 
@@ -145,7 +141,7 @@ require(['jquery', 'd3', '../caleydo_web/main', './listeners', './list/listview'
           }
         });
 
-        C.getAPIJSON('/pathway/config.json').then(function (data) {
+        ServerSearch.resolveConfig().then(function (data) {
           config.setConfig(data);
 
           $("#toggleSettingsButton").click(function () {
