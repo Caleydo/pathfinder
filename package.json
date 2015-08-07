@@ -2,12 +2,12 @@
   "name": "pathfinder",
   "version": "0.0.1",
   "dependencies": {
-    "caleydo_web": "*",
+    "caleydo_core": "*",
     "pathfinder_ccle": "*",
     "pathfinder_graph": "*"
   },
   "peerDependencies": {
-    "caleydo_web": "*",
+    "caleydo_core": "*",
     "pathfinder_ccle": "*",
     "pathfinder_graph": "*"
   },

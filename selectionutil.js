@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 25.02.2015.
  */
-define(['d3', '../caleydo_web/main'], function (d3, C) {
+define(['d3', '../caleydo_core/main'], function (d3, C) {
 
   function Selection() {
     this.hovered = [];

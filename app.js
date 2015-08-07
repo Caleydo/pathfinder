@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', '../caleydo_web/main', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
+require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
     './pathstats/pathstatsview', '../pathfinder_graph/search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
     '../pathfinder_ccle/ccle', 'font-awesome', 'bootstrap'],
   function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting, statisticsUtil, ccle) {
