@@ -532,7 +532,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
         //});
 
         $("#addRanking").click(function () {
-          $("#scriptText").val("var getScoreInfo = function(path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {\n" +
+          $("#scriptText").val("var getScore = function(path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {\n" +
             "//insert code here\n" +
             "return 0;\n}");
 

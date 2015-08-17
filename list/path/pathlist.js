@@ -652,7 +652,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         var that = this;
         this.numericalPropertyScales = {};
         this.pathWrappers.forEach(function (pathWrapper) {
-          that.updateNumericalPropertyScales();
+          that.updateNumericalPropertyScalesForPathWrapper(pathWrapper);
         });
 
       },

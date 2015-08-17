@@ -45,6 +45,15 @@ text {
   fill: $defaultStrokeColor;
 }
 
+text.pathRank {
+  text-anchor: left;
+  font-family: sans-serif;
+  font-weight: bolder;
+  cursor: default;
+  font-size: 10px;
+  fill: $defaultStrokeColor;
+}
+
 text.collapseIconSmall {
   @include selectableTextIcon(10px);
 }

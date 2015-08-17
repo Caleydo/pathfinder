@@ -266,7 +266,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           pathSorting.addSelectionBasedSortingStrategy(new pathSorting.PathPresenceSortingStrategy(selectionUtil.selections["path"]["selected"]));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
 
-          ServerSearch.loadNeighbors(d.node.id, false);
+          //ServerSearch.loadNeighbors(d.node.id, false);
         });
 
       var line = d3.svg.line()
@@ -453,7 +453,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           //pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([d.node.id]);
           pathSorting.addSelectionBasedSortingStrategy(new pathSorting.NodePresenceSortingStrategy(selectionUtil.selections["node"]["selected"]));
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-          ServerSearch.loadNeighbors(d.node.id, false);
+          ServerSearch.loadNeighbors(d.node.id, true);
         });
 
       selectionUtil.removeListeners(that.nodeSelectionListener, "node");
