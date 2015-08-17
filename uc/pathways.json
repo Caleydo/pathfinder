@@ -1,22 +1,6 @@
 {
   "settings": {
-    "port": 7475,
-    "node_label": "_Network_Node",
-    "set_label": "_Set_Node",
-    "directions": {
-      "Edge": "out",
-      "ConsistsOfEdge": "both"
-    },
-    "inline": {
-      "inline": "ConsistsOfEdge",
-      "type": "Edge",
-      "undirectional": false,
-      "flag": "_isSetEdge",
-      "aggregate": {
-        "_Set_Node": "pathways"
-      },
-      "toaggregate": "id"
-    }
+
   },
   "nodes": [
     {
@@ -72,7 +56,7 @@
         "url": "url"
       },
       "inline": {
-        "source": "ConsistsOfEdge",
+        "source": "ConsistsOf",
         "target": "Edge"
       },
       "flag_property": "_isSetEdge",
