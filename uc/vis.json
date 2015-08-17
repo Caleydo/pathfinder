@@ -1,0 +1,66 @@
+{
+  "settings": {
+    "port": 7477,
+    "node_label": "_Network_Node",
+    "set_label": "Author",
+    "directions": {
+      "Cites": "out",
+      "AuthorOf": "both"
+    },
+    "inline": {
+      "inline": "AuthorOf",
+      "type": "Cites",
+      "undirectional": false,
+      "flag": "_sameAuthor",
+      "aggregate": {
+        "Author" : "authors"
+      },
+      "toaggregate": "id"
+    },
+    "node_width": 90,
+    "edge_size": 30
+  },
+  "nodes": [
+    {
+      "name": "Publication",
+      "node_label": "_Network_Node",
+      "properties": {
+        "id": "id",
+        "name": "name",
+        "authors": {
+          "type": "set",
+          "set": "author"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "label": "Cites",
+      "properties": {
+        "_sameAuthor": {
+          "type": "flag",
+          "set": "author"
+        }
+      }
+    }
+  ],
+  "sets": [
+    {
+      "id": "author",
+      "name": "Author",
+      "node_label": "Author",
+
+      "properties": {
+        "name": "name"
+      },
+
+      "inline": {
+        "source": "AuthorOf",
+        "target": "Cites"
+      },
+      "flag_property": "_sameAuthor",
+      "set_property": "authors"
+    }
+  ]
+}

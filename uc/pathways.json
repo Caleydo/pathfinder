@@ -1,0 +1,91 @@
+{
+  "settings": {
+
+  },
+  "nodes": [
+    {
+      "name": "Gene",
+      "node_label": "Gene",
+      "properties": {
+        "id": "id",
+        "idType": "string",
+        "name": "name",
+        "pathways": {
+          "type": "set",
+          "set": "pathways"
+        }
+      }
+    },
+    {
+      "name": "Compound",
+      "node_label": "Compound",
+      "properties": {
+        "id": "id",
+        "idType": "string",
+        "name": "name",
+        "pathways": {
+          "type": "set",
+          "set": "pathways"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "label": "Edge",
+      "properties": {
+        "_isNetworkEdge": "flag_network",
+        "_isSetEdge": {
+          "type": "flag",
+          "set": "pathways"
+        },
+        "pathways": {
+          "type": "set",
+          "set": "pathways"
+        }
+      }
+    }
+  ],
+  "sets": [
+    {
+      "id": "pathways",
+      "name": "Pathways",
+      "node_label": "_Set_Node",
+      "properties": {
+        "name": "name",
+        "url": "url"
+      },
+      "inline": {
+        "source": "ConsistsOf",
+        "target": "Edge"
+      },
+      "flag_property": "_isSetEdge",
+      "set_property": "pathways"
+    }
+  ],
+  "datasets": [
+    {
+      "id": "copynumbervariation",
+      "type": "numerical",
+      "mapping_type": "GENE_SYMBOL",
+      "mapping_nodes": [
+        {
+          "node_label": "Gene",
+          "id_property": "name"
+        }
+      ]
+    },
+    {
+      "id": "mrnaexpression",
+      "type": "numerical",
+      "mapping_type": "GENE_SYMBOL",
+      "mapping_nodes": [
+        {
+          "node_label": "Gene",
+          "id_property": "name"
+        }
+      ]
+    }
+  ],
+  "stratification": "compoundcelleffect_siteprimary"
+}

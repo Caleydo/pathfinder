@@ -1,0 +1,82 @@
+{
+  "settings": {
+    "node_width": 90,
+    "edge_size": 30
+  },
+  "nodes": [
+    {
+      "name": "Author",
+      "node_label": "Author",
+      "properties": {
+        "id": "id",
+        "name": "name",
+        "tvcg_papers": {
+          "type": "set",
+          "set": "tvcg"
+        },
+        "chi_papers": {
+          "type": "set",
+          "set": "chi"
+        },
+        "cited": "numerical",
+        "tvcg_publications": "numerical",
+        "chi_publications": "numerical"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "label": "CoAuthor",
+      "properties": {
+        "_isCoAuthorEdge": {
+          "type": "flag",
+          "set": "publications"
+        },
+        "tvcg_papers": {
+          "type": "set",
+          "set": "tvcg"
+        },
+        "chi_papers": {
+          "type": "set",
+          "set": "chi"
+        }
+      }
+    }
+  ],
+  "sets": [
+    {
+      "id": "tvcg",
+      "name": "TVCG",
+      "node_label": "TVCG",
+
+      "properties": {
+        "title": "name",
+        "ee": "url"
+      },
+
+      "inline": {
+        "source": "AuthoredBy",
+        "target": "CoAuthor"
+      },
+      "flag_property": "_isCoAuthorEdge",
+      "set_property": "tvcg_papers"
+    },
+    {
+      "id": "chi",
+      "name": "CHI",
+      "node_label": "CHI",
+
+      "properties": {
+        "title": "name",
+        "ee": "url"
+      },
+
+      "inline": {
+        "source": "AuthoredBy",
+        "target": "CoAuthor"
+      },
+      "flag_property": "_isCoAuthorEdge",
+      "set_property": "chi_papers"
+    }
+  ]
+}
