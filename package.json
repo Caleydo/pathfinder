@@ -1,8 +1,8 @@
 {
-  "name" : "caleydo-pathfinder",
+  "name" : "pathfinder",
   "version": "0.0.1",
   "license" : "SEE LICENSE IN LICENSE",
-  "repository": "cpartl/pathfinder",
+  "repository": "Caleydo/pathfinder",
   "dependencies": {
   },
   "peerDependencies": {
@@ -44,8 +44,7 @@
         "dagre-d3": {
           "deps": ["d3","lodash", "graphlib", "dagre"],
           "exports": "dagre-d3"
-        },
-        ]
+        }
       }
     }
   }
