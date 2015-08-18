@@ -63,6 +63,7 @@
           "jquery"
         ],
         "bootstrap": [
+          "jquery",
           "css!${baseUrl}/bootstrap/dist/css/bootstrap"
         ]
       }
