@@ -2,6 +2,7 @@
  * Created by Christian on 11.12.2014.
  */
 require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/data', '../caleydo_core/plugin', '../caleydo_window/main', '../caleydo_core/d3util'], function ($, d3, C, data, plugins, window, utils) {
+
   'use strict';
 
   //$.ajax({

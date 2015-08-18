@@ -4,6 +4,7 @@
 require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
     './pathstats/pathstatsview', '../pathfinder_graph/search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
     '../pathfinder_ccle/ccle', 'font-awesome', 'bootstrap'],
+
   function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting, statisticsUtil, ccle) {
 
     'use strict';
@@ -114,7 +115,7 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
             addPath(data.path);
           },
           neighbor_neighbor: function(event, data) {
-            addNeighbor(data.node,data.path);
+            addNeighbor(data.node,data.neighbor);
           },
           neighbor_done: function(event, data) {
             console.log(data.node, data.neighbors);
@@ -238,7 +239,7 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
         }
 
         function addNeighbor(node, neighbor) {
-          console.log(node, neighbor);
+          console.log(node, neighbor.properties.name);
         }
 
         function loadPaths(paths) {
