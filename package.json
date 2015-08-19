@@ -1,5 +1,5 @@
 {
-  "name" : "caleydo-pathfinder",
+  "name" : "pathfinder",
   "version": "0.0.1",
   "license" : "SEE LICENSE IN LICENSE",
   "repository": "Caleydo/pathfinder",
@@ -37,6 +37,10 @@
           "deps": ["d3"],
           "exports": "cola"
         },
+        "graphlib": {
+          "deps": ["lodash"],
+          "exports": "graphlib"
+        },
         "dagre": {
           "deps": ["lodash", "graphlib"],
           "exports": "dagre"
@@ -44,9 +48,7 @@
         "dagre-d3": {
           "deps": ["d3","lodash", "graphlib", "dagre"],
           "exports": "dagre-d3"
-        },
-        "jquery-ui": ["css!${baseUrl}/jquery-ui/themes/smoothness/jquery-ui.css", "jquery"],
-        "bootstrap": ["css!${baseUrl}/bootstrap/dist/css/bootstrap"]
+        }
       }
     }
   }
