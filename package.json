@@ -48,7 +48,11 @@
         "dagre-d3": {
           "deps": ["d3","lodash", "graphlib", "dagre"],
           "exports": "dagre-d3"
-        }
+        },
+        "bootstrap": [
+          "jquery",
+          "css!${baseUrl}/bootstrap/dist/css/bootstrap"
+        ]
       }
     }
   }
