@@ -364,187 +364,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
         allColumnItems.each(function (pathWrapper, index) {
           var item = d3.select(this);
-          //item.select("rect.bgPath").transition()
-          //  .attr({
-          //    width: that.getWidth()
-          //  });
-          //
-          //var allBgSetTypes = item.selectAll("g.bgSetType").data(pathWrapper.setTypes, function (d) {
-          //  return d.id;
-          //});
-          //
-          //var bgSetTypes = allBgSetTypes.enter().append("g")
-          //  .classed("bgSetType", true)
-          //  .attr({
-          //    transform: function (d, i) {
-          //      return "translate(0," + s.getSetTypeTranslateY(pathWrapper, i) + ")"
-          //    }
-          //  });
-          //
-          //bgSetTypes.each(function (setType, setTypeIndex) {
-          //  var bgSetType = d3.select(this);
-          //  bgSetType.attr({
-          //    transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, setTypeIndex) + ")"
-          //  });
-          //
-          //  bgSetType.append("rect")
-          //    .classed("bgSetTypeSummary", true)
-          //    .attr({
-          //      x: 0,
-          //      y: 0,
-          //      width: that.getWidth(),
-          //      height: s.SET_TYPE_HEIGHT
-          //    })
-          //    .style({
-          //      stroke: gridStrokeColor,
-          //      fill: gridFillColor,
-          //      "shape-rendering": "crispEdges"
-          //    });
-          //});
-          //
-          //allBgSetTypes.each(function (setType, setTypeIndex) {
-          //
-          //  var bgSetType = d3.select(this);
-          //
-          //  bgSetType.transition()
-          //    .attr({
-          //      transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, setTypeIndex) + ")"
-          //    });
-          //
-          //  bgSetType.select("rect.bgSetTypeSummary")
-          //    .attr({
-          //      width: that.getWidth(),
-          //      height: s.SET_TYPE_HEIGHT
-          //    });
-          //
-          //  var allBgSets = bgSetType.selectAll("rect.bgSet").data(setType.sets.filter(function (s) {
-          //    return s.canBeShown() && !setType.collapsed;
-          //  }), function (d) {
-          //    return d.id;
-          //  });
-          //
-          //  allBgSets.enter()
-          //    .append("rect")
-          //    .classed("bgSet", true)
-          //    .attr({
-          //      x: 0,
-          //      y: function (d, i) {
-          //        return s.getSetTranslateY(setType, i);
-          //      },
-          //      width: that.getWidth(),
-          //      height: function (d, i) {
-          //        return d.getHeight();
-          //      }
-          //    })
-          //    .style({
-          //      stroke: gridStrokeColor,
-          //      fill: gridFillColor,
-          //      "shape-rendering": "crispEdges"
-          //    });
-          //
-          //  allBgSets.transition()
-          //    .attr({
-          //      y: function (d, i) {
-          //        return s.getSetTranslateY(setType, i);
-          //      },
-          //      width: that.getWidth(),
-          //      height: function (d, i) {
-          //        return d.getHeight();
-          //      }
-          //    });
-          //
-          //  allBgSets.exit().remove();
-          //
-          //
-          //});
-          //
-          //allBgSetTypes.exit().remove();
-          //
-          //
-          //var allBgDatasets = item.selectAll("g.bgDataset").data(pathWrapper.datasets, function (d) {
-          //  return d.id;
-          //});
-          //
-          //var bgDatasets = allBgDatasets.enter().append("g")
-          //  .classed("bgDataset", true);
-          //
-          //bgDatasets.each(function (dataset, datasetIndex) {
-          //  var bgDataset = d3.select(this);
-          //  bgDataset.attr({
-          //    transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + dataset.getPosYRelativeToParent(pathWrapper.datasets)) + ")"
-          //  });
-          //
-          //  bgDataset.append("rect")
-          //    .classed("bgDatasetSummary", true)
-          //    .attr({
-          //      x: 0,
-          //      y: 0,
-          //      width: that.getWidth(),
-          //      height: dataset.getBaseHeight()
-          //    })
-          //    .style({
-          //      stroke: gridStrokeColor,
-          //      fill: gridFillColor,
-          //      "shape-rendering": "crispEdges"
-          //    });
-          //});
-          //
-          //allBgDatasets.each(function (dataset, datasetIndex) {
-          //
-          //  var bgDataset = d3.select(this);
-          //
-          //  bgDataset.transition()
-          //    .attr({
-          //      transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + dataset.getPosYRelativeToParent(pathWrapper.datasets)) + ")"
-          //    });
-          //
-          //  bgDataset.select("rect.bgDatasetSummary")
-          //    .attr({
-          //      width: that.getWidth(),
-          //      height: dataset.getBaseHeight()
-          //    });
-          //
-          //  var allGroups = bgDataset.selectAll("rect.bgGroup").data(dataset.getVisibleChildren(), function (d) {
-          //    return d.name;
-          //  });
-          //
-          //  allGroups.enter()
-          //    .append("rect")
-          //    .classed("bgGroup", true)
-          //    .attr({
-          //      x: 0,
-          //      y: function (d) {
-          //        return d.getPosYRelativeToParent();
-          //      },
-          //      width: that.getWidth(),
-          //      height: function (d) {
-          //        return d.getHeight();
-          //      }
-          //    })
-          //    .style({
-          //      stroke: gridStrokeColor,
-          //      fill: gridFillColor,
-          //      "shape-rendering": "crispEdges"
-          //    });
-          //
-          //  allGroups.transition()
-          //    .attr({
-          //      y: function (d) {
-          //        return d.getPosYRelativeToParent();
-          //      },
-          //      width: that.getWidth(),
-          //      height: function (d) {
-          //        return d.getHeight();
-          //      }
-          //    });
-          //
-          //  allGroups.exit().remove();
-          //
-          //
-          //});
-          //
-          //allBgDatasets.exit().remove();
-
 
           that.itemRenderer.update(item, pathWrapper, index, pathWrappers, that);
         });
@@ -1400,7 +1219,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator, that.column.columnManager);
         });
 
-        that.scoreRepresentation.appendScore(d3.select(this), score, s.SET_TYPE_HEIGHT, column.sortingStrategy.setType === setType.type || pathWrapper.setTypes.length === 1, setInfo.getSetTypeInfo(setType.type).color);
+        that.scoreRepresentation.appendScore(d3.select(this), score, s.SET_TYPE_HEIGHT, column.sortingStrategy.setType === setType.type || pathWrapper.setTypes.length === 1, config.getSetColorFromSetTypePropertyName(setType.type));
 
         d3.select(this).append("title")
           .text(column.sortingStrategy.label + ": " + score);
@@ -1428,7 +1247,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, i) + ")"
           });
 
-        that.scoreRepresentation.updateScore(d3.select(this), score, s.SET_TYPE_HEIGHT, column.sortingStrategy.setType === setType.type || pathWrapper.setTypes.length === 1, setInfo.getSetTypeInfo(setType.type).color);
+        that.scoreRepresentation.updateScore(d3.select(this), score, s.SET_TYPE_HEIGHT, column.sortingStrategy.setType === setType.type || pathWrapper.setTypes.length === 1, config.getSetColorFromSetTypePropertyName(setType.type));
       });
     };
 
