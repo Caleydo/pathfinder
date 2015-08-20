@@ -186,22 +186,22 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
             //
             //});
 
-            C.getJSON("dump/partl-shneiderman.json", function (paths) {
-
-              var i = 0;
-
-              var interval = setInterval(function () {
-
-                if (i >= paths.length) {
-                  clearInterval(interval);
-                  return;
-                }
-                addPath(paths[i]);
-                i++;
-
-              }, 100);
-
-            });
+            //C.getJSON("dump/partl-shneiderman.json", function (paths) {
+            //
+            //  var i = 0;
+            //
+            //  var interval = setInterval(function () {
+            //
+            //    if (i >= paths.length) {
+            //      clearInterval(interval);
+            //      return;
+            //    }
+            //    addPath(paths[i]);
+            //    i++;
+            //
+            //  }, 100);
+            //
+            //});
           });
 
 
