@@ -151,6 +151,10 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       return this.currentGraphLayout.getMinSize();
     };
 
+    PathGraphView.prototype.addNeighbor = function(source, neighbor) {
+      this.currentGraphLayout.addNeighbor(source, neighbor);
+    };
+
     return new PathGraphView();
 
 

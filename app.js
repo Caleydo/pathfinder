@@ -115,7 +115,8 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
                         addPath(data.path);
                     },
                     neighbor_neighbor: function (event, data) {
-                        addNeighbor(data.node, data.neighbor);
+
+                        overviewGraph.addNeighbor(data.node, data.neighbor);
                     },
                     neighbor_done: function (event, data) {
                         console.log(data.node, data.neighbors);
@@ -189,30 +190,9 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
 
                         });
 
-                        //C.getJSON("dump/partl-shneiderman.json", function (paths) {
-                        //
-                        //  var i = 0;
-                        //
-                        //  var interval = setInterval(function () {
-                        //
-                        //    if (i >= paths.length) {
-                        //      clearInterval(interval);
-                        //      return;
-                        //    }
-                        //    addPath(paths[i]);
-                        //    i++;
-                        //
-                        //  }, 100);
-                        //
-                        //});
+
                     });
 
-
-                    //paths.forEach(function (path) {
-                    //
-                    //
-                    //  //loadPaths(paths);
-                    //});
                     //loadPaths(paths);
                 });
 
@@ -241,9 +221,9 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
 
                 }
 
-                function addNeighbor(node, neighbor) {
-                    console.log(node, neighbor.properties.name);
-                }
+                //function addNeighbor(node, neighbor) {
+                //    console.log(node, neighbor.properties.name);
+                //}
 
                 function loadPaths(paths) {
 

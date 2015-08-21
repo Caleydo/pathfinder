@@ -12,6 +12,7 @@ $defaultStrokeColorFiltered: rgb(180, 180, 180);
 $overlayFillColor: rgb(255, 255, 255);
 $overlayStrokeColor: rgb(30, 30, 30);
 $overlayHoverColor: rgb(150, 200, 255);
+$neighborFillColor: rgb(255, 255, 255);
 
 @mixin textIcon($fontSize) {
   font-family: FontAwesome, sans-serif;
@@ -85,6 +86,12 @@ g.node.filtered {
 
   path {
     stroke: $defaultStrokeColorFiltered;
+  }
+}
+
+g.node.neighbor {
+  rect {
+    fill: $neighborFillColor;
   }
 }
 
