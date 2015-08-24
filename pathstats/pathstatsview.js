@@ -504,7 +504,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       typeCont.each(function (d, i) {
         if (d.hasOverlayItems()) {
-          uiUtil.createTemporalMenuOverlayButton(d3.select(this), d3.select("#pathstats svg"), BAR_START_X - 20, 0, true, function() {
+          uiUtil.createTemporalMenuOverlayButton(d3.select(this), BAR_START_X - 20, 0, true, function() {
             return d.getOverlayMenuItems();
           });
 
@@ -617,7 +617,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       stats.each(function (d, i) {
         if (d.hasOverlayItems()) {
-          uiUtil.createTemporalMenuOverlayButton(d3.select(this), d3.select("#pathstats svg"), BAR_START_X - 20, 0, true, function() {
+          uiUtil.createTemporalMenuOverlayButton(d3.select(this), BAR_START_X - 20, 0, true, function() {
             return d.getOverlayMenuItems();
           });
 

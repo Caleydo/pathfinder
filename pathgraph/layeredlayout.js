@@ -535,20 +535,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                     pathSorting.addSelectionBasedSortingStrategy(new pathSorting.NodePresenceSortingStrategy(selectionUtil.selections["node"]["selected"]));
                     listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
 
-                })
-                .each(function (d) {
-
-                    var items = queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]);
-                    items.push({
-                        text: "Add Neighbors",
-                        icon: "\uf067",
-                        callback: function () {
-                            ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp");
-                        }
-                    });
-                    uiUtil.createTemporalMenuOverlayButton(d3.select(this), that.parent, d.width / 2, -d.height / 2, false, items);
-                }
-            )
+                });
 
 
             selectionUtil.removeListeners(that.nodeSelectionListener, "node");
@@ -566,9 +553,17 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                 });
 
             node.each(function (d) {
+                 var items = queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]);
+                    items.push({
+                        text: "Add Neighbors",
+                        icon: "\uf067",
+                        callback: function () {
+                            ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp");
+                        }
+                    });
                 pathUtil.renderNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
                     return that.view.getTextWidth(text)
-                });
+                }, items);
             });
 
             this.updateFilter();

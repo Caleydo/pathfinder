@@ -884,12 +884,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 return {node: node, pathIndex: i};
               });
             });
-          d3.select(this).selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.nodeCont")
-            .data(function () {
-              return pathWrapper.path.nodes.map(function (node) {
-                return {node: node, pathIndex: i};
-              });
-            });
+          //d3.select(this).selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.node")
+          //  .data(function () {
+          //    return pathWrapper.path.nodes.map(function (node) {
+          //      return {node: node, pathIndex: i};
+          //    });
+          //  });
 
           d3.select(this).selectAll("g.path").selectAll("g.edgeGroup").selectAll("g.edge")
             .data(function () {
@@ -1584,7 +1584,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           sc.each(function (d, i) {
 
 
-            uiUtil.createTemporalMenuOverlayButton(d3.select(this), that.parent, s.NODE_START, 0, true, function () {
+            uiUtil.createTemporalMenuOverlayButton(d3.select(this), s.NODE_START, 0, true, function () {
 
               var setNode = setInfo.get(d.set.id);
 
@@ -2391,7 +2391,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //  return that.getPivotNodeAlignedTransform(d)
         //});
 
-        var allNodes = allPathContainers.selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.nodeCont")
+        var allNodes = allPathContainers.selectAll("g.path").selectAll("g.nodeGroup").selectAll("g.node")
           .data(function (pathWrapper, i) {
             return pathWrapper.path.nodes.map(function (node) {
               return {node: node, pathIndex: i};
@@ -2402,9 +2402,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //  .data(function (pathWrapper) {
         //    return pathWrapper.path.nodes;
         //  })
-        var nc = allNodes.enter()
-          .append("g")
-          .classed("nodeCont", true);
+        //var nc = allNodes.enter()
+        //  .append("g")
+        //  .classed("nodeCont", true);
 
         allNodes
           .transition()
@@ -2414,21 +2414,19 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             return "translate(" + (pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE)) + "," + s.V_SPACING + ")";
           });
 
-        nc.each(function (d, i) {
-          uiUtil.createTemporalMenuOverlayButton(d3.select(this), that.parent, s.NODE_WIDTH, 0, false, queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]));
-          //queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "name", d.node.properties[config.getNodeNameProperty(d.node)], s.NODE_WIDTH, 0);
-        });
+        //nc.each(function (d, i) {
+        //  uiUtil.createTemporalMenuOverlayButton(d3.select(this), s.NODE_WIDTH, 0, false, queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]));
+        //  //queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "name", d.node.properties[config.getNodeNameProperty(d.node)], s.NODE_WIDTH, 0);
+        //});
 
-        var node = nc
+        var node = allNodes.enter()
           .append("g")
-          .attr("class", "node")
-
+          .classed("node", true)
           .on("dblclick.align", function (d) {
             //pathSorting.sortingStrategies.selectionSortingStrategy.setNodeIds([d.node.id]);
             that.setPivotNode(d.node.id);
             pathSorting.addSelectionBasedSortingStrategy(new pathSorting.NodePresenceSortingStrategy(selectionUtil.selections["node"]["selected"]));
             listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-
           });
 
         var l = selectionUtil.addDefaultListener(nodeGroup, "g.node", function (d) {
@@ -2441,7 +2439,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         node.each(function (d) {
           pathUtil.renderNode(d3.select(this), d.node, 0, 0, s.NODE_WIDTH, s.NODE_HEIGHT, "url(#pathNodeClipPath)", function (text) {
             return that.listView.getTextWidth(text);
-          });
+          }, queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]));
         });
 
 
