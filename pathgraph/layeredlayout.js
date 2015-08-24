@@ -1,5 +1,5 @@
-define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../view', '../overviewgraph', '../pathutil', '../../pathfinder_graph/search', '../uiutil', '../query/queryutil'],
-    function ($, d3, webcola, dagre, listeners, selectionUtil, pathSorting, pathQuery, config, View, forceGraph, pathUtil, ServerSearch, uiUtil, queryUtil) {
+define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../view', '../overviewgraph', '../pathutil', '../../pathfinder_graph/search', '../uiutil', '../query/queryutil', './neighboredge'],
+    function ($, d3, webcola, dagre, listeners, selectionUtil, pathSorting, pathQuery, config, View, forceGraph, pathUtil, ServerSearch, uiUtil, queryUtil, neighborEdgeManager) {
         'use strict';
 
         var currentNeighborEdgeId = 0;
@@ -268,39 +268,17 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                 }
             }
             if (!exists) {
-                currentNeighborEdgeId++;
+                neighborEdgeManager.currentNeighborEdgeId++;
                 that.graph.setEdge(sourceId, neighbor.id, {
-                    label: "neighborEdge" + currentNeighborEdgeId,
-                    id: "neighborEdge" + currentNeighborEdgeId,
+                    label: "neighborEdge" + neighborEdgeManager.currentNeighborEdgeId,
+                    id: "neighborEdge" + neighborEdgeManager.currentNeighborEdgeId,
                     neighborEdge: true,
-                    edge: {type: "tempNeighborEdge"}
+                    edge: {
+                        id: "neighborEdge" + neighborEdgeManager.currentNeighborEdgeId,
+                        type: "tempNeighborEdge"
+                    }
                 });
             }
-
-            //paths.forEach(function (path) {
-            //        var prevNode = 0;
-            //
-            //        for (var i = 0; i < path.nodes.length; i++) {
-            //            var node = path.nodes[i];
-            //            that.graph.setNode(node.id, {
-            //                label: node.properties[config.getNodeNameProperty(node)],
-            //                node: node,
-            //                width: config.getNodeWidth(),
-            //                height: config.getNodeHeight()
-            //
-            //            });
-            //            if (prevNode !== 0) {
-            //                that.graph.setEdge(prevNode.id, node.id, {
-            //                    label: path.edges[i - 1].id.toString(),
-            //                    id: path.edges[i - 1].id,
-            //                    edge: path.edges[i - 1]
-            //                });
-            //            }
-            //            prevNode = node;
-            //        }
-            //
-            //    }
-            //);
 
             this.renderGraph(svg);
         };
@@ -553,14 +531,14 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                 });
 
             node.each(function (d) {
-                 var items = queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]);
-                    items.push({
-                        text: "Add Neighbors",
-                        icon: "\uf067",
-                        callback: function () {
-                            ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp");
-                        }
-                    });
+                var items = queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]);
+                items.push({
+                    text: "Add Neighbors",
+                    icon: "\uf067",
+                    callback: function () {
+                        ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp");
+                    }
+                });
                 pathUtil.renderNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
                     return that.view.getTextWidth(text)
                 }, items);
