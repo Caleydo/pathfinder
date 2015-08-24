@@ -1,0 +1,9 @@
+{
+  "name": "Pathfinder",
+  "type": "python",
+  "plugins": [
+    "pathfinder",
+    "pathfinder_ccle",
+    "pathfinder_graph"
+  ]
+}
