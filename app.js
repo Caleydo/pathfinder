@@ -123,25 +123,25 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
                     }
                 });
 
-                var selectPaths = d3.select('#select_dump');
-                C.getJSON('dump/testpaths.json').then(function (data) {
-                    var options = selectPaths.selectAll('option').data([{value: '', label: ''}].concat(data));
-                    options.enter().append('option')
-                        .attr('value', function (d) {
-                            return d.value
-                        })
-                        .text(function (d) {
-                            return d.label;
-                        });
-                });
-                selectPaths.on("change", function () {
-                    if (this.value != '') {
-                        C.getJSON(this.value, function (paths) {
-                            reset();
-                            loadPaths(paths);
-                        });
-                    }
-                });
+                //var selectPaths = d3.select('#select_dump');
+                //C.getJSON('dump/testpaths.json').then(function (data) {
+                //    var options = selectPaths.selectAll('option').data([{value: '', label: ''}].concat(data));
+                //    options.enter().append('option')
+                //        .attr('value', function (d) {
+                //            return d.value
+                //        })
+                //        .text(function (d) {
+                //            return d.label;
+                //        });
+                //});
+                //selectPaths.on("change", function () {
+                //    if (this.value != '') {
+                //        C.getJSON(this.value, function (paths) {
+                //            reset();
+                //            loadPaths(paths);
+                //        });
+                //    }
+                //});
 
                 ServerSearch.resolveConfig().then(function (data) {
                     config.setConfig(data);
@@ -171,24 +171,26 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
 
                         pathStatsView.init();
 
-                        var initialPaths = config.getUseCase() === "pathways" ? "dump/egfr-ptk2-sos1.json" : "dump/partl-shneiderman.json";
+                        var initialPaths = config.getSamplePathsFile();
+                        if (initialPaths) {
 
-                        C.getJSON(initialPaths, function (paths) {
+                            C.getJSON(initialPaths, function (paths) {
 
-                            var i = 0;
+                                var i = 0;
 
-                            var interval = setInterval(function () {
+                                var interval = setInterval(function () {
 
-                                if (i >= paths.length) {
-                                    clearInterval(interval);
-                                    return;
-                                }
-                                addPath(paths[i]);
-                                i++;
+                                    if (i >= paths.length) {
+                                        clearInterval(interval);
+                                        return;
+                                    }
+                                    addPath(paths[i]);
+                                    i++;
 
-                            }, 100);
+                                }, 100);
 
-                        });
+                            });
+                        }
 
 
                     });

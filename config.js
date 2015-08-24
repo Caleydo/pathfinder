@@ -103,6 +103,10 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
             return getGetParam('uc') || C.hash.getProp('uc', 'dblp');
         },
 
+        getSamplePathsFile: function () {
+          return config["sample_paths"];
+        },
+
         isNodeSetProperty: function (node, property) {
             var type = this.getNodeType(node);
             var sets = nodeSets[type];

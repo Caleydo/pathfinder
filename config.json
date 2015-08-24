@@ -1,6 +1,7 @@
 {
   "uc": {
     "dblp": {
+      "sample_paths": "dump/partl-shneiderman.json",
       "settings": {
         "node_width": 90,
         "edge_size": 30
@@ -173,6 +174,7 @@
       ]
     },
     "pathways": {
+      "sample_paths": "dump/egfr-ptk2-sos1.json",
       "settings": {
       },
       "nodes": [
