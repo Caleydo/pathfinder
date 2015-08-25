@@ -2406,13 +2406,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //  .append("g")
         //  .classed("nodeCont", true);
 
-        allNodes
-          .transition()
-          .attr("transform", function (d, i) {
-            var position = that.pathWrappers[d.pathIndex].nodePositions[i];
-            var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-            return "translate(" + (pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE)) + "," + s.V_SPACING + ")";
-          });
+
 
         //nc.each(function (d, i) {
         //  uiUtil.createTemporalMenuOverlayButton(d3.select(this), s.NODE_WIDTH, 0, false, queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]));
@@ -2441,6 +2435,14 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             return that.listView.getTextWidth(text);
           }, queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]));
         });
+
+          allNodes
+          .transition()
+          .attr("transform", function (d, i) {
+            var position = that.pathWrappers[d.pathIndex].nodePositions[i];
+            var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+            return "translate(" + (pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE)) + "," + s.V_SPACING + ")";
+          });
 
 
         var setGroup = pathContainer.append("g")
