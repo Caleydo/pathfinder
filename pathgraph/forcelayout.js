@@ -82,11 +82,11 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
 
         function ForceLayout(view) {
             this.view = view;
-            this.nodeIndex = 0;
+            //this.nodeIndex = 0;
             this.paths = [];
-            this.nodeIndexMap = {};
-            this.edgeMap = {};
-            this.graph = {nodes: [], edges: [], groups: []};
+            //this.nodeIndexMap = {};
+            //this.edgeMap = {};
+            this.graph = {nodes: [], edges: []};
             this.force = d3.layout.force()
                 .linkDistance(100)
                 .charge(-3000);
@@ -258,117 +258,6 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
                 this.force.stop();
             },
 
-            addPathsToGraph: function (paths) {
-
-                var that = this;
-
-
-                paths.forEach(function (path) {
-                        path.nodes.forEach(function (node) {
-                            var index = that.nodeIndexMap[node.id.toString()];
-
-                            if (typeof index == "undefined") {
-                                that.nodeIndexMap[node.id.toString()] = that.nodeIndex;
-                                //node.width = config.getNodeWidth() + 20;
-                                //node.height = config.getNodeWidth() + 20;
-                                that.graph.nodes.push({
-                                    label: node.properties[config.getNodeNameProperty(node)],
-                                    node: node,
-                                    width: config.getNodeWidth(),
-                                    height: config.getNodeHeight()
-
-                                });
-                                that.nodeIndex++;
-                            }
-                        });
-
-                        path.edges.forEach(function (edge) {
-                            var e = that.edgeMap[edge.id.toString()];
-
-                            if (typeof e == "undefined") {
-
-                                var sourceNodeIndex = that.nodeIndexMap[edge.sourceNodeId];
-                                if (typeof sourceNodeIndex != "undefined") {
-
-                                    var targetNodeIndex = that.nodeIndexMap[edge.targetNodeId];
-                                    if (typeof targetNodeIndex != "undefined") {
-                                        that.edgeMap[edge.id.toString()] = edge;
-                                        that.graph.edges.push({
-                                            source: sourceNodeIndex,
-                                            target: targetNodeIndex,
-                                            edge: edge
-                                        });
-                                    }
-                                }
-                            }
-                        });
-
-                    }
-                );
-            },
-
-            addNeighbor: function (sourceId, neighbor) {
-                var svg = d3.select("#pathgraph svg");
-
-                var that = this;
-
-                var sourceIndex = that.nodeIndexMap[sourceId.toString()];
-
-                if (typeof sourceIndex === "undefined") {
-                    return;
-                }
-
-                var neighborIndex = that.nodeIndexMap[neighbor.id.toString()];
-
-                if (typeof neighborIndex === "undefined") {
-                    that.nodeIndexMap[neighbor.id.toString()] = neighborIndex = that.nodeIndex;
-                    var sourceNode = that.graph.nodes[sourceIndex];
-
-                    //node.width = config.getNodeWidth() + 20;
-                    //node.height = config.getNodeWidth() + 20;
-                    that.graph.nodes.push({
-                        label: neighbor.properties[config.getNodeNameProperty(neighbor)],
-                        node: neighbor,
-                        neighborNode: true,
-                        width: config.getNodeWidth(),
-                        height: config.getNodeHeight(),
-                        x: sourceNode.x,
-                        y: sourceNode.y
-
-                    });
-                    that.nodeIndex++;
-                }
-
-                //FIXME Switch to test edge ids when they are available
-                //var edgeIds = Object.keys(that.edgeMap);
-                var edges = that.graph.edges;
-                var exists = false;
-                for (var i = 0; i < edges.length; i++) {
-                    var e = edges[i];
-                    if (e.source === sourceIndex && e.target === neighborIndex || e.target === sourceIndex && e.source === neighborIndex) {
-                        exists = true;
-                        break;
-                    }
-                }
-
-                if (!exists) {
-                    neighborEdgeManager.currentNeighborEdgeId++;
-
-                    var edge = {
-                        id: "neighborEdge" + neighborEdgeManager.currentNeighborEdgeId,
-                        type: "tempNeighborEdge"
-                    };
-                    that.edgeMap[edge.id.toString()] = edge;
-                    that.graph.edges.push({
-                        source: sourceIndex,
-                        target: neighborIndex,
-                        neighborEdge: true,
-                        edge: edge
-                    });
-                }
-
-                this.renderGraph(svg);
-            },
 
             fixPath: function (path) {
 
@@ -450,54 +339,13 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
             }
             ,
 
-            updateGraphToFilteredPaths: function () {
-
-                this.graph = {nodes: [], edges: [], groups: []};
-                this.nodeIndexMap = {};
-                this.edgeMap = {};
-                this.nodeIndex = 0;
-                var that = this;
-
-                if (pathQuery.isRemoteQuery()) {
-                    for (var i = 0; i < this.paths.length; i++) {
-                        var path = this.paths[i];
-                        if (pathQuery.isPathFiltered(path.id)) {
-                            this.paths.splice(i, 1);
-                            i--;
-                        }
-                    }
-                }
-
-                this.paths.forEach(function (path) {
-                    if (!pathQuery.isPathFiltered(path.id)) {
-                        that.addPathsToGraph([path]);
-                    }
-                });
-
-                this.renderGraph(d3.select("#pathgraph svg"));
-            }
-            ,
-
-            updateGraphToAllPaths: function () {
-                this.graph = {nodes: [], edges: [], groups: []};
-                this.nodeIndexMap = {};
-                this.edgeMap = {};
-                this.nodeIndex = 0;
-                var that = this;
-
-                that.addPathsToGraph(this.paths);
-
-                this.renderGraph(d3.select("#pathgraph svg"));
-            }
-            ,
-
 
             updateFilter: function () {
 
                 var svg = d3.select("#pathgraph svg");
                 svg.selectAll("g.node")
                     .classed("filtered", function (d) {
-                        return pathQuery.isNodeFiltered(d.node.id);
+                        return !d.neighborNode && pathQuery.isNodeFiltered(d.node.id);
                     });
                 //.transition()
                 //.style("opacity", function (d) {
@@ -507,12 +355,12 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
                 svg.selectAll("g.edgePath").each(function (d) {
                     d3.select(this).select("path.lines")
                         .classed("filtered", function (d) {
-                            return pathQuery.isNodeFiltered(d.edge.sourceNodeId) || pathQuery.isNodeFiltered(d.edge.targetNodeId);
+                            return !d.neighborEdge && (pathQuery.isNodeFiltered(d.edge.sourceNodeId) || pathQuery.isNodeFiltered(d.edge.targetNodeId));
                         });
 
                     d3.select(this).select("defs marker path")
                         .classed("filtered", function (d) {
-                            return pathQuery.isNodeFiltered(d.edge.sourceNodeId) || pathQuery.isNodeFiltered(d.edge.targetNodeId);
+                            return !d.neighborEdge && (pathQuery.isNodeFiltered(d.edge.sourceNodeId) || pathQuery.isNodeFiltered(d.edge.targetNodeId));
                         });
 
                 });
@@ -521,33 +369,58 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
             }
             ,
 
-            render: function (paths) {
+            render: function (paths, graph) {
                 this.paths = paths;
+                this.graph = this.convertGraph(graph);
+
                 //if (paths.length > 0) {
 
                 var svg = d3.select("#pathgraph svg");
-                this.addPathsToGraph(paths);
+                //this.addPathsToGraph(paths);
 
                 this.renderGraph(svg);
                 //}
             }
             ,
 
-            addPath: function (path) {
-                this.paths.push(path);
-                var svg = d3.select("#pathgraph svg");
-                this.addPathsToGraph([path]);
+            convertGraph: function (g) {
+                var graph = {nodes: [], edges: []};
+                var nodeMap = {};
+                var nodeIndex = 0;
 
-                this.renderGraph(svg);
-            }
-            ,
+                g.nodes().forEach(function (n) {
+                    var node = g.node(n);
+                    nodeMap[node.node.id.toString()] = nodeIndex;
+                    nodeIndex++;
+                    graph.nodes.push(node);
+                });
+
+                g.edges().forEach(function (e) {
+                    var sourceIndex = nodeMap[e.v.toString()];
+                    var targetIndex = nodeMap[e.w.toString()];
+                    var edge = Object.create(g.edge(e));
+                    edge.source = sourceIndex;
+                    edge.target = targetIndex;
+                    graph.edges.push(edge);
+                });
+                return graph;
+            },
+
+            //addPath: function (path) {
+            //    this.paths.push(path);
+            //    var svg = d3.select("#pathgraph svg");
+            //    this.addPathsToGraph([path]);
+            //
+            //    this.renderGraph(svg);
+            //}
+            //,
 
             reset: function () {
                 this.paths = [];
-                this.graph = {nodes: [], edges: [], groups: []};
-                this.nodeIndexMap = {};
-                this.edgeMap = {};
-                this.nodeIndex = 0;
+                this.graph = {nodes: [], edges: []};
+                //this.nodeIndexMap = {};
+                //this.edgeMap = {};
+                //this.nodeIndex = 0;
             }
             ,
 
@@ -689,9 +562,15 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
                     }, items);
                 });
 
+                allNodes.classed("neighbor", function (d) {
+                    return d.neighborNode;
+                });
+
 
                 allNodes.exit()
                     .remove();
+
+                this.updateFilter();
 
             }
 
