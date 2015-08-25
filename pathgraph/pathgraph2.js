@@ -83,18 +83,19 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                             }
                         }
                     }
-                    that.updateGraphToFilteredPaths();
+                    that.updateGraph();
                 } else {
                     that.currentGraphLayout.updateFilter();
                 }
             }, listeners.updateType.QUERY_UPDATE);
 
             listeners.add(function (remove) {
-                if (remove) {
-                    that.updateGraphToFilteredPaths();
-                } else {
-                    that.updateGraphToAllPaths();
-                }
+                that.updateGraph();
+                //if (remove) {
+                //    that.updateGraphToFilteredPaths();
+                //} else {
+                //    that.updateGraphToAllPaths();
+                //}
             }, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
 
             this.currentGraphLayout.init();
@@ -178,7 +179,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                         that.graph.setNode(node.id, {
                             label: node.properties[config.getNodeNameProperty(node)],
                             node: node,
-                            neighborNode: false,
+                            isNeighborNode: false,
                             width: config.getNodeWidth(),
                             height: config.getNodeHeight()
 
@@ -215,7 +216,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                 that.graph.setNode(neighbor.id, {
                     label: neighbor.properties[config.getNodeNameProperty(neighbor)],
                     node: neighbor,
-                    neighborNode: true,
+                    isNeighborNode: true,
                     width: config.getNodeWidth(),
                     height: config.getNodeHeight()
                 });
@@ -248,18 +249,16 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             }
         };
 
-        PathGraphView.prototype.updateGraphToFilteredPaths = function () {
+
+        PathGraphView.prototype.updateGraph = function () {
 
             this.graph = newGraph();
-
             var that = this;
-
             this.paths.forEach(function (path) {
-                if (!pathQuery.isPathFiltered(path.id)) {
+                if (!pathQuery.isRemoveFilteredPaths() || !pathQuery.isPathFiltered(path.id)) {
                     that.addPathsToGraph([path]);
                 }
             });
-
             this.neighbors.forEach(function (n) {
                 that.addNeighborToGraph(n.sourceId, n.neighbor);
             });
@@ -267,17 +266,56 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             this.currentGraphLayout.render(this.paths, this.graph);
         };
 
-        PathGraphView.prototype.updateGraphToAllPaths = function () {
+        //PathGraphView.prototype.updateGraphToAllPaths = function () {
+        //    var that = this;
+        //
+        //    this.graph = newGraph();
+        //
+        //    this.addPathsToGraph(this.paths);
+        //    this.neighbors.forEach(function (n) {
+        //        that.addNeighborToGraph(n.sourceId, n.neighbor);
+        //    });
+        //
+        //    this.currentGraphLayout.render(this.paths, this.graph);
+        //};
+
+
+        PathGraphView.prototype.removeNeighborNode = function (nodeId) {
+
+            for (var i = 0; i < this.neighbors.length; i++) {
+                var n = this.neighbors[i];
+                if (n.sourceId === nodeId || n.neighbor.id === nodeId) {
+                    this.neighbors.splice(i, 1);
+                    i--;
+                }
+            }
+
+            this.updateGraph();
+
+        };
+
+        PathGraphView.prototype.removeNeighborsOfNode = function (nodeId) {
+
             var that = this;
+            var neighbors = this.graph.neighbors(nodeId);
 
-            this.graph = newGraph();
+            if (neighbors) {
+                neighbors.forEach(function (neighborId) {
+                    var neighborNode = that.graph.node(neighborId);
+                    if (neighborNode.isNeighborNode) {
+                        for (var i = 0; i < that.neighbors.length; i++) {
+                            var n = that.neighbors[i];
+                            if (n.sourceId.toString() === neighborId.toString() || n.neighbor.id.toString() === neighborId.toString()) {
+                                that.neighbors.splice(i, 1);
+                                i--;
+                            }
+                        }
+                    }
+                });
+            }
 
-            this.addPathsToGraph(this.paths);
-            this.neighbors.forEach(function (n) {
-                that.addNeighborToGraph(n.sourceId, n.neighbor);
-            });
+            this.updateGraph();
 
-            this.currentGraphLayout.render(this.paths, this.graph);
         };
 
         return new PathGraphView();

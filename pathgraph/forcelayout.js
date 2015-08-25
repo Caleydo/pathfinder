@@ -104,35 +104,18 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
                 var w = $svg.offsetWidth;
                 var h = $svg.offsetHeight;
 
-                that.graph.nodes.forEach(function (node) {
-
-                    if (node.x + nodeWidth / 2 > w) {
-                        node.x = w - nodeWidth / 2;
-                    }
-                    if (node.y + nodeHeight / 2 > h) {
-                        node.y = h - nodeHeight / 2;
-                    }
-                    if (node.x - nodeWidth / 2 < 0) {
-                        node.x = nodeWidth / 2;
-                    }
-                    if (node.y - nodeHeight / 2 < 0) {
-                        node.y = nodeHeight / 2;
-                    }
-                });
-
                 var nodeGroup = d3.select("#pathgraph svg g.nodeGroup");
 
                 var allNodes = nodeGroup.selectAll("g.node").data(that.graph.nodes, function (d) {
                     return d.node.id;
                 });
 
-                allNodes.each(function (node) {
+                allNodes.each(function (d) {
                     //if (!node.fixed) {
+                    d.x = Math.max(nodeWidth / 2, Math.min(w - (nodeWidth / 2), d.x));
+                    d.y = Math.max(nodeHeight / 2, Math.min(h - nodeHeight / 2, d.y));
                     d3.select(this)
-                        .attr("transform", function (d) {
-                            return "translate(" + d.x + ", " + d.y + ")";
-                            //}
-                        });
+                        .attr("transform", "translate(" + d.x + ", " + d.y + ")");
                     //}
                 });
 
@@ -345,7 +328,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
                 var svg = d3.select("#pathgraph svg");
                 svg.selectAll("g.node")
                     .classed("filtered", function (d) {
-                        return !d.neighborNode && pathQuery.isNodeFiltered(d.node.id);
+                        return !d.isNeighborNode && pathQuery.isNodeFiltered(d.node.id);
                     });
                 //.transition()
                 //.style("opacity", function (d) {
@@ -530,7 +513,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
                     .classed({
                         node: true,
                         neighbor: function (d) {
-                            return d.neighborNode;
+                            return d.isNeighborNode;
                         }
                     })
                     .on("dblclick", function (d) {
@@ -557,13 +540,24 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
                             ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp");
                         }
                     });
+                    items.push({
+                        text: d.isNeighborNode ? "Remove" : "Remove Neighbors",
+                        icon: "\uf068",
+                        callback: function () {
+                            if (d.isNeighborNode) {
+                                that.view.removeNeighborNode(d.node.id);
+                            } else {
+                                that.view.removeNeighborsOfNode(d.node.id);
+                            }
+                        }
+                    });
                     pathUtil.renderNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
                         return that.view.getTextWidth(text)
                     }, items);
                 });
 
                 allNodes.classed("neighbor", function (d) {
-                    return d.neighborNode;
+                    return d.isNeighborNode;
                 });
 
 

@@ -105,7 +105,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             svg.selectAll("g.node")
                 .classed("filtered", function (d) {
 
-                    return !d.neighborNode && pathQuery.isNodeFiltered(d.node.id);
+                    return !d.isNeighborNode && pathQuery.isNodeFiltered(d.node.id);
                 });
             //.transition()
             //.style("opacity", function (d) {
@@ -363,7 +363,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                 .classed({
                     node: true,
                     neighbor: function (d) {
-                        return d.neighborNode;
+                        return d.isNeighborNode;
                     }
                 })
                 .attr("transform", function (d) {
@@ -386,6 +386,18 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                         ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp");
                     }
                 });
+                items.push({
+                    text: d.isNeighborNode ? "Remove" : "Remove Neighbors",
+                    icon: "\uf068",
+                    callback: function () {
+                        if(d.isNeighborNode) {
+                            that.view.removeNeighborNode(d.node.id);
+                        } else {
+                            that.view.removeNeighborsOfNode(d.node.id);
+                        }
+                    }
+                });
+
                 pathUtil.renderNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
                     return that.view.getTextWidth(text)
                 }, items);
@@ -403,7 +415,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                 .classed({
                     node: true,
                     neighbor: function (d) {
-                        return d.neighborNode;
+                        return d.isNeighborNode;
                     }
                 })
                 .transition()
