@@ -45,14 +45,14 @@ define(['d3', './queryview', '../listoverlay', '../uiutil', '../setinfo', '../co
                     text: "As start",
                     icon: "\uf0b0",
                     callback: function () {
-                        queryView.addNodeFilter(getConstraintInfo(), false);
+                        queryView.asBoundingNode(getConstraintInfo(), true);
                     }
                 },
                 {
                     text: "As end",
                     icon: "\uf0b0",
                     callback: function () {
-                        queryView.addNodeFilter(getConstraintInfo(), true);
+                        queryView.asBoundingNode(getConstraintInfo(), false);
                     }
                 }
             ]
