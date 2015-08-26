@@ -3,9 +3,9 @@
  */
 require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
         './pathstats/pathstatsview', '../pathfinder_graph/search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
-        '../pathfinder_ccle/ccle', 'font-awesome', 'bootstrap'],
+        '../pathfinder_ccle/ccle', './extradata', 'font-awesome', 'bootstrap'],
 
-    function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting, statisticsUtil, ccle) {
+    function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting, statisticsUtil, ccle, extradata) {
 
         'use strict';
 
@@ -13,6 +13,16 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
 
         var currentPathId = 0;
         var showSettings = false;
+
+        //how to use the extra data
+        //extradata.getGeneData(['EGFR']).then(function(data) {
+        //   console.log(data);
+        //});
+
+        //extradata.getKEGGData((['C00157'])).then(function(data) {
+        //    console.log(data);
+        //});
+
 
 
         $(document).ready(function () {
