@@ -358,13 +358,14 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
     return validRegions;
   };
   RegionMatcher.prototype.serialize = function () {
-    var r = this.query.serialize();
+    var r = {};
     var reg = [this.region.minIndex, this.region.maxIndex];
     if (this.relativeToEnd) {
       reg = [-1 - this.region.minIndex, -1 - this.region.maxIndex];
     }
     r['$region'] = reg;
     r['$relate'] = this.regionRelation.name;
+    r['$query'] = this.query.serialize();
     return r;
   };
 
