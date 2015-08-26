@@ -2,7 +2,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
     function ($, d3, webcola, dagre, listeners, selectionUtil, pathSorting, pathQuery, config, View, ForceLayout, LayeredLayout) {
         'use strict';
 
-        var currentNeighborEdgeId = 0;
+
 
         function newGraph() {
             return new dagre.graphlib.Graph();
@@ -222,29 +222,24 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                 });
             }
 
-            //FIXME Switch to test edge ids when they are available
-            //var edges = that.graph.edges();
-            var exists = that.graph.edge({v: sourceId, w: neighbor.id}) || that.graph.edge({
-                    w: sourceId,
-                    v: neighbor.id
+            var edge = neighbor._edge;
+            var exists = that.graph.edge({v: edge.sourceNodeId, w: edge.targetNodeId}) || that.graph.edge({
+                    v: edge.sourceNodeId, w: edge.targetNodeId
                 });
-            //for (var i = 0; i < edges.length; i++) {
-            //    var e = edges[i];
-            //    if (e.v === sourceId.toString() && e.w === neighbor.id.toString() || e.w === sourceId.toString() && e.v === neighbor.id.toString()) {
-            //        exists = true;
-            //        break;
-            //    }
-            //}
+
             if (!exists) {
-                currentNeighborEdgeId++;
-                that.graph.setEdge(sourceId, neighbor.id, {
-                    label: "neighborEdge" + currentNeighborEdgeId,
-                    id: "neighborEdge" + currentNeighborEdgeId,
+                that.graph.setEdge(edge.sourceNodeId, edge.targetNodeId, {
+                    label: edge.id.toString(),
+                    id: edge.id,
                     neighborEdge: true,
-                    edge: {
-                        id: "neighborEdge" + currentNeighborEdgeId,
-                        type: "tempNeighborEdge"
-                    }
+                    edge: edge
+                    //label: "neighborEdge" + currentNeighborEdgeId,
+                    //id: "neighborEdge" + currentNeighborEdgeId,
+                    //neighborEdge: true,
+                    //edge: {
+                    //    id: "neighborEdge" + currentNeighborEdgeId,
+                    //    type: "tempNeighborEdge"
+                    //}
                 });
             }
         };
