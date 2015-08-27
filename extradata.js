@@ -7,14 +7,14 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/plugin'], function (
   function getData(id, ids) {
     var plugins = plugin.list('pathfinder_' + id + '_data');
     if (plugins.length === 0) {
-      return C.resolved({});
+      return Promise.resolve({});
     }
     if (plugins.length === 0) {
       return plugins[0].load().then(function (impl) {
       return impl.factory(ids);
       });
     }
-    return C.all(plugins.map(function(p) { return p.load().then(function(impl) { return impl.factory(ids); })})).then(function(datas) {
+    return Promise.all(plugins.map(function(p) { return p.load().then(function(impl) { return impl.factory(ids); })})).then(function(datas) {
       var r = {};
       datas.forEach(function(data) {
         Object.keys(data).forEach(function(gene) {

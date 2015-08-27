@@ -1,11 +1,11 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
+require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
         './pathstats/pathstatsview', '../pathfinder_graph/search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
         '../pathfinder_ccle/ccle', './extradata', 'font-awesome', 'bootstrap'],
 
-    function ($, d3, C, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting, statisticsUtil, ccle, extradata) {
+    function ($, d3, C, ajax, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting, statisticsUtil, ccle, extradata) {
 
         'use strict';
 
@@ -134,7 +134,7 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
                 });
 
                 //var selectPaths = d3.select('#select_dump');
-                //C.getJSON('dump/testpaths.json').then(function (data) {
+                //ajax.getJSON('dump/testpaths.json').then(function (data) {
                 //    var options = selectPaths.selectAll('option').data([{value: '', label: ''}].concat(data));
                 //    options.enter().append('option')
                 //        .attr('value', function (d) {
@@ -146,7 +146,7 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
                 //});
                 //selectPaths.on("change", function () {
                 //    if (this.value != '') {
-                //        C.getJSON(this.value, function (paths) {
+                //        ajax.getJSON(this.value, function (paths) {
                 //            reset();
                 //            loadPaths(paths);
                 //        });
@@ -184,7 +184,7 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
                         var initialPaths = config.getSamplePathsFile();
                         if (initialPaths) {
 
-                            C.getJSON(initialPaths, function (paths) {
+                            ajax.getJSON(initialPaths).then(function (paths) {
 
                                 var i = 0;
 
