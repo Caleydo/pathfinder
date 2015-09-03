@@ -11,6 +11,14 @@
     "pathfinder_graph": "*"
   },
   "caleydo": {
+    "plugins": {
+      "web": [
+        {
+          "type": "app",
+          "name": "PPI"
+        }
+      ]
+    },
     "dependencies": {
       "web": {
         "d3": "~3.5.5",
