@@ -7,14 +7,14 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/plugin', 'config'], 
     exports.getData = function (ids, datasetId) {
         var plugins = plugin.list('pathfinder_data');
         if (plugins.length === 0) {
-            return C.resolved({});
+            return Promise.resolve({});
         }
         if (plugins.length === 1) {
             return plugins[0].load().then(function (impl) {
                 return impl.factory(ids, datasetId);
             });
         }
-        return C.all(plugins.map(function (p) {
+        return Promise.all(plugins.map(function (p) {
             return p.load().then(function (impl) {
                 return impl.factory(ids, datasetId);
             })
@@ -84,14 +84,14 @@ define(['exports', '../caleydo_core/main', '../caleydo_core/plugin', 'config'], 
             return p.uc === config.getUseCase();
         });
         if (plugins.length === 0) {
-            return C.resolved([]);
+            return Promise.resolve([]);
         }
         if (plugins.length === 1) {
             return plugins[0].load().then(function (impl) {
                 return impl.factory();
             });
         }
-        return C.all(plugins.map(function (p) {
+        return Promise.all(plugins.map(function (p) {
             return p.load().then(function (impl) {
                 return impl.factory();
             })

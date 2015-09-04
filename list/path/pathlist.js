@@ -1,6 +1,6 @@
 define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '../../selectionutil',
         '../pathsorting', '../../pathutil', '../../query/pathquery', '../../datastore', '../../config', '../../listoverlay',
-        '../../query/queryview', '../../query/queryutil', '../../hierarchyelements', './settings', './datasetrenderer2', '../../settings/visibilitysettings', '../../uiutil', './column'],
+        '../../query/queryview', '../../query/queryutil', '../../hierarchyelements', './settings', './datasetrenderer', '../../settings/visibilitysettings', '../../uiutil', './column'],
     function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config, ListOverlay, queryView, queryUtil, hierarchyElements, s, dr, vs, uiUtil, columns) {
         'use strict';
 
@@ -125,36 +125,39 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
 
                 datasets.forEach(function (dataset) {
-                    var d = new dr.DatasetWrapper(dataset);
-                    var exists = false;
-                    //Use existing wrapper if present
-                    that.datasets.forEach(function (wrapper) {
-                        if (wrapper.id === dataset.info.id) {
-                            d = wrapper;
-                            //clear children
-                            d.children = [];
-                            exists = true;
-                        }
-                    });
-
-                    if (!exists) {
-                        that.datasets.push(d);
-                    }
-
-                    if (dataset.info.type === "matrix") {
-                        Object.keys(dataset.groups).forEach(function (group) {
-                            var g = new dr.DataGroupWrapper(group, d);
-                            d.children.push(g);
-                        });
-                    } else if (dataset.info.type === "table") {
-                        dataset.info.columns.forEach(function (col) {
-                            if (col.value.type === "real") {
-                                var c = new dr.DataColumnWrapper(col, d);
-                                d.children.push(c);
+                        var d = new dr.DatasetWrapper(dataset);
+                        var exists = false;
+                        //Use existing wrapper if present
+                        that.datasets.forEach(function (wrapper) {
+                            if (wrapper.id === dataset.info.id) {
+                                d = wrapper;
+                                //clear children
+                                d.children = [];
+                                exists = true;
                             }
                         });
+
+                        if (!exists) {
+                            that.datasets.push(d);
+                        }
+
+                        if (dataset.info.type === "matrix") {
+                            Object.keys(dataset.groups).forEach(function (group) {
+                                var g = new dr.DataGroupWrapper(group, d);
+                                d.children.push(g);
+                            });
+                        }
+                        else if (dataset.info.type === "table") {
+                            dataset.info.columns.forEach(function (col) {
+                                if (col.value.type === "real") {
+                                    var c = new dr.TableColumnWrapper(col, d);
+                                    d.children.push(c);
+                                }
+                            });
+                        }
+
                     }
-                });
+                );
 
 
             },
@@ -175,7 +178,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     return numericalProperties[key];
                 });
 
-            },
+            }
+
+            ,
 
             addPathSets: function (path) {
 

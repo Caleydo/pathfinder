@@ -405,6 +405,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
             return getDataPropertyForNode("data", node, dataset, group);
         }
 
+        function getPropertyForNode(node, dataset, property) {
+            return getDataPropertyForNode(property, node, dataset);
+        }
+
         function pathExists(path) {
             for (var i = 0; i < paths.length; i++) {
 
@@ -510,7 +514,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
                             allDatasets[datasetId][nodeId] = data[datasetId][nodeId];
                         });
                     }
-
+                    listeners.notify(listeners.updateType.DATASET_UPDATE);
                 });
             });
 
@@ -522,11 +526,11 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
                     ccle.boxplot_of(nodeId, function (res) {
                         if (typeof res !== "undefined") {
                             Object.keys(res).forEach(function (dataset) {
-                                Object.keys(res[dataset]).forEach(function (group) {
-                                    allDatasets[dataset][nodeId] = allDatasets[dataset][nodeId] || {};
-                                    allDatasets[dataset][nodeId].stats = res[dataset]["_all"].stats;
-                                    allDatasets[dataset][nodeId].data = res[dataset]["_all"].data;
-                                })
+                                //Object.keys(res[dataset]).forEach(function (group) {
+                                allDatasets[dataset][nodeId] = allDatasets[dataset][nodeId] || {};
+                                allDatasets[dataset][nodeId].stats = res[dataset]["_all"].stats;
+                                allDatasets[dataset][nodeId].data = res[dataset]["_all"].data;
+                                //})
                             });
                             listeners.notify(listeners.updateType.DATASET_UPDATE);
                         }
@@ -770,6 +774,8 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
             getDataForNode: getDataForNode,
 
             getStatsForNode: getStatsForNode,
+
+            getPropertyForNode: getPropertyForNode,
 
             getPathDatasetStats: getPathDatasetStats,
 

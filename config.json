@@ -265,7 +265,7 @@
       "stratification": "compoundcelleffect_siteprimary"
     },
     "metabolomics": {
-      "sample_paths": "dump/egfr-ptk2-sos1.json",
+      "sample_paths": "dump/acaa1-c00350.json",
       "settings": {
       },
       "nodes": [
