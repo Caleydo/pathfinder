@@ -6,6 +6,10 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         var DATA_GROUP_V_PADDING = 4;
         var DATA_AXIS_SIZE = 60;
 
+        var hDatasetGroupRenderer = new HDataRenderer();
+        var vDatasetGroupRenderer = new VDataRenderer();
+        var currentDatasetGroupRenderer = hDatasetGroupRenderer;
+
 
         function DatasetWrapper(dataset) {
             hierarchyElements.HierarchyElement.call(this);
@@ -32,13 +36,96 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             return (!s.isTiltAttributes() && !this.collapsed) ? h + DATA_AXIS_WIDTH : h;
         };
 
-        //function MatrixDatasetWrapper(id, name, minValue, maxValue, color) {
-        //    DatasetWrapper.call(this, id, name, color);
-        //    this.minValue = minValue;
-        //    this.maxValue = maxValue;
-        //}
-        //
-        //MatrixDatasetWrapper.prototype = Object.create(DatasetWrapper.prototype);
+        DatasetWrapper.prototype.renderEnter = function (parent, pathWrapper, pathList) {
+            var that = this;
+            parent.append("text")
+                .classed("collapseIconSmall", true)
+                .attr({
+                    x: 5,
+                    y: (that.getBaseHeight() - 10) / 2 + 9
+                });
+            var datasetLabel = parent.append("text")
+                .attr({
+                    x: s.SET_TYPE_INDENT,
+                    y: (that.getBaseHeight() - 10) / 2 + 9,
+                    "clip-path": "url(#SetLabelClipPath)"
+                })
+                .style({
+                    fill: this.color
+                })
+                .text(function (d) {
+                    return d.name;
+                });
+
+            datasetLabel.append("title")
+                .text(function (d) {
+                    return d.name;
+                });
+
+            currentDatasetGroupRenderer.onDatasetEnter(parent, pathWrapper, this, pathList);
+        };
+
+        DatasetWrapper.prototype.renderUpdate = function (parent, pathWrapper, pathList) {
+            var that = this;
+
+            parent.select("text.collapseIconSmall")
+                .text(function (d) {
+                    return d.collapsed ? "\uf0da" : "\uf0dd";
+                })
+                .on("click", function (d) {
+                    var collapsed = !d.collapsed;
+                    if (d3.event.ctrlKey) {
+                        listeners.notify(s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE, {
+                            type: d.name,
+                            collapsed: collapsed
+                        });
+                    } else {
+                        d.collapsed = collapsed;
+                        d3.select(this).text(d.collapsed ? "\uf0da" : "\uf0dd");
+
+                        pathList.updatePathList();
+
+                    }
+                });
+
+
+            currentDatasetGroupRenderer.onDatasetUpdate(parent, pathWrapper, this, pathList);
+
+
+            var allChildren = parent.selectAll("g.dataGroup")
+                .data(that.getVisibleChildren(), function (d) {
+                    return d.name
+                });
+
+            var child = allChildren.enter()
+                .append("g")
+                .classed("dataGroup", true);
+
+            child.each(function (child) {
+                child.renderEnter(d3.select(this), pathWrapper, that, pathList);
+            });
+
+            allChildren.attr({
+                transform: function (d, i) {
+                    var posY = that.getBaseHeight();
+                    var groups = that.getVisibleChildren();
+
+                    for (var j = 0; j < i; j++) {
+                        var g = groups[j];
+                        posY += g.getHeight();
+                    }
+                    return ("translate(0, " + posY + ")");
+                }
+            });
+
+
+            allChildren.each(function (child) {
+                child.renderUpdate(d3.select(this), pathWrapper, that, pathList);
+            });
+
+            allChildren.exit().remove();
+        };
+
 
         function DataGroupWrapper(name, parent) {
             hierarchyElements.HierarchyElement.call(this, parent);
@@ -55,281 +142,147 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             return s.isDataGroupSticky(this.parent.id, this.name);
         };
 
+        DataGroupWrapper.prototype.renderEnter = function (parent, pathWrapper, dataset, pathList) {
+            var that = this;
 
-        function DataRenderer(pathList) {
-            this.pathList = pathList;
-        }
+            parent.append("rect")
+                .classed("background", true)
+                .attr({
+                    x: s.SET_TYPE_INDENT,
+                    y: DATA_GROUP_V_PADDING,
+                    width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
+                    height: s.isTiltAttributes() ? DATA_AXIS_SIZE : BOX_WIDTH
+                })
+                .style({
+                    //stroke: "black",
+                    fill: "rgba(240,240,240,0.5)"
+                });
 
-        DataRenderer.prototype = {
+            var groupLabel = parent.append("text")
+                .attr({
+                    x: s.SET_TYPE_INDENT,
+                    y: (that.getBaseHeight() - 10) / 2 + 9,
+                    "clip-path": "url(#SetLabelClipPath)"
+                })
+                .style({
+                    fill: dataset.color
+                })
+                .text(function (d) {
+                    return d.name;
+                });
 
-            render: function () {
-                var that = this;
-                var allDatasetGroups = that.pathList.parent.selectAll("g.pathContainer g.datasetGroup")
-                    .data(that.pathList.pathWrappers, function (d) {
-                        return d.path.id;
+            groupLabel.append("title")
+                .text(function (d) {
+                    return d.name;
+                });
+
+            currentDatasetGroupRenderer.onDataGroupEnter(parent, pathWrapper, dataset, that, pathList);
+        };
+
+        DataGroupWrapper.prototype.renderUpdate = function (parent, pathWrapper, dataset, pathList) {
+            var that = this;
+
+            parent.select("rect.background")
+                .transition()
+                .attr({
+                    width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
+                    height: s.isTiltAttributes() ? DATA_AXIS_SIZE : BOX_WIDTH
+                });
+
+
+            currentDatasetGroupRenderer.onDataGroupUpdate(parent, pathWrapper, dataset, this, pathList);
+
+            var statData = [];
+
+            pathWrapper.path.nodes.forEach(function (node, index) {
+                var stats = dataStore.getStatsForNode(node, dataset.id, that.name);
+                if (typeof stats !== "undefined") {
+                    statData.push({
+                        stats: stats,
+                        node: node,
+                        nodeIndex: index
                     });
+                }
+            });
 
-                //allDatasetGroups.attr({
-                //    transform: function (d) {
-                //        return "translate(0," + (s.PATH_HEIGHT + d.getSetHeight() + d.getPropertyHeight()) + ")";
-                //    }
-                //});
-
-                allDatasetGroups.each(function (pathWrapper) {
-
-                        var p = d3.select(this).attr({
-                            transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight()) + ")"
-                        });
-
-                        var allDatasets = p.selectAll("g.dataset")
-                            .data(pathWrapper.datasets);
-
-                        var dataset = allDatasets.enter()
-                            .append("g")
-                            .classed("dataset", true);
-
-                        dataset.each(function (dataset, datasetIndex) {
-                            var $dataset = d3.select(this);
-                            $dataset.append("text")
-                                .classed("collapseIconSmall", true)
-                                .attr({
-                                    x: 5,
-                                    y: (dataset.getBaseHeight() - 10) / 2 + 9
-                                });
-                            var datasetLabel = $dataset.append("text")
-                                .attr({
-                                    x: s.SET_TYPE_INDENT,
-                                    y: (dataset.getBaseHeight() - 10) / 2 + 9,
-                                    "clip-path": "url(#SetLabelClipPath)"
-                                })
-                                .style({
-                                    fill: dataset.color
-                                })
-                                .text(function (d) {
-                                    return d.name;
-                                });
-
-                            datasetLabel.append("title")
-                                .text(function (d) {
-                                    return d.name;
-                                });
-
-                            that.onDatasetEnter($dataset, pathWrapper, dataset, datasetIndex);
-                        });
-
-                        allDatasets.each(function (dataset, datasetIndex) {
-
-                            var $dataset = d3.select(this);
-
-                            $dataset.select("text.collapseIconSmall")
-                                .text(function (d) {
-                                    return d.collapsed ? "\uf0da" : "\uf0dd";
-                                })
-                                .on("click", function (d) {
-                                    var collapsed = !d.collapsed;
-                                    if (d3.event.ctrlKey) {
-                                        listeners.notify(s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE, {
-                                            type: d.name,
-                                            collapsed: collapsed
-                                        });
-                                    } else {
-                                        d.collapsed = collapsed;
-                                        d3.select(this).text(d.collapsed ? "\uf0da" : "\uf0dd");
-
-                                        that.pathList.updatePathList();
-
-                                    }
-                                });
-
-                            $dataset.attr({
-                                transform: function (d) {
-                                    var posY = 0;
-                                    var datasetWrappers = pathWrapper.datasets;
-
-                                    for (var j = 0; j < datasetIndex; j++) {
-                                        var datasetWrapper = datasetWrappers[j];
-                                        if (datasetWrapper.canBeShown()) {
-                                            posY += datasetWrapper.getHeight();
-                                        }
-                                    }
-                                    return ("translate(0, " + posY + ")");
-                                }
-                            });
+            var allNodeData = parent.selectAll("g.nodeData")
+                .data(statData, function (d) {
+                    return d.node.id;
+                });
 
 
-                            that.onDatasetUpdate($dataset, pathWrapper, dataset, datasetIndex);
+            var nodeData = allNodeData.enter()
+                .append("g")
+                .classed("nodeData", true);
+
+            nodeData.each(function (statData) {
+                currentDatasetGroupRenderer.onNodeDataEnter(d3.select(this), pathWrapper, dataset, that, statData, pathList);
+            });
+
+            allNodeData.each(function (statData) {
+                currentDatasetGroupRenderer.onNodeDataUpdate(d3.select(this), pathWrapper, dataset, that, statData, pathList);
+            });
+
+            allNodeData.exit().remove();
+
+        };
 
 
-                            var allGroups = $dataset.selectAll("g.dataGroup")
-                                .data(dataset.getVisibleChildren(), function (d) {
-                                    return d.name
-                                });
-
-                            var group = allGroups.enter()
-                                .append("g")
-                                .classed("dataGroup", true);
-
-                            group.each(function (group, groupIndex) {
-
-                                var $group = d3.select(this);
-
-                                $group.append("rect")
-                                    .classed("background", true)
-                                    .attr({
-                                        x: s.SET_TYPE_INDENT,
-                                        y: DATA_GROUP_V_PADDING,
-                                        width: that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
-                                        height: s.isTiltAttributes() ? DATA_AXIS_SIZE : BOX_WIDTH
-                                    })
-                                    .style({
-                                        //stroke: "black",
-                                        fill: "rgba(240,240,240,0.5)"
-                                    });
-
-                                var groupLabel = $group.append("text")
-                                    .attr({
-                                        x: s.SET_TYPE_INDENT,
-                                        y: (group.getBaseHeight() - 10) / 2 + 9,
-                                        "clip-path": "url(#SetLabelClipPath)"
-                                    })
-                                    .style({
-                                        fill: dataset.color
-                                    })
-                                    .text(function (d) {
-                                        return d.name;
-                                    });
-
-                                groupLabel.append("title")
-                                    .text(function (d) {
-                                        return d.name;
-                                    });
-
-                                that.onDataGroupEnter($group, pathWrapper, dataset, group, groupIndex);
-                            });
-
-
-                            allGroups.each(function (group, groupIndex) {
-
-                                var $group = d3.select(this);
-
-                                $group.attr({
-                                    transform: function (d) {
-                                        var posY = dataset.getBaseHeight();
-                                        var groups = dataset.getVisibleChildren();
-
-                                        for (var j = 0; j < groupIndex; j++) {
-                                            var g = groups[j];
-                                            posY += g.getHeight();
-                                        }
-                                        return ("translate(0, " + posY + ")");
-                                    }
-                                });
-
-                                d3.select(this).select("rect.background")
-                                    .transition()
-                                    .attr({
-                                        width: that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
-                                        height: s.isTiltAttributes() ? DATA_AXIS_SIZE : BOX_WIDTH
-                                    });
-
-
-                                that.onDataGroupUpdate($group, pathWrapper, dataset, group, groupIndex);
-
-                                var statData = [];
-
-                                pathWrapper.path.nodes.forEach(function (node, index) {
-                                    var stats = dataStore.getStatsForNode(node, dataset.id, group.name);
-                                    if (typeof stats !== "undefined") {
-                                        statData.push({
-                                            stats: stats,
-                                            node: node,
-                                            nodeIndex: index
-                                        });
-                                    }
-                                });
-
-                                var allNodeData = d3.select(this).selectAll("g.nodeData")
-                                    .data(statData, function (d) {
-                                        return d.node.id;
-                                    });
-
-
-                                var nodeData = allNodeData.enter()
-                                    .append("g")
-                                    .classed("nodeData", true);
-
-                                nodeData.each(function (statData) {
-                                    that.onNodeDataEnter(d3.select(this), pathWrapper, dataset, group, statData);
-                                });
-
-                                allNodeData.each(function (statData) {
-                                    that.onNodeDataUpdate(d3.select(this), pathWrapper, dataset, group, statData);
-                                });
-
-                                allNodeData.exit().remove();
-
-                            });
-
-                            allGroups.exit().remove();
-
-                        });
-
-                        allDatasets.exit().remove();
-
-                    }
-                )
-                ;
-            },
-
-            onDatasetEnter: function ($dataset, pathWrapper, dataset, datasetIndex) {
-
-            }
-            ,
-
-            onDatasetUpdate: function ($dataset, pathWrapper, dataset, datasetIndex) {
-
-            }
-            ,
-
-            onDataGroupEnter: function ($group, pathWrapper, dataset, group, groupIndex) {
-
-            }
-            ,
-
-            onDataGroupUpdate: function ($group, pathWrapper, dataset, group, groupIndex) {
-
-            }
-            ,
-
-            onNodeDataEnter: function ($nodeData, pathWrapper, dataset, group, statData) {
-
-            }
-            ,
-
-            onNodeDataUpdate: function ($nodeData, pathWrapper, dataset, group, statData) {
-
-            }
-
-        }
-        ;
+        //function DataRenderer(pathList) {
+        //    this.pathList = pathList;
+        //}
+        //
+        //DataRenderer.prototype = {
+        //
+        //    render: function () {
+        //
+        //    },
+        //
+        //    onDatasetEnter: function ($dataset, pathWrapper, dataset, datasetIndex) {
+        //
+        //    }
+        //    ,
+        //
+        //    onDatasetUpdate: function ($dataset, pathWrapper, dataset, datasetIndex) {
+        //
+        //    }
+        //    ,
+        //
+        //    onDataGroupEnter: function ($group, pathWrapper, dataset, group, groupIndex) {
+        //
+        //    }
+        //    ,
+        //
+        //    onDataGroupUpdate: function ($group, pathWrapper, dataset, group, groupIndex) {
+        //
+        //    }
+        //    ,
+        //
+        //    onNodeDataEnter: function ($nodeData, pathWrapper, dataset, group, statData) {
+        //
+        //    }
+        //    ,
+        //
+        //    onNodeDataUpdate: function ($nodeData, pathWrapper, dataset, group, statData) {
+        //
+        //    }
+        //
+        //}
+        //;
 
         function HDataRenderer(pathList) {
-            DataRenderer.call(this, pathList);
         }
 
-        HDataRenderer.prototype = Object.create(DataRenderer.prototype);
-
-        HDataRenderer.prototype.onDatasetEnter = function ($dataset, pathWrapper, dataset, datasetIndex) {
-            var that = this;
+        HDataRenderer.prototype.onDatasetEnter = function ($dataset, pathWrapper, dataset, pathList) {
 
             var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
             var scaleX = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([0, axisSize]);
 
-            this.appendAxes($dataset, pathWrapper, dataset);
+            this.appendAxes($dataset, pathWrapper, dataset, pathList);
 
         };
 
-        HDataRenderer.prototype.appendAxes = function ($dataset, pathWrapper, dataset) {
+        HDataRenderer.prototype.appendAxes = function ($dataset, pathWrapper, dataset, pathList) {
             var that = this;
             var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
             var scaleX = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([0, axisSize]);
@@ -349,13 +302,13 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                 .classed("boxPlotAxisX", true)
                 .attr({
                     transform: function (d, i) {
-                        return "translate(" + (that.pathList.getNodePositionX(pathWrapper, i, true) - axisSize / 2) + "," + (dataset.getHeight() - DATA_AXIS_WIDTH) + ")";
+                        return "translate(" + (pathList.getNodePositionX(pathWrapper, i, true) - axisSize / 2) + "," + (dataset.getHeight() - DATA_AXIS_WIDTH) + ")";
                     }
                 })
                 .call(xAxis);
         };
 
-        HDataRenderer.prototype.onDatasetUpdate = function ($dataset, pathWrapper, dataset, datasetIndex) {
+        HDataRenderer.prototype.onDatasetUpdate = function ($dataset, pathWrapper, dataset, pathList) {
 
             $dataset.selectAll("g.boxPlotAxisY").remove();
 
@@ -368,11 +321,11 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             if (dataset.collapsed) {
                 allAxes.remove();
             } else {
-                this.appendAxes($dataset, pathWrapper, dataset);
+                this.appendAxes($dataset, pathWrapper, dataset, pathList);
                 allAxes.transition()
                     .attr({
                         transform: function (d, i) {
-                            return "translate(" + (that.pathList.getNodePositionX(pathWrapper, i, true) - axisSize / 2) + "," + (dataset.getHeight() - DATA_AXIS_WIDTH) + ")"
+                            return "translate(" + (pathList.getNodePositionX(pathWrapper, i, true) - axisSize / 2) + "," + (dataset.getHeight() - DATA_AXIS_WIDTH) + ")"
                         }
                     });
 
@@ -407,7 +360,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                     var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
                     var $summaryData = d3.select(this);
                     $summaryData.attr({
-                        transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + (DATA_GROUP_V_PADDING) + ")"
+                        transform: "translate(" + (pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + (DATA_GROUP_V_PADDING) + ")"
                     });
 
                     appendBoxPlotH($summaryData, statData.stats, scaleX, dataset.color);
@@ -419,7 +372,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                     var $summaryData = d3.select(this);
                     $summaryData.transition()
                         .attr({
-                            transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + (DATA_GROUP_V_PADDING) + ")"
+                            transform: "translate(" + (pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + (DATA_GROUP_V_PADDING) + ")"
                         });
 
                     updateBoxPlotH($summaryData, statData.stats, scaleX);
@@ -430,11 +383,14 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
         };
 
-        HDataRenderer.prototype.onDataGroupUpdate = function ($group, pathWrapper, dataset, group, groupIndex) {
+        HDataRenderer.prototype.onDataGroupEnter = function ($group, pathWrapper, dataset) {
+        };
+
+        HDataRenderer.prototype.onDataGroupUpdate = function ($group) {
             $group.selectAll("g.boxPlotAxisY").remove();
         };
 
-        HDataRenderer.prototype.onNodeDataEnter = function ($nodeData, pathWrapper, dataset, group, statData) {
+        HDataRenderer.prototype.onNodeDataEnter = function ($nodeData, pathWrapper, dataset, group, statData, pathList) {
             var that = this;
 
             var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
@@ -442,7 +398,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             var scaleX = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([0, axisSize]);
 
             $nodeData.attr({
-                transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + DATA_GROUP_V_PADDING + ")"
+                transform: "translate(" + (pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + DATA_GROUP_V_PADDING + ")"
             });
 
             //var stats = dataStore.getStatsForNode(node, dataset.name, group.name);
@@ -451,7 +407,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         };
 
 
-        HDataRenderer.prototype.onNodeDataUpdate = function ($nodeData, pathWrapper, dataset, group, statData) {
+        HDataRenderer.prototype.onNodeDataUpdate = function ($nodeData, pathWrapper, dataset, group, statData, pathList) {
             var that = this;
 
             var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
@@ -460,7 +416,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             $nodeData
                 .transition()
                 .attr({
-                    transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + DATA_GROUP_V_PADDING + ")"
+                    transform: "translate(" + (pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + DATA_GROUP_V_PADDING + ")"
                 });
 
             updateBoxPlotH($nodeData, statData.stats, scaleX);
@@ -504,16 +460,13 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
 
         function VDataRenderer(pathList) {
-            DataRenderer.call(this, pathList);
         }
 
-        VDataRenderer.prototype = Object.create(DataRenderer.prototype);
-
-        VDataRenderer.prototype.onDatasetEnter = function ($dataset, pathWrapper, dataset, datasetIndex) {
+        VDataRenderer.prototype.onDatasetEnter = function ($dataset, pathWrapper, dataset) {
             this.appendAxis($dataset, dataset);
         };
 
-        VDataRenderer.prototype.onDatasetUpdate = function ($dataset, pathWrapper, dataset, datasetIndex) {
+        VDataRenderer.prototype.onDatasetUpdate = function ($dataset, pathWrapper, dataset, pathList) {
             $dataset.selectAll("g.boxPlotAxisX").remove();
             var that = this;
 
@@ -551,7 +504,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                     var axisSize = config.getNodeWidth() + s.EDGE_SIZE / 2;
                     var $summaryData = d3.select(this);
                     $summaryData.attr({
-                        transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
+                        transform: "translate(" + (pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
                     });
 
                     appendBoxPlotV($summaryData, statData.stats, scaleY, dataset.color);
@@ -563,7 +516,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                     var $summaryData = d3.select(this);
                     $summaryData.transition()
                         .attr({
-                            transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
+                            transform: "translate(" + (pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
                         });
 
                     updateBoxPlotV($summaryData, statData.stats, scaleY);
@@ -589,12 +542,12 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                 .call(yAxis);
         };
 
-        VDataRenderer.prototype.onDataGroupEnter = function ($group, pathWrapper, dataset, group, groupIndex) {
+        VDataRenderer.prototype.onDataGroupEnter = function ($group, pathWrapper, dataset) {
 
             this.appendAxis($group, dataset);
         };
 
-        VDataRenderer.prototype.onDataGroupUpdate = function ($group, pathWrapper, dataset, group, groupIndex) {
+        VDataRenderer.prototype.onDataGroupUpdate = function ($group, pathWrapper, dataset, group) {
 
             if ($group.select("g.boxPlotAxisY").empty()) {
                 this.appendAxis($group, dataset);
@@ -602,25 +555,25 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         };
 
 
-        VDataRenderer.prototype.onNodeDataEnter = function ($nodeData, pathWrapper, dataset, group, statData) {
+        VDataRenderer.prototype.onNodeDataEnter = function ($nodeData, pathWrapper, dataset, group, statData, pathList) {
             var that = this;
 
             var scaleY = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([DATA_AXIS_SIZE, 0]);
 
             $nodeData.attr({
-                transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
+                transform: "translate(" + (pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
             });
             appendBoxPlotV($nodeData, statData.stats, scaleY, dataset.color);
         };
 
-        VDataRenderer.prototype.onNodeDataUpdate = function ($nodeData, pathWrapper, dataset, group, statData) {
+        VDataRenderer.prototype.onNodeDataUpdate = function ($nodeData, pathWrapper, dataset, group, statData, pathList) {
             var that = this;
 
             var scaleY = d3.scale.linear().domain([dataset.minValue, dataset.maxValue]).range([DATA_AXIS_SIZE, 0]);
 
             $nodeData.transition()
                 .attr({
-                    transform: "translate(" + (that.pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
+                    transform: "translate(" + (pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true)) + "," + DATA_GROUP_V_PADDING + ")"
                 });
 
 
@@ -915,8 +868,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         }
 
         function DatasetRenderer(pathList) {
-            this.vRenderer = new VDataRenderer(pathList);
-            this.hRenderer = new HDataRenderer(pathList);
+            this.pathList = pathList;
         }
 
 
@@ -924,11 +876,58 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
             render: function () {
                 if (s.isTiltAttributes()) {
-                    this.vRenderer.render();
+                    currentDatasetGroupRenderer = vDatasetGroupRenderer;
                 } else {
-                    this.hRenderer.render();
+                    currentDatasetGroupRenderer = hDatasetGroupRenderer;
                 }
 
+                var that = this;
+                var allDatasetGroups = that.pathList.parent.selectAll("g.pathContainer g.datasetGroup")
+                    .data(that.pathList.pathWrappers, function (d) {
+                        return d.path.id;
+                    });
+
+
+                allDatasetGroups.each(function (pathWrapper) {
+
+                        var p = d3.select(this).attr({
+                            transform: "translate(0," + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight()) + ")"
+                        });
+
+                        var allDatasets = p.selectAll("g.dataset")
+                            .data(pathWrapper.datasets);
+
+                        var dataset = allDatasets.enter()
+                            .append("g")
+                            .classed("dataset", true);
+                        //
+                        dataset.each(function (dataset) {
+                            dataset.renderEnter(d3.select(this), pathWrapper, that.pathList)
+                        });
+
+                        allDatasets.attr({
+                            transform: function (d, i) {
+                                var posY = 0;
+                                var datasetWrappers = pathWrapper.datasets;
+
+                                for (var j = 0; j < i; j++) {
+                                    var datasetWrapper = datasetWrappers[j];
+                                    if (datasetWrapper.canBeShown()) {
+                                        posY += datasetWrapper.getHeight();
+                                    }
+                                }
+                                return ("translate(0, " + posY + ")");
+                            }
+                        });
+
+                        allDatasets.each(function (dataset) {
+                            dataset.renderUpdate(d3.select(this), pathWrapper, that.pathList);
+                        });
+
+                        allDatasets.exit().remove();
+
+                    }
+                );
             }
         };
 

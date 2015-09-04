@@ -588,9 +588,9 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                 var datasetSelect = $("#datasetSelect");
                 datasetSelect.empty();
                 datasets.forEach(function (dataset, i) {
-                    datasetSelect.append("<option value='" + dataset.info.name + "'>" + dataset.info.title + "</option>");
+                    datasetSelect.append("<option value='" + dataset.info.id + "'>" + dataset.info.name + "</option>");
                     if (i === 0) {
-                        datasetSelect.val(dataset.info.name);
+                        datasetSelect.val(dataset.info.id);
                         fillGroupSelect(dataset);
                     }
                 });

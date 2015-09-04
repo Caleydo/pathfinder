@@ -15,14 +15,20 @@ require(['jquery', 'd3', '../caleydo_core/main', './listeners', './list/listview
         var showSettings = false;
 
         //how to use the extra data
-        //extradata.getGeneData(['EGFR']).then(function(data) {
-        //   console.log(data);
-        //});
-
-        //extradata.getKEGGData((['C00157'])).then(function(data) {
+        //extradata.getGeneData(['ACAA1'], "pathfinder_mrna").then(function (data) {
         //    console.log(data);
         //});
-
+        //
+        //extradata.getKEGGData((['C00157'], "pathfinder_metabolomics")).then(function (data) {
+        //    console.log(data);
+        //});
+        //
+        //extradata.list().then(function (descs) {
+        //    console.log(descs);
+        //});
+        //extradata.getData(['ACAA1'], "pathfinder_mrna").then(function (data) {
+        //    console.log(data);
+        //});
 
 
         $(document).ready(function () {
