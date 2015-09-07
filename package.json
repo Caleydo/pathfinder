@@ -8,7 +8,8 @@
   "peerDependencies": {
     "caleydo_core": "*",
     "pathfinder_ccle": "*",
-    "pathfinder_graph": "*"
+    "pathfinder_graph": "*",
+    "wrapper_bootstrap_fontawesome": "*"
   },
   "caleydo": {
     "plugins": {
@@ -22,10 +23,8 @@
     "dependencies": {
       "web": {
         "d3": "~3.5.5",
-        "font-awesome": ">=4.3.0",
         "webcola": "~3.1.0",
         "jquery-ui": "~1.11.4",
-        "bootstrap": "~3.3.4",
         "graphlib": "~1.0.1",
         "dagre": "~0.7.1",
         "dagre-d3": "~0.4.3"
@@ -34,7 +33,6 @@
 
     "requirejs-config": {
       "paths": {
-        "bootstrap": "${baseUrl}/bootstrap/dist/js/bootstrap",
         "lodash": "${baseUrl}/lodash/dist/lodash",
         "graphlib": "${baseUrl}/graphlib/dist/graphlib.core",
         "dagre": "${baseUrl}/dagre/dist/dagre.core",
@@ -56,11 +54,7 @@
         "dagre-d3": {
           "deps": ["d3","lodash", "graphlib", "dagre"],
           "exports": "dagre-d3"
-        },
-        "bootstrap": [
-          "jquery",
-          "css!${baseUrl}/bootstrap/dist/css/bootstrap"
-        ]
+        }
       }
     }
   }
