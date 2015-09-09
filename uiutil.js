@@ -47,7 +47,7 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
                         callBack();
 
                         parent.selectAll("g.overlayButton").remove();
-                         d3.event.stopPropagation();
+                        d3.event.stopPropagation();
                     })
             });
 
@@ -109,6 +109,75 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
                 .text(buttonText);
 
             return button;
+        },
+
+        appendBars: function (parent, values, scale, height, color, name) {
+
+            var that = this;
+            var vals = values instanceof Array ? values : [values];
+            var posY = 0;
+
+            vals.forEach(function (value) {
+                var bar = parent.append("g")
+                    .classed("bar", true);
+                bar.append("rect")
+                    .classed("valueBg", true)
+                    .attr({
+                        x: 0,
+                        y: posY,
+                        width: scale.range()[1],
+                        height: height
+                    })
+                    .style({
+                        fill: "white"
+                    });
+
+                var x = (0 < scale.domain()[0] || 0 > scale.domain[1]) ? scale(scale.domain()[0]) : (value < 0 ? scale(value) : scale(0));
+                var width = Math.abs((0 < scale.domain()[0] ? scale(scale.domain()[0]) : (0 > scale.domain()[1] ? scale(scale.domain()[1]) : scale(0))) - scale(value));
+
+                bar.append("rect")
+                    .classed("value", true)
+                    .attr({
+                        x: x,
+                        y: posY,
+                        fill: color,
+                        width: width,
+                        height: height
+                    });
+
+                bar.append("rect")
+                    .classed("valueFrame", true)
+                    .attr({
+                        x: 0,
+                        y: posY,
+                        width: scale.range()[1],
+                        height: height
+                    })
+                    .style({
+                        "shape-rendering": "crispEdges",
+                        fill: "rgba(0,0,0,0)",
+                        stroke: "rgb(80,80,80)"
+                    });
+
+                bar.append("line")
+                    .classed("zero", true)
+                    .attr({
+                        x1: scale(0),
+                        y1: posY - 4,
+                        x2: scale(0),
+                        y2: posY + height + 4
+                    })
+                    .style({
+                        "opacity": (scale.domain()[0] < 0 && scale.domain()[1] > 0) ? 1 : 0,
+                        "shape-rendering": "crispEdges",
+                        stroke: "rgb(80,80,80)"
+                    });
+
+                bar.append("title").text(name + ": " + that.formatNumber(value));
+
+                posY += height;
+            });
+
         }
 
 

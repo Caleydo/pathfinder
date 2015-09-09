@@ -165,7 +165,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             var groupLabel = parent.append("text")
                 .attr({
                     x: s.SET_TYPE_INDENT,
-                    y: (that.getBaseHeight() - 10) / 2 + 9,
+                    y: that.getLabelPosY(),
                     "clip-path": "url(#SetLabelClipPath)"
                 })
                 .style({
@@ -217,6 +217,10 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             allNodeData.exit().remove();
         };
 
+        DatasetSubsetWrapper.prototype.getLabelPosY = function () {
+            return (this.getBaseHeight() - 10) / 2 + 9;
+        };
+
 
         function DataGroupWrapper(name, parent) {
             DatasetSubsetWrapper.call(this, name, parent);
@@ -240,8 +244,10 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         };
 
 
-        function TableColumnWrapper(column, parent) {
+        function TableColumnWrapper(column, parent, pathWrapper) {
             DatasetSubsetWrapper.call(this, column.name, parent);
+            var that = this;
+            this.pathWrapper = pathWrapper;
             this.column = column;
         }
 
@@ -261,7 +267,23 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         };
 
         TableColumnWrapper.prototype.getBaseHeight = function () {
-            return s.isTiltAttributes() ? DATA_AXIS_SIZE + 2 * DATA_GROUP_V_PADDING : 14;
+
+            var that = this;
+            var maxNumValues = 1;
+            this.pathWrapper.path.nodes.forEach(function (node) {
+                var data = dataStore.getPropertyForNode(node, that.parent.id, that.name);
+                if (typeof data !== "undefined") {
+                    if (data instanceof Array && data.length > maxNumValues) {
+                        maxNumValues = data.length;
+                    }
+                }
+            });
+
+            return s.isTiltAttributes() ? DATA_AXIS_SIZE + 2 * DATA_GROUP_V_PADDING : maxNumValues * s.DEFAULT_BAR_SIZE + 10; //+ DATA_AXIS_WIDTH;
+        };
+
+        TableColumnWrapper.prototype.getLabelPosY = function () {
+            return 14;
         };
 
         function DataRenderer() {
@@ -305,69 +327,116 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
         HNumericalDataRenderer.prototype = Object.create(DataRenderer.prototype);
 
+        //HNumericalDataRenderer.prototype.onDataGroupEnter = function ($group, pathWrapper, dataset, group, pathList) {
+        //    $group.insert("rect", ":first-child")
+        //        .classed("background", true)
+        //        .attr({
+        //            x: s.SET_TYPE_INDENT,
+        //            y: -10,
+        //            width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH,
+        //            height: s.isTiltAttributes() ? DATA_AXIS_SIZE : s.DEFAULT_BAR_SIZE + 20
+        //        })
+        //        .style({
+        //            //stroke: "black",
+        //            fill: "white"
+        //        });
+        //};
+
         HNumericalDataRenderer.prototype.onNodeDataEnter = function ($nodeData, pathWrapper, dataset, group, nodeData, pathList) {
             $nodeData.attr({
-                transform: "translate(" + (pathList.getNodePositionX(pathWrapper, nodeData.nodeIndex, false)) + "," + (group.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2 + ")"
+                transform: "translate(" + (pathList.getNodePositionX(pathWrapper, nodeData.nodeIndex, false)) + ",5 )"
             });
+            //var min = Math.min(0, group.column.value.range[0]);
+            //var max = Math.max(0, group.column.value.range[1]);
 
-            var scale = d3.scale.linear().domain([group.column.value.range[0], group.column.value.range[1]]).range([0, config.getNodeWidth()]);
+            var min = group.column.value.range[0] < 0 ? -(Math.max(Math.abs(group.column.value.range[0]), Math.abs(group.column.value.range[1]))) : 0;
+            var max = group.column.value.range[0] < 0 ? (Math.max(Math.abs(group.column.value.range[0]), Math.abs(group.column.value.range[1]))) : group.column.value.range[1];
+            var scale = d3.scale.linear().domain([min, max]).range([0, config.getNodeWidth() - 20]);
             //FIXME cope with arrays
             var value = nodeData.data instanceof Array ? nodeData.data[0] : nodeData.data;
 
-            $nodeData.append("rect")
-                .classed("valueBg", true)
+            uiUtil.appendBars($nodeData, nodeData.data, scale, s.DEFAULT_BAR_SIZE, dataset.color, group.name);
+            //
+            //$nodeData.append("rect")
+            //    .classed("valueBg", true)
+            //    .attr({
+            //        x: 0,
+            //        y: -5,
+            //        width: scale.range()[1],
+            //        height: s.DEFAULT_BAR_SIZE+10
+            //    })
+            //    .style({
+            //        fill: "white"
+            //    });
+            //
+            //var x = (0 < scale.domain()[0] || 0 > scale.domain[1]) ? scale(scale.domain()[0]) : (value < 0 ? scale(value) : scale(0));
+            //var width = Math.abs((0 < scale.domain()[0] ? scale(scale.domain()[0]) : (0 > scale.domain()[1] ? scale(scale.domain()[1]) : scale(0))) - scale(value));
+            //
+            //$nodeData.append("rect")
+            //    .classed("value", true)
+            //    .attr({
+            //        x: x,
+            //        y: 0,
+            //        fill: dataset.color,
+            //        width: width,
+            //        height: s.DEFAULT_BAR_SIZE
+            //    });
+            //
+            //$nodeData.append("rect")
+            //    .classed("valueFrame", true)
+            //    .attr({
+            //        x: 0,
+            //        y: 0,
+            //        width: scale.range()[1],
+            //        height: s.DEFAULT_BAR_SIZE
+            //    })
+            //    .style({
+            //        "shape-rendering": "crispEdges",
+            //        fill: "rgba(0,0,0,0)",
+            //        stroke: "rgb(80,80,80)"
+            //    });
+            //
+            //$nodeData.append("line")
+            //    .classed("zero", true)
+            //    .attr({
+            //        x1: scale(0),
+            //        y1: -4,
+            //        x2: scale(0),
+            //        y2: s.DEFAULT_BAR_SIZE + 4
+            //    })
+            //    .style({
+            //        "opacity": (scale.domain()[0] < 0 && scale.domain()[1] > 0) ? 1 : 0,
+            //        "shape-rendering": "crispEdges",
+            //        stroke: "rgb(80,80,80)"
+            //    });
+            //
+            //$nodeData.append("title").text(group.name + ": " + uiUtil.formatNumber(value));
+
+            $nodeData.append("text")
                 .attr({
-                    x: 0,
-                    y: 0,
-                    width: scale.range()[1],
-                    height: s.DEFAULT_BAR_SIZE
+                    x: config.getNodeWidth() - 15,
+                    y: 9,
+                    "clip-path": "url(#SetLabelClipPath)"
                 })
                 .style({
-                    fill: "white"
-                });
-
-            var x = (0 < scale.domain()[0] || 0 > scale.domain[1]) ? scale(scale.domain()[0]) : (value < 0 ? scale(value) : scale(0));
-            var width = Math.abs((0 < scale.domain()[0] ? scale(scale.domain()[0]) : (0 > scale.domain()[1] ? scale(scale.domain()[1]) : scale(0))) - scale(value));
-
-            $nodeData.append("rect")
-                .classed("value", true)
-                .attr({
-                    x: x,
-                    y: 0,
-                    fill: dataset.color,
-                    width: width,
-                    height: s.DEFAULT_BAR_SIZE
-                });
-
-            $nodeData.append("rect")
-                .classed("valueFrame", true)
-                .attr({
-                    x: 0,
-                    y: 0,
-                    width: scale.range()[1],
-                    height: s.DEFAULT_BAR_SIZE
+                    fill: dataset.color
                 })
-                .style({
-                    "shape-rendering": "crispEdges",
-                    fill: "rgba(0,0,0,0)",
-                    stroke: "rgb(80,80,80)"
-                });
+                .text(uiUtil.formatNumber(value, 2));
 
-            $nodeData.append("line")
-                .classed("zero", true)
-                .attr({
-                    x1: scale(0),
-                    y1: -4,
-                    x2: scale(0),
-                    y2: s.DEFAULT_BAR_SIZE + 4
-                })
-                .style({
-                    "opacity": (scale.domain()[0] < 0 && scale.domain()[1] > 0) ? 1 : 0,
-                    "shape-rendering": "crispEdges",
-                    stroke: "rgb(80,80,80)"
-                });
+            //var xAxis = d3.svg.axis()
+            //    .scale(scale)
+            //    .orient("bottom")
+            //    .tickValues([scale.domain()[0], scale.domain()[1]])
+            //    //.tickFormat(d3.format(".2f"))
+            //    .tickSize(3, 3);
+            //$nodeData
+            //    .append("g")
+            //    .classed("axis", true)
+            //    .attr({
+            //        transform: "translate(" + 0 + "," + (group.getHeight() - DATA_AXIS_WIDTH - 2) + ")"
+            //    })
+            //    .call(xAxis);
 
-            $nodeData.append("title").text(group.name + ": " + uiUtil.formatNumber(value));
         };
 
 

@@ -425,14 +425,16 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
         }
 
         function fillGroupSelect(dataset) {
-            var groupSelect = $("#groupSelect");
-            groupSelect.empty();
-            groupSelect.append("<option value='_all'>All groups</option>");
-            groupSelect.val("_all");
+            if (dataset.info.type === "matrix") {
+                var groupSelect = $("#groupSelect");
+                groupSelect.empty();
+                groupSelect.append("<option value='_all'>All groups</option>");
+                groupSelect.val("_all");
 
-            Object.keys(dataset.groups).forEach(function (group) {
-                groupSelect.append("<option value='" + group + "'>" + group + "</option>");
-            });
+                Object.keys(dataset.groups).forEach(function (group) {
+                    groupSelect.append("<option value='" + group + "'>" + group + "</option>");
+                });
+            }
         }
 
         sortingManager.setStrategyChain([sortingStrategies.pathQueryStrategy, sortingStrategies.pathLength, sortingStrategies.pathId]);
@@ -533,8 +535,8 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
                 $("#addRanking").click(function () {
                     $("#scriptText").val("var getScore = function(path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {\n" +
-                    "//insert code here\n" +
-                    "return 0;\n}");
+                        "//insert code here\n" +
+                        "return 0;\n}");
 
                     $("#rankScriptModal").modal("show");
                 });

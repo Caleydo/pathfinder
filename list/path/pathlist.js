@@ -125,7 +125,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
 
                 datasets.forEach(function (dataset) {
-                        var d = new dr.DatasetWrapper(dataset);
+                        var d = new dr.DatasetWrapper(dataset, that);
                         var exists = false;
                         //Use existing wrapper if present
                         that.datasets.forEach(function (wrapper) {
@@ -143,14 +143,14 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
                         if (dataset.info.type === "matrix") {
                             Object.keys(dataset.groups).forEach(function (group) {
-                                var g = new dr.DataGroupWrapper(group, d);
+                                var g = new dr.DataGroupWrapper(group, d, that);
                                 d.children.push(g);
                             });
                         }
                         else if (dataset.info.type === "table") {
                             dataset.info.columns.forEach(function (col) {
                                 if (col.value.type === "real") {
-                                    var c = new dr.TableColumnWrapper(col, d);
+                                    var c = new dr.TableColumnWrapper(col, d, that);
                                     d.children.push(c);
                                 }
                             });
