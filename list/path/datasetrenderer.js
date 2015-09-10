@@ -279,7 +279,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                 }
             });
 
-            return s.isTiltAttributes() ? DATA_AXIS_SIZE + 2 * DATA_GROUP_V_PADDING : maxNumValues * s.DEFAULT_BAR_SIZE + 10; //+ DATA_AXIS_WIDTH;
+            return s.isTiltAttributes() ? DATA_AXIS_SIZE + 2 * DATA_GROUP_V_PADDING : maxNumValues * s.DEFAULT_BAR_SIZE + 10 + DATA_AXIS_WIDTH;
         };
 
         TableColumnWrapper.prototype.getLabelPosY = function () {
@@ -351,11 +351,11 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
             var min = group.column.value.range[0] < 0 ? -(Math.max(Math.abs(group.column.value.range[0]), Math.abs(group.column.value.range[1]))) : 0;
             var max = group.column.value.range[0] < 0 ? (Math.max(Math.abs(group.column.value.range[0]), Math.abs(group.column.value.range[1]))) : group.column.value.range[1];
-            var scale = d3.scale.linear().domain([min, max]).range([0, config.getNodeWidth() - 20]);
+            var scale = d3.scale.linear().domain([min, max]).range([0, config.getNodeWidth()]);
             //FIXME cope with arrays
             var value = nodeData.data instanceof Array ? nodeData.data[0] : nodeData.data;
 
-            uiUtil.appendBars($nodeData, nodeData.data, scale, s.DEFAULT_BAR_SIZE, dataset.color, group.name);
+            uiUtil.appendBars($nodeData, nodeData.data, scale, s.DEFAULT_BAR_SIZE, dataset.color, group.name, true, true);
             //
             //$nodeData.append("rect")
             //    .classed("valueBg", true)
@@ -412,30 +412,19 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             //
             //$nodeData.append("title").text(group.name + ": " + uiUtil.formatNumber(value));
 
-            $nodeData.append("text")
-                .attr({
-                    x: config.getNodeWidth() - 15,
-                    y: 9,
-                    "clip-path": "url(#SetLabelClipPath)"
-                })
-                .style({
-                    fill: dataset.color
-                })
-                .text(uiUtil.formatNumber(value, 2));
-
-            //var xAxis = d3.svg.axis()
-            //    .scale(scale)
-            //    .orient("bottom")
-            //    .tickValues([scale.domain()[0], scale.domain()[1]])
-            //    //.tickFormat(d3.format(".2f"))
-            //    .tickSize(3, 3);
-            //$nodeData
-            //    .append("g")
-            //    .classed("axis", true)
+            //$nodeData.append("text")
             //    .attr({
-            //        transform: "translate(" + 0 + "," + (group.getHeight() - DATA_AXIS_WIDTH - 2) + ")"
+            //        x: config.getNodeWidth() - 15,
+            //        y: 9,
+            //        "clip-path": "url(#SetLabelClipPath)"
             //    })
-            //    .call(xAxis);
+            //    .style({
+            //        fill: dataset.color
+            //    })
+            //    .text(uiUtil.formatNumber(value, 2));
+
+            //var numBars = nodeData.data instanceof Array ? nodeData.data.length : 1;
+
 
         };
 

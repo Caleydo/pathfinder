@@ -111,11 +111,25 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
             return button;
         },
 
-        appendBars: function (parent, values, scale, height, color, name) {
+        appendBars: function (parent, values, scale, barHeight, color, name, addAxis, addBackground) {
 
             var that = this;
             var vals = values instanceof Array ? values : [values];
             var posY = 0;
+
+            if (addBackground) {
+                parent.append("rect")
+                    .classed("valueBg", true)
+                    .attr({
+                        x: 0,
+                        y: -5,
+                        width: scale.range()[1],
+                        height: vals.length * barHeight +10
+                    })
+                    .style({
+                        fill: "white"
+                    });
+            }
 
             vals.forEach(function (value) {
                 var bar = parent.append("g")
@@ -126,7 +140,7 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
                         x: 0,
                         y: posY,
                         width: scale.range()[1],
-                        height: height
+                        height: barHeight
                     })
                     .style({
                         fill: "white"
@@ -142,7 +156,7 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
                         y: posY,
                         fill: color,
                         width: width,
-                        height: height
+                        height: barHeight
                     });
 
                 bar.append("rect")
@@ -151,7 +165,7 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
                         x: 0,
                         y: posY,
                         width: scale.range()[1],
-                        height: height
+                        height: barHeight
                     })
                     .style({
                         "shape-rendering": "crispEdges",
@@ -165,7 +179,7 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
                         x1: scale(0),
                         y1: posY - 4,
                         x2: scale(0),
-                        y2: posY + height + 4
+                        y2: posY + barHeight + 4
                     })
                     .style({
                         "opacity": (scale.domain()[0] < 0 && scale.domain()[1] > 0) ? 1 : 0,
@@ -175,9 +189,24 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
 
                 bar.append("title").text(name + ": " + that.formatNumber(value));
 
-                posY += height;
+                posY += barHeight;
             });
 
+            if (addAxis) {
+                var xAxis = d3.svg.axis()
+                    .scale(scale)
+                    .orient("bottom")
+                    .tickValues([scale.domain()[0], scale.domain()[1]])
+                    //.tickFormat(d3.format(".2f"))
+                    .tickSize(3, 3);
+                parent
+                    .append("g")
+                    .classed("barAxis", true)
+                    .attr({
+                        transform: "translate(" + 0 + "," + posY + ")"
+                    })
+                    .call(xAxis);
+            }
         }
 
 
