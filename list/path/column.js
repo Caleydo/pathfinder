@@ -1299,7 +1299,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                     .attr({
                         transform: "translate(0, " + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + property.getPosYRelativeToParent(pathWrapper.properties)) + ")"
                     });
-                this.scoreRepresentation.setValueRange(valueRange);
+                that.scoreRepresentation.setValueRange(valueRange);
                 that.scoreRepresentation.appendScore(p, scoreInfo.score, property.getHeight(), true, config.getNodePropertyColorFromPropertyName(property.name));
 
                 p.append("title")
@@ -1325,35 +1325,26 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                     .attr({
                         transform: "translate(0, " + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + property.getPosYRelativeToParent(pathWrapper.properties)) + ")"
                     });
-                this.scoreRepresentation.setValueRange(valueRange);
+                taht.scoreRepresentation.setValueRange(valueRange);
                 that.scoreRepresentation.updateScore(p, scoreInfo.score, property.getHeight(), true, config.getNodePropertyColorFromPropertyName(property.name));
             }
         };
 
 //------------------------------
-        function DatasetItemRenderer(column, scoreRepresentation, tooltipTextAccessor) {
+        function MatrixDatasetItemRenderer(column, scoreRepresentation, tooltipTextAccessor) {
             PathItemRenderer.call(this, column, scoreRepresentation);
             this.tooltipTextAccessor = tooltipTextAccessor;
         }
 
-        DatasetItemRenderer.prototype = Object.create(PathItemRenderer.prototype);
+        MatrixDatasetItemRenderer.prototype = Object.create(PathItemRenderer.prototype);
 
-        DatasetItemRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
+        MatrixDatasetItemRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
 
             var that = this;
 
             var datasetId = column.sortingStrategy.datasetId;
             var groupId = column.sortingStrategy.groupId;
-            var dataset = 0;
-            var dsIndex = 0;
-            for (var i = 0; i < pathWrapper.datasets.length; i++) {
-                var d = pathWrapper.datasets[i];
-                if (d.id === datasetId) {
-                    dataset = d;
-                    dsIndex = i;
-                    break;
-                }
-            }
+            var dataset = getDatasetWrapper(pathWrapper, datasetId);
 
             var valueRange = getPathDataScoreValueRange(pathWrappers, dataset, column.sortingStrategy);
             this.scoreRepresentation.setValueRange(valueRange);
@@ -1363,15 +1354,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             var score = scoreInfo.score;
 
             var posY = dataset.getPosYRelativeToParent(pathWrapper.datasets);
-            //var datasetWrappers = pathWrapper.datasets;
-
-            //
-            //for (var j = 0; j < dsIndex; j++) {
-            //  var datasetWrapper = datasetWrappers[j];
-            //  if (datasetWrapper.canBeShown()) {
-            //    posY += datasetWrapper.getHeight();
-            //  }
-            //}
 
             var datasetGroup = item.append("g")
                 .classed("dataset", true)
@@ -1388,37 +1370,18 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
             this.scoreRepresentation.appendScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), (typeof groupId === "undefined") ? dataset.color : d3.hsl(dataset.color).brighter(1).toString());
 
-            //var bar = datasetGroup.append("rect")
-            //  .classed("datasetScore", true)
-            //  .attr({
-            //    x: score < 0 ? barScale(score) : barScale(0),
-            //    y: (dataset.getBaseHeight() - BAR_SIZE) / 2,
-            //    fill: (typeof groupId === "undefined") ? "gray" : "rgb(180, 180,180)",
-            //    width: Math.abs(barScale(0) - barScale(score)),
-            //    height: BAR_SIZE
-            //  })
-
 
             datasetGroup.append("title")
                 .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
 
         };
 
-        DatasetItemRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
+        MatrixDatasetItemRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
 
             var that = this;
-            var datasetId = column.sortingStrategy.datasetId;
             var groupId = column.sortingStrategy.groupId;
-            var dataset = 0;
-            var dsIndex = 0;
-            for (var i = 0; i < pathWrapper.datasets.length; i++) {
-                var d = pathWrapper.datasets[i];
-                if (d.id === datasetId) {
-                    dataset = d;
-                    dsIndex = i;
-                    break;
-                }
-            }
+            var datasetId = column.sortingStrategy.datasetId;
+            var dataset = getDatasetWrapper(pathWrapper, datasetId);
 
             var valueRange = getPathDataScoreValueRange(pathWrappers, dataset, column.sortingStrategy);
             this.scoreRepresentation.setValueRange(valueRange);
@@ -1428,14 +1391,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             var score = scoreInfo.score;
 
             var posY = dataset.getPosYRelativeToParent(pathWrapper.datasets);
-            //var datasetWrappers = pathWrapper.datasets;
-            //
-            //for (var j = 0; j < dsIndex; j++) {
-            //  var datasetWrapper = datasetWrappers[j];
-            //  if (datasetWrapper.canBeShown()) {
-            //    posY += datasetWrapper.getHeight();
-            //  }
-            //}
 
             var datasetPosY = s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight() + posY;
 
@@ -1445,16 +1400,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 });
 
             this.scoreRepresentation.updateScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), dataset.color);
-            //
-            //datasetGroup.select("rect.datasetScore")
-            //  .transition()
-            //  .attr({
-            //    x: score < 0 ? barScale(score) : barScale(0),
-            //    y: (dataset.getBaseHeight() - BAR_SIZE) / 2,
-            //    fill: (typeof groupId === "undefined") ? "gray" : "rgb(180, 180,180)",
-            //    width: Math.abs(barScale(0) - barScale(score))
-            //  });
-
 
             if (column.sortingStrategy.supportsScoresPerGroup) {
                 var allGroups = item.selectAll("g.group")
@@ -1480,11 +1425,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
 
                         d3.select(this).attr({
-                            //x: score < 0 ? barScale(score) : barScale(0),
-                            //y: (group.getBaseHeight() - SMALL_BAR_SIZE) / 2,
-                            //fill: groupId === group.name ? "gray" : "rgb(180, 180,180)",
-                            //width: Math.abs(barScale(0) - barScale(score)),
-                            //height: SMALL_BAR_SIZE,
                             transform: "translate(0," + (datasetPosY + group.getPosYRelativeToParent()) + ")"
                         })
                             .on("dblclick", function () {
@@ -1517,10 +1457,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
 
                     d3.select(this).attr({
-                        //x: score < 0 ? barScale(score) : barScale(0),
-                        //y: (group.getBaseHeight() - SMALL_BAR_SIZE) / 2,
-                        //fill: groupId === group.name ? "gray" : "rgb(180, 180,180)",
-                        //width: Math.abs(barScale(0) - barScale(score)),
                         transform: "translate(0," + (datasetPosY + group.getPosYRelativeToParent()) + ")"
                     });
 
@@ -1531,17 +1467,108 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             }
         };
 
-        DatasetItemRenderer.prototype.init = function () {
+        MatrixDatasetItemRenderer.prototype.init = function () {
             PathItemRenderer.prototype.init.call(this);
             if (this.column.sortingStrategy.groupId) {
                 s.incStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
             }
         };
 
-        DatasetItemRenderer.prototype.destroy = function () {
+        MatrixDatasetItemRenderer.prototype.destroy = function () {
             if (this.column.sortingStrategy.groupId) {
                 s.decStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.groupId);
             }
+            PathItemRenderer.prototype.destroy.call(this);
+        };
+
+        function getDatasetWrapper(pathWrapper, datasetId) {
+            for (var i = 0; i < pathWrapper.datasets.length; i++) {
+                if (pathWrapper.datasets[i].id === datasetId) {
+                    return pathWrapper.datasets[i];
+                }
+            }
+        }
+
+        function getTableColumntWrapper(datasetWrapper, tableColumnName) {
+            for (var i = 0; i < datasetWrapper.children.length; i++) {
+                if (datasetWrapper.children[i].name === tableColumnName) {
+                    return datasetWrapper.children[i];
+                }
+            }
+        }
+
+        //------------------------------
+
+        function TableDatasetItemRenderer(column, scoreRepresentation, tooltipTextAccessor) {
+            PathItemRenderer.call(this, column, scoreRepresentation);
+            this.tooltipTextAccessor = tooltipTextAccessor;
+        }
+
+        TableDatasetItemRenderer.prototype = Object.create(PathItemRenderer.prototype);
+
+        TableDatasetItemRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
+
+            var that = this;
+            var datasetId = column.sortingStrategy.datasetId;
+            var attribute = column.sortingStrategy.attribute;
+            var datasetWrapper = getDatasetWrapper(pathWrapper, datasetId);
+            var tableColumnWrapper = getTableColumntWrapper(datasetWrapper, attribute);
+
+            if (!tableColumnWrapper || !tableColumnWrapper.canBeShown()) {
+                return;
+            }
+
+            var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
+            var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
+
+
+            //var p1 = datasetWrapper.getPosYRelativeToParent(pathWrapper.datasets);
+            //var p2 = tableColumnWrapper.getPosYRelativeToParent()
+
+            var p = item.append("g")
+                .classed("property", true)
+                .attr({
+                    transform: "translate(0, " + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight() + datasetWrapper.getPosYRelativeToParent(pathWrapper.datasets) + tableColumnWrapper.getPosYRelativeToParent()) + ")"
+                });
+            that.scoreRepresentation.setValueRange(valueRange);
+            that.scoreRepresentation.appendScore(p, scoreInfo.score, tableColumnWrapper.getHeight(), true, datasetWrapper.color);
+
+            p.append("title")
+                .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
+
+        };
+
+        TableDatasetItemRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
+            var that = this;
+            var datasetId = column.sortingStrategy.datasetId;
+            var attribute = column.sortingStrategy.attribute;
+            var datasetWrapper = getDatasetWrapper(pathWrapper, datasetId);
+            var tableColumnWrapper = getTableColumntWrapper(datasetWrapper, attribute);
+
+            if (!tableColumnWrapper) {
+                return;
+            }
+
+            var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
+            var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
+
+            var p = item.select("g.property").transition()
+                .attr({
+                    transform: "translate(0, " + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight() + datasetWrapper.getPosYRelativeToParent(pathWrapper.datasets) + tableColumnWrapper.getPosYRelativeToParent()) + ")"
+                });
+            that.scoreRepresentation.setValueRange(valueRange);
+            that.scoreRepresentation.updateScore(p, scoreInfo.score, tableColumnWrapper.getHeight(), true, datasetWrapper.color);
+
+        };
+
+        TableDatasetItemRenderer.prototype.init = function () {
+            PathItemRenderer.prototype.init.call(this);
+            s.incStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.attribute);
+
+        };
+
+        TableDatasetItemRenderer.prototype.destroy = function () {
+            s.decStickyDataGroupOwners(this.column.sortingStrategy.datasetId, this.column.sortingStrategy.attribute);
             PathItemRenderer.prototype.destroy.call(this);
         };
 
@@ -1647,17 +1674,20 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 this.itemRenderers["NUMERICAL_PROPERTY"] = function (column) {
                     return new PropertyItemRenderer(column, new BarRepresentation(), simpleScoreTooltip);
                 };
+                this.itemRenderers["NUMERICAL_TABLE_ATTRIBUTE"] = function (column) {
+                    return new TableDatasetItemRenderer(column, new BarRepresentation(), simpleScoreTooltip);
+                };
                 this.itemRenderers["OVERALL_STATS"] = function (column) {
-                    return new DatasetItemRenderer(column, new BarRepresentation(), overallStatsTooltip);
+                    return new MatrixDatasetItemRenderer(column, new BarRepresentation(), overallStatsTooltip);
                 };
                 this.itemRenderers["PER_NODE_STATS"] = function (column) {
-                    return new DatasetItemRenderer(column, new BarRepresentation(), perNodeStatsTooltip);
+                    return new MatrixDatasetItemRenderer(column, new BarRepresentation(), perNodeStatsTooltip);
                 };
                 this.itemRenderers["OVERALL_BETWEEN_GROUPS_STATS"] = function (column) {
-                    return new DatasetItemRenderer(column, new BarRepresentation(), overallBetweenGroupsStatsTooltip);
+                    return new MatrixDatasetItemRenderer(column, new BarRepresentation(), overallBetweenGroupsStatsTooltip);
                 };
                 this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = function (column) {
-                    return new DatasetItemRenderer(column, new BarRepresentation(), perNodeBetweenGroupsStatsTooltip);
+                    return new MatrixDatasetItemRenderer(column, new BarRepresentation(), perNodeBetweenGroupsStatsTooltip);
                 };
                 this.itemRenderers["SELECTED_PATHS"] = function (column) {
                     return new SimplePathScoreRenderer(column, new BooleanRepresentation(), simpleBooleanScoreTooltip);

@@ -217,24 +217,49 @@
                                                                                       id="dataBasedScoreRadio"/>Data-based
                         score</label><br>
 
-                    <div id="dataBasedScoreWidgets">
+                    <div id="dataBasedScoreWidgets" >
                         <div style="display:inline-block">
                             <label for="datasetSelect" style="padding: 0">Dataset</label><br>
                             <select id="datasetSelect" size="5"></select>
                         </div>
-                        <div style="display:inline-block">
-                            <label for="groupSelect" style="padding: 0">Group</label><br>
-                            <select id="groupSelect" size="5"></select>
+                        <div id="tableDatasetWidgets" style="display:inline-block">
+                            <div style="display:inline-block">
+                                <label for="attributeSelect" style="padding: 0">Property</label><br>
+                                <select id="attributeSelect" size="5"></select>
+                            </div>
+                            <div style="display:inline-block">
+                                <label for="attributeStatSelect" style="padding: 0">Method</label><br>
+                                <select id="attributeStatSelect" size="5">
+                                    <option value="mean">Average</option>
+                                    <option value="min">Minimum</option>
+                                    <option value="max">Maximum</option>
+                                </select>
+                            </div>
                         </div>
-                        <div style="display:inline-block">
-                            <label for="statisticSelect" style="padding: 0">Statistic</label><br>
-                            <select id="statisticSelect" size="5">
-                                <option value="median">Median</option>
-                                <option value="mean">Arithmetic mean</option>
-                                <option value="std">Standard-deviation</option>
-                                <option value="min">Minimum</option>
-                                <option value="max">Maximum</option>
-                            </select>
+
+                        <div id="matrixDatasetWidgets" style="display:inline-block">
+                            <div style="display:inline-block">
+                                <label for="groupSelect" style="padding: 0">Group</label><br>
+                                <select id="groupSelect" size="5"></select>
+                            </div>
+                            <div style="display:inline-block">
+                                <label for="statisticSelect" style="padding: 0">Statistic</label><br>
+                                <select id="statisticSelect" size="5">
+                                    <option value="median">Median</option>
+                                    <option value="mean">Arithmetic mean</option>
+                                    <option value="std">Standard-deviation</option>
+                                    <option value="min">Minimum</option>
+                                    <option value="max">Maximum</option>
+                                </select>
+                            </div>
+                            <div style="display:inline-block">
+                                <label for="scopeSelect" style="padding: 0">Scope</label><br>
+                                <select id="scopeSelect" size="5">
+                                    <option value="path">Whole Path</option>
+                                    <option value="minNode">Node with min score</option>
+                                    <option value="maxNode">Node with max score</option>
+                                </select>
+                            </div>
                         </div>
                         <!--<div style="display:inline-block">-->
                         <!--<label for="methodSelect" style="padding: 0">Method</label><br>-->
@@ -244,14 +269,6 @@
                         <!--<option label="Max statistic difference in groups">maxDiff</option>-->
                         <!--</select>-->
                         <!--</div>-->
-                        <div style="display:inline-block">
-                            <label for="scopeSelect" style="padding: 0">Scope</label><br>
-                            <select id="scopeSelect" size="5">
-                                <option value="path">Whole Path</option>
-                                <option value="minNode">Node with min score</option>
-                                <option value="maxNode">Node with max score</option>
-                            </select>
-                        </div>
                     </div>
                 </div>
                 <div class="radio" id="customScore">

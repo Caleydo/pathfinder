@@ -77,15 +77,15 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
         };
 
 
-        function NumericalNodePropertySortingStrategy(stat, label, property) {
-            SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, label, "NUMERICAL_PROPERTY");
+        function NumericalPerNodeSortingStrategy(stat, label, propertyAccessor, id) {
+            SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.ATTRIBUTE, label, id);
             this.ascending = false;
-            this.property = property;
+            this.accessor = propertyAccessor;
             this.stat = stat;
         }
 
-        NumericalNodePropertySortingStrategy.prototype = Object.create(SortingStrategy.prototype);
-        NumericalNodePropertySortingStrategy.prototype.compare = function (a, b) {
+        NumericalPerNodeSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+        NumericalPerNodeSortingStrategy.prototype.compare = function (a, b) {
             var scoreA = this.getScoreInfo(a.path).score;
             var scoreB = this.getScoreInfo(b.path).score;
 
@@ -95,12 +95,12 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
             return d3.descending(scoreA, scoreB);
         };
 
-        NumericalNodePropertySortingStrategy.prototype.getScoreInfo = function (path) {
+        NumericalPerNodeSortingStrategy.prototype.getScoreInfo = function (path) {
             var that = this;
             var propertyValues = [];
 
             path.nodes.forEach(function (node) {
-                    var value = node.properties[that.property];
+                    var value = that.accessor(node);
                     if (typeof value !== "undefined") {
                         propertyValues.push(value);
                     }
@@ -110,6 +110,31 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
             var stats = statisticsUtil.statisticsOf(propertyValues);
             return {score: stats[this.stat]};
         };
+
+        function NumericalTableAttributeSortingStrategy(datasetId, stat, label, attribute) {
+            NumericalPerNodeSortingStrategy.call(this, stat, label, function (node) {
+                var data = dataStore.getPropertyForNode(node, datasetId, attribute);
+                if (typeof data !== "undefined") {
+                    if (data instanceof Array) {
+                        return statisticsUtil.statisticsOf(data)[stat];
+                    }
+                    return data;
+                }
+            }, "NUMERICAL_TABLE_ATTRIBUTE");
+            this.datasetId = datasetId;
+            this.attribute = attribute;
+        }
+
+        NumericalTableAttributeSortingStrategy.prototype = Object.create(NumericalPerNodeSortingStrategy.prototype);
+
+        function NumericalNodePropertySortingStrategy(stat, label, property) {
+            NumericalPerNodeSortingStrategy.call(this, stat, label, function (node) {
+                return node.properties[property];
+            }, "NUMERICAL_PROPERTY");
+            this.property = property;
+        }
+
+        NumericalNodePropertySortingStrategy.prototype = Object.create(NumericalPerNodeSortingStrategy.prototype);
 
 
         function PathPresenceSortingStrategy(pathIds) {
@@ -407,11 +432,22 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
         function validateDataBasedSortingConfig() {
             var datasetId = $("#datasetSelect").val();
-            var groupId = $("#groupSelect").val();
-            var stat = $("#statisticSelect").val();
-            var method = "stat"; //$("#methodSelect").val();
-            var scope = $("#scopeSelect").val();
-            return datasetId && groupId && stat && method && scope;
+            if (!datasetId) {
+                return false;
+            }
+            var dataset = dataStore.getDataSet(datasetId);
+            if (dataset.info.type === "matrix") {
+                var groupId = $("#groupSelect").val();
+                var stat = $("#statisticSelect").val();
+                //var method = "stat"; //$("#methodSelect").val();
+                var scope = $("#scopeSelect").val();
+
+                return groupId && stat && scope;
+            } else {
+                var attribute = $("#attributeSelect").val();
+                var stat = $("#attributeStatSelect").val();
+                return attribute && stat;
+            }
         }
 
         function validateNodePropertySortingConfig() {
@@ -436,6 +472,34 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                 });
             }
         }
+
+        function fillAttributeSelect(dataset) {
+            if (dataset.info.type === "table") {
+                var attributeSelect = $("#attributeSelect");
+                attributeSelect.empty();
+
+                dataset.info.columns.forEach(function (col) {
+                    if (col.value.type === "real") {
+                        attributeSelect.append("<option value='" + col.name + "'>" + col.name + "</option>");
+                    }
+                });
+
+            }
+        }
+
+        function updateToDatasetSelection(datasetId) {
+            var dataset = dataStore.getDataSet(datasetId);
+            if (dataset.info.type === "matrix") {
+                $("#matrixDatasetWidgets").css("display", "inline-block");
+                $("#tableDatasetWidgets").css("display", "none");
+                fillGroupSelect(dataset);
+            } else {
+                $("#matrixDatasetWidgets").css("display", "none");
+                $("#tableDatasetWidgets").css("display", "inline-block");
+                fillAttributeSelect(dataset);
+            }
+        }
+
 
         sortingManager.setStrategyChain([sortingStrategies.pathQueryStrategy, sortingStrategies.pathLength, sortingStrategies.pathId]);
 
@@ -509,7 +573,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                 });
 
                 $("#datasetSelect").on("change", function () {
-                    fillGroupSelect(dataStore.getDataSet($(this).val()));
+                    updateToDatasetSelection($(this).val());
                     $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
                 });
                 $("#groupSelect").on("change", function () {
@@ -522,6 +586,14 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                     $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
                 });
                 $("#scopeSelect").on("change", function () {
+                    $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
+                });
+
+                $("#attributeSelect").on("change", function () {
+                    $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
+                });
+
+                $("#attributeStatSelect").on("change", function () {
                     $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
                 });
 
@@ -579,6 +651,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                 });
             },
 
+
             openConfigureSortingDialog: function (callback) {
                 var that = this;
                 var datasets = dataStore.getDataSets();
@@ -593,7 +666,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                     datasetSelect.append("<option value='" + dataset.info.id + "'>" + dataset.info.name + "</option>");
                     if (i === 0) {
                         datasetSelect.val(dataset.info.id);
-                        fillGroupSelect(dataset);
+                        updateToDatasetSelection(dataset.info.id);
                     }
                 });
 
@@ -639,6 +712,8 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
                 $("#rankConfigConfirm").click(function () {
 
+                    $("#rankConfigConfirm").off("click");
+
                     if ($("#pathLengthRadio").prop("checked")) {
                         callback(sortingStrategies.pathLength);
 
@@ -656,14 +731,24 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
                     } else if ($("#dataBasedScoreRadio").prop("checked")) {
                         var datasetId = $("#datasetSelect").val();
-                        var stat = $("#statisticSelect").val();
-                        var group = $("#groupSelect").val();
-                        var method = "stat"; //$("#methodSelect").val();
-                        var scope = $("#scopeSelect").val();
-                        if (group === "_all") {
-                            callback(dataStore.getSortingStrategy(datasetId, stat, method, scope));
+
+                        var dataset = dataStore.getDataSet(datasetId);
+                        if (dataset.info.type === "matrix") {
+                            var stat = $("#statisticSelect").val();
+                            var group = $("#groupSelect").val();
+                            var method = "stat"; //$("#methodSelect").val();
+                            var scope = $("#scopeSelect").val();
+                            if (group === "_all") {
+                                callback(dataStore.getSortingStrategy(datasetId, stat, method, scope));
+                            } else {
+                                callback(dataStore.getSortingStrategy(datasetId, stat, method, scope, group));
+                            }
                         } else {
-                            callback(dataStore.getSortingStrategy(datasetId, stat, method, scope, group));
+                            var attribute = $("#attributeSelect").val();
+                            var stat = $("#attributeStatSelect").val();
+                            var label = stat === "mean" ? "Average " + attribute : (statisticsUtil.getHumanReadableStat(stat, true) + " " + attribute);
+                            callback(new NumericalTableAttributeSortingStrategy(datasetId, stat, label, attribute));
+
                         }
                     } else if ($("#customScoreRadio").prop("checked")) {
                         var sortingStrategyId = $("#customScoreSelect").val();
@@ -671,13 +756,11 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                             var strategy = that.customSortingStrategies[i];
                             if (strategy.id === sortingStrategyId) {
                                 callback(strategy);
-                                $("#rankConfigConfirm").off("click");
-                                return;
                             }
                         }
                     }
 
-                    $("#rankConfigConfirm").off("click");
+
                 });
             },
 
@@ -696,7 +779,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
             SetPresenceSortingStrategy: SetPresenceSortingStrategy,
 
-            NumericalNodePropertySortingStrategy: NumericalNodePropertySortingStrategy
+            NumericalNodePropertySortingStrategy: NumericalPerNodeSortingStrategy
         }
 
     }
