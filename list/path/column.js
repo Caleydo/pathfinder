@@ -830,6 +830,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             this.appendSortingIndicator(parent, maxHeight, showSortingIndicator);
             var maxWidth = that.getWidth() - (2 * BAR_SIDE_PADDING);
 
+            if(isNaN(score)) {
+                return;
+            }
+
             parent.append("rect")
                 .classed("scoreFrameFill", true)
                 .attr({
@@ -888,6 +892,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             var that = this;
             this.updateSortingIndicator(parent, maxHeight, showSortingIndicator);
             var maxWidth = that.getWidth() - (2 * BAR_SIDE_PADDING);
+
+            if(isNaN(score)) {
+                return;
+            }
 
             parent.select("rect.scoreFrameFill")
                 .transition()

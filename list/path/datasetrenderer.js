@@ -352,78 +352,29 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             var min = group.column.value.range[0] < 0 ? -(Math.max(Math.abs(group.column.value.range[0]), Math.abs(group.column.value.range[1]))) : 0;
             var max = group.column.value.range[0] < 0 ? (Math.max(Math.abs(group.column.value.range[0]), Math.abs(group.column.value.range[1]))) : group.column.value.range[1];
             var scale = d3.scale.linear().domain([min, max]).range([0, config.getNodeWidth()]);
-            //FIXME cope with arrays
-            var value = nodeData.data instanceof Array ? nodeData.data[0] : nodeData.data;
+            ////FIXME cope with arrays
+            //var value = nodeData.data instanceof Array ? nodeData.data[0] : nodeData.data;
 
             uiUtil.appendBars($nodeData, nodeData.data, scale, s.DEFAULT_BAR_SIZE, dataset.color, group.name, true, true);
-            //
-            //$nodeData.append("rect")
-            //    .classed("valueBg", true)
-            //    .attr({
-            //        x: 0,
-            //        y: -5,
-            //        width: scale.range()[1],
-            //        height: s.DEFAULT_BAR_SIZE+10
-            //    })
-            //    .style({
-            //        fill: "white"
-            //    });
-            //
-            //var x = (0 < scale.domain()[0] || 0 > scale.domain[1]) ? scale(scale.domain()[0]) : (value < 0 ? scale(value) : scale(0));
-            //var width = Math.abs((0 < scale.domain()[0] ? scale(scale.domain()[0]) : (0 > scale.domain()[1] ? scale(scale.domain()[1]) : scale(0))) - scale(value));
-            //
-            //$nodeData.append("rect")
-            //    .classed("value", true)
-            //    .attr({
-            //        x: x,
-            //        y: 0,
-            //        fill: dataset.color,
-            //        width: width,
-            //        height: s.DEFAULT_BAR_SIZE
-            //    });
-            //
-            //$nodeData.append("rect")
-            //    .classed("valueFrame", true)
-            //    .attr({
-            //        x: 0,
-            //        y: 0,
-            //        width: scale.range()[1],
-            //        height: s.DEFAULT_BAR_SIZE
-            //    })
-            //    .style({
-            //        "shape-rendering": "crispEdges",
-            //        fill: "rgba(0,0,0,0)",
-            //        stroke: "rgb(80,80,80)"
-            //    });
-            //
-            //$nodeData.append("line")
-            //    .classed("zero", true)
-            //    .attr({
-            //        x1: scale(0),
-            //        y1: -4,
-            //        x2: scale(0),
-            //        y2: s.DEFAULT_BAR_SIZE + 4
-            //    })
-            //    .style({
-            //        "opacity": (scale.domain()[0] < 0 && scale.domain()[1] > 0) ? 1 : 0,
-            //        "shape-rendering": "crispEdges",
-            //        stroke: "rgb(80,80,80)"
-            //    });
-            //
-            //$nodeData.append("title").text(group.name + ": " + uiUtil.formatNumber(value));
 
-            //$nodeData.append("text")
-            //    .attr({
-            //        x: config.getNodeWidth() - 15,
-            //        y: 9,
-            //        "clip-path": "url(#SetLabelClipPath)"
-            //    })
-            //    .style({
-            //        fill: dataset.color
-            //    })
-            //    .text(uiUtil.formatNumber(value, 2));
 
-            //var numBars = nodeData.data instanceof Array ? nodeData.data.length : 1;
+        };
+
+        HNumericalDataRenderer.prototype.onNodeDataUpdate = function ($nodeData, pathWrapper, dataset, group, nodeData, pathList) {
+            $nodeData.transition()
+                .attr({
+                    transform: "translate(" + (pathList.getNodePositionX(pathWrapper, nodeData.nodeIndex, false)) + ",5 )"
+                });
+            //var min = Math.min(0, group.column.value.range[0]);
+            //var max = Math.max(0, group.column.value.range[1]);
+
+            //var min = group.column.value.range[0] < 0 ? -(Math.max(Math.abs(group.column.value.range[0]), Math.abs(group.column.value.range[1]))) : 0;
+            //var max = group.column.value.range[0] < 0 ? (Math.max(Math.abs(group.column.value.range[0]), Math.abs(group.column.value.range[1]))) : group.column.value.range[1];
+            //var scale = d3.scale.linear().domain([min, max]).range([0, config.getNodeWidth()]);
+            ////FIXME cope with arrays
+            //var value = nodeData.data instanceof Array ? nodeData.data[0] : nodeData.data;
+            //
+            //uiUtil.appendBars($nodeData, nodeData.data, scale, s.DEFAULT_BAR_SIZE, dataset.color, group.name, true, true);
 
 
         };
