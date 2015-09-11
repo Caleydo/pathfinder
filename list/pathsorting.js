@@ -344,8 +344,10 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
         ReferencePathDifferenceSortingStrategy.prototype.compare = function (a, b) {
 
-            var scoreA = this.getInherentScoreInfo(a.path).score;
-            var scoreB = this.getInherentScoreInfo(b.path).score;
+
+            //Make sure that the reference path is always ranked on top/bottom
+            var scoreA = a.path.id === pathSettings.referencePathId ? -1 : this.getInherentScoreInfo(a.path).score;
+            var scoreB = b.path.id === pathSettings.referencePathId ? -1: this.getInherentScoreInfo(b.path).score;
             if (this.ascending) {
                 return d3.ascending(scoreA, scoreB);
             }

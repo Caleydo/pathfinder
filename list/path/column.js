@@ -587,9 +587,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         SimplePathScoreRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
             var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
 
-            var score = column.sortingStrategy.getScoreInfo(pathWrapper.path).score;
+            var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
             this.scoreRepresentation.setValueRange(valueRange);
-            this.scoreRepresentation.updateScore(item, score, s.PATH_HEIGHT, true);
+            this.scoreRepresentation.updateScore(item, scoreInfo.score, s.PATH_HEIGHT, true);
+            item.select("title").text(this.tooltipTextAccessor(column.sortingStrategy, scoreInfo))
         };
 
         function getPathDataScoreValueRange(pathWrappers, dataset, sortingStrategy) {
@@ -1266,8 +1267,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             this.scoreRepresentation.setValueRange(valueRange);
 
             if (pathWrapper.setTypes.length > 1) {
-                var score = column.sortingStrategy.getScoreInfo(pathWrapper.path).score;
-                this.scoreRepresentation.updateScore(item, score, s.PATH_HEIGHT, typeof originalSortingStrategy.setType === "undefined");
+                var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
+                this.scoreRepresentation.updateScore(item, scoreInfo.score, s.PATH_HEIGHT, typeof originalSortingStrategy.setType === "undefined");
+                item.select("g.path").select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
             }
 
             var allSetTypes = item.selectAll("g.setType").data(pathWrapper.setTypes, function (d) {
@@ -1275,13 +1277,14 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             });
 
             allSetTypes.each(function (setType, i) {
-                var score = column.sortingStrategy.getScoreInfo(pathWrapper.path, setType.type).score;
+                var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path, setType.type);
                 d3.select(this).transition()
                     .attr({
                         transform: "translate(0," + s.getSetTypeTranslateY(pathWrapper, i) + ")"
                     });
 
-                that.scoreRepresentation.updateScore(d3.select(this), score, s.SET_TYPE_HEIGHT, originalSortingStrategy.setType === setType.type || pathWrapper.setTypes.length === 1, config.getSetColorFromSetTypePropertyName(setType.type));
+                that.scoreRepresentation.updateScore(d3.select(this), scoreInfo.score, s.SET_TYPE_HEIGHT, originalSortingStrategy.setType === setType.type || pathWrapper.setTypes.length === 1, config.getSetColorFromSetTypePropertyName(setType.type));
+                d3.select(this).select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
             });
         };
 
@@ -1345,6 +1348,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                     });
                 that.scoreRepresentation.setValueRange(valueRange);
                 that.scoreRepresentation.updateScore(p, scoreInfo.score, property.getHeight(), true, config.getNodePropertyColorFromPropertyName(property.name));
+                p.select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
             }
         };
 
@@ -1421,7 +1425,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                     transform: "translate(0," + datasetPosY + ")"
                 });
 
+
             this.scoreRepresentation.updateScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), dataset.color);
+            datasetGroup.select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
 
             if (originalSortingStrategy.supportsScoresPerGroup) {
                 var allGroups = item.selectAll("g.group")
@@ -1467,7 +1473,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
                 allGroups.each(function (group, index) {
                     var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path, dataset.id, group.name);
-                    var score = scoreInfo.score;
 
                     var posY = dataset.getBaseHeight();
                     var groups = dataset.getVisibleChildren();
@@ -1482,7 +1487,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                         transform: "translate(0," + (datasetPosY + group.getPosYRelativeToParent()) + ")"
                     });
 
-                    that.scoreRepresentation.updateScore(d3.select(this), score, group.getBaseHeight(), (groupId === group.name), dataset.color);
+                    that.scoreRepresentation.updateScore(d3.select(this), scoreInfo.score, group.getBaseHeight(), (groupId === group.name), dataset.color);
+                    d3.select(this).select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
                 });
 
                 allGroups.exit().remove();
@@ -1585,6 +1591,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 });
             that.scoreRepresentation.setValueRange(valueRange);
             that.scoreRepresentation.updateScore(p, scoreInfo.score, tableColumnWrapper.getHeight(), true, datasetWrapper.color);
+            p.select("title")
+                .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
 
         };
 
