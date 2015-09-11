@@ -40,12 +40,16 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         OverallStatsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
         OverallStatsSortingStrategy.prototype.compare = function (a, b) {
-            var scoreA = this.getScoreInfo(a.path, this.datasetId, this.groupId).score;
-            var scoreB = this.getScoreInfo(b.path, this.datasetId, this.groupId).score;
+            var scoreA = this.getInherentScoreInfo(a.path).score;
+            var scoreB = this.getInherentScoreInfo(b.path).score;
             if (this.ascending) {
                 return d3.ascending(scoreA, scoreB);
             }
             return d3.descending(scoreA, scoreB);
+        };
+
+        OverallStatsSortingStrategy.prototype.getInherentScoreInfo = function (path) {
+            return this.getScoreInfo(path, this.datasetId, this.groupId);
         };
 
         OverallStatsSortingStrategy.prototype.getScoreInfo = function (path, datasetId, groupId) {
@@ -74,13 +78,17 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         PerNodeStatsSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
 
         PerNodeStatsSortingStrategy.prototype.compare = function (a, b) {
-            var scoreA = this.getScoreInfo(a.path, this.datasetId, this.groupId).score;
-            var scoreB = this.getScoreInfo(b.path, this.datasetId, this.groupId).score;
+            var scoreA = this.getInherentScoreInfo(a.path).score;
+            var scoreB = this.getInherentScoreInfo(b.path).score;
 
             if (this.ascending) {
                 return d3.ascending(scoreA, scoreB);
             }
             return d3.descending(scoreA, scoreB);
+        };
+
+        PerNodeStatsSortingStrategy.prototype.getInherentScoreInfo = function (path) {
+            return this.getScoreInfo(path, this.datasetId, this.groupId);
         };
 
         PerNodeStatsSortingStrategy.prototype.getScoreInfo = function (path, datasetId, groupId) {
@@ -118,13 +126,17 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
         OverallBetweenGroupsSortingStrategy.prototype.compare = function (a, b) {
 
-            var scoreA = this.getScoreInfo(a.path, this.datasetId).score;
-            var scoreB = this.getScoreInfo(b.path, this.datasetId).score;
+            var scoreA = this.getInherentScoreInfo(a.path).score;
+            var scoreB = this.getInherentScoreInfo(b.path).score;
 
             if (this.ascending) {
                 return d3.ascending(scoreA, scoreB);
             }
             return d3.descending(scoreA, scoreB);
+        };
+
+        OverallBetweenGroupsSortingStrategy.prototype.getInherentScoreInfo = function (path) {
+            return this.getScoreInfo(path, this.datasetId);
         };
 
         OverallBetweenGroupsSortingStrategy.prototype.getScoreInfo = function (path, datasetId) {
@@ -159,13 +171,17 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
         PerNodeBetweenGroupsSortingStrategy.prototype.compare = function (a, b) {
 
-            var scoreA = this.getScoreInfo(a.path, this.datasetId).score;
-            var scoreB = this.getScoreInfo(b.path, this.datasetId).score;
+            var scoreA = this.getInherentScoreInfo(a.path).score;
+            var scoreB = this.getInherentScoreInfo(b.path).score;
 
             if (this.ascending) {
                 return d3.ascending(scoreA, scoreB);
             }
             return d3.descending(scoreA, scoreB);
+        };
+
+        PerNodeBetweenGroupsSortingStrategy.prototype.getInherentScoreInfo = function (path) {
+            return this.getScoreInfo(path, this.datasetId);
         };
 
         PerNodeBetweenGroupsSortingStrategy.prototype.getScoreInfo = function (path, datasetId) {
@@ -720,6 +736,14 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
             getPaths: function () {
                 return paths;
+            },
+
+            getPath: function (pathId) {
+                for (var i = 0; i < paths.length; i++) {
+                    if (pathId === paths[i].id) {
+                        return paths[i];
+                    }
+                }
             },
 
             getNode: function (nodeId) {

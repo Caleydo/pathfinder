@@ -340,9 +340,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         function getToggleReferencePathCallback(wrapper, allPathContainers) {
             return function (permanent) {
                 if (!permanent) {
-                    uiUtil.referencePathId = wrapper.path.id;
+                    s.referencePathId = wrapper.path.id;
                     allPathContainers.each(function (pathWrapper) {
-                        if (pathWrapper.path.id !== uiUtil.referencePathId) {
+                        if (pathWrapper.path.id !== s.referencePathId) {
                             var parent = d3.select(this).select("g.path");
 
                             //FIXME A little hacky
@@ -354,8 +354,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     });
 
                 } else {
-                    delete uiUtil.referencePathId;
+                    delete s.referencePathId;
                 }
+                listeners.notify(s.pathListUpdateTypes.UPDATE_REFERENCE_PATH, s.referencePathId);
             };
         }
 
@@ -569,6 +570,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 });
 
             }
+
+            this.updateReferencePathListener = function (pathId) {
+                that.renderPaths();
+            }
         }
 
         PathList.prototype = {
@@ -627,6 +632,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 listeners.add(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
                 listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
                 listeners.add(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
+                listeners.add(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
                 listeners.add(this.sortUpdateListener, pathSorting.updateType);
                 listeners.add(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
 
@@ -802,8 +808,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 listeners.remove(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
                 listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
                 listeners.remove(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
+                listeners.remove(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
                 listeners.remove(this.sortUpdateListener, pathSorting.updateType);
                 listeners.remove(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
+
 
             },
 
@@ -2365,7 +2373,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
                 pathContainer.each(function (pathWrapper) {
                     var parent = d3.select(this).select("g.path");
-                    
+
                     uiUtil.createTemporalOverlayButton(parent, getToggleReferencePathCallback(pathWrapper, allPathContainers), "\uf13d", 50, (s.PATH_HEIGHT - uiUtil.NORMAL_BUTTON_SIZE) / 2, false, true, "Toggle reference path");
 
                 });

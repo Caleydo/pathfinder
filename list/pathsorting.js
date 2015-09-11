@@ -1,5 +1,5 @@
-define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listeners', '../query/pathquery', '../datastore', '../setinfo', '../config', '../statisticsutil'],
-    function ($, sorting, pathUtil, q, listeners, pathQuery, dataStore, setInfo, config, statisticsUtil) {
+define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listeners', '../query/pathquery', '../datastore', '../setinfo', '../config', '../statisticsutil', './path/settings'],
+    function ($, sorting, pathUtil, q, listeners, pathQuery, dataStore, setInfo, config, statisticsUtil, pathSettings) {
         var SortingStrategy = sorting.SortingStrategy;
 
         //TODO: fetch amount of sets from server
@@ -18,7 +18,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
             return d3.descending(a.path.edges.length, b.path.edges.length);
         };
 
-        PathLengthSortingStrategy.prototype.getScoreInfo = function (path) {
+        PathLengthSortingStrategy.prototype.getScoreInfo = PathLengthSortingStrategy.prototype.getInherentScoreInfo = function (path) {
             return {score: path.edges.length};
         };
 
@@ -48,13 +48,17 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
             //  return totalWeight;
             //}
 
-            var weightA = this.getScoreInfo(a.path, this.setType).score;
-            var weightB = this.getScoreInfo(b.path, this.setType).score;
+            var weightA = this.getInherentScoreInfo(a.path).score;
+            var weightB = this.getInherentScoreInfo(b.path).score;
 
             if (this.ascending) {
                 return d3.ascending(weightA, weightB);
             }
             return d3.descending(weightA, weightB);
+        };
+
+        SetConnectionStrengthSortingStrategy.prototype.getInherentScoreInfo = function (path) {
+            return this.getScoreInfo(path, this.setType);
         };
 
         SetConnectionStrengthSortingStrategy.prototype.getScoreInfo = function (path, setType) {
@@ -95,7 +99,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
             return d3.descending(scoreA, scoreB);
         };
 
-        NumericalPerNodeSortingStrategy.prototype.getScoreInfo = function (path) {
+        NumericalPerNodeSortingStrategy.prototype.getScoreInfo = NumericalPerNodeSortingStrategy.prototype.getInherentScoreInfo = function (path) {
             var that = this;
             var propertyValues = [];
 
@@ -159,7 +163,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
         };
 
-        PathPresenceSortingStrategy.prototype.getScoreInfo = function (path) {
+        PathPresenceSortingStrategy.prototype.getScoreInfo = PathPresenceSortingStrategy.prototype.getInherentScoreInfo = function (path) {
             for (var i = 0; i < this.pathIds.length; i++) {
                 if (path.id === this.pathIds[i]) {
                     return {score: 1};
@@ -195,7 +199,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
             return d3.descending(numNodesA, numNodesB);
         };
 
-        NodePresenceSortingStrategy.prototype.getScoreInfo = function (path) {
+        NodePresenceSortingStrategy.prototype.getScoreInfo = NodePresenceSortingStrategy.prototype.getInherentScoreInfo = function (path) {
             var numNodes = 0;
             var ids = [];
             this.nodeIds.forEach(function (nodeId) {
@@ -241,7 +245,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
         };
 
-        SetPresenceSortingStrategy.prototype.getScoreInfo = function (path) {
+        SetPresenceSortingStrategy.prototype.getScoreInfo = SetPresenceSortingStrategy.prototype.getInherentScoreInfo = function (path) {
             var numSets = 0;
             var ids = [];
             this.setIds.forEach(function (setId) {
@@ -330,6 +334,64 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
         };
 
+
+        function ReferencePathDifferenceSortingStrategy(wrappee) {
+            SortingStrategy.call(this, wrappee.type, "Difference to reference path in " + wrappee.label, "REFERENCE_PATH_DIFFERENCE");
+            this.wrappee = wrappee;
+        }
+
+        ReferencePathDifferenceSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+
+        ReferencePathDifferenceSortingStrategy.prototype.compare = function (a, b) {
+
+            var scoreA = this.getInherentScoreInfo(a.path).score;
+            var scoreB = this.getInherentScoreInfo(b.path).score;
+            if (this.ascending) {
+                return d3.ascending(scoreA, scoreB);
+            }
+            return d3.descending(scoreA, scoreB);
+        };
+
+        ReferencePathDifferenceSortingStrategy.prototype.getInherentScoreInfo = function (path) {
+            if (typeof pathSettings.referencePathId !== "undefined") {
+                var referencePath = dataStore.getPath(pathSettings.referencePathId);
+                if (referencePath) {
+                    var refPathScoreInfo = this.wrappee.getInherentScoreInfo(referencePath);
+                    var scoreInfo = this.wrappee.getInherentScoreInfo(path);
+                    return {
+                        score: Math.abs(refPathScoreInfo.score - scoreInfo.score),
+                        refPathScoreInfo: refPathScoreInfo,
+                        pathScoreInfo: scoreInfo
+                    };
+                }
+            }
+
+            return {score: 0};
+        };
+
+        ReferencePathDifferenceSortingStrategy.prototype.getScoreInfo = function (path) {
+
+            if (typeof pathSettings.referencePathId !== "undefined") {
+                var referencePath = dataStore.getPath(pathSettings.referencePathId);
+                if (referencePath) {
+
+                    var refArgs = Array.prototype.slice.call(arguments);
+                    refArgs[0] = referencePath;
+                    //Pass any parameters to the wrappee
+                    var refPathScoreInfo = this.wrappee.getScoreInfo.apply(this.wrappee, refArgs);
+                    var scoreInfo = this.wrappee.getScoreInfo.apply(this.wrappee, arguments);
+                    return {
+                        score: Math.abs(refPathScoreInfo.score - scoreInfo.score),
+                        refPathScoreInfo: refPathScoreInfo,
+                        pathScoreInfo: scoreInfo
+                    };
+                }
+            }
+
+            return {score: 0};
+
+        };
+
         var currentCustomStratId = 0;
 
         function CustomSortingStrategy(userScoreFunction, label) {
@@ -348,7 +410,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
             return d3.descending(scoreA, scoreB);
         };
 
-        CustomSortingStrategy.prototype.getScoreInfo = function (path) {
+        CustomSortingStrategy.prototype.getScoreInfo = CustomSortingStrategy.prototype.getInherentScoreInfo = function (path) {
             return {score: this.userScoreFunction(path, dataStore.getDataSets(), (pathUtil.getAllSetInfosForNode).bind(pathUtil), (dataStore.getDataForNode).bind(dataStore), (dataStore.getStatsForNode).bind(dataStore))};
         };
 
@@ -714,21 +776,22 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
                     $("#rankConfigConfirm").off("click");
 
-                    if ($("#pathLengthRadio").prop("checked")) {
-                        callback(sortingStrategies.pathLength);
+                    var useDiffToReferencePath = $("#diffToReferencePath").prop("checked");
+                    var sortingStrategy = 0;
 
+                    if ($("#pathLengthRadio").prop("checked")) {
+                        sortingStrategy = sortingStrategies.pathLength;
                     } else if ($("#setConnectionStrengthRadio").prop("checked")) {
                         var setType = $("#setTypeSelect").val();
                         var stat = $("#setStatSelect").val();
                         var label = stat === "mean" ? "Average set connection strength" : (statisticsUtil.getHumanReadableStat(stat, true) + " set connection strength");
-                        callback(setType === "all" ? new SetConnectionStrengthSortingStrategy(stat, label) : new SetConnectionStrengthSortingStrategy(stat, label, setType));
+                        sortingStrategy = setType === "all" ? new SetConnectionStrengthSortingStrategy(stat, label) : new SetConnectionStrengthSortingStrategy(stat, label, setType);
 
                     } else if ($("#nodePropertyRadio").prop("checked")) {
                         var property = $("#propertySelect").val();
                         var stat = $("#propertyStatSelect").val();
                         var label = stat === "mean" ? "Average " + property : (statisticsUtil.getHumanReadableStat(stat, true) + " " + property);
-                        callback(new NumericalNodePropertySortingStrategy(stat, label, property));
-
+                        sortingStrategy = new NumericalNodePropertySortingStrategy(stat, label, property);
                     } else if ($("#dataBasedScoreRadio").prop("checked")) {
                         var datasetId = $("#datasetSelect").val();
 
@@ -739,15 +802,15 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                             var method = "stat"; //$("#methodSelect").val();
                             var scope = $("#scopeSelect").val();
                             if (group === "_all") {
-                                callback(dataStore.getSortingStrategy(datasetId, stat, method, scope));
+                                sortingStrategy = dataStore.getSortingStrategy(datasetId, stat, method, scope);
                             } else {
-                                callback(dataStore.getSortingStrategy(datasetId, stat, method, scope, group));
+                                sortingStrategy = dataStore.getSortingStrategy(datasetId, stat, method, scope, group);
                             }
                         } else {
                             var attribute = $("#attributeSelect").val();
                             var stat = $("#attributeStatSelect").val();
                             var label = stat === "mean" ? "Average " + attribute : (statisticsUtil.getHumanReadableStat(stat, true) + " " + attribute);
-                            callback(new NumericalTableAttributeSortingStrategy(datasetId, stat, label, attribute));
+                            sortingStrategy = new NumericalTableAttributeSortingStrategy(datasetId, stat, label, attribute);
 
                         }
                     } else if ($("#customScoreRadio").prop("checked")) {
@@ -755,10 +818,12 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                         for (var i = 0; i < that.customSortingStrategies.length; i++) {
                             var strategy = that.customSortingStrategies[i];
                             if (strategy.id === sortingStrategyId) {
-                                callback(strategy);
+                                sortingStrategy = strategy;
                             }
                         }
                     }
+
+                    callback(useDiffToReferencePath ? new ReferencePathDifferenceSortingStrategy(sortingStrategy) : sortingStrategy);
 
 
                 });
