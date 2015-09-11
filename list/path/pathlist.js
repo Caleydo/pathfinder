@@ -337,6 +337,28 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //  return posY;
         //}
 
+        function getToggleReferencePathCallback(wrapper, allPathContainers) {
+            return function (permanent) {
+                if (!permanent) {
+                    uiUtil.referencePathId = wrapper.path.id;
+                    allPathContainers.each(function (pathWrapper) {
+                        if (pathWrapper.path.id !== uiUtil.referencePathId) {
+                            var parent = d3.select(this).select("g.path");
+
+                            //FIXME A little hacky
+                            $(parent[0]).off("mouseenter.overlay");
+                            $(parent[0]).off("mouseleave.overlay");
+                            parent.selectAll("g.overlayButton").remove();
+                            uiUtil.createTemporalOverlayButton(parent, getToggleReferencePathCallback(pathWrapper, allPathContainers), "\uf13d", 50, (s.PATH_HEIGHT - uiUtil.NORMAL_BUTTON_SIZE) / 2, false, true, "Toggle reference path");
+                        }
+                    });
+
+                } else {
+                    delete uiUtil.referencePathId;
+                }
+            };
+        }
+
         function getPathContainerTransformFunction(pathWrappers) {
             return function (d, i) {
                 return "translate(0," + s.getPathContainerTranslateY(pathWrappers, i) + ")";
@@ -2340,6 +2362,14 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     "path"
                 );
                 that.selectionListeners.push(l);
+
+                pathContainer.each(function (pathWrapper) {
+                    var parent = d3.select(this).select("g.path");
+                    
+                    uiUtil.createTemporalOverlayButton(parent, getToggleReferencePathCallback(pathWrapper, allPathContainers), "\uf13d", 50, (s.PATH_HEIGHT - uiUtil.NORMAL_BUTTON_SIZE) / 2, false, true, "Toggle reference path");
+
+                });
+
 
                 var edgeGroup = p.append("g")
                     .attr("class", "edgeGroup");

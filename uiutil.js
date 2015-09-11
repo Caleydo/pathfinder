@@ -36,24 +36,45 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
         },
 
 
-        createTemporalOverlayButton: function (parent, callBack, text, x, y, small) {
+        createTemporalOverlayButton: function (parent, callBack, text, x, y, small, isPermanentBehavior, tooltip) {
             var that = this;
 
-            $(parent[0]).mouseenter(function () {
-                var button = that.addOverlayButton(parent, x, y, small ? that.SMALL_BUTTON_SIZE : that.NORMAL_BUTTON_SIZE, small ? that.SMALL_BUTTON_SIZE : that.NORMAL_BUTTON_SIZE, text, 7, small ? that.SMALL_BUTTON_SIZE : that.NORMAL_BUTTON_SIZE, "rgb(30, 30, 30)", false);
+            var onMouseLeave = function () {
+                //FIXME assumes only one overlayButton for the parent
+                parent.selectAll("g.overlayButton").remove();
+            };
+
+            var onMouseEnter = function () {
+                var button = that.addOverlayButton(parent, x, y, small ? that.SMALL_BUTTON_SIZE : that.NORMAL_BUTTON_SIZE, small ? that.SMALL_BUTTON_SIZE : that.NORMAL_BUTTON_SIZE, text, 7, small ? that.SMALL_BUTTON_SIZE : that.NORMAL_BUTTON_SIZE, "rgb(30, 30, 30)", false, tooltip);
+                var isPermanent = false;
 
                 button.classed("smallButton", small)
                     .on("click.overlay", function () {
-                        callBack();
 
-                        parent.selectAll("g.overlayButton").remove();
+                        if (isPermanentBehavior) {
+                            callBack(isPermanent);
+                            isPermanent = !isPermanent;
+                            if (!isPermanent) {
+                                button.remove();
+                                $(parent[0]).on("mouseenter.overlay", onMouseEnter);
+                                $(parent[0]).on("mouseleave.overlay", onMouseLeave);
+                            } else {
+                                $(parent[0]).off("mouseenter.overlay");
+                                $(parent[0]).off("mouseleave.overlay");
+                            }
+                        } else {
+                            callBack();
+                            button.remove();
+                        }
+
+
                         d3.event.stopPropagation();
-                    })
-            });
+                    });
 
-            $(parent[0]).mouseleave(function () {
-                parent.selectAll("g.overlayButton").remove();
-            });
+            }
+
+            $(parent[0]).on("mouseenter.overlay", onMouseEnter);
+            $(parent[0]).on("mouseleave.overlay", onMouseLeave);
         },
 
         createTemporalMenuOverlayButton: function (parent, x, y, small, items) {
@@ -80,7 +101,7 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
             listOverlay.show();
         },
 
-        addOverlayButton: function (parent, x, y, width, height, buttonText, textX, textY, color, showBg) {
+        addOverlayButton: function (parent, x, y, width, height, buttonText, textX, textY, color, showBg, tooltip) {
 
             var button = parent.append("g")
                 .classed("overlayButton", true)
@@ -108,6 +129,10 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
                 })
                 .text(buttonText);
 
+            if (typeof tooltip !== "undefined") {
+                button.append("title").text((typeof tooltip === "function") ? tooltip() : tooltip.toString());
+            }
+
             return button;
         },
 
@@ -124,7 +149,7 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
                         x: 0,
                         y: -5,
                         width: scale.range()[1],
-                        height: vals.length * barHeight +10
+                        height: vals.length * barHeight + 10
                     })
                     .style({
                         fill: "white"
