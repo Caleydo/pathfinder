@@ -2525,29 +2525,52 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                         var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
                         return "translate(" + (pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE)) + "," + s.V_SPACING + ")";
                     })
-                    .each(function (node) {
+                    .each(function (node, nodeIndex) {
                         if (typeof s.referencePathId === "undefined") {
                             d3.select(this).select("text.refPathStatus").remove();
+                            d3.select(this).select("text.refPathPosDiff").remove();
                         } else {
 
                             if (that.pathWrappers[node.pathIndex].path.id !== s.referencePathId) {
-                                var isNodeInRefPath = pathUtil.isNodeInPath(node.node, referencePath);
+                                var nodeIndexInRefPath = pathUtil.indexOfNodeInPath(node.node, referencePath);
                                 var t = d3.select(this).select("text.refPathStatus");
                                 if (t.empty()) {
                                     t = d3.select(this).append("text")
                                         .classed("refPathStatus", true)
                                         .attr({
                                             x: -2,
-                                            y: s.NODE_HEIGHT
+                                            y: s.NODE_HEIGHT / 2 - 4
                                         });
                                 }
 
                                 t.style({
-                                    fill: isNodeInRefPath ? "green" : "red"
-                                }).text(isNodeInRefPath ? "\uf00c" : "\uf00d");
+                                    fill: nodeIndexInRefPath >= 0 ? "green" : "red"
+                                }).text(nodeIndexInRefPath >= 0 ? "\uf00c" : "\uf00d");
+
+                                var nodePosDiff = nodeIndex - nodeIndexInRefPath;
+
+                                if (nodeIndexInRefPath >= 0 && nodePosDiff !== 0) {
+                                    var diffText = d3.select(this).select("text.refPathPosDiff");
+                                    if (diffText.empty()) {
+                                        diffText = d3.select(this).append("text")
+                                            .classed("refPathPosDiff", true)
+                                            .attr({
+                                                x: -2,
+                                                y: s.NODE_HEIGHT+2
+                                            });
+                                    }
+
+                                    diffText.style({
+                                        fill: "red",
+                                        "text-anchor": "end"
+                                    }).text((nodePosDiff > 0 ? "+" : "") + nodePosDiff);
+                                } else {
+                                    d3.select(this).select("text.refPathPosDiff").remove();
+                                }
 
                             } else {
                                 d3.select(this).select("text.refPathStatus").remove();
+                                d3.select(this).select("text.refPathPosDiff").remove();
                             }
                         }
                     });

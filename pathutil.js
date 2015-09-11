@@ -113,6 +113,15 @@ define(["d3", "./config", "./setinfo", "./uiutil"], function (d3, config, setInf
             return false;
         },
 
+        indexOfNodeInPath: function (node, path) {
+            for (var i = 0; i < path.nodes.length; i++) {
+                if (path.nodes[i].id === node.id) {
+                    return i;
+                }
+            }
+            return -1;
+        },
+
         renderNode: function (parent, node, x, y, width, height, clipPath, textWidthFunction, overlayItems) {
             parent.append("rect")
                 .attr({
