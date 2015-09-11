@@ -141,6 +141,11 @@ text.scoreIcon {
   @include textIcon(14px);
 }
 
+text.refPathStatus {
+  @include textIcon(12px);
+  text-anchor: end;
+}
+
 g.listItem.hovered {
   rect {
     fill: $overlayHoverColor;

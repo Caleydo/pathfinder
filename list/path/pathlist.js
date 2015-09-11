@@ -2516,12 +2516,40 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     }, queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]));
                 });
 
+                var referencePath = dataStore.getPath(s.referencePathId);
+
                 allNodes
                     .transition()
                     .attr("transform", function (d, i) {
                         var position = that.pathWrappers[d.pathIndex].nodePositions[i];
                         var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
                         return "translate(" + (pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE)) + "," + s.V_SPACING + ")";
+                    })
+                    .each(function (node) {
+                        if (typeof s.referencePathId === "undefined") {
+                            d3.select(this).select("text.refPathStatus").remove();
+                        } else {
+
+                            if (that.pathWrappers[node.pathIndex].path.id !== s.referencePathId) {
+                                var isNodeInRefPath = pathUtil.isNodeInPath(node.node, referencePath);
+                                var t = d3.select(this).select("text.refPathStatus");
+                                if (t.empty()) {
+                                    t = d3.select(this).append("text")
+                                        .classed("refPathStatus", true)
+                                        .attr({
+                                            x: -2,
+                                            y: s.NODE_HEIGHT
+                                        });
+                                }
+
+                                t.style({
+                                    fill: isNodeInRefPath ? "green" : "red"
+                                }).text(isNodeInRefPath ? "\uf00c" : "\uf00d");
+
+                            } else {
+                                d3.select(this).select("text.refPathStatus").remove();
+                            }
+                        }
                     });
 
 
