@@ -420,10 +420,15 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
             if (typeof pathSettings.referencePathId !== "undefined") {
                 var referencePath = dataStore.getPath(pathSettings.referencePathId);
+                var commonNodeIds = pathUtil.getCommonNodes(referencePath, path).map(function (node) {
+                    return node.id;
+                });
                 if (referencePath) {
-                    var score = pathUtil.getCommonNodes(referencePath, path).length / path.nodes.length;
+                    var score = commonNodeIds.length / path.nodes.length;
                     return {
-                        score: score
+                        score: score,
+                        idType: "node",
+                        ids: commonNodeIds
                     };
                 }
             }
