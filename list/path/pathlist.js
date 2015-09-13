@@ -465,7 +465,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 }
 
                 that.updateMaxSets();
-                that.updatePathList();
+                that.renderPaths();
             };
 
             this.listUpdateListener = function (updatedObject) {
@@ -2556,7 +2556,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                             .classed("refPathPosDiff", true)
                                             .attr({
                                                 x: -2,
-                                                y: s.NODE_HEIGHT+2
+                                                y: s.NODE_HEIGHT + 2
                                             });
                                     }
 

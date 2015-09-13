@@ -271,6 +271,21 @@
                         <!--</div>-->
                     </div>
                 </div>
+                <div class="radio" id="referencePathScore">
+                    <label for="referencePathScoreRadio" style="font-weight: bold"><input type="radio"
+                                                                                          name="rankMethodRadio"
+                                                                                          id="referencePathScoreRadio"/>Similarity
+                        to reference path</label><br>
+
+                    <div id="referencePathScoreWidgets">
+                        <label for="referencePathScoreSelect" style="padding: 0">Available scores</label><br>
+                        <select id="referencePathScoreSelect" size="5" >
+                            <option value="commonNodes">Number of shared nodes with respect to path length</option>
+                            <option value="commonSets">Number of shared sets in non-shared nodes</option>
+                        </select><br>
+                    </div>
+
+                </div>
                 <div class="radio" id="customScore">
                     <label for="customScoreRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
                                                                                    id="customScoreRadio"/>Custom
@@ -284,7 +299,7 @@
 
                 </div>
 
-                <div class="checkbox">
+                <div class="checkbox" id="diffToReferencePathWidgets">
                     <label for="diffToReferencePath"><input type="checkbox"
                                                             id="diffToReferencePath"/>Use score
                         difference to reference path</label>

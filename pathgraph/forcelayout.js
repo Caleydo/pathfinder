@@ -479,7 +479,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
                     .append("path")
                     .attr("d", "M 0 0 L 10 5 L 0 10 z");
 
-                selectionUtil.addDefaultTrigger(edgeGroup, "g.edgePath", function (d) {
+                selectionUtil.addDefaultTrigger(edgeGroup.selectAll("g.edgePath"), function (d) {
 
                     var pathIds = [];
                     that.paths.forEach(function (path) {

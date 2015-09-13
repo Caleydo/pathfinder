@@ -122,6 +122,64 @@ define(["d3", "./config", "./setinfo", "./uiutil"], function (d3, config, setInf
             return -1;
         },
 
+        getCommonNodes: function (path1, path2) {
+            var nodes = [];
+
+            for (var i = 0; i < path1.nodes.length; i++) {
+                var currentNodeId = path1.nodes[i].id;
+                for (var j = 0; j < path2.nodes.length; j++) {
+                    if (currentNodeId === path2.nodes[j].id) {
+                        nodes.push(path2.nodes[j]);
+                        break;
+                    }
+                }
+            }
+            return nodes;
+        },
+
+        getNonCommonNodesOfPath: function (path, referencePath) {
+            var nodes = [];
+
+            for (var i = 0; i < path.nodes.length; i++) {
+                var currentNodeId = path.nodes[i].id;
+                var common = false;
+                for (var j = 0; j < referencePath.nodes.length; j++) {
+                    if (currentNodeId === referencePath.nodes[j].id) {
+                        common = true;
+                        break;
+                    }
+                }
+                if (!common) {
+                    nodes.push(path.nodes[i]);
+                }
+            }
+            return nodes;
+        },
+
+        getSetIdsOfNodes: function(nodes) {
+            var that = this;
+            var setIds = d3.set([]);
+
+            nodes.forEach(function(node) {
+               that.forEachNodeSet(node, function(setType, setId){
+                   setIds.add(setId);
+               })
+            });
+            return setIds.values();
+        },
+
+        getSetIdsOfEdges: function(edges) {
+            var that = this;
+            var setIds = d3.set([]);
+
+            edges.forEach(function(edge) {
+               that.forEachEdgeSet(edge, function(setType, setId){
+                   setIds.add(setId);
+               })
+            });
+            return setIds.values();
+        },
+
         renderNode: function (parent, node, x, y, width, height, clipPath, textWidthFunction, overlayItems) {
             parent.append("rect")
                 .attr({

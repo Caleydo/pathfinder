@@ -1,5 +1,5 @@
-define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listeners', '../query/pathquery', '../datastore', '../setinfo', '../config', '../statisticsutil', './path/settings'],
-    function ($, sorting, pathUtil, q, listeners, pathQuery, dataStore, setInfo, config, statisticsUtil, pathSettings) {
+define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listeners', '../query/pathquery', '../datastore', '../setinfo', '../config', '../statisticsutil', './path/settings', '../settings/visibilitysettings'],
+    function ($, sorting, pathUtil, q, listeners, pathQuery, dataStore, setInfo, config, statisticsUtil, pathSettings, visibilitySettings) {
         var SortingStrategy = sorting.SortingStrategy;
 
         //TODO: fetch amount of sets from server
@@ -347,7 +347,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
             //Make sure that the reference path is always ranked on top/bottom
             var scoreA = a.path.id === pathSettings.referencePathId ? -1 : this.getInherentScoreInfo(a.path).score;
-            var scoreB = b.path.id === pathSettings.referencePathId ? -1: this.getInherentScoreInfo(b.path).score;
+            var scoreB = b.path.id === pathSettings.referencePathId ? -1 : this.getInherentScoreInfo(b.path).score;
             if (this.ascending) {
                 return d3.ascending(scoreA, scoreB);
             }
@@ -394,6 +394,108 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
         };
 
+        function CommonNodesWithRefPathSortingStrategy() {
+            SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Shared nodes to path length ratio", "COMMON_NODES");
+            this.ascending = false;
+        }
+
+        CommonNodesWithRefPathSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+
+        CommonNodesWithRefPathSortingStrategy.prototype.compare = function (a, b) {
+
+            //Make sure that the reference path is always ranked on top/bottom
+            var scoreA = a.path.id === pathSettings.referencePathId ? 2 : this.getInherentScoreInfo(a.path).score;
+            var scoreB = b.path.id === pathSettings.referencePathId ? 2 : this.getInherentScoreInfo(b.path).score;
+            if (this.ascending) {
+                return d3.ascending(scoreA, scoreB);
+            }
+            return d3.descending(scoreA, scoreB);
+        };
+
+        CommonNodesWithRefPathSortingStrategy.prototype.getInherentScoreInfo = function (path) {
+            return this.getScoreInfo(path);
+        };
+
+        CommonNodesWithRefPathSortingStrategy.prototype.getScoreInfo = function (path) {
+
+            if (typeof pathSettings.referencePathId !== "undefined") {
+                var referencePath = dataStore.getPath(pathSettings.referencePathId);
+                if (referencePath) {
+                    var score = pathUtil.getCommonNodes(referencePath, path).length / path.nodes.length;
+                    return {
+                        score: score
+                    };
+                }
+            }
+            return {score: 0};
+
+        };
+
+        function CommonSetsWithRefPathSortingStrategy() {
+            SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Shared sets in non-shared nodes", "COMMON_SETS");
+            this.ascending = false;
+        }
+
+        CommonSetsWithRefPathSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
+
+        CommonSetsWithRefPathSortingStrategy.prototype.compare = function (a, b) {
+
+            //Make sure that the reference path is always ranked on top/bottom
+            var scoreA = a.path.id === pathSettings.referencePathId ? Number.POSITIVE_INFINITY : this.getInherentScoreInfo(a.path).score;
+            var scoreB = b.path.id === pathSettings.referencePathId ? Number.POSITIVE_INFINITY : this.getInherentScoreInfo(b.path).score;
+            if (this.ascending) {
+                return d3.ascending(scoreA, scoreB);
+            }
+            return d3.descending(scoreA, scoreB);
+        };
+
+        CommonSetsWithRefPathSortingStrategy.prototype.getInherentScoreInfo = function (path) {
+            return this.getScoreInfo(path);
+        };
+
+        CommonSetsWithRefPathSortingStrategy.prototype.getScoreInfo = function (path) {
+
+            if (typeof pathSettings.referencePathId !== "undefined") {
+                var referencePath = dataStore.getPath(pathSettings.referencePathId);
+                if (referencePath) {
+
+                    var commonSets = [];
+                    var nonCommonNodes = pathUtil.getNonCommonNodesOfPath(path, referencePath);
+
+                    var refPathSetIds = visibilitySettings.isShowNonEdgeSets() ? pathUtil.getSetIdsOfNodes(referencePath.nodes) : pathUtil.getSetIdsOfEdges(referencePath.edges);
+                    var setIds = d3.set(pathUtil.getSetIdsOfNodes(nonCommonNodes));
+                    var refPathSetIdsSet = d3.set(refPathSetIds);
+
+                    if (!visibilitySettings.isShowNonEdgeSets()) {
+                        var edgeSetIds = pathUtil.getSetIdsOfEdges(path.edges);
+                        var tmp = d3.set([]);
+                        edgeSetIds.forEach(function (setId) {
+                            if (setIds.has(setId)) {
+                                tmp.add(setId);
+                            }
+                        });
+                        setIds = tmp;
+                    }
+
+                    setIds.forEach(function (setId) {
+                        if (refPathSetIdsSet.has(setId)) {
+                            commonSets.push(setId);
+                        }
+                    });
+
+
+                    return {
+                        score: commonSets.length,
+                        idType: "set",
+                        ids: commonSets
+                    };
+
+                }
+            }
+
+            return {score: 0};
+        };
+
         var currentCustomStratId = 0;
 
         function CustomSortingStrategy(userScoreFunction, label) {
@@ -438,37 +540,37 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
         };
 
-        //var pathQuery = new pathQueryModel.NodeMatcher(new pathQueryModel.Or(new pathQueryModel.NodeNameConstraint("C00527"), new pathQueryModel.NodeNameConstraint("C00431")));
+//var pathQuery = new pathQueryModel.NodeMatcher(new pathQueryModel.Or(new pathQueryModel.NodeNameConstraint("C00527"), new pathQueryModel.NodeNameConstraint("C00431")));
 
-        //var pathQuery = new q.NodeMatcher(new q.OrConstraint(new q.AndConstraint(new q.NodeSetPresenceConstraint("hsa01230"), new q.NodeSetPresenceConstraint("hsa00300")), new q.NodeNameConstraint("C00431")));
+//var pathQuery = new q.NodeMatcher(new q.OrConstraint(new q.AndConstraint(new q.NodeSetPresenceConstraint("hsa01230"), new q.NodeSetPresenceConstraint("hsa00300")), new q.NodeNameConstraint("C00431")));
 
-        //var pathQuery = new q.NodeMatcher(new q.AndConstraint(new q.new q.NodeNameConstraint("C00431"), new q.NodeSetPresenceConstraint("hsa00310")));
+//var pathQuery = new q.NodeMatcher(new q.AndConstraint(new q.new q.NodeNameConstraint("C00431"), new q.NodeSetPresenceConstraint("hsa00310")));
 
-        //var pathQuery = new q.QueryMatchRegionRelation(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.NodeMatcher(new q.NodeNameConstraint("C00527")), q.MatchRegionRelations.subsequent);
+//var pathQuery = new q.QueryMatchRegionRelation(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.NodeMatcher(new q.NodeNameConstraint("C00527")), q.MatchRegionRelations.subsequent);
 
-        //var pathQuery = new q.QueryMatchRegionRelation(new q.QueryMatchRegionRelation(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00071")), q.MatchRegionRelations.equal), new q.NodeMatcher(new q.NodeTypeConstraint("Compound")), q.MatchRegionRelations.subsequent);
+//var pathQuery = new q.QueryMatchRegionRelation(new q.QueryMatchRegionRelation(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00071")), q.MatchRegionRelations.equal), new q.NodeMatcher(new q.NodeTypeConstraint("Compound")), q.MatchRegionRelations.subsequent);
 
-        //var pathQuery = new q.QueryMatchRegionRelation(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.NodeMatcher(new q.NodeTypeConstraint("Compound")), q.MatchRegionRelations.subsequent);
+//var pathQuery = new q.QueryMatchRegionRelation(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.NodeMatcher(new q.NodeTypeConstraint("Compound")), q.MatchRegionRelations.subsequent);
 
-        //var pathQuery = new q.RegionMatcher(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.MatchRegion(2, 2), true);
+//var pathQuery = new q.RegionMatcher(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.MatchRegion(2, 2), true);
 
-        //var pathQuery = new q.Or(new q.RegionMatcher(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.MatchRegion(2, 2), true), new q.NodeMatcher(new q.NodeNameConstraint("C00164")));
+//var pathQuery = new q.Or(new q.RegionMatcher(new q.NodeMatcher(new q.NodeNameConstraint("219")), new q.MatchRegion(2, 2), true), new q.NodeMatcher(new q.NodeNameConstraint("C00164")));
 
-        //var pathQuery = new q.QueryMatchRegionRelation(
-        //  new q.QueryMatchRegionRelation(
-        //    new q.QueryMatchRegionRelation(
-        //      new q.QueryMatchRegionRelation(
-        //        new q.QueryMatchRegionRelation(
-        //          new q.QueryMatchRegionRelation(
-        //            new q.NodeMatcher(new q.NodeNameConstraint("1152")),
-        //            new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00330")), q.MatchRegionRelations.max1EqualsMin2),
-        //          new q.NodeMatcher(new q.NodeNameConstraint("219")), q.MatchRegionRelations.subsequent),
-        //        new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00310")), q.MatchRegionRelations.max1EqualsMin2),
-        //      new q.NodeMatcher(new q.NodeTypeConstraint("Compound")), q.MatchRegionRelations.subsequent),
-        //    new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00310")), q.MatchRegionRelations.max1EqualsMin2),
-        //  new q.NodeMatcher(new  q.NodeNameConstraint("23067")), q.MatchRegionRelations.subsequent);
+//var pathQuery = new q.QueryMatchRegionRelation(
+//  new q.QueryMatchRegionRelation(
+//    new q.QueryMatchRegionRelation(
+//      new q.QueryMatchRegionRelation(
+//        new q.QueryMatchRegionRelation(
+//          new q.QueryMatchRegionRelation(
+//            new q.NodeMatcher(new q.NodeNameConstraint("1152")),
+//            new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00330")), q.MatchRegionRelations.max1EqualsMin2),
+//          new q.NodeMatcher(new q.NodeNameConstraint("219")), q.MatchRegionRelations.subsequent),
+//        new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00310")), q.MatchRegionRelations.max1EqualsMin2),
+//      new q.NodeMatcher(new q.NodeTypeConstraint("Compound")), q.MatchRegionRelations.subsequent),
+//    new q.EdgeMatcher(new q.EdgeSetPresenceConstraint("hsa00310")), q.MatchRegionRelations.max1EqualsMin2),
+//  new q.NodeMatcher(new  q.NodeNameConstraint("23067")), q.MatchRegionRelations.subsequent);
 
-        //sortingManager.setStrategyChain([sortingStrategies.getPathQueryStrategy(pathQuery), sortingStrategies.pathId]);
+//sortingManager.setStrategyChain([sortingStrategies.getPathQueryStrategy(pathQuery), sortingStrategies.pathId]);
 
         function updateWidgetVisibility() {
             $("#setConnectionStrengthWidgets").css({
@@ -483,8 +585,16 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                 display: $("#dataBasedScoreRadio").prop("checked") ? "block" : "none"
             });
 
+            $("#referencePathScoreWidgets").css({
+                display: $("#referencePathScoreRadio").prop("checked") ? "block" : "none"
+            });
+
             $("#customScoreWidgets").css({
                 display: $("#customScoreRadio").prop("checked") ? "block" : "none"
+            });
+
+            $("#diffToReferencePathWidgets").css({
+                display: $("#referencePathScoreRadio").prop("checked") ? "none" : "block"
             });
         }
 
@@ -518,6 +628,10 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
             var property = $("#propertySelect").val();
             var stat = $("#propertyStatSelect").val();
             return property && stat;
+        }
+
+        function validateRefPathSortingConfig() {
+            return $("#referencePathScoreSelect").val();
         }
 
         function validateCustomScoreConfig() {
@@ -616,6 +730,12 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                     //$("#rankScriptConfirm").toggleEnabled(validateDataBasedSortingConfig());
                     $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
                 });
+                $("#referencePathScoreRadio").click(function () {
+                    updateWidgetVisibility();
+                    //$("#rankScriptConfirm").toggleEnabled(validateDataBasedSortingConfig());
+                    $("#rankConfigConfirm").prop("disabled", !validateRefPathSortingConfig());
+                });
+
                 $("#customScoreRadio").click(function () {
                     updateWidgetVisibility();
                     //$("#rankScriptConfirm").toggleEnabled(validateDataBasedSortingConfig());
@@ -659,6 +779,10 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
                 $("#attributeStatSelect").on("change", function () {
                     $("#rankConfigConfirm").prop("disabled", !validateDataBasedSortingConfig());
+                });
+
+                $("#referencePathScoreSelect").on("change", function () {
+                    $("#rankConfigConfirm").prop("disabled", !validateRefPathSortingConfig());
                 });
 
                 $("#customScoreSelect").on("change", function () {
@@ -815,6 +939,17 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                             sortingStrategy = new NumericalTableAttributeSortingStrategy(datasetId, stat, label, attribute);
 
                         }
+                    } else if ($("#referencePathScoreRadio").prop("checked")) {
+
+                        switch ($("#referencePathScoreSelect").val()) {
+                            case "commonNodes":
+                                sortingStrategy = new CommonNodesWithRefPathSortingStrategy();
+                                break;
+                            case "commonSets":
+                                sortingStrategy = new CommonSetsWithRefPathSortingStrategy();
+                                break;
+                        }
+
                     } else if ($("#customScoreRadio").prop("checked")) {
                         var sortingStrategyId = $("#customScoreSelect").val();
                         for (var i = 0; i < that.customSortingStrategies.length; i++) {
@@ -850,4 +985,5 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
         }
 
     }
-);
+)
+;

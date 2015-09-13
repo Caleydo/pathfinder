@@ -328,7 +328,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             //attr("marker-end", "url(#arrowRight)");
 
 
-            selectionUtil.addDefaultTrigger(edgeGroup, "g.edgePath", function (d) {
+            selectionUtil.addDefaultTrigger(edgeGroup.selectAll("g.edgePath"), function (d) {
 
                 var pathIds = [];
                 that.paths.forEach(function (path) {

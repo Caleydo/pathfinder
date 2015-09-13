@@ -1,5 +1,5 @@
-define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pathsorting", "../../datastore", "../../config", "../../setinfo", '../../sorting'],
-    function ($, d3, s, listeners, uiUtil, pathSorting, dataStore, config, setInfo, sorting) {
+define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pathsorting", "../../datastore", "../../config", "../../setinfo", '../../sorting', '../../selectionutil'],
+    function ($, d3, s, listeners, uiUtil, pathSorting, dataStore, config, setInfo, sorting, selectionUtil) {
 
         //var DEFAULT_COLUMN_WIDTH = 80;
         var COLUMN_SPACING = 5;
@@ -579,7 +579,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             this.scoreRepresentation.setValueRange(valueRange);
             this.scoreRepresentation.appendScore(item, scoreInfo.score, s.PATH_HEIGHT, true);
 
-
             item.append("title")
                 .text(this.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
         };
@@ -590,7 +589,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
             this.scoreRepresentation.setValueRange(valueRange);
             this.scoreRepresentation.updateScore(item, scoreInfo.score, s.PATH_HEIGHT, true);
-            item.select("title").text(this.tooltipTextAccessor(column.sortingStrategy, scoreInfo))
+            item.select("title").text(this.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
+            if (typeof scoreInfo.idType !== "undefined" && typeof scoreInfo.ids !== "undefined") {
+                selectionUtil.addDefaultTrigger(item, function () {
+                    return scoreInfo.ids;
+                }, scoreInfo.idType);
+            }
         };
 
         function getPathDataScoreValueRange(pathWrappers, dataset, sortingStrategy) {
@@ -1735,6 +1739,12 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 };
                 this.itemRenderers["PER_NODE_BETWEEN_GROUPS_STATS"] = function (column, wrapped) {
                     return new MatrixDatasetItemRenderer(column, new BarRepresentation(), wrapped ? referencePathDifferenceWrapperTooltipFactory(perNodeBetweenGroupsStatsTooltip) : perNodeBetweenGroupsStatsTooltip);
+                };
+                this.itemRenderers["COMMON_NODES"] = function (column) {
+                    return new SimplePathScoreRenderer(column, new BarRepresentation(), simpleScoreTooltip);
+                };
+                this.itemRenderers["COMMON_SETS"] = function (column) {
+                    return new SimplePathScoreRenderer(column, new BarRepresentation(), simpleScoreTooltip);
                 };
                 this.itemRenderers["SELECTED_PATHS"] = function (column) {
                     return new SimplePathScoreRenderer(column, new BooleanRepresentation(), simpleBooleanScoreTooltip);
