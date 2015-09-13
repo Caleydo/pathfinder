@@ -98,7 +98,9 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
             return {
                 node: desc.node,
-                score: desc.stats[this.stat]
+                score: desc.stats[this.stat],
+                idType: "node",
+                ids: [desc.node.id]
             };
         };
 
@@ -192,7 +194,9 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
                 group1: desc.el1.group,
                 group2: desc.el2.group,
                 node: desc.el1.node,
-                score: desc.diff
+                score: desc.diff,
+                idType: "node",
+                ids: [desc.el1.node.id]
             };
         };
 
