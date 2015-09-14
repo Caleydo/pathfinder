@@ -1456,15 +1456,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                         //}
                     })
                     .attr("transform", getSetTypeTransformFunction(that.pathWrappers));
-                //.each("end", function (d) {
-                //
-                //
-                //
-                //  //if (d.setType.canBeShown()) {
-                //  //  d3.select(this)
-                //  //    .attr("display", "inline");
-                //  //}
-                //});
+
 
                 setType.append("text")
                     .text(function (d) {
@@ -1488,7 +1480,147 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
                 //});
 
+                if (typeof s.referencePathId !== "undefined") {
+                    var overviewSetStatusStartX = 0;
+                    allSetTypes.each(function (d, i) {
+                        var start = that.listView.getTextWidth(config.getSetTypeFromSetPropertyName(d.setType.type));
+                        if (start > overviewSetStatusStartX) {
+                            overviewSetStatusStartX = start;
+                        }
+                    });
+                    overviewSetStatusStartX += 15;
+                }
+
                 allSetTypes.each(function (d, i) {
+
+
+                        if (typeof s.referencePathId === "undefined") {
+                            d3.select(this).select("g.setStatusOverview").remove();
+                        } else {
+                            if (that.pathWrappers[d.pathIndex].path.id !== s.referencePathId) {
+
+                                var refPathSetType = referencePathWrapper.setTypeDict[d.setType.type];
+                                if (refPathSetType) {
+
+                                    var numSetsInRefPath = 0;
+
+                                    var mySets = d.setType.sets.filter(function (set) {
+                                        return set.canBeShown();
+                                    });
+
+                                    mySets.forEach(function (set) {
+                                        if (typeof refPathSetType.setDict[set.id] !== "undefined" && refPathSetType.setDict[set.id].canBeShown()) {
+                                            numSetsInRefPath++;
+                                        }
+                                    });
+                                }
+
+
+                                var setOverview = d3.select(this).select("g.setStatusOverview");
+                                if (setOverview.empty()) {
+                                    setOverview = d3.select(this).append("g")
+                                        .classed("setStatusOverview", true);
+
+                                    setOverview.append("text")
+                                        .classed({
+                                            refPathStatus: true,
+                                            numSetsStatus: true
+                                        })
+                                        .attr({
+                                            x: overviewSetStatusStartX,
+                                            y: (s.SET_TYPE_HEIGHT - 10) / 2 + 9
+                                        }).style({
+                                            fill: "green",
+                                            "text-anchor": "start"
+                                        }).text("\uf00c");
+
+                                    setOverview.append("text")
+                                        .classed("numPresentSets", true)
+                                        .attr({
+                                            x: overviewSetStatusStartX+13,
+                                            y: (s.SET_TYPE_HEIGHT - 10) / 2 + 9
+                                        }).style({
+                                            fill: "green"
+                                        });
+
+                                    setOverview.append("text")
+                                        .classed({
+                                            refPathStatus: true,
+                                            numNonSetsStatus: true
+                                        })
+                                        .attr({
+                                            y: (s.SET_TYPE_HEIGHT - 10) / 2 + 9
+                                        }).style({
+                                            fill: "red",
+                                            "text-anchor": "start"
+                                        }).text("\uf00d");
+
+                                    setOverview.append("text")
+                                        .classed("numNonPresentSets", true)
+                                        .attr({
+                                            y: (s.SET_TYPE_HEIGHT - 10) / 2 + 9
+                                        }).style({
+                                            fill: "red"
+                                        });
+
+                                }
+                                var numSetsTextWidth = that.listView.getTextWidth(numSetsInRefPath);
+
+                                d3.select(this).select("g.setStatusOverview").select("text.numPresentSets")
+                                    .text(numSetsInRefPath);
+                                d3.select(this).select("g.setStatusOverview").select("text.numNonSetsStatus")
+                                    .attr("x", overviewSetStatusStartX + 13 + numSetsTextWidth+5);
+                                d3.select(this).select("g.setStatusOverview").select("text.numNonPresentSets")
+                                    .attr("x", overviewSetStatusStartX + 24 + numSetsTextWidth+5)
+                                    .text(mySets.length - numSetsInRefPath);
+
+                                //t.style({
+                                //    fill: isSetInRefPath ? "green" : "red"
+                                //}).text(isSetInRefPath ? "\uf00c" : "\uf00d");
+                                //
+                                //var diffText = d3.select(this).select("text.refPathPosDiff");
+                                //if (diffText.empty()) {
+                                //    diffText = d3.select(this).append("text")
+                                //        .classed("refPathPosDiff", true)
+                                //        .attr({
+                                //            x: -2,
+                                //            y: s.NODE_HEIGHT + 2
+                                //        });
+                                //}
+                                //
+                                //diffText.style({
+                                //    fill: "red",
+                                //    "text-anchor": "end"
+                                //}).text((nodePosDiff > 0 ? "+" : "") + nodePosDiff);
+
+
+                                //var nodePosDiff = nodeIndex - nodeIndexInRefPath;
+                                //
+                                //if (nodeIndexInRefPath >= 0 && nodePosDiff !== 0) {
+                                //    var diffText = d3.select(this).select("text.refPathPosDiff");
+                                //    if (diffText.empty()) {
+                                //        diffText = d3.select(this).append("text")
+                                //            .classed("refPathPosDiff", true)
+                                //            .attr({
+                                //                x: -2,
+                                //                y: s.NODE_HEIGHT + 2
+                                //            });
+                                //    }
+                                //
+                                //    diffText.style({
+                                //        fill: "red",
+                                //        "text-anchor": "end"
+                                //    }).text((nodePosDiff > 0 ? "+" : "") + nodePosDiff);
+                                //} else {
+                                //    d3.select(this).select("text.refPathPosDiff").remove();
+                                //}
+
+                            } else {
+                                d3.select(this).select("g.setStatusOverview").remove();
+                            }
+                        }
+
+
                         var setTypeSummaryContainer = d3.select(this).select("g.setTypeSummary");
 
 
@@ -1732,7 +1864,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                         var allCircles = d3.select(this).selectAll("circle")
                             .data(function () {
                                 return d.set.nodeIndices.map(function (index) {
-                                    return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, nodeIndex: index};
+                                    return {
+                                        pathIndex: d.pathIndex,
+                                        setTypeIndex: d.setTypeIndex,
+                                        nodeIndex: index
+                                    };
                                 });
                             });
 
@@ -1823,7 +1959,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                             if (that.pathWrappers[d.pathIndex].path.id !== s.referencePathId) {
 
                                 var refPathSetType = referencePathWrapper.setTypeDict[setType.setType.type];
-                                if(refPathSetType) {
+                                if (refPathSetType) {
                                     var setInRefPath = refPathSetType.setDict[d.set.id];
                                 }
 
@@ -1892,6 +2028,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 var position = pathWrapper.nodePositions[nodeIndex];
                 return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + (centerPosition ? s.NODE_WIDTH / 2 : 0);
             }
+
             ,
 
             renderLineGrid: function () {
