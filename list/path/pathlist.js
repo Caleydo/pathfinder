@@ -1537,7 +1537,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                     setOverview.append("text")
                                         .classed("numPresentSets", true)
                                         .attr({
-                                            x: overviewSetStatusStartX+13,
+                                            x: overviewSetStatusStartX + 13,
                                             y: (s.SET_TYPE_HEIGHT - 10) / 2 + 9
                                         }).style({
                                             fill: "green"
@@ -1563,16 +1563,20 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                             fill: "red"
                                         });
 
+                                    setOverview.append("title");
+
                                 }
                                 var numSetsTextWidth = that.listView.getTextWidth(numSetsInRefPath);
 
                                 d3.select(this).select("g.setStatusOverview").select("text.numPresentSets")
                                     .text(numSetsInRefPath);
                                 d3.select(this).select("g.setStatusOverview").select("text.numNonSetsStatus")
-                                    .attr("x", overviewSetStatusStartX + 13 + numSetsTextWidth+5);
+                                    .attr("x", overviewSetStatusStartX + 13 + numSetsTextWidth + 5);
                                 d3.select(this).select("g.setStatusOverview").select("text.numNonPresentSets")
-                                    .attr("x", overviewSetStatusStartX + 24 + numSetsTextWidth+5)
+                                    .attr("x", overviewSetStatusStartX + 24 + numSetsTextWidth + 5)
                                     .text(mySets.length - numSetsInRefPath);
+                                d3.select(this).select("g.setStatusOverview").select("title")
+                                    .text(config.getSetTypeFromSetPropertyName(d.setType.type) + ": " + numSetsInRefPath + " sets are shared with the reference path, " + (mySets.length - numSetsInRefPath) + " are not.");
 
                                 //t.style({
                                 //    fill: isSetInRefPath ? "green" : "red"
@@ -1969,35 +1973,17 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                     t = d3.select(this).append("text")
                                         .classed("refPathStatus", true)
                                         .attr({
-                                            x: s.SET_TYPE_INDENT,
+                                            x: s.NODE_START+28,
                                             y: s.SET_HEIGHT
                                         });
+                                    t.append("title");
                                 }
 
                                 t.style({
                                     fill: isSetInRefPath ? "green" : "red"
                                 }).text(isSetInRefPath ? "\uf00c" : "\uf00d");
-
-                                //var nodePosDiff = nodeIndex - nodeIndexInRefPath;
-                                //
-                                //if (nodeIndexInRefPath >= 0 && nodePosDiff !== 0) {
-                                //    var diffText = d3.select(this).select("text.refPathPosDiff");
-                                //    if (diffText.empty()) {
-                                //        diffText = d3.select(this).append("text")
-                                //            .classed("refPathPosDiff", true)
-                                //            .attr({
-                                //                x: -2,
-                                //                y: s.NODE_HEIGHT + 2
-                                //            });
-                                //    }
-                                //
-                                //    diffText.style({
-                                //        fill: "red",
-                                //        "text-anchor": "end"
-                                //    }).text((nodePosDiff > 0 ? "+" : "") + nodePosDiff);
-                                //} else {
-                                //    d3.select(this).select("text.refPathPosDiff").remove();
-                                //}
+                                //t.select("title")
+                                //    .text(setInfo.getSetLabel(d.set.id) + "is " + (isSetInRefPath ? "" : "not ") + " in the reference path.");
 
                             } else {
                                 d3.select(this).select("text.refPathStatus").remove();
