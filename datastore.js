@@ -799,11 +799,11 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
                 return allDatasets[datasetId];
             },
 
-            getDataForNode: getDataForNode,
+            getMatrixDataForNode: getDataForNode,
 
-            getStatsForNode: getStatsForNode,
+            getMatrixStatsForNode: getStatsForNode,
 
-            getPropertyForNode: getPropertyForNode,
+            getTableAttributeForNode: getPropertyForNode,
 
             getPathDatasetStats: getPathDatasetStats,
 

@@ -228,8 +228,8 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
         DataGroupWrapper.prototype = Object.create(DatasetSubsetWrapper.prototype);
 
-        DataGroupWrapper.prototype.getDataForNode = function (dataset, node, nodeIndex) {
-            var stats = dataStore.getStatsForNode(node, dataset.id, this.name);
+        DataGroupWrapper.prototype.getMatrixDataForNode = function (dataset, node, nodeIndex) {
+            var stats = dataStore.getMatrixStatsForNode(node, dataset.id, this.name);
             if (typeof stats !== "undefined") {
                 return {stats: stats};
             }
@@ -254,9 +254,9 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         TableColumnWrapper.prototype = Object.create(DatasetSubsetWrapper.prototype);
 
 
-        TableColumnWrapper.prototype.getDataForNode = function (dataset, node, nodeIndex) {
-            var data = dataStore.getPropertyForNode(node, dataset.id, this.name);
-            //var stats = dataStore.getStatsForNode(node, dataset.id, that.name);
+        TableColumnWrapper.prototype.getMatrixDataForNode = function (dataset, node, nodeIndex) {
+            var data = dataStore.getTableAttributeForNode(node, dataset.id, this.name);
+            //var stats = dataStore.getMatrixStatsForNode(node, dataset.id, that.name);
             if (typeof data !== "undefined") {
                 return {data: data};
             }
@@ -271,7 +271,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             var that = this;
             var maxNumValues = 1;
             this.pathWrapper.path.nodes.forEach(function (node) {
-                var data = dataStore.getPropertyForNode(node, that.parent.id, that.name);
+                var data = dataStore.getTableAttributeForNode(node, that.parent.id, that.name);
                 if (typeof data !== "undefined") {
                     if (data instanceof Array && data.length > maxNumValues) {
                         maxNumValues = data.length;
@@ -449,7 +449,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
             pathWrapper.path.nodes.forEach(function (node, index) {
                 if (dataset.children.length > 0) {
-                    var stats = dataStore.getStatsForNode(node, dataset.id);
+                    var stats = dataStore.getMatrixStatsForNode(node, dataset.id);
                     if (typeof stats !== "undefined") {
                         statData.push({
                             stats: stats,
@@ -533,7 +533,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
                 transform: "translate(" + (pathList.getNodePositionX(pathWrapper, statData.nodeIndex, true) - axisSize / 2) + "," + DATA_GROUP_V_PADDING + ")"
             });
 
-            //var stats = dataStore.getStatsForNode(node, dataset.name, group.name);
+            //var stats = dataStore.getMatrixStatsForNode(node, dataset.name, group.name);
 
             appendBoxPlotH($nodeData, statData.stats, scaleX, dataset.color);
         };
@@ -554,7 +554,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             updateBoxPlotH($nodeData, statData.stats, scaleX);
 
             //var allPoints = $nodeData.selectAll("g.dataPoint")
-            //  .data(dataStore.getDataForNode(node, dataset.name, group.name));
+            //  .data(dataStore.getMatrixDataForNode(node, dataset.name, group.name));
             //
             //var point = allPoints.enter()
             //  .append("g")
@@ -615,7 +615,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
             pathWrapper.path.nodes.forEach(function (node, index) {
                 if (dataset.children.length > 0) {
-                    var stats = dataStore.getStatsForNode(node, dataset.id);
+                    var stats = dataStore.getMatrixStatsForNode(node, dataset.id);
                     if (typeof stats !== "undefined") {
                         statData.push({
                             stats: stats,
@@ -866,7 +866,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
         function appendBoxPlotH(parent, stats, scaleX, color) {
 
-            //var stats = dataStore.getStatsForNode(d, dataset.name, group.name);
+            //var stats = dataStore.getMatrixStatsForNode(d, dataset.name, group.name);
 
             appendToolTip(parent, stats);
 

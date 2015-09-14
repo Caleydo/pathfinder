@@ -117,7 +117,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
         function NumericalTableAttributeSortingStrategy(datasetId, stat, label, attribute) {
             NumericalPerNodeSortingStrategy.call(this, stat, label, function (node) {
-                var data = dataStore.getPropertyForNode(node, datasetId, attribute);
+                var data = dataStore.getTableAttributeForNode(node, datasetId, attribute);
                 if (typeof data !== "undefined") {
                     if (data instanceof Array) {
                         return statisticsUtil.statisticsOf(data)[stat];
@@ -520,7 +520,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
         };
 
         CustomSortingStrategy.prototype.getScoreInfo = CustomSortingStrategy.prototype.getInherentScoreInfo = function (path) {
-            return {score: this.userScoreFunction(path, dataStore.getDataSets(), (pathUtil.getAllSetInfosForNode).bind(pathUtil), (dataStore.getDataForNode).bind(dataStore), (dataStore.getStatsForNode).bind(dataStore))};
+            return {score: this.userScoreFunction(path, dataStore.getPath(pathSettings.referencePathId), dataStore.getDataSets(), (pathUtil.getAllSetInfosForNode).bind(pathUtil), (dataStore.getMatrixDataForNode).bind(dataStore), (dataStore.getMatrixStatsForNode).bind(dataStore), (dataStore.getTableAttributeForNode).bind(dataStore))};
         };
 
 
@@ -799,7 +799,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                 //});
 
                 $("#addRanking").click(function () {
-                    $("#scriptText").val("var getScore = function(path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {\n" +
+                    $("#scriptText").val("var getScore = function(path, referencePath, datasets, getSetsForNode, getMatrixDataForNode, getMatrixStatsForNode, getTableAttributeForNode) {\n" +
                         "//insert code here\n" +
                         "return 0;\n}");
 
@@ -820,7 +820,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                         //listeners.notify("CUSTOM_SORTING_STRATEGY_UPDATE", that.customSortingStrategies);
                     }
 
-                    //var getScoreInfo = function (path, datasets, getSetsForNode, getDataForNode, getStatsForNode) {
+                    //var getScoreInfo = function (path, datasets, getSetsForNode, getMatrixDataForNode, getMatrixStatsForNode) {
                     //  var numSets = 0;
                     //  path.nodes.forEach(function (node) {
                     //    var sets = getSetsForNode(node);
