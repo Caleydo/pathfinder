@@ -1,5 +1,5 @@
-define(['d3', 'jquery', './listeners', './query/pathquery', './config', './statisticsutil', './sorting', '../pathfinder_ccle/ccle', './extradata'],
-    function (d3, $, listeners, pathQuery, config, statisticsUtil, sorting, ccle, extraData) {
+define(['d3', 'jquery', './listeners', './query/pathquery', './config', './statisticsutil', './sorting', '../pathfinder_ccle/ccle', './extradata', './list/path/settings'],
+    function (d3, $, listeners, pathQuery, config, statisticsUtil, sorting, ccle, extraData, pathSettings) {
 
         var SortingStrategy = sorting.SortingStrategy;
 
@@ -605,6 +605,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
                                     paths.splice(i, 1);
                                     i--;
                                     delete pathStats[path.id];
+                                    if (pathSettings.referencePathId === path.id) {
+                                        delete pathSettings.referencePathId;
+                                        listeners.notify(pathSettings.pathListUpdateTypes.UPDATE_REFERENCE_PATH, pathSettings.referencePathId);
+                                    }
                                 }
                             }
 

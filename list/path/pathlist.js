@@ -247,6 +247,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 //});
 
                 this.setTypes = setTypeList;
+                this.setTypeDict = setTypeDict;
             }
         };
 
@@ -999,7 +1000,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                         });
 
                         var set = d3.select(this)
-                            .selectAll("g.setCont")
+                            .selectAll("g.set")
                             .data(function () {
                                 var filteredSets = d.setType.sets.filter(function (s) {
                                     return s.canBeShown();
@@ -1367,6 +1368,16 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 var nodeSetScale = this.getNodeSetScale();
                 var edgeSetScale = this.getEdgeSetScale();
 
+                var referencePathWrapper = 0;
+                if (typeof s.referencePathId !== "undefined") {
+                    for (var i = 0; i < this.pathWrappers.length; i++) {
+                        if (this.pathWrappers[i].path.id === s.referencePathId) {
+                            referencePathWrapper = this.pathWrappers[i];
+                        }
+                    }
+                }
+
+
                 var allSetTypes = allPathContainers.selectAll("g.setGroup").selectAll("g.setType")
                     .data(function (pathWrapper, i) {
                         var filteredSetTypes = pathWrapper.setTypes.filter(function (setType) {
@@ -1618,69 +1629,36 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 allSetTypes.exit().remove();
 
 
-                allSetTypes.each(function (d) {
+                allSetTypes.each(function (setType) {
 
-                    if (d.setType.collapsed) {
-                        d3.select(this).selectAll("g.setCont")
+                    if (setType.setType.collapsed) {
+                        d3.select(this).selectAll("g.set")
                             .remove();
                         return;
                     }
 
-                    var allSc = d3.select(this)
-                        .selectAll("g.setCont")
+                    var allSets = d3.select(this)
+                        .selectAll("g.set")
                         .data(function () {
-                            var filteredSets = d.setType.sets.filter(function (s) {
+                            var filteredSets = setType.setType.sets.filter(function (s) {
                                 return s.canBeShown();
                             });
 
                             return filteredSets.map(function (myset) {
                                 return {
                                     set: myset,
-                                    pathIndex: d.pathIndex,
-                                    setTypeIndex: that.pathWrappers[d.pathIndex].setTypes.indexOf(d.setType)
+                                    pathIndex: setType.pathIndex,
+                                    setTypeIndex: that.pathWrappers[setType.pathIndex].setTypes.indexOf(setType.setType)
                                 };
                             });
                         }, function (d) {
                             return d.set.id;
                         });
 
-                    var sc = allSc
+
+                    var set = allSets
                         .enter()
                         .append("g")
-                        .classed("setCont", true);
-
-                    sc.each(function (d, i) {
-
-
-                        uiUtil.createTemporalMenuOverlayButton(d3.select(this), s.NODE_START, 0, true, function () {
-
-                            var setNode = setInfo.get(d.set.id);
-
-                            if (typeof setNode === "undefined") {
-                                return [];
-                            }
-
-                            var items = queryUtil.getFilterOverlayItems("set", d.set.id);
-                            var linkItem = setInfo.getLinkOverlayItem(d.set.id);
-                            if (linkItem) {
-                                items.push(linkItem);
-                            }
-                            return items;
-                        });
-                        //queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, s.NODE_START, 0, true);
-                    });
-
-                    allSc.attr({
-                        display: function (d) {
-                            if (d.set.canBeShown()) {
-                                return "inline";
-                            }
-                            return "none";
-                        },
-                        transform: getSetTransformFunction(that.pathWrappers)
-                    });
-
-                    var set = sc.append("g")
                         .classed("set", true)
                         .on("dblclick", function (d) {
                             //pathSorting.sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
@@ -1710,6 +1688,36 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                         .text(function (d) {
                             return setInfo.getSetLabel(d.set.id);
                         });
+
+                    set.each(function (d, i) {
+
+                        uiUtil.createTemporalMenuOverlayButton(d3.select(this), s.NODE_START, 0, true, function () {
+
+                            var setNode = setInfo.get(d.set.id);
+
+                            if (typeof setNode === "undefined") {
+                                return [];
+                            }
+
+                            var items = queryUtil.getFilterOverlayItems("set", d.set.id);
+                            var linkItem = setInfo.getLinkOverlayItem(d.set.id);
+                            if (linkItem) {
+                                items.push(linkItem);
+                            }
+                            return items;
+                        });
+                        //queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, s.NODE_START, 0, true);
+                    });
+
+                    allSets.attr({
+                        display: function (d) {
+                            if (d.set.canBeShown()) {
+                                return "inline";
+                            }
+                            return "none";
+                        },
+                        transform: getSetTransformFunction(that.pathWrappers)
+                    });
 
 
                     var setVisContainer = set.append("g")
@@ -1779,40 +1787,91 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     });
 
 
-                    d3.select(this).selectAll("g.setVisContainer")
-                        .each(function (d) {
+                    allSets.each(function (d) {
 
-                            var allCircles = d3.select(this).selectAll("circle");
+                        var container = d3.select(this).select("g.setVisContainer");
+                        var allCircles = container.selectAll("circle");
 
-                            allCircles.transition()
-                                .attr({
-                                    cx: function (d) {
-                                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                        var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-                                        return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                                    }
-                                });
+                        allCircles.transition()
+                            .attr({
+                                cx: function (d) {
+                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                }
+                            });
 
-                            var allLines = d3.select(this).selectAll("line");
+                        var allLines = container.selectAll("line");
 
-                            allLines.transition()
-                                .attr({
-                                    x1: function (d) {
-                                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                        var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
-                                        return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                                    },
-                                    x2: function (d) {
-                                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                        var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
-                                        return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                                    }
-                                });
+                        allLines.transition()
+                            .attr({
+                                x1: function (d) {
+                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
+                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                },
+                                x2: function (d) {
+                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
+                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                }
+                            });
 
-                        });
+                        if (typeof s.referencePathId === "undefined") {
+                            d3.select(this).select("text.refPathStatus").remove();
+                        } else {
+                            if (that.pathWrappers[d.pathIndex].path.id !== s.referencePathId) {
+
+                                var refPathSetType = referencePathWrapper.setTypeDict[setType.setType.type];
+                                if(refPathSetType) {
+                                    var setInRefPath = refPathSetType.setDict[d.set.id];
+                                }
+
+                                var isSetInRefPath = typeof setInRefPath !== "undefined" && setInRefPath.canBeShown();
+                                var t = d3.select(this).select("text.refPathStatus");
+                                if (t.empty()) {
+                                    t = d3.select(this).append("text")
+                                        .classed("refPathStatus", true)
+                                        .attr({
+                                            x: s.SET_TYPE_INDENT,
+                                            y: s.SET_HEIGHT
+                                        });
+                                }
+
+                                t.style({
+                                    fill: isSetInRefPath ? "green" : "red"
+                                }).text(isSetInRefPath ? "\uf00c" : "\uf00d");
+
+                                //var nodePosDiff = nodeIndex - nodeIndexInRefPath;
+                                //
+                                //if (nodeIndexInRefPath >= 0 && nodePosDiff !== 0) {
+                                //    var diffText = d3.select(this).select("text.refPathPosDiff");
+                                //    if (diffText.empty()) {
+                                //        diffText = d3.select(this).append("text")
+                                //            .classed("refPathPosDiff", true)
+                                //            .attr({
+                                //                x: -2,
+                                //                y: s.NODE_HEIGHT + 2
+                                //            });
+                                //    }
+                                //
+                                //    diffText.style({
+                                //        fill: "red",
+                                //        "text-anchor": "end"
+                                //    }).text((nodePosDiff > 0 ? "+" : "") + nodePosDiff);
+                                //} else {
+                                //    d3.select(this).select("text.refPathPosDiff").remove();
+                                //}
+
+                            } else {
+                                d3.select(this).select("text.refPathStatus").remove();
+                            }
+                        }
+
+                    });
 
 
-                    allSc.exit()
+                    allSets.exit()
                         .remove();
 
                 });
@@ -1825,13 +1884,15 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     "set"
                 );
 
-            },
+            }
+            ,
 
             getNodePositionX: function (pathWrapper, nodeIndex, centerPosition) {
                 var pivotNodeTranslate = this.getPivotNodeAlignedTranslationX(pathWrapper);
                 var position = pathWrapper.nodePositions[nodeIndex];
                 return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + (centerPosition ? s.NODE_WIDTH / 2 : 0);
-            },
+            }
+            ,
 
             renderLineGrid: function () {
                 var gridStrokeColor = "white";
@@ -2103,7 +2164,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 });
 
                 allBgPathWrappers.exit().remove();
-            },
+            }
+            ,
 
             renderNodeProperties: function () {
                 var that = this;
@@ -2281,7 +2343,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 });
 
 
-            },
+            }
+            ,
 
             renderPaths: function () {
 
