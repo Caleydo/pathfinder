@@ -18,13 +18,19 @@
 
     <header>
 
-        <button type="button" id="toggleQueryMode" class="btn btn-default btn-active">Advanced Query</button>
-        <button id="toggleSettingsButton" class="btn btn-default" style="float:right"><i class="fa fa-bars"></i>
+        <div id="query_interface" style="width:calc(100% - 50px)">
+
+        </div>
+        <button id="toggleSettingsButton" class="btn btn-default" style="display:inline-block"><i
+                class="fa fa-bars"></i>
         </button>
 
-        <section id="query_interface">
+        <div class="progress progress-info progress-striped"
+             style="margin-bottom: 5px; margin-top: 5px; height: 0.5em;">
+            <div class="progress-bar" style="width: 0%"></div>
+        </div>
 
-        </section>
+
     </header>
 
     <div id="container">
@@ -279,7 +285,7 @@
 
                     <div id="referencePathScoreWidgets">
                         <label for="referencePathScoreSelect" style="padding: 0">Available scores</label><br>
-                        <select id="referencePathScoreSelect" size="5" >
+                        <select id="referencePathScoreSelect" size="5">
                             <option value="commonNodes">Number of shared nodes with respect to path length</option>
                             <option value="commonSets">Number of shared sets in non-shared nodes</option>
                         </select><br>
