@@ -580,6 +580,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
         SimplePathScoreRenderer.prototype.enter = function (item, pathWrapper, index, pathWrappers, column) {
 
+
             var valueRange = getScoreValueRange(pathWrappers, column.sortingStrategy);
 
             var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
@@ -589,6 +590,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
             item.append("title")
                 .text(this.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
+
+            item.style("display", scoreInfo.hideScore ? "none" : "block");
         };
 
         SimplePathScoreRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
@@ -600,6 +603,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             item.select("title").text(this.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
 
             addSelectionTrigger(item, scoreInfo);
+            item.style("display", scoreInfo.hideScore ? "none" : "block");
         };
 
         function getPathDataScoreValueRange(pathWrappers, dataset, sortingStrategy) {
@@ -1242,6 +1246,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
                 pathGroup.append("title")
                     .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
+                pathGroup.style("display", scoreInfo.hideScore ? "none" : "block");
             }
 
             var setTypes = item.selectAll("g.setType").data(pathWrapper.setTypes, function (d) {
@@ -1266,6 +1271,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
                 d3.select(this).append("title")
                     .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
+                d3.select(this).style("display", scoreInfo.hideScore ? "none" : "block");
             });
         };
 
@@ -1280,7 +1286,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 this.scoreRepresentation.updateScore(item, scoreInfo.score, s.PATH_HEIGHT, typeof originalSortingStrategy.setType === "undefined");
                 item.select("g.path").select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
 
-                 addSelectionTrigger(item.select("g.path"), scoreInfo);
+                addSelectionTrigger(item.select("g.path"), scoreInfo);
+                item.select("g.path").style("display", scoreInfo.hideScore ? "none" : "block");
             }
 
             var allSetTypes = item.selectAll("g.setType").data(pathWrapper.setTypes, function (d) {
@@ -1297,6 +1304,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 that.scoreRepresentation.updateScore(d3.select(this), scoreInfo.score, s.SET_TYPE_HEIGHT, originalSortingStrategy.setType === setType.type || pathWrapper.setTypes.length === 1, config.getSetColorFromSetTypePropertyName(setType.type));
                 d3.select(this).select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
                 addSelectionTrigger(d3.select(this), scoreInfo);
+                d3.select(this).style("display", scoreInfo.hideScore ? "none" : "block");
             });
         };
 
@@ -1336,6 +1344,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
                 p.append("title")
                     .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
+                p.style("display", scoreInfo.hideScore ? "none" : "block");
             }
         };
 
@@ -1362,6 +1371,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 that.scoreRepresentation.updateScore(p, scoreInfo.score, property.getHeight(), true, config.getNodePropertyColorFromPropertyName(property.name));
                 p.select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
                 addSelectionTrigger(p, scoreInfo);
+                p.style("display", scoreInfo.hideScore ? "none" : "block");
             }
         };
 
@@ -1410,6 +1420,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
             datasetGroup.append("title")
                 .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
+            datasetGroup.style("display", scoreInfo.hideScore ? "none" : "block");
 
         };
 
@@ -1442,6 +1453,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             this.scoreRepresentation.updateScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), dataset.color);
             datasetGroup.select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
             addSelectionTrigger(datasetGroup, scoreInfo);
+            datasetGroup.style("display", scoreInfo.hideScore ? "none" : "block");
 
             if (originalSortingStrategy.supportsScoresPerGroup) {
                 var allGroups = item.selectAll("g.group")
@@ -1482,6 +1494,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
                         d3.select(this).append("title")
                             .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
+                        d3.select(this).style("display", scoreInfo.hideScore ? "none" : "block");
 
 
                     });
@@ -1505,6 +1518,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                     that.scoreRepresentation.updateScore(d3.select(this), scoreInfo.score, group.getBaseHeight(), (groupId === group.name), dataset.color);
                     d3.select(this).select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
                     addSelectionTrigger(d3.select(this), scoreInfo);
+                    d3.select(this).style("display", scoreInfo.hideScore ? "none" : "block");
                 });
 
                 allGroups.exit().remove();
@@ -1583,6 +1597,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
             p.append("title")
                 .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
+             p.style("display", scoreInfo.hideScore ? "none" : "block");
 
         };
 
@@ -1610,6 +1625,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             p.select("title")
                 .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
             addSelectionTrigger(p, scoreInfo);
+             p.style("display", scoreInfo.hideScore ? "none" : "block");
 
         };
 

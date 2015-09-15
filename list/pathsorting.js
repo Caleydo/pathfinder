@@ -363,7 +363,8 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                     return {
                         score: Math.abs(refPathScoreInfo.score - scoreInfo.score),
                         refPathScoreInfo: refPathScoreInfo,
-                        pathScoreInfo: scoreInfo
+                        pathScoreInfo: scoreInfo,
+                        hideScore: pathSettings.referencePathId === path.id
                     };
                 }
             }
@@ -385,7 +386,8 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                     return {
                         score: Math.abs(refPathScoreInfo.score - scoreInfo.score),
                         refPathScoreInfo: refPathScoreInfo,
-                        pathScoreInfo: scoreInfo
+                        pathScoreInfo: scoreInfo,
+                        hideScore: pathSettings.referencePathId === path.id
                     };
                 }
             }
@@ -395,7 +397,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
         };
 
         function CommonNodesWithRefPathSortingStrategy() {
-            SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Shared nodes to path length ratio", "COMMON_NODES");
+            SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.UNKNOWN, "Shared nodes to path length ratio", "COMMON_NODES");
             this.ascending = false;
         }
 
@@ -428,16 +430,19 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                     return {
                         score: score,
                         idType: "node",
-                        ids: commonNodeIds
+                        ids: commonNodeIds,
+                        hideScore: pathSettings.referencePathId === path.id
                     };
                 }
             }
-            return {score: 0};
+            return {
+                score: 0
+            };
 
         };
 
         function CommonSetsWithRefPathSortingStrategy() {
-            SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.PRESENCE, "Shared sets in non-shared nodes", "COMMON_SETS");
+            SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.UNKNOWN, "Shared sets in non-shared nodes", "COMMON_SETS");
             this.ascending = false;
         }
 
@@ -492,7 +497,8 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
                     return {
                         score: commonSets.length,
                         idType: "set",
-                        ids: commonSets
+                        ids: commonSets,
+                        hideScore: pathSettings.referencePathId === path.id
                     };
 
                 }
