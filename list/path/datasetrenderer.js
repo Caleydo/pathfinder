@@ -228,7 +228,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
         DataGroupWrapper.prototype = Object.create(DatasetSubsetWrapper.prototype);
 
-        DataGroupWrapper.prototype.getMatrixDataForNode = function (dataset, node, nodeIndex) {
+        DataGroupWrapper.prototype.getDataForNode = function (dataset, node, nodeIndex) {
             var stats = dataStore.getMatrixStatsForNode(node, dataset.id, this.name);
             if (typeof stats !== "undefined") {
                 return {stats: stats};
@@ -254,7 +254,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         TableColumnWrapper.prototype = Object.create(DatasetSubsetWrapper.prototype);
 
 
-        TableColumnWrapper.prototype.getMatrixDataForNode = function (dataset, node, nodeIndex) {
+        TableColumnWrapper.prototype.getDataForNode = function (dataset, node, nodeIndex) {
             var data = dataStore.getTableAttributeForNode(node, dataset.id, this.name);
             //var stats = dataStore.getMatrixStatsForNode(node, dataset.id, that.name);
             if (typeof data !== "undefined") {

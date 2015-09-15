@@ -505,6 +505,9 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
                     }
                 });
             });
+            if(nodes.length === 0){
+                return;
+            }
 
             //var keys = Object.keys(allDatasets);
             //

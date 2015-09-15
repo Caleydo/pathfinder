@@ -748,9 +748,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 addNodeConstraintBooleanButtons(that);
             });
 
-            $(this.myDomElements.select("input")[0]).on("input.sync", function () {
-                setSimpleQueryUINodeText(this.value, that);
-            })
+            //$(this.myDomElements.select("input")[0]).on("input.sync", function () {
+            //    setSimpleQueryUINodeText(this.value, that);
+            //})
         };
 
         function addNodeConstraintBooleanButtons(element) {
@@ -785,7 +785,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
         NodeConstraintElement.prototype.onSelect = function (ui) {
             MultiConstraintElement.prototype.onSelect.call(this, ui);
-            //setSimpleQueryUINodeText($(this.myDomElements.select("input")[0]).val(), this);
+            setSimpleQueryUINodeText($(this.myDomElements.select("input")[0]).val(), this);
         };
 
         function setSimpleQueryUINodeText(text, c) {
