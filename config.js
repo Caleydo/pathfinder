@@ -17,12 +17,6 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
     var propertyColors = {};
     var datasetColors = {};
 
-    function getGetParam(name) {
-        if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
-            return decodeURIComponent(name[1]);
-    }
-
-
     return {
         setConfig: function (c) {
             config = c;
@@ -100,7 +94,7 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
         },
 
         getUseCase: function () {
-            return getGetParam('uc') || C.hash.getProp('uc', 'dblp');
+            return C.hash.getProp('uc', C.param.getProp('uc', 'dblp'));
         },
 
         getSamplePathsFile: function () {
