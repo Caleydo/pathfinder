@@ -1973,7 +1973,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                     t = d3.select(this).append("text")
                                         .classed("refPathStatus", true)
                                         .attr({
-                                            x: s.NODE_START+28,
+                                            x: s.NODE_START + 28,
                                             y: s.SET_HEIGHT
                                         });
                                     t.append("title");
@@ -2699,7 +2699,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 node.each(function (d) {
                     pathUtil.renderNode(d3.select(this), d.node, 0, 0, s.NODE_WIDTH, s.NODE_HEIGHT, "url(#pathNodeClipPath)", function (text) {
                         return that.listView.getTextWidth(text);
-                    }, queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]));
+                    }, pathUtil.getDefaultNodeOverlayItems(d.node));
                 });
 
                 var referencePath = dataStore.getPath(s.referencePathId);

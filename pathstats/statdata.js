@@ -1,5 +1,5 @@
-define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config', '../setinfo', '../settings/visibilitysettings', '../query/queryutil', '../selectionutil'],
-  function (hierarchyElements, listeners, pathSorting, pathQuery, config, setInfo, visibilitySettings, queryUtil, selectionUtil) {
+define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query/pathquery', '../config', '../setinfo', '../settings/visibilitysettings', '../query/queryutil', '../selectionutil', '../pathutil'],
+  function (hierarchyElements, listeners, pathSorting, pathQuery, config, setInfo, visibilitySettings, queryUtil, selectionUtil, pathUtil) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
 
@@ -62,7 +62,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     };
 
     NodeWrapper.prototype.getOverlayMenuItems = function() {
-      return queryUtil.getFilterOverlayItems("name", this.getLabel());
+      return pathUtil.getDefaultNodeOverlayItems(this.node)
     };
 
     //NodeWrapper.prototype.getNodeConstraintType = function () {

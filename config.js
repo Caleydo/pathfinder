@@ -104,7 +104,7 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
         },
 
         getSamplePathsFile: function () {
-          return config["sample_paths"];
+            return config["sample_paths"];
         },
 
         isNodeSetProperty: function (node, property) {
@@ -456,6 +456,14 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
                 return "Unknown";
             }
             return type;
+        }
+        ,
+
+        getNodeUrlProperty: function (node) {
+            var nodeConfig = this.getNodeConfig(node);
+            if (nodeConfig) {
+                return nodeConfig.properties["url"];
+            }
         }
         ,
 

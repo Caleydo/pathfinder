@@ -185,6 +185,7 @@
             "id": "id",
             "idType": "string",
             "name": "name",
+            "url": "url",
             "pathways": {
               "type": "set",
               "set": "pathways"
@@ -194,6 +195,7 @@
         {
           "name": "Compound",
           "node_label": "Compound",
+          "url": "url",
           "properties": {
             "id": "id",
             "idType": "string",
@@ -276,6 +278,7 @@
             "id": "id",
             "idType": "string",
             "name": "name",
+            "url": "url",
             "pathways": {
               "type": "set",
               "set": "pathways"
@@ -289,6 +292,7 @@
             "id": "id",
             "idType": "string",
             "name": "name",
+            "url": "url",
             "pathways": {
               "type": "set",
               "set": "pathways"
