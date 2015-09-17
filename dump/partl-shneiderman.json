@@ -8,16 +8,17 @@
         ],
         "id": 655,
         "properties": {
+          "name": "Christian Partl",
+          "cited": 4,
+          "tvcg_publications": 4,
           "tvcg_papers": [
             "journals/tvcg/LexSPKS10",
             "journals/tvcg/LexSSPS11",
             "journals/tvcg/PartlLSSWPS14",
             "journals/tvcg/LexPKSGWSP13"
           ],
-          "cited": 4,
-          "id": "Christian_Partl",
-          "name": "Christian Partl",
-          "tvcg_publications": 4
+          "chi_publications": 0,
+          "id": "Christian_Partl"
         }
       },
       {
@@ -71,6 +72,9 @@
         ],
         "id": 327,
         "properties": {
+          "name": "Frank van Ham",
+          "cited": 56,
+          "tvcg_publications": 8,
           "tvcg_papers": [
             "journals/tvcg/HamWV09",
             "journals/tvcg/HamMMSW11",
@@ -81,10 +85,8 @@
             "journals/tvcg/HamR08",
             "journals/tvcg/AbelloHK06"
           ],
-          "cited": 56,
-          "id": "Frank_van_Ham",
-          "name": "Frank van Ham",
-          "tvcg_publications": 8
+          "chi_publications": 0,
+          "id": "Frank_van_Ham"
         }
       },
       {
@@ -238,7 +240,7 @@
       }
     ],
     "weight": 5,
-    "id": 0
+    "id": 20
   },
   {
     "nodes": [
@@ -249,16 +251,17 @@
         ],
         "id": 655,
         "properties": {
+          "name": "Christian Partl",
+          "cited": 4,
+          "tvcg_publications": 4,
           "tvcg_papers": [
             "journals/tvcg/LexSPKS10",
             "journals/tvcg/LexSSPS11",
             "journals/tvcg/PartlLSSWPS14",
             "journals/tvcg/LexPKSGWSP13"
           ],
-          "cited": 4,
-          "id": "Christian_Partl",
-          "name": "Christian Partl",
-          "tvcg_publications": 4
+          "chi_publications": 0,
+          "id": "Christian_Partl"
         }
       },
       {
@@ -329,6 +332,7 @@
             "conf/chi/ReineckeYMMZLG13",
             "conf/chi/ReineckeFSGGH13"
           ],
+          "cited": 0,
           "tvcg_publications": 1,
           "tvcg_papers": [
             "journals/tvcg/BorkinYBMGSP13"
@@ -521,7 +525,7 @@
       }
     ],
     "weight": 5,
-    "id": 1
+    "id": 21
   },
   {
     "nodes": [
@@ -532,16 +536,17 @@
         ],
         "id": 655,
         "properties": {
+          "name": "Christian Partl",
+          "cited": 4,
+          "tvcg_publications": 4,
           "tvcg_papers": [
             "journals/tvcg/LexSPKS10",
             "journals/tvcg/LexSSPS11",
             "journals/tvcg/PartlLSSWPS14",
             "journals/tvcg/LexPKSGWSP13"
           ],
-          "cited": 4,
-          "id": "Christian_Partl",
-          "name": "Christian Partl",
-          "tvcg_publications": 4
+          "chi_publications": 0,
+          "id": "Christian_Partl"
         }
       },
       {
@@ -591,8 +596,7 @@
         ],
         "id": 8883,
         "properties": {
-          "chi_publications": 59,
-          "id": "Patrick_Baudisch",
+          "name": "Patrick Baudisch",
           "chi_papers": [
             "conf/chi/HinckleyZSBCST07",
             "conf/chi/ChanMRB12",
@@ -654,7 +658,10 @@
             "conf/chi/MuellerMGFB14a",
             "conf/chi/HinckleyBRG05"
           ],
-          "name": "Patrick Baudisch"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 59,
+          "id": "Patrick_Baudisch"
         }
       },
       {
@@ -840,7 +847,7 @@
       }
     ],
     "weight": 5,
-    "id": 2
+    "id": 22
   },
   {
     "nodes": [
@@ -851,16 +858,17 @@
         ],
         "id": 655,
         "properties": {
+          "name": "Christian Partl",
+          "cited": 4,
+          "tvcg_publications": 4,
           "tvcg_papers": [
             "journals/tvcg/LexSPKS10",
             "journals/tvcg/LexSSPS11",
             "journals/tvcg/PartlLSSWPS14",
             "journals/tvcg/LexPKSGWSP13"
           ],
-          "cited": 4,
-          "id": "Christian_Partl",
-          "name": "Christian Partl",
-          "tvcg_publications": 4
+          "chi_publications": 0,
+          "id": "Christian_Partl"
         }
       },
       {
@@ -1147,7 +1155,7 @@
       }
     ],
     "weight": 5,
-    "id": 3
+    "id": 23
   },
   {
     "nodes": [
@@ -1158,16 +1166,17 @@
         ],
         "id": 655,
         "properties": {
+          "name": "Christian Partl",
+          "cited": 4,
+          "tvcg_publications": 4,
           "tvcg_papers": [
             "journals/tvcg/LexSPKS10",
             "journals/tvcg/LexSSPS11",
             "journals/tvcg/PartlLSSWPS14",
             "journals/tvcg/LexPKSGWSP13"
           ],
-          "cited": 4,
-          "id": "Christian_Partl",
-          "name": "Christian Partl",
-          "tvcg_publications": 4
+          "chi_publications": 0,
+          "id": "Christian_Partl"
         }
       },
       {
@@ -1245,8 +1254,7 @@
         ],
         "id": 12561,
         "properties": {
-          "chi_publications": 15,
-          "id": "Jeffrey_Nichols",
+          "name": "Jeffrey Nichols",
           "chi_papers": [
             "conf/chi/MyersBNPKML02",
             "conf/chi/BrooksGNPP12",
@@ -1264,7 +1272,10 @@
             "conf/chi/LiNLDC10",
             "conf/chi/Nichols02"
           ],
-          "name": "Jeffrey Nichols"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 15,
+          "id": "Jeffrey_Nichols"
         }
       },
       {
@@ -1274,8 +1285,7 @@
         ],
         "id": 7652,
         "properties": {
-          "chi_publications": 15,
-          "id": "Jennifer_Golbeck",
+          "name": "Jennifer Golbeck",
           "chi_papers": [
             "conf/chi/Golbeck12a",
             "conf/chi/ShrotRGK14",
@@ -1293,7 +1303,10 @@
             "conf/chi/schraefelGDBR08",
             "conf/chi/Golbeck09"
           ],
-          "name": "Jennifer Golbeck"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 15,
+          "id": "Jennifer_Golbeck"
         }
       },
       {
@@ -1425,7 +1438,7 @@
       }
     ],
     "weight": 6,
-    "id": 4
+    "id": 24
   },
   {
     "nodes": [
@@ -1436,16 +1449,17 @@
         ],
         "id": 655,
         "properties": {
+          "name": "Christian Partl",
+          "cited": 4,
+          "tvcg_publications": 4,
           "tvcg_papers": [
             "journals/tvcg/LexSPKS10",
             "journals/tvcg/LexSSPS11",
             "journals/tvcg/PartlLSSWPS14",
             "journals/tvcg/LexPKSGWSP13"
           ],
-          "cited": 4,
-          "id": "Christian_Partl",
-          "name": "Christian Partl",
-          "tvcg_publications": 4
+          "chi_publications": 0,
+          "id": "Christian_Partl"
         }
       },
       {
@@ -1517,6 +1531,7 @@
             "conf/chi/OlwalFH08",
             "conf/chi/SukanF12"
           ],
+          "cited": 0,
           "tvcg_publications": 4,
           "tvcg_papers": [
             "journals/tvcg/CoquillartFK12",
@@ -1563,8 +1578,7 @@
         ],
         "id": 7652,
         "properties": {
-          "chi_publications": 15,
-          "id": "Jennifer_Golbeck",
+          "name": "Jennifer Golbeck",
           "chi_papers": [
             "conf/chi/Golbeck12a",
             "conf/chi/ShrotRGK14",
@@ -1582,7 +1596,10 @@
             "conf/chi/schraefelGDBR08",
             "conf/chi/Golbeck09"
           ],
-          "name": "Jennifer Golbeck"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 15,
+          "id": "Jennifer_Golbeck"
         }
       },
       {
@@ -1716,7 +1733,7 @@
       }
     ],
     "weight": 6,
-    "id": 5
+    "id": 25
   },
   {
     "nodes": [
@@ -1727,16 +1744,17 @@
         ],
         "id": 655,
         "properties": {
+          "name": "Christian Partl",
+          "cited": 4,
+          "tvcg_publications": 4,
           "tvcg_papers": [
             "journals/tvcg/LexSPKS10",
             "journals/tvcg/LexSSPS11",
             "journals/tvcg/PartlLSSWPS14",
             "journals/tvcg/LexPKSGWSP13"
           ],
-          "cited": 4,
-          "id": "Christian_Partl",
-          "name": "Christian Partl",
-          "tvcg_publications": 4
+          "chi_publications": 0,
+          "id": "Christian_Partl"
         }
       },
       {
@@ -1895,8 +1913,7 @@
         ],
         "id": 7652,
         "properties": {
-          "chi_publications": 15,
-          "id": "Jennifer_Golbeck",
+          "name": "Jennifer Golbeck",
           "chi_papers": [
             "conf/chi/Golbeck12a",
             "conf/chi/ShrotRGK14",
@@ -1914,7 +1931,10 @@
             "conf/chi/schraefelGDBR08",
             "conf/chi/Golbeck09"
           ],
-          "name": "Jennifer Golbeck"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 15,
+          "id": "Jennifer_Golbeck"
         }
       },
       {
@@ -2049,7 +2069,7 @@
       }
     ],
     "weight": 6,
-    "id": 6
+    "id": 26
   },
   {
     "nodes": [
@@ -2060,16 +2080,17 @@
         ],
         "id": 655,
         "properties": {
+          "name": "Christian Partl",
+          "cited": 4,
+          "tvcg_publications": 4,
           "tvcg_papers": [
             "journals/tvcg/LexSPKS10",
             "journals/tvcg/LexSSPS11",
             "journals/tvcg/PartlLSSWPS14",
             "journals/tvcg/LexPKSGWSP13"
           ],
-          "cited": 4,
-          "id": "Christian_Partl",
-          "name": "Christian Partl",
-          "tvcg_publications": 4
+          "chi_publications": 0,
+          "id": "Christian_Partl"
         }
       },
       {
@@ -2119,8 +2140,7 @@
         ],
         "id": 8883,
         "properties": {
-          "chi_publications": 59,
-          "id": "Patrick_Baudisch",
+          "name": "Patrick Baudisch",
           "chi_papers": [
             "conf/chi/HinckleyZSBCST07",
             "conf/chi/ChanMRB12",
@@ -2182,7 +2202,10 @@
             "conf/chi/MuellerMGFB14a",
             "conf/chi/HinckleyBRG05"
           ],
-          "name": "Patrick Baudisch"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 59,
+          "id": "Patrick_Baudisch"
         }
       },
       {
@@ -2223,6 +2246,7 @@
             "conf/chi/QuinnHARB08",
             "conf/chi/LeeMISAB12"
           ],
+          "cited": 0,
           "tvcg_publications": 1,
           "tvcg_papers": [
             "journals/tvcg/LeePPBVGK06"
@@ -2238,8 +2262,7 @@
         ],
         "id": 7655,
         "properties": {
-          "chi_publications": 39,
-          "id": "Clifford_Nass",
+          "name": "Clifford Nass",
           "chi_papers": [
             "conf/chi/LeeN03",
             "conf/chi/DahlbackWNA07",
@@ -2281,7 +2304,10 @@
             "conf/chi/RaoHNJ09",
             "conf/chi/NassST94"
           ],
-          "name": "Clifford Nass"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 39,
+          "id": "Clifford_Nass"
         }
       },
       {
@@ -2416,7 +2442,7 @@
       }
     ],
     "weight": 6,
-    "id": 7
+    "id": 27
   },
   {
     "nodes": [
@@ -2427,16 +2453,17 @@
         ],
         "id": 655,
         "properties": {
+          "name": "Christian Partl",
+          "cited": 4,
+          "tvcg_publications": 4,
           "tvcg_papers": [
             "journals/tvcg/LexSPKS10",
             "journals/tvcg/LexSSPS11",
             "journals/tvcg/PartlLSSWPS14",
             "journals/tvcg/LexPKSGWSP13"
           ],
-          "cited": 4,
-          "id": "Christian_Partl",
-          "name": "Christian Partl",
-          "tvcg_publications": 4
+          "chi_publications": 0,
+          "id": "Christian_Partl"
         }
       },
       {
@@ -2486,8 +2513,7 @@
         ],
         "id": 11111,
         "properties": {
-          "chi_publications": 8,
-          "id": "Aaron_J._Quigley",
+          "name": "Aaron J. Quigley",
           "chi_papers": [
             "conf/chi/ShannonQN09",
             "conf/chi/QuigleyDMIS13",
@@ -2498,7 +2524,10 @@
             "conf/chi/ShannonQN10",
             "conf/chi/AptedKQ06"
           ],
-          "name": "Aaron J. Quigley"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 8,
+          "id": "Aaron_J._Quigley"
         }
       },
       {
@@ -2508,8 +2537,7 @@
         ],
         "id": 7625,
         "properties": {
-          "chi_publications": 37,
-          "id": "Wendy_E._Mackay",
+          "name": "Wendy E. Mackay",
           "chi_papers": [
             "conf/chi/WagnerNGHM13",
             "conf/chi/LiuHDMB12",
@@ -2549,7 +2577,10 @@
             "conf/chi/BauPM09",
             "conf/chi/WilsonMCBN12"
           ],
-          "name": "Wendy E. Mackay"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 37,
+          "id": "Wendy_E._Mackay"
         }
       },
       {
@@ -2559,8 +2590,7 @@
         ],
         "id": 10997,
         "properties": {
-          "chi_publications": 16,
-          "id": "Ed_Huai-hsin_Chi",
+          "name": "Ed Huai-hsin Chi",
           "chi_papers": [
             "conf/chi/KammererNPC09",
             "conf/chi/WoodruffGPCC00",
@@ -2579,7 +2609,10 @@
             "conf/chi/ChiHHC04",
             "conf/chi/WilsonMCBN12"
           ],
-          "name": "Ed Huai-hsin Chi"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 16,
+          "id": "Ed_Huai-hsin_Chi"
         }
       },
       {
@@ -2713,7 +2746,7 @@
       }
     ],
     "weight": 6,
-    "id": 8
+    "id": 28
   },
   {
     "nodes": [
@@ -2724,16 +2757,17 @@
         ],
         "id": 655,
         "properties": {
+          "name": "Christian Partl",
+          "cited": 4,
+          "tvcg_publications": 4,
           "tvcg_papers": [
             "journals/tvcg/LexSPKS10",
             "journals/tvcg/LexSSPS11",
             "journals/tvcg/PartlLSSWPS14",
             "journals/tvcg/LexPKSGWSP13"
           ],
-          "cited": 4,
-          "id": "Christian_Partl",
-          "name": "Christian Partl",
-          "tvcg_publications": 4
+          "chi_publications": 0,
+          "id": "Christian_Partl"
         }
       },
       {
@@ -2845,8 +2879,7 @@
         ],
         "id": 7625,
         "properties": {
-          "chi_publications": 37,
-          "id": "Wendy_E._Mackay",
+          "name": "Wendy E. Mackay",
           "chi_papers": [
             "conf/chi/WagnerNGHM13",
             "conf/chi/LiuHDMB12",
@@ -2886,7 +2919,10 @@
             "conf/chi/BauPM09",
             "conf/chi/WilsonMCBN12"
           ],
-          "name": "Wendy E. Mackay"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 37,
+          "id": "Wendy_E._Mackay"
         }
       },
       {
@@ -2896,8 +2932,7 @@
         ],
         "id": 10997,
         "properties": {
-          "chi_publications": 16,
-          "id": "Ed_Huai-hsin_Chi",
+          "name": "Ed Huai-hsin Chi",
           "chi_papers": [
             "conf/chi/KammererNPC09",
             "conf/chi/WoodruffGPCC00",
@@ -2916,7 +2951,10 @@
             "conf/chi/ChiHHC04",
             "conf/chi/WilsonMCBN12"
           ],
-          "name": "Ed Huai-hsin Chi"
+          "cited": 0,
+          "tvcg_publications": 0,
+          "chi_publications": 16,
+          "id": "Ed_Huai-hsin_Chi"
         }
       },
       {
@@ -3048,6 +3086,6 @@
       }
     ],
     "weight": 6,
-    "id": 9
+    "id": 29
   }
 ]

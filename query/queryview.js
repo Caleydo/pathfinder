@@ -1791,13 +1791,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 }
             });
 
-            startInput.on("input", function (e) {
-                var constraint = that.findUnambiguousPathNodeConstraint(true);
-                if (constraint) {
-                    constraint.setText(this.value);
-                    constraint.setInfo(null, false);
-                }
-            });
+            //startInput.on("input", function (e) {
+            //    var constraint = that.findUnambiguousPathNodeConstraint(true);
+            //    if (constraint) {
+            //        constraint.setText(this.value);
+            //        constraint.setInfo(null, false);
+            //    }
+            //});
 
 
             var endInput = $("#endNode");
@@ -1814,17 +1814,18 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 }
             });
 
-            endInput.on("input", function (e) {
-                var constraint = that.findUnambiguousPathNodeConstraint(false);
-                if (constraint) {
-                    constraint.setText(this.value);
-                    constraint.setInfo(null, false);
-                }
-            });
+            //endInput.on("input", function (e) {
+            //    var constraint = that.findUnambiguousPathNodeConstraint(false);
+            //    if (constraint) {
+            //        constraint.setText(this.value);
+            //        constraint.setInfo(null, false);
+            //    }
+            //});
 
             function setNodeInfo(isStartNode, info) {
                 var constraint = that.findUnambiguousPathNodeConstraint(isStartNode);
                 if (constraint) {
+                    constraint.setText(info.label);
                     constraint.setInfo(info);
                 }
             }
