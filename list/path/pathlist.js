@@ -1653,6 +1653,13 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                 stroke: function (d) {
                                     return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
                                 },
+                                "stroke-dasharray": function (d) {
+                                    if (!config.isSetTypeEdgeOrigin(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type)) {
+                                        return "0,0";
+                                    }
+                                    var edge = that.pathWrappers[d.pathIndex].path.edges[d.relIndex];
+                                    return config.isNetworkEdge(edge) ? "0,0" : "10,5";
+                                },
                                 "stroke-width": function (d) {
                                     var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
                                         that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
@@ -1767,236 +1774,236 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
                 allSetTypes.each(function (setType) {
 
-                    if (setType.setType.collapsed) {
-                        d3.select(this).selectAll("g.set")
-                            .remove();
-                        return;
-                    }
-
-                    var allSets = d3.select(this)
-                        .selectAll("g.set")
-                        .data(function () {
-                            var filteredSets = setType.setType.sets.filter(function (s) {
-                                return s.canBeShown();
-                            });
-
-                            return filteredSets.map(function (myset) {
-                                return {
-                                    set: myset,
-                                    pathIndex: setType.pathIndex,
-                                    setTypeIndex: that.pathWrappers[setType.pathIndex].setTypes.indexOf(setType.setType)
-                                };
-                            });
-                        }, function (d) {
-                            return d.set.id;
-                        });
-
-
-                    var set = allSets
-                        .enter()
-                        .append("g")
-                        .classed("set", true)
-                        .on("dblclick", function (d) {
-                            //pathSorting.sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
-                            pathSorting.addSelectionBasedSortingStrategy(new pathSorting.SetPresenceSortingStrategy(selectionUtil.selections["set"]["selected"]));
-                            listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-                        });
-
-                    set.append("rect")
-                        .attr("class", "filler")
-                        .attr("x", 0)
-                        .attr("y", 0)
-                        .attr("width", "100%")
-                        .attr("height", s.SET_HEIGHT);
-
-                    set.append("text")
-                        .text(function (d) {
-                            return setInfo.getSetLabel(d.set.id);
-                        })
-                        .attr("x", s.SET_TYPE_INDENT)
-                        .attr("y", s.SET_HEIGHT)
-                        .style("fill", function (d) {
-                            return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
-                        })
-                        .attr("clip-path", "url(#SetLabelClipPath)");
-
-                    set.append("title")
-                        .text(function (d) {
-                            return setInfo.getSetLabel(d.set.id);
-                        });
-
-                    set.each(function (d, i) {
-
-                        uiUtil.createTemporalMenuOverlayButton(d3.select(this), s.NODE_START, 0, true, function () {
-
-                            var setNode = setInfo.get(d.set.id);
-
-                            if (typeof setNode === "undefined") {
-                                return [];
-                            }
-
-                            var items = queryUtil.getFilterOverlayItems("set", d.set.id);
-                            var linkItem = setInfo.getLinkOverlayItem(d.set.id);
-                            if (linkItem) {
-                                items.push(linkItem);
-                            }
-                            return items;
-                        });
-                        //queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, s.NODE_START, 0, true);
-                    });
-
-                    allSets.attr({
-                        display: function (d) {
-                            if (d.set.canBeShown()) {
-                                return "inline";
-                            }
-                            return "none";
-                        },
-                        transform: getSetTransformFunction(that.pathWrappers)
-                    });
-
-
-                    var setVisContainer = set.append("g")
-                        .classed("setVisContainer", true);
-
-
-                    //allSetVisContainers.attr("transform", function (d) {
-                    //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
-                    //});
-
-                    setVisContainer.each(function (d) {
-                        var allCircles = d3.select(this).selectAll("circle")
-                            .data(function () {
-                                return d.set.nodeIndices.map(function (index) {
-                                    return {
-                                        pathIndex: d.pathIndex,
-                                        setTypeIndex: d.setTypeIndex,
-                                        nodeIndex: index
-                                    };
-                                });
-                            });
-
-                        allCircles.enter()
-                            .append("circle")
-                            .attr({
-                                cy: function (d) {
-                                    return s.SET_HEIGHT / 2;
-                                },
-                                r: 2,
-                                fill: function (d) {
-                                    return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
-                                }
-                            });
-
-
-                        allCircles.exit().remove();
-
-                        var allLines = d3.select(this).selectAll("line").
-                            data(function (d, i) {
-                                return d.set.relIndices.map(function (index) {
-                                    return {
-                                        pathIndex: d.pathIndex,
-                                        setTypeIndex: d.setTypeIndex,
-                                        setIndex: i,
-                                        relIndex: index
-                                    };
-                                });
-                            });
-
-                        allLines.enter()
-                            .append("line")
-                            //.attr("x1", function (d) {
-                            //  return (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
-                            //})
-                            .attr("y1", function (d) {
-                                return s.SET_HEIGHT / 2;
-                                //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
-                            })
-                            //.attr("x2", function (d) {
-                            //  return ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
-                            //})
-                            .attr("y2", function (d) {
-                                return s.SET_HEIGHT / 2;
-                                //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
-                            })
-                            .attr("stroke", function (d) {
-                                return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
-                            });
-
-                        allLines.exit().remove();
-                    });
-
-
-                    allSets.each(function (d) {
-
-                        var container = d3.select(this).select("g.setVisContainer");
-                        var allCircles = container.selectAll("circle");
-
-                        allCircles.transition()
-                            .attr({
-                                cx: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                                }
-                            });
-
-                        var allLines = container.selectAll("line");
-
-                        allLines.transition()
-                            .attr({
-                                x1: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                                },
-                                x2: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                                }
-                            });
-
-                        if (typeof s.referencePathId === "undefined") {
-                            d3.select(this).select("text.refPathStatus").remove();
-                        } else {
-                            if (that.pathWrappers[d.pathIndex].path.id !== s.referencePathId) {
-
-                                var refPathSetType = referencePathWrapper.setTypeDict[setType.setType.type];
-                                if (refPathSetType) {
-                                    var setInRefPath = refPathSetType.setDict[d.set.id];
-                                }
-
-                                var isSetInRefPath = typeof setInRefPath !== "undefined" && setInRefPath.canBeShown();
-                                var t = d3.select(this).select("text.refPathStatus");
-                                if (t.empty()) {
-                                    t = d3.select(this).append("text")
-                                        .classed("refPathStatus", true)
-                                        .attr({
-                                            x: s.NODE_START + 28,
-                                            y: s.SET_HEIGHT
-                                        });
-                                    t.append("title");
-                                }
-
-                                t.style({
-                                    fill: isSetInRefPath ? "green" : "red"
-                                }).text(isSetInRefPath ? "\uf00c" : "\uf00d");
-                                //t.select("title")
-                                //    .text(setInfo.getSetLabel(d.set.id) + "is " + (isSetInRefPath ? "" : "not ") + " in the reference path.");
-
-                            } else {
-                                d3.select(this).select("text.refPathStatus").remove();
-                            }
+                        if (setType.setType.collapsed) {
+                            d3.select(this).selectAll("g.set")
+                                .remove();
+                            return;
                         }
 
-                    });
+                        var allSets = d3.select(this)
+                            .selectAll("g.set")
+                            .data(function () {
+                                var filteredSets = setType.setType.sets.filter(function (s) {
+                                    return s.canBeShown();
+                                });
+
+                                return filteredSets.map(function (myset) {
+                                    return {
+                                        set: myset,
+                                        pathIndex: setType.pathIndex,
+                                        setTypeIndex: that.pathWrappers[setType.pathIndex].setTypes.indexOf(setType.setType)
+                                    };
+                                });
+                            }, function (d) {
+                                return d.set.id;
+                            });
 
 
-                    allSets.exit()
-                        .remove();
+                        var set = allSets
+                            .enter()
+                            .append("g")
+                            .classed("set", true)
+                            .on("dblclick", function (d) {
+                                //pathSorting.sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
+                                pathSorting.addSelectionBasedSortingStrategy(new pathSorting.SetPresenceSortingStrategy(selectionUtil.selections["set"]["selected"]));
+                                listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+                            });
 
-                });
+                        set.append("rect")
+                            .attr("class", "filler")
+                            .attr("x", 0)
+                            .attr("y", 0)
+                            .attr("width", "100%")
+                            .attr("height", s.SET_HEIGHT);
+
+                        set.append("text")
+                            .text(function (d) {
+                                return setInfo.getSetLabel(d.set.id);
+                            })
+                            .attr("x", s.SET_TYPE_INDENT)
+                            .attr("y", s.SET_HEIGHT)
+                            .style("fill", function (d) {
+                                return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
+                            })
+                            .attr("clip-path", "url(#SetLabelClipPath)");
+
+                        set.append("title")
+                            .text(function (d) {
+                                return setInfo.getSetLabel(d.set.id);
+                            });
+
+                        set.each(function (d, i) {
+
+                            uiUtil.createTemporalMenuOverlayButton(d3.select(this), s.NODE_START, 0, true, function () {
+
+                                var setNode = setInfo.get(d.set.id);
+
+                                if (typeof setNode === "undefined") {
+                                    return [];
+                                }
+
+                                var items = queryUtil.getFilterOverlayItems("set", d.set.id);
+                                var linkItem = setInfo.getLinkOverlayItem(d.set.id);
+                                if (linkItem) {
+                                    items.push(linkItem);
+                                }
+                                return items;
+                            });
+                            //queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, s.NODE_START, 0, true);
+                        });
+
+                        allSets.attr({
+                            display: function (d) {
+                                if (d.set.canBeShown()) {
+                                    return "inline";
+                                }
+                                return "none";
+                            },
+                            transform: getSetTransformFunction(that.pathWrappers)
+                        });
+
+
+                        var setVisContainer = set.append("g")
+                            .classed("setVisContainer", true);
+
+
+                        //allSetVisContainers.attr("transform", function (d) {
+                        //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
+                        //});
+
+                        setVisContainer.each(function (d) {
+                            var allCircles = d3.select(this).selectAll("circle")
+                                .data(function () {
+                                    return d.set.nodeIndices.map(function (index) {
+                                        return {
+                                            pathIndex: d.pathIndex,
+                                            setTypeIndex: d.setTypeIndex,
+                                            nodeIndex: index
+                                        };
+                                    });
+                                });
+
+                            allCircles.enter()
+                                .append("circle")
+                                .attr({
+                                    cy: function (d) {
+                                        return s.SET_HEIGHT / 2;
+                                    },
+                                    r: 2,
+                                    fill: function (d) {
+                                        return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
+                                    }
+                                });
+
+
+                            allCircles.exit().remove();
+
+                            var allLines = d3.select(this).selectAll("line").
+                                data(function (d, i) {
+                                    return d.set.relIndices.map(function (index) {
+                                        return {
+                                            pathIndex: d.pathIndex,
+                                            setTypeIndex: d.setTypeIndex,
+                                            setIndex: i,
+                                            relIndex: index
+                                        };
+                                    });
+                                });
+
+                            allLines.enter()
+                                .append("line")
+                                .attr({
+                                    y1: s.SET_HEIGHT / 2,
+                                    y2: s.SET_HEIGHT / 2,
+                                    "stroke-dasharray": function (d) {
+                                        if (!config.isSetTypeEdgeOrigin(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type)) {
+                                            return "0,0";
+                                        }
+                                        var edge = that.pathWrappers[d.pathIndex].path.edges[d.relIndex];
+                                        return config.isSetOriginOfEdge(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].sets[d.setIndex].id, edge) ? "0,0" : "10,5";
+                                    },
+                                    stroke: function (d) {
+                                        return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
+                                    }
+                                });
+
+
+                            allLines.exit().remove();
+                        });
+
+
+                        allSets.each(function (d) {
+
+                            var container = d3.select(this).select("g.setVisContainer");
+                            var allCircles = container.selectAll("circle");
+
+                            allCircles.transition()
+                                .attr({
+                                    cx: function (d) {
+                                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                                        var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
+                                        return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                    }
+                                });
+
+                            var allLines = container.selectAll("line");
+
+                            allLines.transition()
+                                .attr({
+                                    x1: function (d) {
+                                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                                        var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
+                                        return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                    },
+                                    x2: function (d) {
+                                        var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                                        var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
+                                        return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                    }
+                                });
+
+                            if (typeof s.referencePathId === "undefined") {
+                                d3.select(this).select("text.refPathStatus").remove();
+                            } else {
+                                if (that.pathWrappers[d.pathIndex].path.id !== s.referencePathId) {
+
+                                    var refPathSetType = referencePathWrapper.setTypeDict[setType.setType.type];
+                                    if (refPathSetType) {
+                                        var setInRefPath = refPathSetType.setDict[d.set.id];
+                                    }
+
+                                    var isSetInRefPath = typeof setInRefPath !== "undefined" && setInRefPath.canBeShown();
+                                    var t = d3.select(this).select("text.refPathStatus");
+                                    if (t.empty()) {
+                                        t = d3.select(this).append("text")
+                                            .classed("refPathStatus", true)
+                                            .attr({
+                                                x: s.NODE_START + 28,
+                                                y: s.SET_HEIGHT
+                                            });
+                                        t.append("title");
+                                    }
+
+                                    t.style({
+                                        fill: isSetInRefPath ? "green" : "red"
+                                    }).text(isSetInRefPath ? "\uf00c" : "\uf00d");
+                                    //t.select("title")
+                                    //    .text(setInfo.getSetLabel(d.set.id) + "is " + (isSetInRefPath ? "" : "not ") + " in the reference path.");
+
+                                } else {
+                                    d3.select(this).select("text.refPathStatus").remove();
+                                }
+                            }
+
+                        });
+
+
+                        allSets.exit()
+                            .remove();
+
+                    }
+                )
+                ;
 
                 selectionUtil.removeListeners(that.setSelectionListener);
 
@@ -2799,9 +2806,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
             }
 
-        };
+        }
+        ;
 
 
         return PathList;
     }
-);
+)
+;

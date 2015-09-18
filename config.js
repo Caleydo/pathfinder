@@ -136,15 +136,23 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
         ,
 
 
-        getSetTypeFromSetPropertyName: function (id) {
-            for (var i = 0; i < config.sets.length; i++) {
-                var setConfig = config.sets[i];
-                if (setConfig["set_property"] === id) {
-                    return setConfig["name"];
-                }
+        getSetTypeFromSetPropertyName: function (propertyName) {
+
+            var setConfig = this.getSetConfigFromSetPropertyName(propertyName)
+            if(setConfig){
+                return setConfig["name"];
             }
         }
         ,
+
+        getSetConfigFromSetPropertyName: function(propertyName) {
+            for (var i = 0; i < config.sets.length; i++) {
+                var setConfig = config.sets[i];
+                if (setConfig["set_property"] === propertyName) {
+                    return setConfig;
+                }
+            }
+        },
 
 
         getSetTypeFromNodeSetProperty: function (node, property) {
@@ -448,6 +456,30 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
             return setConfig["name"];
         }
         ,
+
+        getEdgeTypeOfOriginSetPropertyName: function (propertyName) {
+            var setConfig = this.getSetConfigFromSetPropertyName(propertyName);
+            return setConfig["originOf"];
+        },
+
+        isSetTypeEdgeOrigin: function (propertyName) {
+            return typeof this.getEdgeTypeOfOriginSetPropertyName(propertyName) !== "undefined"
+        },
+
+        isSetOriginOfEdge: function (setId, edge) {
+
+            var origins = edge.properties["_edgeOrigin"];
+            if (typeof origins === "undefined") {
+                return false;
+            }
+
+            for (var i = 0; i < origins.length; i++) {
+                if (origins[i] === setId) {
+                    return true;
+                }
+            }
+            return false;
+        },
 
         getNodeType: function (node) {
             var nodeConfig = this.getNodeConfig(node);

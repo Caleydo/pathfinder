@@ -216,6 +216,7 @@
               "type": "flag",
               "set": "pathways"
             },
+            "_edgeOrigin": "pathways",
             "pathways": {
               "type": "set",
               "set": "pathways"
@@ -237,7 +238,8 @@
             "target": "Edge"
           },
           "flag_property": "_isSetEdge",
-          "set_property": "pathways"
+          "set_property": "pathways",
+          "originOf": "Edge"
         }
       ],
       "datasets": [
@@ -309,6 +311,7 @@
               "type": "flag",
               "set": "pathways"
             },
+             "_edgeOrigin": "pathways",
             "pathways": {
               "type": "set",
               "set": "pathways"
@@ -330,7 +333,8 @@
             "target": "Edge"
           },
           "flag_property": "_isSetEdge",
-          "set_property": "pathways"
+          "set_property": "pathways",
+          "originOf": "Edge"
         }
       ],
       "datasets": [
