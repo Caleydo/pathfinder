@@ -174,7 +174,7 @@
       ]
     },
     "pathways": {
-      "sample_paths": "dump/egfr-ptk2-sos1.json",
+      "sample_paths": "dump/egfr-sos1.json",
       "settings": {
       },
       "nodes": [
@@ -200,6 +200,7 @@
             "id": "id",
             "idType": "string",
             "name": "name",
+            "url": "url",
             "pathways": {
               "type": "set",
               "set": "pathways"

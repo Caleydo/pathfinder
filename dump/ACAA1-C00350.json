@@ -6,8 +6,9 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 3809,
+        "id": 16603,
         "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:30",
           "idType": "ENTREZ",
           "pathways": [
             "hsa04146",
@@ -28,122 +29,20 @@
           "_Network_Node",
           "Compound"
         ],
-        "id": 687,
+        "id": 15070,
         "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00157",
           "idType": "KEGG_COMPOUND",
           "pathways": [
-            "hsa05140",
-            "hsa05146",
-            "hsa04270",
-            "hsa04611",
-            "hsa04664",
-            "hsa04666",
+            "hsa05231",
             "hsa04723",
-            "hsa04726",
-            "hsa04730",
-            "hsa04750",
-            "hsa04912",
-            "hsa04913",
-            "hsa04921",
-            "hsa00590",
-            "hsa00591",
-            "hsa01040"
-          ],
-          "id": "C00219",
-          "name": "C00219"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Compound"
-        ],
-        "id": 500,
-        "properties": {
-          "idType": "KEGG_COMPOUND",
-          "pathways": [
-            "hsa05130",
-            "hsa04140",
-            "hsa04723",
-            "hsa00563",
-            "hsa00564"
-          ],
-          "id": "C00350",
-          "name": "C00350"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 687,
-        "type": "Edge",
-        "sourceNodeId": 3809,
-        "id": 45158113,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa01040"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 687,
-        "type": "Edge",
-        "sourceNodeId": 500,
-        "id": 32899759,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa04723"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 10
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 3809,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04146",
-            "hsa00071",
-            "hsa00280",
-            "hsa00592",
-            "hsa01040",
-            "hsa01130",
-            "hsa01212",
-            "hsa03320"
-          ],
-          "id": "30",
-          "name": "ACAA1"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 8330,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
             "hsa00564",
-            "hsa00565",
             "hsa00590",
             "hsa00591",
-            "hsa00592",
-            "hsa04014"
+            "hsa00592"
           ],
-          "id": "11145",
-          "name": "HRASLS3"
+          "id": "C00157",
+          "name": "Phosphatidylcholine"
         }
       },
       {
@@ -151,8 +50,9 @@
           "_Network_Node",
           "Compound"
         ],
-        "id": 500,
+        "id": 13322,
         "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00350",
           "idType": "KEGG_COMPOUND",
           "pathways": [
             "hsa05130",
@@ -162,16 +62,16 @@
             "hsa00564"
           ],
           "id": "C00350",
-          "name": "C00350"
+          "name": "Phosphatidylethanolamine"
         }
       }
     ],
     "edges": [
       {
-        "targetNodeId": 8330,
+        "targetNodeId": 15070,
         "type": "Edge",
-        "sourceNodeId": 3809,
-        "id": 249766026,
+        "sourceNodeId": 16603,
+        "id": 987775195,
         "properties": {
           "_isSetEdge": true,
           "pathways": [
@@ -180,21 +80,21 @@
         }
       },
       {
-        "targetNodeId": 500,
+        "targetNodeId": 15070,
         "type": "Edge",
-        "sourceNodeId": 8330,
-        "id": 57268,
+        "sourceNodeId": 13322,
+        "id": 873216734,
         "properties": {
           "_isSetEdge": true,
-          "_isNetworkEdge": true,
           "pathways": [
+            "hsa04723",
             "hsa00564"
           ]
         }
       }
     ],
     "weight": 3,
-    "id": 11
+    "id": 20
   },
   {
     "nodes": [
@@ -203,8 +103,9 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 3809,
+        "id": 16603,
         "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:30",
           "idType": "ENTREZ",
           "pathways": [
             "hsa04146",
@@ -223,51 +124,18 @@
       {
         "labels": [
           "_Network_Node",
-          "Compound"
+          "Gene"
         ],
-        "id": 76,
+        "id": 16600,
         "properties": {
-          "idType": "KEGG_COMPOUND",
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:8443",
+          "idType": "ENTREZ",
           "pathways": [
-            "hsa05031",
-            "hsa05033",
-            "hsa05034",
-            "hsa05230",
-            "hsa04068",
-            "hsa04080",
-            "hsa04540",
-            "hsa04713",
-            "hsa04720",
-            "hsa04721",
-            "hsa04723",
-            "hsa04724",
-            "hsa04727",
-            "hsa04730",
-            "hsa04742",
-            "hsa04964",
-            "hsa04974",
-            "hsa05014",
-            "hsa05016",
-            "hsa05030",
-            "hsa00250",
-            "hsa00330",
-            "hsa00340",
-            "hsa00430",
-            "hsa00471",
-            "hsa00480",
-            "hsa00524",
-            "hsa00630",
-            "hsa00650",
-            "hsa00860",
-            "hsa00910",
-            "hsa00970",
-            "hsa01130",
-            "hsa01210",
-            "hsa01230",
-            "hsa02010"
+            "hsa04146",
+            "hsa00564"
           ],
-          "id": "C00025",
-          "name": "C00025"
+          "id": "8443",
+          "name": "GNPAT"
         }
       },
       {
@@ -275,8 +143,9 @@
           "_Network_Node",
           "Compound"
         ],
-        "id": 500,
+        "id": 13322,
         "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00350",
           "idType": "KEGG_COMPOUND",
           "pathways": [
             "hsa05130",
@@ -286,38 +155,38 @@
             "hsa00564"
           ],
           "id": "C00350",
-          "name": "C00350"
+          "name": "Phosphatidylethanolamine"
         }
       }
     ],
     "edges": [
       {
-        "targetNodeId": 76,
+        "targetNodeId": 16600,
         "type": "Edge",
-        "sourceNodeId": 3809,
-        "id": 5115617,
+        "sourceNodeId": 16603,
+        "id": 1088045275,
         "properties": {
           "_isSetEdge": true,
           "pathways": [
-            "hsa01130"
+            "hsa04146"
           ]
         }
       },
       {
-        "targetNodeId": 76,
+        "targetNodeId": 16600,
         "type": "Edge",
-        "sourceNodeId": 500,
-        "id": 5112308,
+        "sourceNodeId": 13322,
+        "id": 873218264,
         "properties": {
           "_isSetEdge": true,
           "pathways": [
-            "hsa04723"
+            "hsa00564"
           ]
         }
       }
     ],
     "weight": 3,
-    "id": 12
+    "id": 21
   },
   {
     "nodes": [
@@ -326,8 +195,9 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 3809,
+        "id": 16603,
         "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:30",
           "idType": "ENTREZ",
           "pathways": [
             "hsa04146",
@@ -348,8 +218,9 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 4013,
+        "id": 16783,
         "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:84647",
           "idType": "ENTREZ",
           "pathways": [
             "hsa04270",
@@ -362,8 +233,8 @@
             "hsa00592",
             "hsa04014"
           ],
-          "id": "26279",
-          "name": "PLA2G2D"
+          "id": "84647",
+          "name": "PLA2G12B"
         }
       },
       {
@@ -371,8 +242,9 @@
           "_Network_Node",
           "Compound"
         ],
-        "id": 500,
+        "id": 13322,
         "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00350",
           "idType": "KEGG_COMPOUND",
           "pathways": [
             "hsa05130",
@@ -382,16 +254,16 @@
             "hsa00564"
           ],
           "id": "C00350",
-          "name": "C00350"
+          "name": "Phosphatidylethanolamine"
         }
       }
     ],
     "edges": [
       {
-        "targetNodeId": 4013,
+        "targetNodeId": 16783,
         "type": "Edge",
-        "sourceNodeId": 3809,
-        "id": 249761709,
+        "sourceNodeId": 16603,
+        "id": 1088242063,
         "properties": {
           "_isSetEdge": true,
           "pathways": [
@@ -400,12 +272,15 @@
         }
       },
       {
-        "targetNodeId": 500,
+        "targetNodeId": 13322,
         "type": "Edge",
-        "sourceNodeId": 4013,
-        "id": 57304,
+        "sourceNodeId": 16783,
+        "id": 131897,
         "properties": {
           "_isSetEdge": true,
+          "_edgeOrigin": [
+            "hsa00564"
+          ],
           "_isNetworkEdge": true,
           "pathways": [
             "hsa00564"
@@ -414,7 +289,7 @@
       }
     ],
     "weight": 3,
-    "id": 13
+    "id": 22
   },
   {
     "nodes": [
@@ -423,8 +298,9 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 3809,
+        "id": 16603,
         "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:30",
           "idType": "ENTREZ",
           "pathways": [
             "hsa04146",
@@ -445,493 +321,9 @@
           "_Network_Node",
           "Gene"
         ],
-        "id": 4015,
+        "id": 16782,
         "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04270",
-            "hsa04972",
-            "hsa04975",
-            "hsa00564",
-            "hsa00565",
-            "hsa00590",
-            "hsa00591",
-            "hsa00592",
-            "hsa04014"
-          ],
-          "id": "391013",
-          "name": "PLA2G2C"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Compound"
-        ],
-        "id": 500,
-        "properties": {
-          "idType": "KEGG_COMPOUND",
-          "pathways": [
-            "hsa05130",
-            "hsa04140",
-            "hsa04723",
-            "hsa00563",
-            "hsa00564"
-          ],
-          "id": "C00350",
-          "name": "C00350"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 4015,
-        "type": "Edge",
-        "sourceNodeId": 3809,
-        "id": 249761711,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa00592"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 500,
-        "type": "Edge",
-        "sourceNodeId": 4015,
-        "id": 57300,
-        "properties": {
-          "_isSetEdge": true,
-          "_isNetworkEdge": true,
-          "pathways": [
-            "hsa00564"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 14
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 3809,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04146",
-            "hsa00071",
-            "hsa00280",
-            "hsa00592",
-            "hsa01040",
-            "hsa01130",
-            "hsa01212",
-            "hsa03320"
-          ],
-          "id": "30",
-          "name": "ACAA1"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 4014,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04270",
-            "hsa04972",
-            "hsa04975",
-            "hsa00564",
-            "hsa00565",
-            "hsa00590",
-            "hsa00591",
-            "hsa00592",
-            "hsa04014"
-          ],
-          "id": "30814",
-          "name": "PLA2G2E"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Compound"
-        ],
-        "id": 500,
-        "properties": {
-          "idType": "KEGG_COMPOUND",
-          "pathways": [
-            "hsa05130",
-            "hsa04140",
-            "hsa04723",
-            "hsa00563",
-            "hsa00564"
-          ],
-          "id": "C00350",
-          "name": "C00350"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 4014,
-        "type": "Edge",
-        "sourceNodeId": 3809,
-        "id": 249761710,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa00592"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 500,
-        "type": "Edge",
-        "sourceNodeId": 4014,
-        "id": 57292,
-        "properties": {
-          "_isSetEdge": true,
-          "_isNetworkEdge": true,
-          "pathways": [
-            "hsa00564"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 15
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 3809,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04146",
-            "hsa00071",
-            "hsa00280",
-            "hsa00592",
-            "hsa01040",
-            "hsa01130",
-            "hsa01212",
-            "hsa03320"
-          ],
-          "id": "30",
-          "name": "ACAA1"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 4020,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04270",
-            "hsa04972",
-            "hsa04975",
-            "hsa00564",
-            "hsa00565",
-            "hsa00590",
-            "hsa00591",
-            "hsa00592",
-            "hsa04014"
-          ],
-          "id": "64600",
-          "name": "PLA2G2F"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Compound"
-        ],
-        "id": 500,
-        "properties": {
-          "idType": "KEGG_COMPOUND",
-          "pathways": [
-            "hsa05130",
-            "hsa04140",
-            "hsa04723",
-            "hsa00563",
-            "hsa00564"
-          ],
-          "id": "C00350",
-          "name": "C00350"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 4020,
-        "type": "Edge",
-        "sourceNodeId": 3809,
-        "id": 249761716,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa00592"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 500,
-        "type": "Edge",
-        "sourceNodeId": 4020,
-        "id": 57282,
-        "properties": {
-          "_isSetEdge": true,
-          "_isNetworkEdge": true,
-          "pathways": [
-            "hsa00564"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 16
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 3809,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04146",
-            "hsa00071",
-            "hsa00280",
-            "hsa00592",
-            "hsa01040",
-            "hsa01130",
-            "hsa01212",
-            "hsa03320"
-          ],
-          "id": "30",
-          "name": "ACAA1"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 4021,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04270",
-            "hsa04972",
-            "hsa04975",
-            "hsa00564",
-            "hsa00565",
-            "hsa00590",
-            "hsa00591",
-            "hsa00592",
-            "hsa04014"
-          ],
-          "id": "81579",
-          "name": "PLA2G12A"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Compound"
-        ],
-        "id": 500,
-        "properties": {
-          "idType": "KEGG_COMPOUND",
-          "pathways": [
-            "hsa05130",
-            "hsa04140",
-            "hsa04723",
-            "hsa00563",
-            "hsa00564"
-          ],
-          "id": "C00350",
-          "name": "C00350"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 4021,
-        "type": "Edge",
-        "sourceNodeId": 3809,
-        "id": 249761717,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa00592"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 500,
-        "type": "Edge",
-        "sourceNodeId": 4021,
-        "id": 57296,
-        "properties": {
-          "_isSetEdge": true,
-          "_isNetworkEdge": true,
-          "pathways": [
-            "hsa00564"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 17
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 3809,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04146",
-            "hsa00071",
-            "hsa00280",
-            "hsa00592",
-            "hsa01040",
-            "hsa01130",
-            "hsa01212",
-            "hsa03320"
-          ],
-          "id": "30",
-          "name": "ACAA1"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 4022,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04270",
-            "hsa04666",
-            "hsa04750",
-            "hsa00564",
-            "hsa00565",
-            "hsa00590",
-            "hsa00591",
-            "hsa00592",
-            "hsa04014"
-          ],
-          "id": "8398",
-          "name": "PLA2G6"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Compound"
-        ],
-        "id": 500,
-        "properties": {
-          "idType": "KEGG_COMPOUND",
-          "pathways": [
-            "hsa05130",
-            "hsa04140",
-            "hsa04723",
-            "hsa00563",
-            "hsa00564"
-          ],
-          "id": "C00350",
-          "name": "C00350"
-        }
-      }
-    ],
-    "edges": [
-      {
-        "targetNodeId": 4022,
-        "type": "Edge",
-        "sourceNodeId": 3809,
-        "id": 249761718,
-        "properties": {
-          "_isSetEdge": true,
-          "pathways": [
-            "hsa00592"
-          ]
-        }
-      },
-      {
-        "targetNodeId": 500,
-        "type": "Edge",
-        "sourceNodeId": 4022,
-        "id": 57270,
-        "properties": {
-          "_isSetEdge": true,
-          "_isNetworkEdge": true,
-          "pathways": [
-            "hsa00564"
-          ]
-        }
-      }
-    ],
-    "weight": 3,
-    "id": 18
-  },
-  {
-    "nodes": [
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 3809,
-        "properties": {
-          "idType": "ENTREZ",
-          "pathways": [
-            "hsa04146",
-            "hsa00071",
-            "hsa00280",
-            "hsa00592",
-            "hsa01040",
-            "hsa01130",
-            "hsa01212",
-            "hsa03320"
-          ],
-          "id": "30",
-          "name": "ACAA1"
-        }
-      },
-      {
-        "labels": [
-          "_Network_Node",
-          "Gene"
-        ],
-        "id": 4023,
-        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:8399",
           "idType": "ENTREZ",
           "pathways": [
             "hsa04270",
@@ -953,8 +345,9 @@
           "_Network_Node",
           "Compound"
         ],
-        "id": 500,
+        "id": 13322,
         "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00350",
           "idType": "KEGG_COMPOUND",
           "pathways": [
             "hsa05130",
@@ -964,16 +357,16 @@
             "hsa00564"
           ],
           "id": "C00350",
-          "name": "C00350"
+          "name": "Phosphatidylethanolamine"
         }
       }
     ],
     "edges": [
       {
-        "targetNodeId": 4023,
+        "targetNodeId": 16782,
         "type": "Edge",
-        "sourceNodeId": 3809,
-        "id": 249761719,
+        "sourceNodeId": 16603,
+        "id": 1088242062,
         "properties": {
           "_isSetEdge": true,
           "pathways": [
@@ -982,12 +375,15 @@
         }
       },
       {
-        "targetNodeId": 500,
+        "targetNodeId": 13322,
         "type": "Edge",
-        "sourceNodeId": 4023,
-        "id": 57272,
+        "sourceNodeId": 16782,
+        "id": 131896,
         "properties": {
           "_isSetEdge": true,
+          "_edgeOrigin": [
+            "hsa00564"
+          ],
           "_isNetworkEdge": true,
           "pathways": [
             "hsa00564"
@@ -996,6 +392,629 @@
       }
     ],
     "weight": 3,
-    "id": 19
+    "id": 23
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 16603,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:30",
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa04146",
+            "hsa00071",
+            "hsa00280",
+            "hsa00592",
+            "hsa01040",
+            "hsa01130",
+            "hsa01212",
+            "hsa03320"
+          ],
+          "id": "30",
+          "name": "ACAA1"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "id": 13491,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00219",
+          "idType": "KEGG_COMPOUND",
+          "pathways": [
+            "hsa05140",
+            "hsa05146",
+            "hsa04270",
+            "hsa04611",
+            "hsa04664",
+            "hsa04666",
+            "hsa04723",
+            "hsa04726",
+            "hsa04730",
+            "hsa04750",
+            "hsa04912",
+            "hsa04913",
+            "hsa04921",
+            "hsa04923",
+            "hsa04925",
+            "hsa00590",
+            "hsa00591",
+            "hsa01040"
+          ],
+          "id": "C00219",
+          "name": "Arachidonate"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "id": 13322,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00350",
+          "idType": "KEGG_COMPOUND",
+          "pathways": [
+            "hsa05130",
+            "hsa04140",
+            "hsa04723",
+            "hsa00563",
+            "hsa00564"
+          ],
+          "id": "C00350",
+          "name": "Phosphatidylethanolamine"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 13491,
+        "type": "Edge",
+        "sourceNodeId": 16603,
+        "id": 884293851,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa01040"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 13491,
+        "type": "Edge",
+        "sourceNodeId": 13322,
+        "id": 873215155,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa04723"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 24
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 16603,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:30",
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa04146",
+            "hsa00071",
+            "hsa00280",
+            "hsa00592",
+            "hsa01040",
+            "hsa01130",
+            "hsa01212",
+            "hsa03320"
+          ],
+          "id": "30",
+          "name": "ACAA1"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 16781,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:8398",
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa04270",
+            "hsa04666",
+            "hsa04750",
+            "hsa00564",
+            "hsa00565",
+            "hsa00590",
+            "hsa00591",
+            "hsa00592",
+            "hsa04014"
+          ],
+          "id": "8398",
+          "name": "PLA2G6"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "id": 13322,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00350",
+          "idType": "KEGG_COMPOUND",
+          "pathways": [
+            "hsa05130",
+            "hsa04140",
+            "hsa04723",
+            "hsa00563",
+            "hsa00564"
+          ],
+          "id": "C00350",
+          "name": "Phosphatidylethanolamine"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 16781,
+        "type": "Edge",
+        "sourceNodeId": 16603,
+        "id": 1088242061,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00592"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 13322,
+        "type": "Edge",
+        "sourceNodeId": 16781,
+        "id": 131895,
+        "properties": {
+          "_isSetEdge": true,
+          "_edgeOrigin": [
+            "hsa00564"
+          ],
+          "_isNetworkEdge": true,
+          "pathways": [
+            "hsa00564"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 25
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 16603,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:30",
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa04146",
+            "hsa00071",
+            "hsa00280",
+            "hsa00592",
+            "hsa01040",
+            "hsa01130",
+            "hsa01212",
+            "hsa03320"
+          ],
+          "id": "30",
+          "name": "ACAA1"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 16780,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:81579",
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa04270",
+            "hsa04972",
+            "hsa04975",
+            "hsa00564",
+            "hsa00565",
+            "hsa00590",
+            "hsa00591",
+            "hsa00592",
+            "hsa04014"
+          ],
+          "id": "81579",
+          "name": "PLA2G12A"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "id": 13322,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00350",
+          "idType": "KEGG_COMPOUND",
+          "pathways": [
+            "hsa05130",
+            "hsa04140",
+            "hsa04723",
+            "hsa00563",
+            "hsa00564"
+          ],
+          "id": "C00350",
+          "name": "Phosphatidylethanolamine"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 16780,
+        "type": "Edge",
+        "sourceNodeId": 16603,
+        "id": 1088242060,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00592"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 13322,
+        "type": "Edge",
+        "sourceNodeId": 16780,
+        "id": 131894,
+        "properties": {
+          "_isSetEdge": true,
+          "_edgeOrigin": [
+            "hsa00564"
+          ],
+          "_isNetworkEdge": true,
+          "pathways": [
+            "hsa00564"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 26
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 16603,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:30",
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa04146",
+            "hsa00071",
+            "hsa00280",
+            "hsa00592",
+            "hsa01040",
+            "hsa01130",
+            "hsa01212",
+            "hsa03320"
+          ],
+          "id": "30",
+          "name": "ACAA1"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 16779,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:64600",
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa04270",
+            "hsa04972",
+            "hsa04975",
+            "hsa00564",
+            "hsa00565",
+            "hsa00590",
+            "hsa00591",
+            "hsa00592",
+            "hsa04014"
+          ],
+          "id": "64600",
+          "name": "PLA2G2F"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "id": 13322,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00350",
+          "idType": "KEGG_COMPOUND",
+          "pathways": [
+            "hsa05130",
+            "hsa04140",
+            "hsa04723",
+            "hsa00563",
+            "hsa00564"
+          ],
+          "id": "C00350",
+          "name": "Phosphatidylethanolamine"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 16779,
+        "type": "Edge",
+        "sourceNodeId": 16603,
+        "id": 1088242059,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00592"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 13322,
+        "type": "Edge",
+        "sourceNodeId": 16779,
+        "id": 131893,
+        "properties": {
+          "_isSetEdge": true,
+          "_edgeOrigin": [
+            "hsa00564"
+          ],
+          "_isNetworkEdge": true,
+          "pathways": [
+            "hsa00564"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 27
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 16603,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:30",
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa04146",
+            "hsa00071",
+            "hsa00280",
+            "hsa00592",
+            "hsa01040",
+            "hsa01130",
+            "hsa01212",
+            "hsa03320"
+          ],
+          "id": "30",
+          "name": "ACAA1"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 16778,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:5322",
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa04270",
+            "hsa04972",
+            "hsa04975",
+            "hsa00564",
+            "hsa00565",
+            "hsa00590",
+            "hsa00591",
+            "hsa00592",
+            "hsa04014"
+          ],
+          "id": "5322",
+          "name": "PLA2G5"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "id": 13322,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00350",
+          "idType": "KEGG_COMPOUND",
+          "pathways": [
+            "hsa05130",
+            "hsa04140",
+            "hsa04723",
+            "hsa00563",
+            "hsa00564"
+          ],
+          "id": "C00350",
+          "name": "Phosphatidylethanolamine"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 16778,
+        "type": "Edge",
+        "sourceNodeId": 16603,
+        "id": 1088242058,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00592"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 13322,
+        "type": "Edge",
+        "sourceNodeId": 16778,
+        "id": 131892,
+        "properties": {
+          "_isSetEdge": true,
+          "_edgeOrigin": [
+            "hsa00564"
+          ],
+          "_isNetworkEdge": true,
+          "pathways": [
+            "hsa00564"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 28
+  },
+  {
+    "nodes": [
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 16603,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:30",
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa04146",
+            "hsa00071",
+            "hsa00280",
+            "hsa00592",
+            "hsa01040",
+            "hsa01130",
+            "hsa01212",
+            "hsa03320"
+          ],
+          "id": "30",
+          "name": "ACAA1"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Gene"
+        ],
+        "id": 16777,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?hsa:5320",
+          "idType": "ENTREZ",
+          "pathways": [
+            "hsa04270",
+            "hsa04972",
+            "hsa04975",
+            "hsa00564",
+            "hsa00565",
+            "hsa00590",
+            "hsa00591",
+            "hsa00592",
+            "hsa04014"
+          ],
+          "id": "5320",
+          "name": "PLA2G2A"
+        }
+      },
+      {
+        "labels": [
+          "_Network_Node",
+          "Compound"
+        ],
+        "id": 13322,
+        "properties": {
+          "url": "http://www.kegg.jp/dbget-bin/www_bget?cpd:C00350",
+          "idType": "KEGG_COMPOUND",
+          "pathways": [
+            "hsa05130",
+            "hsa04140",
+            "hsa04723",
+            "hsa00563",
+            "hsa00564"
+          ],
+          "id": "C00350",
+          "name": "Phosphatidylethanolamine"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "targetNodeId": 16777,
+        "type": "Edge",
+        "sourceNodeId": 16603,
+        "id": 1088242057,
+        "properties": {
+          "_isSetEdge": true,
+          "pathways": [
+            "hsa00592"
+          ]
+        }
+      },
+      {
+        "targetNodeId": 13322,
+        "type": "Edge",
+        "sourceNodeId": 16777,
+        "id": 131890,
+        "properties": {
+          "_isSetEdge": true,
+          "_edgeOrigin": [
+            "hsa00564"
+          ],
+          "_isNetworkEdge": true,
+          "pathways": [
+            "hsa00564"
+          ]
+        }
+      }
+    ],
+    "weight": 3,
+    "id": 29
   }
 ]

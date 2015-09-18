@@ -545,7 +545,12 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
             //FIXME: not generic at all
             if (config.getUseCase() === "pathways") {
                 //FIXME: CCLE does assume same node id for every dataset
-                nodeIds[Object.keys(allDatasets)[0]].forEach(function (nodeId) {
+                var mappedDatasets = Object.keys(nodeIds);
+                if(mappedDatasets.length <= 0){
+                    return;
+                }
+                var ds = Object.keys(nodeIds)[0];
+                nodeIds[ds].forEach(function (nodeId) {
                     ccle.boxplot_of(nodeId, function (res) {
                         if (typeof res !== "undefined") {
                             Object.keys(res).forEach(function (dataset) {
