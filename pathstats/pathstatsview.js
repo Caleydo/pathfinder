@@ -310,7 +310,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         d3.select(this).selectAll("g.statTypes rect.pathOccurrences title")
           .data(d.children, getKey)
           .text(function (d) {
-            return d.pathIds.length
+            return d.getTooltip()
           });
 
 
@@ -341,7 +341,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           stats.selectAll("rect.pathOccurrences title")
             .data(typeWrapper.children, getKey)
             .text(function (d) {
-              return d.pathIds.length
+              return d.getTooltip()
             });
 
           d3.select(this).selectAll("g.statTypeCont")
@@ -692,7 +692,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
         setPathOccurrenceBar.append("title")
           .text(function (stat) {
-            return stat.pathIds.length;
+            return stat.getTooltip();
           });
       }
 
