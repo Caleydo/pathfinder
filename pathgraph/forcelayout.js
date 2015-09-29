@@ -532,7 +532,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
                 );
 
                 node.each(function (d) {
-                    var items = queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]);
+                    var items = pathUtil.getDefaultNodeOverlayItems(d.node);
                     items.push({
                         text: "Add Neighbors",
                         icon: "\uf067",

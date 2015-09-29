@@ -378,7 +378,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                 });
 
             node.each(function (d) {
-                var items = queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]);
+                var items = pathUtil.getDefaultNodeOverlayItems(d.node);
                 items.push({
                     text: "Add Neighbors",
                     icon: "\uf067",
@@ -390,7 +390,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                     text: d.isNeighborNode ? "Remove" : "Remove Neighbors",
                     icon: "\uf068",
                     callback: function () {
-                        if(d.isNeighborNode) {
+                        if (d.isNeighborNode) {
                             that.view.removeNeighborNode(d.node.id);
                         } else {
                             that.view.removeNeighborsOfNode(d.node.id);

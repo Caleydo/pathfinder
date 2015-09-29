@@ -1,4 +1,4 @@
-define(["d3", "./config", "./setinfo", "./uiutil"], function (d3, config, setInfo, uiUtil) {
+define(["d3", "./config", "./setinfo", "./uiutil"], function (d3, config, setInfo, uiUtil, queryUtil) {
 
     return {
         isNodeSetProperty: function (node, key) {
@@ -156,26 +156,51 @@ define(["d3", "./config", "./setinfo", "./uiutil"], function (d3, config, setInf
             return nodes;
         },
 
-        getSetIdsOfNodes: function(nodes) {
+        getNodeUrl: function (node) {
+            var property = config.getNodeUrlProperty(node);
+            if (property) {
+                return node.properties[property];
+            }
+        },
+
+        getDefaultNodeOverlayItems: function (node) {
+            //var items = queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(node)]);
+
+            var items = require("./query/queryutil").getFilterOverlayItems("name", node.properties[config.getNodeNameProperty(node)]);
+            var url = this.getNodeUrl(node);
+            if (url) {
+                items.push({
+                    text: "Show",
+                    icon: "\uf08e",
+                    callback: function () {
+                        window.open(url);
+                    }
+                })
+            }
+
+            return items;
+        },
+
+        getSetIdsOfNodes: function (nodes) {
             var that = this;
             var setIds = d3.set([]);
 
-            nodes.forEach(function(node) {
-               that.forEachNodeSet(node, function(setType, setId){
-                   setIds.add(setId);
-               })
+            nodes.forEach(function (node) {
+                that.forEachNodeSet(node, function (setType, setId) {
+                    setIds.add(setId);
+                })
             });
             return setIds.values();
         },
 
-        getSetIdsOfEdges: function(edges) {
+        getSetIdsOfEdges: function (edges) {
             var that = this;
             var setIds = d3.set([]);
 
-            edges.forEach(function(edge) {
-               that.forEachEdgeSet(edge, function(setType, setId){
-                   setIds.add(setId);
-               })
+            edges.forEach(function (edge) {
+                that.forEachEdgeSet(edge, function (setType, setId) {
+                    setIds.add(setId);
+                })
             });
             return setIds.values();
         },

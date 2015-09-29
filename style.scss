@@ -34,7 +34,7 @@ html, body {
 }
 
 body {
-  margin: 0px;
+  padding: 0px 5px 0px 5px;
 }
 
 text {
@@ -50,7 +50,7 @@ text.pathRank {
   font-family: sans-serif;
   font-weight: bolder;
   cursor: default;
-  font-size: 10px;
+  font-size: 14px;
   fill: $defaultStrokeColor;
 }
 
@@ -433,7 +433,7 @@ header {
 }
 
 #listView {
-  padding: 5px;
+  padding: 5px 5px 5px 5px;
 
   -webkit-flex: 4;
   flex: 4;

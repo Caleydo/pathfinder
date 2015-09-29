@@ -367,16 +367,16 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             };
         }
 
-        function getSetTypeTransformFunction(pathWrappers) {
-
-            return function (d, i) {
-                var pathWrapper = pathWrappers[d.pathIndex];
-
-                var posY = s.getSetTypeTranslateY(pathWrapper, i);
-
-                return "translate(0," + posY + ")";
-            }
-        }
+        //function getSetTypeTransformFunction(pathWrappers) {
+        //
+        //    return function (d, i) {
+        //        var pathWrapper = pathWrappers[d.pathIndex];
+        //
+        //        var posY = s.getSetTypeTranslateY(pathWrapper, i);
+        //
+        //        return "translate(0," + posY + ")";
+        //    }
+        //}
 
         function getSetTransformFunction(pathWrappers) {
             return function (d, i) {
@@ -396,12 +396,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
             svg.selectAll("g.pathContainer g.setGroup g.set text")
                 .text(function (d) {
-                    return setInfo.getSetLabel(d.set.id);
+                    return setInfo.getSetLabel(d.id);
                 });
 
             svg.selectAll("g.pathContainer g.setGroup g.set title")
                 .text(function (d) {
-                    return setInfo.getSetLabel(d.set.id);
+                    return setInfo.getSetLabel(d.id);
                 });
         }
 
@@ -967,93 +967,93 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                             });
                         });
 
-                    var setTypes = d3.select(this).selectAll("g.setGroup").selectAll("g.setType")
-                        .data(function () {
-                            return pathWrapper.setTypes.map(function (mySetType) {
-                                return {setType: mySetType, pathIndex: i};
-                            });
-                        });
+                    //var setTypes = d3.select(this).selectAll("g.setGroup").selectAll("g.setType")
+                    //    .data(function () {
+                    //        return pathWrapper.setTypes.map(function (mySetType) {
+                    //            return {setType: mySetType, pathIndex: i};
+                    //        });
+                    //    });
 
-                    d3.select(this).selectAll("g.setGroup").selectAll("g.setTypeSummary")
-                        .data(function () {
-                            return pathWrapper.setTypes.map(function (mySetType) {
-                                return {setType: mySetType, pathIndex: i};
-                            });
-                        });
+                    //d3.select(this).selectAll("g.setGroup").selectAll("g.setTypeSummary")
+                    //    .data(function () {
+                    //        return pathWrapper.setTypes.map(function (mySetType) {
+                    //            return {setType: mySetType, pathIndex: i};
+                    //        });
+                    //    });
 
-                    setTypes.each(function (d, i) {
-
-                        d3.select(this).selectAll("g.setTypeSummary").each(function () {
-                            d3.select(this).selectAll("circle")
-                                .data(function () {
-                                    return d.setType.nodeIndices.map(function (index) {
-                                        return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
-                                    });
-                                });
-
-                            d3.select(this).selectAll("line")
-                                .data(function () {
-                                    return d.setType.relIndices.map(function (index) {
-                                        return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
-                                    });
-                                })
-                        });
-
-                        var set = d3.select(this)
-                            .selectAll("g.set")
-                            .data(function () {
-                                var filteredSets = d.setType.sets.filter(function (s) {
-                                    return s.canBeShown();
-                                });
-
-                                return filteredSets.map(function (myset) {
-                                    return {
-                                        set: myset,
-                                        pathIndex: d.pathIndex,
-                                        setTypeIndex: that.pathWrappers[d.pathIndex].setTypes.indexOf(d.setType)
-                                    };
-                                });
-                            }, function (d) {
-                                return d.set.id;
-                            });
-
-                        var setVisContainer = d3.select(this)
-                            .selectAll("g.setVisContainer")
-                            .data(function () {
-                                var filteredSets = d.setType.sets.filter(function (s) {
-                                    return s.canBeShown();
-                                });
-
-                                return filteredSets.map(function (myset) {
-                                    return {
-                                        set: myset,
-                                        pathIndex: d.pathIndex,
-                                        setTypeIndex: that.pathWrappers[d.pathIndex].setTypes.indexOf(d.setType)
-                                    };
-                                });
-                            }, function (d) {
-                                return d.set.id;
-                            });
-
-                        setVisContainer.each(function (d, i) {
-                            d3.select(this).selectAll("circle")
-                                .data(function () {
-                                    return d.set.nodeIndices.map(function (index) {
-                                        return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, nodeIndex: index};
-                                    });
-                                });
-
-
-                            d3.select(this).selectAll("line").
-                                data(function (d, i) {
-                                    return d.set.relIndices.map(function (index) {
-                                        return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, relIndex: index};
-                                    });
-                                });
-                        });
-
-
-                    });
+                    //setTypes.each(function (d, i) {
+                    //
+                    //    d3.select(this).selectAll("g.setTypeSummary").each(function () {
+                    //        d3.select(this).selectAll("circle")
+                    //            .data(function () {
+                    //                return d.setType.nodeIndices.map(function (index) {
+                    //                    return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
+                    //                });
+                    //            });
+                    //
+                    //        d3.select(this).selectAll("line")
+                    //            .data(function () {
+                    //                return d.setType.relIndices.map(function (index) {
+                    //                    return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
+                    //                });
+                    //            })
+                    //    });
+                    //
+                    //    var set = d3.select(this)
+                    //        .selectAll("g.set")
+                    //        .data(function () {
+                    //            var filteredSets = d.setType.sets.filter(function (s) {
+                    //                return s.canBeShown();
+                    //            });
+                    //
+                    //            return filteredSets.map(function (myset) {
+                    //                return {
+                    //                    set: myset,
+                    //                    pathIndex: d.pathIndex,
+                    //                    setTypeIndex: that.pathWrappers[d.pathIndex].setTypes.indexOf(d.setType)
+                    //                };
+                    //            });
+                    //        }, function (d) {
+                    //            return d.set.id;
+                    //        });
+                    //
+                    //    var setVisContainer = d3.select(this)
+                    //        .selectAll("g.setVisContainer")
+                    //        .data(function () {
+                    //            var filteredSets = d.setType.sets.filter(function (s) {
+                    //                return s.canBeShown();
+                    //            });
+                    //
+                    //            return filteredSets.map(function (myset) {
+                    //                return {
+                    //                    set: myset,
+                    //                    pathIndex: d.pathIndex,
+                    //                    setTypeIndex: that.pathWrappers[d.pathIndex].setTypes.indexOf(d.setType)
+                    //                };
+                    //            });
+                    //        }, function (d) {
+                    //            return d.set.id;
+                    //        });
+                    //
+                    //    setVisContainer.each(function (d, i) {
+                    //        d3.select(this).selectAll("circle")
+                    //            .data(function () {
+                    //                return d.set.nodeIndices.map(function (index) {
+                    //                    return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, nodeIndex: index};
+                    //                });
+                    //            });
+                    //
+                    //
+                    //        d3.select(this).selectAll("line").
+                    //            data(function (d, i) {
+                    //                return d.set.relIndices.map(function (index) {
+                    //                    return {pathIndex: d.pathIndex, setTypeIndex: d.setTypeIndex, relIndex: index};
+                    //                });
+                    //            });
+                    //    });
+                    //
+                    //
+                    //});
 
                 });
             },
@@ -1377,134 +1377,118 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     }
                 }
 
+                allPathContainers.each(function (pathWrapper) {
 
-                var allSetTypes = allPathContainers.selectAll("g.setGroup").selectAll("g.setType")
-                    .data(function (pathWrapper, i) {
-                        var filteredSetTypes = pathWrapper.setTypes.filter(function (setType) {
-                            return setType.canBeShown();
+
+                    var allSetTypes = d3.select(this).select("g.setGroup").selectAll("g.setType")
+                        .data(function () {
+                            return pathWrapper.setTypes.filter(function (setType) {
+                                return setType.canBeShown();
+                            });
                         });
 
-                        return filteredSetTypes.map(function (mySetType) {
-                            return {setType: mySetType, pathIndex: i};
+
+                    var setType = allSetTypes.enter()
+                        .append("g")
+                        .classed("setType", true)
+                        .attr({
+                            transform: function (d, i) {
+                                var posY = s.getSetTypeTranslateY(pathWrapper, i);
+                                return "translate(0," + posY + ")";
+                            }
+                        }
+                    );
+
+                    setType.append("text")
+                        .attr("class", "collapseIconSmall")
+                        .attr({
+                            x: 5,
+                            y: (s.SET_TYPE_HEIGHT - 10) / 2 + 9
                         });
-                    });
 
 
-                var setType = allSetTypes.enter()
-                    .append("g")
-                    .classed("setType", true)
-                    .attr({
-                        //display: function (d) {
-                        //  if (d.setType.canBeShown()) {
-                        //    return "inline";
-                        //  }
-                        //  return "none";
-                        //},
-                        transform: getSetTypeTransformFunction(that.pathWrappers)
+                    setType.append("text")
+                        .text(function (d) {
+                            return config.getSetTypeFromSetPropertyName(d.type);
+                        })
+                        .attr({
+                            x: 10,
+                            y: ( s.SET_TYPE_HEIGHT - 10) / 2 + 9
+                        })
+                        .style("fill", function (d) {
+                            return config.getSetColorFromSetTypePropertyName(d.type);
+                        })
+                        .attr("clip-path", "url(#SetLabelClipPath)");
+
+                    setType.append("g")
+                        .classed("setTypeSummary", true)
+                        .attr("display", function (d) {
+                            return d.collapsed ? "inline" : "none";
+                        });
+
+
+                    allSetTypes
+                        .transition()
+                        .each("start", function (d) {
+                            d3.select(this).selectAll("g.setTypeSummary")
+                                .attr("display", d.collapsed ? "inline" : "none");
+
+                            d3.select(this).selectAll("text.collapseIconSmall")
+                                .text(function (d) {
+                                    return d.collapsed ? "\uf0da" : "\uf0dd";
+                                });
+
+                        })
+                        .attr("transform", function (d, i) {
+                            var posY = s.getSetTypeTranslateY(pathWrapper, i);
+                            return "translate(0," + posY + ")";
+                        });
+
+
+                    if (typeof s.referencePathId !== "undefined") {
+                        var overviewSetStatusStartX = 0;
+                        allSetTypes.each(function (d, i) {
+                            var start = that.listView.getTextWidth(config.getSetTypeFromSetPropertyName(d.type));
+                            if (start > overviewSetStatusStartX) {
+                                overviewSetStatusStartX = start;
+                            }
+                        });
+                        overviewSetStatusStartX += 15;
                     }
-                );
 
-                setType.append("text")
-                    .attr("class", "collapseIconSmall")
-                    .attr("x", 5)
-                    .attr("y", (s.SET_TYPE_HEIGHT - 10) / 2 + 9);
+                    allSetTypes.each(function (setTypeWrapper) {
 
-                allSetTypes.selectAll("text.collapseIconSmall")
-                    .text(function (d) {
-                        return d.setType.collapsed ? "\uf0da" : "\uf0dd";
-                    })
-                    .on("click", function (d) {
-                        var collapsed = !d.setType.collapsed;
-                        if (d3.event.ctrlKey) {
-                            listeners.notify(s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE, {
-                                type: d.setType.type,
-                                collapsed: collapsed
+                        var $setType = d3.select(this);
+
+                        $setType.select("text.collapseIconSmall")
+                            .text(setTypeWrapper.collapsed ? "\uf0da" : "\uf0dd")
+                            .on("click", function () {
+                                var collapsed = !setTypeWrapper.collapsed;
+                                if (d3.event.ctrlKey) {
+                                    listeners.notify(s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE, {
+                                        type: setTypeWrapper.type,
+                                        collapsed: collapsed
+                                    });
+                                } else {
+                                    setTypeWrapper.collapsed = collapsed;
+                                    d3.select(this).text(setTypeWrapper.collapsed ? "\uf0da" : "\uf0dd");
+
+                                    that.updatePathList();
+
+                                }
                             });
-                        } else {
-                            d.setType.collapsed = collapsed;
-                            d3.select(this).text(d.setType.collapsed ? "\uf0da" : "\uf0dd");
-
-                            that.updatePathList();
-
-                        }
-                        //updateAggregateList(parent);
-                    });
-
-                allSetTypes
-                    .transition()
-                    .each("start", function (d) {
-                        //var setTypeSummaryContainer = d3.select(this).selectAll("g.setTypeSummary");
-                        ////.attr("transform", function (d) {
-                        ////  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
-                        ////});
-                        //
-                        //if (d.setType.collapsed) {
-                        d3.select(this).selectAll("g.setTypeSummary")
-                            .attr("display", d.setType.collapsed ? "inline" : "none");
-
-                        //}
-
-                        d3.select(this).selectAll("text.collapseIconSmall")
-                            .text(function (d) {
-                                return d.setType.collapsed ? "\uf0da" : "\uf0dd";
-                            });
-
-
-                        //if (!d.setType.canBeShown()) {
-                        //  d3.select(this)
-                        //    .attr("display", "none");
-                        //}
-                    })
-                    .attr("transform", getSetTypeTransformFunction(that.pathWrappers));
-
-
-                setType.append("text")
-                    .text(function (d) {
-                        //var text = d[0].id;
-                        //return getClampedText(text, 15);
-                        return config.getSetTypeFromSetPropertyName(d.setType.type);
-                    })
-                    .attr("x", 10)
-                    .attr("y", (s.SET_TYPE_HEIGHT - 10) / 2 + 9)
-                    .style("fill", function (d) {
-                        return config.getSetColorFromSetTypePropertyName(d.setType.type);
-                    })
-                    .attr("clip-path", "url(#SetLabelClipPath)");
-
-                setType.append("g")
-                    .classed("setTypeSummary", true)
-                    .attr("display", function (d) {
-                        return d.setType.collapsed ? "inline" : "none";
-                    });
-                //.attr("transform", function (d) {
-                //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex]);
-                //});
-
-                if (typeof s.referencePathId !== "undefined") {
-                    var overviewSetStatusStartX = 0;
-                    allSetTypes.each(function (d, i) {
-                        var start = that.listView.getTextWidth(config.getSetTypeFromSetPropertyName(d.setType.type));
-                        if (start > overviewSetStatusStartX) {
-                            overviewSetStatusStartX = start;
-                        }
-                    });
-                    overviewSetStatusStartX += 15;
-                }
-
-                allSetTypes.each(function (d, i) {
-
 
                         if (typeof s.referencePathId === "undefined") {
                             d3.select(this).select("g.setStatusOverview").remove();
                         } else {
-                            if (that.pathWrappers[d.pathIndex].path.id !== s.referencePathId) {
+                            if (pathWrapper.path.id !== s.referencePathId) {
 
-                                var refPathSetType = referencePathWrapper.setTypeDict[d.setType.type];
+                                var refPathSetType = referencePathWrapper.setTypeDict[setTypeWrapper.type];
                                 if (refPathSetType) {
 
                                     var numSetsInRefPath = 0;
 
-                                    var mySets = d.setType.sets.filter(function (set) {
+                                    var mySets = setTypeWrapper.sets.filter(function (set) {
                                         return set.canBeShown();
                                     });
 
@@ -1516,9 +1500,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                 }
 
 
-                                var setOverview = d3.select(this).select("g.setStatusOverview");
+                                var setOverview = $setType.select("g.setStatusOverview");
                                 if (setOverview.empty()) {
-                                    setOverview = d3.select(this).append("g")
+                                    setOverview = $setType.append("g")
                                         .classed("setStatusOverview", true);
 
                                     setOverview.append("text")
@@ -1568,440 +1552,331 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                 }
                                 var numSetsTextWidth = that.listView.getTextWidth(numSetsInRefPath);
 
-                                d3.select(this).select("g.setStatusOverview").select("text.numPresentSets")
+                                $setType.select("g.setStatusOverview").select("text.numPresentSets")
                                     .text(numSetsInRefPath);
-                                d3.select(this).select("g.setStatusOverview").select("text.numNonSetsStatus")
+                                $setType.select("g.setStatusOverview").select("text.numNonSetsStatus")
                                     .attr("x", overviewSetStatusStartX + 13 + numSetsTextWidth + 5);
-                                d3.select(this).select("g.setStatusOverview").select("text.numNonPresentSets")
+                                $setType.select("g.setStatusOverview").select("text.numNonPresentSets")
                                     .attr("x", overviewSetStatusStartX + 24 + numSetsTextWidth + 5)
                                     .text(mySets.length - numSetsInRefPath);
-                                d3.select(this).select("g.setStatusOverview").select("title")
-                                    .text(config.getSetTypeFromSetPropertyName(d.setType.type) + ": " + numSetsInRefPath + " sets are shared with the reference path, " + (mySets.length - numSetsInRefPath) + " are not.");
-
-                                //t.style({
-                                //    fill: isSetInRefPath ? "green" : "red"
-                                //}).text(isSetInRefPath ? "\uf00c" : "\uf00d");
-                                //
-                                //var diffText = d3.select(this).select("text.refPathPosDiff");
-                                //if (diffText.empty()) {
-                                //    diffText = d3.select(this).append("text")
-                                //        .classed("refPathPosDiff", true)
-                                //        .attr({
-                                //            x: -2,
-                                //            y: s.NODE_HEIGHT + 2
-                                //        });
-                                //}
-                                //
-                                //diffText.style({
-                                //    fill: "red",
-                                //    "text-anchor": "end"
-                                //}).text((nodePosDiff > 0 ? "+" : "") + nodePosDiff);
-
-
-                                //var nodePosDiff = nodeIndex - nodeIndexInRefPath;
-                                //
-                                //if (nodeIndexInRefPath >= 0 && nodePosDiff !== 0) {
-                                //    var diffText = d3.select(this).select("text.refPathPosDiff");
-                                //    if (diffText.empty()) {
-                                //        diffText = d3.select(this).append("text")
-                                //            .classed("refPathPosDiff", true)
-                                //            .attr({
-                                //                x: -2,
-                                //                y: s.NODE_HEIGHT + 2
-                                //            });
-                                //    }
-                                //
-                                //    diffText.style({
-                                //        fill: "red",
-                                //        "text-anchor": "end"
-                                //    }).text((nodePosDiff > 0 ? "+" : "") + nodePosDiff);
-                                //} else {
-                                //    d3.select(this).select("text.refPathPosDiff").remove();
-                                //}
+                                $setType.select("g.setStatusOverview").select("title")
+                                    .text(config.getSetTypeFromSetPropertyName(setTypeWrapper.type) + ": " + numSetsInRefPath + " sets are shared with the reference path, " + (mySets.length - numSetsInRefPath) + " are not.");
 
                             } else {
-                                d3.select(this).select("g.setStatusOverview").remove();
+                                $setType.select("g.setStatusOverview").remove();
                             }
                         }
 
 
-                        var setTypeSummaryContainer = d3.select(this).select("g.setTypeSummary");
-
+                        var setTypeSummaryContainer = $setType.select("g.setTypeSummary");
 
                         var allLines = setTypeSummaryContainer.selectAll("line")
                             .data(function () {
-                                return d.setType.relIndices.map(function (index) {
-                                    return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
-                                });
+                                return setTypeWrapper.relIndices;
                             });
                         var line = allLines.enter()
                             .append("line")
                             .attr({
                                 x1: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                    //var pivotNodeTranslate = getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                                    //var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
+                                    return that.getNodePositionX(pathWrapper, d, true); // + s.NODE_WIDTH / 2;
                                 }
                                 ,
                                 y1: s.SET_TYPE_HEIGHT / 2,
                                 x2: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                    //var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
+                                    //var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
+                                    //return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                    return that.getNodePositionX(pathWrapper, d + 1, true);
                                 },
                                 y2: s.SET_TYPE_HEIGHT / 2,
                                 stroke: function (d) {
-                                    return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
+                                    return config.getSetColorFromSetTypePropertyName(setTypeWrapper.type);
+                                },
+                                "stroke-dasharray": function (d) {
+                                    if (!config.isSetTypeEdgeOrigin(setTypeWrapper.type)) {
+                                        return "0,0";
+                                    }
+                                    var edge = pathWrapper.path.edges[d];
+                                    return config.isNetworkEdge(edge) ? "0,0" : "10,5";
                                 },
                                 "stroke-width": function (d) {
-                                    var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
-                                        that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+                                    var numSets = getEdgeSetCount(pathWrapper.path.edges[d], setTypeWrapper);
                                     return edgeSetScale(numSets);
                                 }
                             });
 
-                        line.append("title").text(function (d) {
-                            var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
-                                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-                            return "Number of connecting sets: " + numSets;
-                        });
+                        line.append("title");
 
                         allLines.transition()
                             .attr({
                                 x1: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                    return that.getNodePositionX(pathWrapper, d, true); // + s.NODE_WIDTH / 2;
                                 },
                                 x2: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                                },
-                                stroke: function (d) {
-                                    return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
+                                    return that.getNodePositionX(pathWrapper, d + 1, true); // + s.NODE_WIDTH / 2;
                                 },
                                 "stroke-width": function (d) {
-                                    var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
-                                        that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
+                                    var numSets = getEdgeSetCount(pathWrapper.path.edges[d],
+                                        setTypeWrapper);
                                     return edgeSetScale(numSets);
                                 }
                             });
 
-                        allLines.selectAll("title").data(function () {
-                            return d.setType.relIndices.map(function (index) {
-                                return {pathIndex: d.pathIndex, setTypeIndex: i, relIndex: index};
-                            });
-                        }).text(function (d) {
-                            var numSets = getEdgeSetCount(that.pathWrappers[d.pathIndex].path.edges[d.relIndex],
-                                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-                            return "Number of connecting sets: " + numSets;
+                        allLines.each(function (relIndex) {
+                            var numSets = getEdgeSetCount(pathWrapper.path.edges[relIndex], setTypeWrapper);
+                            d3.select(this).select("title").text("Number of connecting sets: " + numSets);
                         });
-
                         allLines.exit().remove();
 
                         var allCircles = setTypeSummaryContainer.selectAll("circle")
                             .data(function () {
-                                return d.setType.nodeIndices.map(function (index) {
-                                    return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
-                                });
+                                return setTypeWrapper.nodeIndices;
                             });
 
                         var circle = allCircles.enter()
                             .append("circle")
                             .attr({
                                 cx: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                    return that.getNodePositionX(pathWrapper, d, true);
                                 },
                                 cy: s.SET_TYPE_HEIGHT / 2,
                                 r: function (d) {
-                                    var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-                                        that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-
+                                    var numSets = getNodeSetCount(pathWrapper.path.nodes[d],
+                                        setTypeWrapper);
                                     return numSets == 0 ? 0 : nodeSetScale(numSets);
                                 },
                                 fill: function (d) {
-                                    return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
+                                    return config.getSetColorFromSetTypePropertyName(setTypeWrapper.type);
                                 }
                             });
 
-                        circle.append("title").text(function (d) {
-                            var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-                                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-                            return "Number of sets: " + numSets;
-                        });
+                        circle.append("title");
 
                         allCircles.transition()
                             .attr({
                                 cx: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                                    return that.getNodePositionX(pathWrapper, d, true);
                                 },
                                 r: function (d) {
-                                    var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-                                        that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-
+                                    var numSets = getNodeSetCount(pathWrapper.path.nodes[d],
+                                        setTypeWrapper);
                                     return numSets == 0 ? 0 : nodeSetScale(numSets);
                                 }
                             });
 
-                        allCircles.selectAll("title").data(function () {
-                            return d.setType.nodeIndices.map(function (index) {
-                                return {pathIndex: d.pathIndex, setTypeIndex: i, nodeIndex: index};
-                            });
-                        }).text(function (d) {
-                            var numSets = getNodeSetCount(that.pathWrappers[d.pathIndex].path.nodes[d.nodeIndex],
-                                that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex]);
-                            return "Number of sets: " + numSets;
+                        allCircles.each(function (nodeIndex) {
+                            var numSets = getNodeSetCount(pathWrapper.path.nodes[nodeIndex],
+                                setTypeWrapper);
+                            d3.select(this).select("title")
+                                .text("Number of sets: " + numSets)
                         });
 
                         allCircles.exit().remove();
-                    }
-                );
-
-                allSetTypes.exit().remove();
 
 
-                allSetTypes.each(function (setType) {
-
-                    if (setType.setType.collapsed) {
-                        d3.select(this).selectAll("g.set")
-                            .remove();
-                        return;
-                    }
-
-                    var allSets = d3.select(this)
-                        .selectAll("g.set")
-                        .data(function () {
-                            var filteredSets = setType.setType.sets.filter(function (s) {
-                                return s.canBeShown();
-                            });
-
-                            return filteredSets.map(function (myset) {
-                                return {
-                                    set: myset,
-                                    pathIndex: setType.pathIndex,
-                                    setTypeIndex: that.pathWrappers[setType.pathIndex].setTypes.indexOf(setType.setType)
-                                };
-                            });
-                        }, function (d) {
-                            return d.set.id;
-                        });
-
-
-                    var set = allSets
-                        .enter()
-                        .append("g")
-                        .classed("set", true)
-                        .on("dblclick", function (d) {
-                            //pathSorting.sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
-                            pathSorting.addSelectionBasedSortingStrategy(new pathSorting.SetPresenceSortingStrategy(selectionUtil.selections["set"]["selected"]));
-                            listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-                        });
-
-                    set.append("rect")
-                        .attr("class", "filler")
-                        .attr("x", 0)
-                        .attr("y", 0)
-                        .attr("width", "100%")
-                        .attr("height", s.SET_HEIGHT);
-
-                    set.append("text")
-                        .text(function (d) {
-                            return setInfo.getSetLabel(d.set.id);
-                        })
-                        .attr("x", s.SET_TYPE_INDENT)
-                        .attr("y", s.SET_HEIGHT)
-                        .style("fill", function (d) {
-                            return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
-                        })
-                        .attr("clip-path", "url(#SetLabelClipPath)");
-
-                    set.append("title")
-                        .text(function (d) {
-                            return setInfo.getSetLabel(d.set.id);
-                        });
-
-                    set.each(function (d, i) {
-
-                        uiUtil.createTemporalMenuOverlayButton(d3.select(this), s.NODE_START, 0, true, function () {
-
-                            var setNode = setInfo.get(d.set.id);
-
-                            if (typeof setNode === "undefined") {
-                                return [];
-                            }
-
-                            var items = queryUtil.getFilterOverlayItems("set", d.set.id);
-                            var linkItem = setInfo.getLinkOverlayItem(d.set.id);
-                            if (linkItem) {
-                                items.push(linkItem);
-                            }
-                            return items;
-                        });
-                        //queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, s.NODE_START, 0, true);
-                    });
-
-                    allSets.attr({
-                        display: function (d) {
-                            if (d.set.canBeShown()) {
-                                return "inline";
-                            }
-                            return "none";
-                        },
-                        transform: getSetTransformFunction(that.pathWrappers)
-                    });
-
-
-                    var setVisContainer = set.append("g")
-                        .classed("setVisContainer", true);
-
-
-                    //allSetVisContainers.attr("transform", function (d) {
-                    //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
-                    //});
-
-                    setVisContainer.each(function (d) {
-                        var allCircles = d3.select(this).selectAll("circle")
-                            .data(function () {
-                                return d.set.nodeIndices.map(function (index) {
-                                    return {
-                                        pathIndex: d.pathIndex,
-                                        setTypeIndex: d.setTypeIndex,
-                                        nodeIndex: index
-                                    };
-                                });
-                            });
-
-                        allCircles.enter()
-                            .append("circle")
-                            .attr({
-                                cy: function (d) {
-                                    return s.SET_HEIGHT / 2;
-                                },
-                                r: 2,
-                                fill: function (d) {
-                                    return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
-                                }
-                            });
-
-
-                        allCircles.exit().remove();
-
-                        var allLines = d3.select(this).selectAll("line").
-                            data(function (d, i) {
-                                return d.set.relIndices.map(function (index) {
-                                    return {
-                                        pathIndex: d.pathIndex,
-                                        setTypeIndex: d.setTypeIndex,
-                                        setIndex: i,
-                                        relIndex: index
-                                    };
-                                });
-                            });
-
-                        allLines.enter()
-                            .append("line")
-                            //.attr("x1", function (d) {
-                            //  return (d.relIndex * nodeWidth) + (d.relIndex * edgeSize) + nodeWidth / 2;
-                            //})
-                            .attr("y1", function (d) {
-                                return s.SET_HEIGHT / 2;
-                                //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
-                            })
-                            //.attr("x2", function (d) {
-                            //  return ((d.relIndex + 1) * nodeWidth) + ((d.relIndex + 1) * edgeSize) + nodeWidth / 2;
-                            //})
-                            .attr("y2", function (d) {
-                                return s.SET_HEIGHT / 2;
-                                //return 2 * vSpacing + nodeHeight + (d.setIndex + 1) * setHeight - 5;
-                            })
-                            .attr("stroke", function (d) {
-                                return config.getSetColorFromSetTypePropertyName(that.pathWrappers[d.pathIndex].setTypes[d.setTypeIndex].type);
-                            });
-
-                        allLines.exit().remove();
-                    });
-
-
-                    allSets.each(function (d) {
-
-                        var container = d3.select(this).select("g.setVisContainer");
-                        var allCircles = container.selectAll("circle");
-
-                        allCircles.transition()
-                            .attr({
-                                cx: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                                }
-                            });
-
-                        var allLines = container.selectAll("line");
-
-                        allLines.transition()
-                            .attr({
-                                x1: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                                },
-                                x2: function (d) {
-                                    var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-                                    var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
-                                    return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
-                                }
-                            });
-
-                        if (typeof s.referencePathId === "undefined") {
-                            d3.select(this).select("text.refPathStatus").remove();
-                        } else {
-                            if (that.pathWrappers[d.pathIndex].path.id !== s.referencePathId) {
-
-                                var refPathSetType = referencePathWrapper.setTypeDict[setType.setType.type];
-                                if (refPathSetType) {
-                                    var setInRefPath = refPathSetType.setDict[d.set.id];
-                                }
-
-                                var isSetInRefPath = typeof setInRefPath !== "undefined" && setInRefPath.canBeShown();
-                                var t = d3.select(this).select("text.refPathStatus");
-                                if (t.empty()) {
-                                    t = d3.select(this).append("text")
-                                        .classed("refPathStatus", true)
-                                        .attr({
-                                            x: s.NODE_START+28,
-                                            y: s.SET_HEIGHT
-                                        });
-                                    t.append("title");
-                                }
-
-                                t.style({
-                                    fill: isSetInRefPath ? "green" : "red"
-                                }).text(isSetInRefPath ? "\uf00c" : "\uf00d");
-                                //t.select("title")
-                                //    .text(setInfo.getSetLabel(d.set.id) + "is " + (isSetInRefPath ? "" : "not ") + " in the reference path.");
-
-                            } else {
-                                d3.select(this).select("text.refPathStatus").remove();
-                            }
+                        if (setTypeWrapper.collapsed) {
+                            $setType.selectAll("g.set")
+                                .remove();
+                            return;
                         }
 
+                        var allSets = $setType
+                            .selectAll("g.set")
+                            .data(function () {
+                                return setTypeWrapper.sets.filter(function (s) {
+                                    return s.canBeShown();
+                                });
+                            }, function (d) {
+                                return d.id;
+                            });
+
+
+                        var set = allSets
+                            .enter()
+                            .append("g")
+                            .classed("set", true)
+                            .on("dblclick", function (d) {
+                                //pathSorting.sortingStrategies.selectionSortingStrategy.setSetIds([d.set.id]);
+                                pathSorting.addSelectionBasedSortingStrategy(new pathSorting.SetPresenceSortingStrategy(selectionUtil.selections["set"]["selected"]));
+                                listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
+                            });
+
+                        set.append("rect")
+                            .classed("filler", true)
+                            .attr({
+                                x: 0,
+                                y: 0,
+                                width: "100%",
+                                height: s.SET_HEIGHT
+                            });
+
+                        set.append("text")
+                            .text(function (d) {
+                                return setInfo.getSetLabel(d.id);
+                            })
+                            .attr({
+                                x: s.SET_TYPE_INDENT,
+                                y: s.SET_HEIGHT
+                            })
+                            .style("fill", function (d) {
+                                return config.getSetColorFromSetTypePropertyName(setTypeWrapper.type);
+                            })
+                            .attr("clip-path", "url(#SetLabelClipPath)");
+
+                        set.append("title")
+                            .text(function (d) {
+                                return setInfo.getSetLabel(d.id);
+                            });
+
+                        set.each(function (d, i) {
+
+                            uiUtil.createTemporalMenuOverlayButton(d3.select(this), s.NODE_START, 0, true, function () {
+
+                                var setNode = setInfo.get(d.id);
+
+                                if (typeof setNode === "undefined") {
+                                    return [];
+                                }
+
+                                var items = queryUtil.getFilterOverlayItems("set", d.id);
+                                var linkItem = setInfo.getLinkOverlayItem(d.id);
+                                if (linkItem) {
+                                    items.push(linkItem);
+                                }
+                                return items;
+                            });
+                            //queryUtil.createAddNodeFilterButton(d3.select(this), that.parent, "set", d.set.id, s.NODE_START, 0, true);
+                        });
+
+                        allSets.transition()
+                            .attr({
+                                transform: function (d, i) {
+                                    var posY = s.getSetTranslateY(setTypeWrapper, i);
+                                    return "translate(0," + posY + ")";
+                                }
+                            });
+
+
+                        var setVisContainer = set.append("g")
+                            .classed("setVisContainer", true);
+
+
+                        //allSetVisContainers.attr("transform", function (d) {
+                        //  return that.getPivotNodeAlignedTransform(that.pathWrappers[d.pathIndex])
+                        //});
+
+
+                        allSets.each(function (setWrapper) {
+
+                            var container = d3.select(this).select("g.setVisContainer");
+                            var allCircles = container.selectAll("circle")
+                                .data(function () {
+                                    return setWrapper.nodeIndices;
+                                });
+
+                            allCircles.enter()
+                                .append("circle")
+                                .attr({
+                                    cy: s.SET_HEIGHT / 2,
+                                    r: 2,
+                                    fill: config.getSetColorFromSetTypePropertyName(setTypeWrapper.type)
+                                });
+
+                            allCircles.transition()
+                                .attr({
+                                    cx: function (d) {
+                                        return that.getNodePositionX(pathWrapper, d, true);
+                                    }
+                                });
+
+
+                            allCircles.exit().remove();
+
+
+                            var allLines = container.selectAll("line").
+                                data(function () {
+                                    return setWrapper.relIndices;
+                                });
+
+                            allLines.enter()
+                                .append("line")
+                                .attr({
+                                    y1: s.SET_HEIGHT / 2,
+                                    y2: s.SET_HEIGHT / 2,
+                                    "stroke-dasharray": function (d) {
+                                        if (!config.isSetTypeEdgeOrigin(setTypeWrapper.type)) {
+                                            return "0,0";
+                                        }
+                                        var edge = pathWrapper.path.edges[d];
+                                        return config.isSetOriginOfEdge(setWrapper.id, edge) ? "0,0" : "10,5";
+                                    },
+                                    stroke: config.getSetColorFromSetTypePropertyName(setTypeWrapper.type)
+                                });
+
+
+                            allLines.transition()
+                                .attr({
+                                    x1: function (d) {
+                                        return that.getNodePositionX(pathWrapper, d, true);
+                                    },
+                                    x2: function (d) {
+                                        return that.getNodePositionX(pathWrapper, d + 1, true);
+                                    }
+                                });
+
+                            allLines.exit().remove();
+
+                            if (typeof s.referencePathId === "undefined") {
+                                d3.select(this).select("text.refPathStatus").remove();
+                            } else {
+                                if (pathWrapper.path.id !== s.referencePathId) {
+
+                                    var refPathSetType = referencePathWrapper.setTypeDict[setTypeWrapper.type];
+                                    if (refPathSetType) {
+                                        var setInRefPath = refPathSetType.setDict[setWrapper.id];
+                                    }
+
+                                    var isSetInRefPath = typeof setInRefPath !== "undefined" && setInRefPath.canBeShown();
+                                    var t = d3.select(this).select("text.refPathStatus");
+                                    if (t.empty()) {
+                                        t = d3.select(this).append("text")
+                                            .classed("refPathStatus", true)
+                                            .attr({
+                                                x: s.NODE_START + 28,
+                                                y: s.SET_HEIGHT
+                                            });
+                                        t.append("title");
+                                    }
+
+                                    t.style({
+                                        fill: isSetInRefPath ? "green" : "red"
+                                    }).text(isSetInRefPath ? "\uf00c" : "\uf00d");
+                                    //t.select("title")
+                                    //    .text(setInfo.getSetLabel(d.set.id) + "is " + (isSetInRefPath ? "" : "not ") + " in the reference path.");
+
+                                } else {
+                                    d3.select(this).select("text.refPathStatus").remove();
+                                }
+                            }
+
+                        });
+
+
+                        allSets.exit()
+                            .remove();
+
                     });
 
-
-                    allSets.exit()
-                        .remove();
-
+                    allSetTypes.exit().remove();
                 });
+
 
                 selectionUtil.removeListeners(that.setSelectionListener);
 
-                that.setSelectionListener = selectionUtil.addDefaultListener(allSetTypes, "g.set", function (d) {
-                        return d.set.id;
+                that.setSelectionListener = selectionUtil.addDefaultListener(allPathContainers, "g.set", function (d) {
+                        return d.id;
                     },
                     "set"
                 );
@@ -2699,7 +2574,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 node.each(function (d) {
                     pathUtil.renderNode(d3.select(this), d.node, 0, 0, s.NODE_WIDTH, s.NODE_HEIGHT, "url(#pathNodeClipPath)", function (text) {
                         return that.listView.getTextWidth(text);
-                    }, queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(d.node)]));
+                    }, pathUtil.getDefaultNodeOverlayItems(d.node));
                 });
 
                 var referencePath = dataStore.getPath(s.referencePathId);
@@ -2799,9 +2674,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
             }
 
-        };
+        }
+        ;
 
 
         return PathList;
     }
-);
+)
+;

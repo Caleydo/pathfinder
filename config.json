@@ -174,7 +174,7 @@
       ]
     },
     "pathways": {
-      "sample_paths": "dump/egfr-ptk2-sos1.json",
+      "sample_paths": "dump/egfr-sos1.json",
       "settings": {
       },
       "nodes": [
@@ -185,6 +185,7 @@
             "id": "id",
             "idType": "string",
             "name": "name",
+            "url": "url",
             "pathways": {
               "type": "set",
               "set": "pathways"
@@ -194,10 +195,12 @@
         {
           "name": "Compound",
           "node_label": "Compound",
+          "url": "url",
           "properties": {
             "id": "id",
             "idType": "string",
             "name": "name",
+            "url": "url",
             "pathways": {
               "type": "set",
               "set": "pathways"
@@ -214,6 +217,7 @@
               "type": "flag",
               "set": "pathways"
             },
+            "_edgeOrigin": "pathways",
             "pathways": {
               "type": "set",
               "set": "pathways"
@@ -235,7 +239,8 @@
             "target": "Edge"
           },
           "flag_property": "_isSetEdge",
-          "set_property": "pathways"
+          "set_property": "pathways",
+          "originOf": "Edge"
         }
       ],
       "datasets": [
@@ -276,6 +281,7 @@
             "id": "id",
             "idType": "string",
             "name": "name",
+            "url": "url",
             "pathways": {
               "type": "set",
               "set": "pathways"
@@ -289,6 +295,7 @@
             "id": "id",
             "idType": "string",
             "name": "name",
+            "url": "url",
             "pathways": {
               "type": "set",
               "set": "pathways"
@@ -305,6 +312,7 @@
               "type": "flag",
               "set": "pathways"
             },
+             "_edgeOrigin": "pathways",
             "pathways": {
               "type": "set",
               "set": "pathways"
@@ -326,7 +334,8 @@
             "target": "Edge"
           },
           "flag_property": "_isSetEdge",
-          "set_property": "pathways"
+          "set_property": "pathways",
+          "originOf": "Edge"
         }
       ],
       "datasets": [
