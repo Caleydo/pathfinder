@@ -1,5 +1,5 @@
-define(['d3', 'jquery', './listeners', './query/pathquery', './config', './statisticsutil', './sorting', '../pathfinder_ccle/ccle', './extradata', './list/path/settings'],
-    function (d3, $, listeners, pathQuery, config, statisticsUtil, sorting, ccle, extraData, pathSettings) {
+define(['d3', 'jquery', './listeners', './query/pathquery', './config', './statisticsutil', './sorting', '../pathfinder_ccle/ccle', './extradata', './list/path/settings', './pathutil'],
+    function (d3, $, listeners, pathQuery, config, statisticsUtil, sorting, ccle, extraData, pathSettings, pathUtil) {
 
         var SortingStrategy = sorting.SortingStrategy;
 
@@ -492,6 +492,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
         function fetchData() {
 
+
             if (Object.keys(allDatasets).length === 0) {
                 return;
             }
@@ -781,6 +782,31 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
                             addNodeProperties(node);
                         }
                     });
+
+                    path.edges.forEach(function(edge,i){
+
+                        var startNode = path.nodes[i];
+                        var endNode = path.nodes[i+1];
+
+                        var setDict = {};
+                        pathUtil.forEachNodeSet(startNode, function (setType, setId) {
+                            setDict[setType] = setDict[setType] || {};
+                            setDict[setType][setId] = true;
+                        });
+
+                        Object.keys(setDict).forEach(function(setType) {
+                           delete edge.properties[setType];
+                        });
+
+                        pathUtil.forEachNodeSet(endNode, function (setType, setId) {
+                            if(setDict[setType] && setDict[setType][setId]){
+                                edge.properties[setType] = edge.properties[setType] || [];
+                                edge.properties[setType].push(setId);
+                            }
+                        });
+
+                    });
+
 
                     fetchData();
                     return true;
