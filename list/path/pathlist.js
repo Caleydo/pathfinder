@@ -2496,7 +2496,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     })
                     .style({
                         "stroke-dasharray": function (d) {
-                            return config.isNetworkEdge(d.edge) ? "0,0" : "10,5";
+                            return (config.isSetEdgesOnly() || config.isNetworkEdge(d.edge)) ? "0,0" : "10,5";
                         }
                     });
                 //.attr("display", function (d) {

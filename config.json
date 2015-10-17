@@ -4,7 +4,8 @@
       "sample_paths": "dump/partl-shneiderman.json",
       "settings": {
         "node_width": 90,
-        "edge_size": 30
+        "edge_size": 30,
+        "set_edges_only": true
       },
       "nodes": [
         {

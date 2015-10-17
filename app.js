@@ -33,6 +33,11 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
 
         $(document).ready(function () {
 
+                $('.pathGraphView').resizable({
+                    handles: 'n,w,s,e', minWidth: 200,
+                    maxWidth: 400
+                });
+
 
                 //$.widget("custom.typedAutocomplete", $.ui.autocomplete, {
                 //  _renderItem: function (ul, item) {
@@ -122,6 +127,7 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
                 //});
 
                 statisticsUtil.statisticsOf([0, NaN, 5, 3, NaN, 7, 3]);
+                var x = 0;
 
                 ServerSearch.on({
                     query_start: function () {
@@ -129,6 +135,8 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
                     },
                     query_path: function (event, data) {
                         addPath(data.path);
+                        //dataStore.addPath(data.path);
+                        //console.log("added path " +(x++))
                     },
                     neighbor_neighbor: function (event, data) {
 

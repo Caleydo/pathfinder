@@ -1712,6 +1712,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         QueryView.prototype.initImpl = function () {
             View.prototype.init.call(this);
 
+            $("#sets_as_edges_group").css({display: config.isSetEdgesOnly() ? "none" : "inline-block"});
 
             var $progress = $('.progress-bar');
             ServerSearch.on({
@@ -1830,14 +1831,17 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 }
             }
 
+            function isJustNetworkEdges() {
+                return !(config.isSetEdgesOnly() || ($('#sets_as_edges').is(':checked')));
+            }
 
             $('#remove_filtered_paths').click(function () {
                     pathQuery.setRemoveFilteredPaths(!($('#remove_filtered_paths').prop("checked")));
                 }
             );
 
-            $('#just_network_edges').click(function () {
-                pathQuery.setJustNetworkEdges($('#just_network_edges').is(':checked'));
+            $('#sets_as_edges').click(function () {
+                pathQuery.setJustNetworkEdges(isJustNetworkEdges());
             });
 
             ServerSearch.on('query_done', function () {
@@ -1850,13 +1854,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
                 var k = +$('#at_most_k').val();
                 var maxDepth = +$('#longest_path').val();
-                var justNetworkEdges = $('#just_network_edges').is(':checked');
+                //var justNetworkEdges = $('#just_network_edges').is(':checked');
                 var query = that.container.getPathQuery();
 
                 pathQuery.setQuery(query, true);
 
                 $('#query_interface button[type="submit"] i').attr('class', 'fa fa-spinner fa-pulse');
-                ServerSearch.loadQuery(query, k, maxDepth, justNetworkEdges);
+                ServerSearch.loadQuery(query, k, maxDepth, isJustNetworkEdges());
 
                 return false;
             });
@@ -1942,7 +1946,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 var nodeContainer = pathContainer.children[isStartNode ? 0 : pathContainer.children.length - 1];
 
                 if (nodeContainer instanceof NodeContainer) {
-                    if(nodeContainer.children.length > 0) {
+                    if (nodeContainer.children.length > 0) {
                         nodeContainer.removeChild(0);
                     }
 

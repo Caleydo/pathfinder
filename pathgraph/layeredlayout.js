@@ -201,7 +201,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
                         if (d.edge.neighborEdge) {
                             return "1,5";
                         }
-                        return config.isNetworkEdge(d.edge.edge) ? "0,0" : "10,5";
+
+                        return  (config.isSetEdgesOnly() || config.isNetworkEdge(d.edge.edge)) ? "0,0" : "10,5";
                     }
                 })
                 .classed("lines", true)

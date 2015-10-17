@@ -93,6 +93,10 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
             });
         },
 
+        isSetEdgesOnly: function() {
+            return config.settings["set_edges_only"] ? true : false;
+        },
+
         getUseCase: function () {
             return C.hash.getProp('uc', C.param.getProp('uc', 'dblp'));
         },
