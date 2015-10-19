@@ -484,7 +484,8 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
                     .scale(scaleX)
                     .orient("top")
                     .tickValues([scaleX.domain()[0], scaleX.domain()[1]])
-                    .tickFormat(d3.format(".0f"));
+                    .tickFormat(d3.format(".0f"))
+                    .tickSize(3, 3);;
             }
 
 
