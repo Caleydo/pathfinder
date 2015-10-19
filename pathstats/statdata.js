@@ -3,7 +3,8 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
 
         var HierarchyElement = hierarchyElements.HierarchyElement;
 
-        var LEVEL1_HIERARCHY_ELEMENT_HEIGHT = 18;
+        var LEVEL1_HIERARCHY_ELEMENT_HEIGHT = 24;
+        var LEVEL2_HIERARCHY_ELEMENT_HEIGHT = 16;
         var HIERARCHY_ELEMENT_HEIGHT = 12;
 
         function BaseHierarchyElement(parentElement) {
@@ -90,6 +91,10 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
         }
 
         NodeTypeWrapper.prototype = Object.create(BaseHierarchyElement.prototype);
+
+        NodeTypeWrapper.prototype.getBaseHeight = function () {
+            return LEVEL2_HIERARCHY_ELEMENT_HEIGHT;
+        };
 
         NodeTypeWrapper.prototype.addNode = function (node, path) {
             var nodeWrapper = this.nodeWrapperDict[node.id.toString()];
@@ -309,6 +314,10 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
 
 
         SetTypeWrapper.prototype = Object.create(BaseHierarchyElement.prototype);
+
+        SetTypeWrapper.prototype.getBaseHeight = function () {
+            return LEVEL2_HIERARCHY_ELEMENT_HEIGHT;
+        };
 
         SetTypeWrapper.prototype.addNode = function (setId, node, path) {
             var setWrapper = this.setWrapperDict[setId.toString()];

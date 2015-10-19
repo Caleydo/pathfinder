@@ -3,6 +3,11 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
 
     var listOverlay = new ListOverlay();
 
+    var DEFAULT_TEXT_SIZE_ELEMENT_FONT_STYLE = {
+        "font": "10px sans-serif",
+        "opacity": 0
+    };
+
     return {
 
         NORMAL_BUTTON_SIZE: 16,
@@ -232,8 +237,39 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
                     })
                     .call(xAxis);
             }
+        },
+
+        createFontSizeTextElement: function (svg) {
+            return svg.append("text")
+                .attr('class', "textSizeElement")
+                .attr("x", 0)
+                .attr("y", 0)
+                .style(DEFAULT_TEXT_SIZE_ELEMENT_FONT_STYLE);
+
+        },
+
+        getTextBBox: function (textElement, text, fontStyle) {
+            textElement
+                .text(text);
+
+            if (fontStyle) {
+                var style = {};
+
+                Object.keys(fontStyle).forEach(function (styleProp) {
+                    style[styleProp] = textElement.style(styleProp);
+                });
+
+                textElement.style(fontStyle);
+                var bbox = textElement.node().getBBox();
+
+                textElement.style(style);
+                return bbox;
+            }
+
+            return textElement.node().getBBox();
         }
 
 
     }
-});
+})
+;
