@@ -7,7 +7,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
 
         function PathLengthSortingStrategy() {
-            SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT, "Path length", "PATH_LENGTH");
+            SortingStrategy.call(this, SortingStrategy.prototype.STRATEGY_TYPES.WEIGHT, "Length", "PATH_LENGTH");
         }
 
         PathLengthSortingStrategy.prototype = Object.create(SortingStrategy.prototype);
