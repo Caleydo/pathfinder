@@ -20,6 +20,15 @@
         }
       ]
     },
+    "products":[{
+      "name": "Pathfinder",
+      "type": "python",
+      "plugins": [
+        "pathfinder",
+        "pathfinder_ccle",
+        "pathfinder_graph"
+      ]
+    }],
     "dependencies": {
       "web": {
         "d3": "~3.5.5",
