@@ -1896,6 +1896,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 var gridStrokeColor = "white";
                 var gridFillColor = "rgba(0,0,0,0)";
 
+                var gridStyle = {
+                    stroke: "white",
+                    fill: "rgba(0,0,0,0)",
+                    "shape-rendering": "crispEdges"
+                };
+
                 var that = this;
 
                 var lineGridContainer = this.parent.select("g.lineGridContainer");
@@ -1938,11 +1944,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                             width: "100%",
                             height: s.PATH_HEIGHT
                         })
-                        .style({
-                            stroke: gridStrokeColor,
-                            fill: gridFillColor,
-                            "shape-rendering": "crispEdges"
-                        });
+                        .style(gridStyle);
                 });
 
                 allBgPathWrappers.transition()
@@ -1983,11 +1985,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                 width: "100%",
                                 height: s.SET_TYPE_HEIGHT
                             })
-                            .style({
-                                stroke: gridStrokeColor,
-                                fill: gridFillColor,
-                                "shape-rendering": "crispEdges"
-                            });
+                            .style(gridStyle);
                     });
 
                     allBgSetTypes.each(function (setType, setTypeIndex) {
@@ -2023,11 +2021,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                     return d.getHeight();
                                 }
                             })
-                            .style({
-                                stroke: gridStrokeColor,
-                                fill: gridFillColor,
-                                "shape-rendering": "crispEdges"
-                            });
+                            .style(gridStyle);
 
                         allBgSets.transition()
                             .attr({
@@ -2051,7 +2045,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     });
 
                     var bgNodeProperties = allBgNodeProperties.enter().append("rect")
-                        .classed("bgSetType", true);
+                        .classed("bgNodeProperty", true);
 
 
                     bgNodeProperties.each(function (property) {
@@ -2062,11 +2056,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                             width: "100%",
                             height: property.getBaseHeight()
                         })
-                            .style({
-                                stroke: gridStrokeColor,
-                                fill: gridFillColor,
-                                "shape-rendering": "crispEdges"
-                            });
+                            .style(gridStyle);
 
                     });
 
@@ -2099,11 +2089,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                 width: "100%",
                                 height: dataset.getBaseHeight()
                             })
-                            .style({
-                                stroke: gridStrokeColor,
-                                fill: gridFillColor,
-                                "shape-rendering": "crispEdges"
-                            });
+                            .style(gridStyle);
                     });
 
                     allBgDatasets.each(function (dataset, datasetIndex) {
@@ -2137,11 +2123,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                                     return d.getHeight();
                                 }
                             })
-                            .style({
-                                stroke: gridStrokeColor,
-                                fill: gridFillColor,
-                                "shape-rendering": "crispEdges"
-                            });
+                            .style(gridStyle);
 
                         allGroups.transition()
                             .attr({
