@@ -441,7 +441,6 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
                                 "font-size": 18
                             });
 
-
                     } else if (d === that.setTypeWrappers) {
                         d3.select(this)
                             .classed("setTypeGroup", true)
@@ -454,9 +453,43 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
                             .style({
                                 "font-size": 18
                             });
+
                     }
+
+                    appendAxis(d3.select(this), that.getBarScale(), d.getBaseHeight());
                 });
-            selectionUtil.removeListeners(this.selectionListeners);
+
+
+            allLevel1HierarchyElements.each(function (d) {
+                updateAxis(d3.select(this), that.getBarScale());
+            });
+
+            function appendAxis(parent, scaleX, posY) {
+                parent
+                    .append("g")
+                    .classed("axis", true)
+                    .attr({
+                        transform: "translate(" + BAR_START_X + "," + posY + ")"
+                    })
+                    .call(axis(scaleX));
+            }
+
+            function updateAxis(parent, scaleX) {
+                parent.select("g.axis")
+                    .call(axis(scaleX));
+            }
+
+            function axis(scaleX) {
+                return d3.svg.axis()
+                    .scale(scaleX)
+                    .orient("top")
+                    .tickValues([scaleX.domain()[0], scaleX.domain()[1]])
+                    .tickFormat(d3.format(".0f"));
+            }
+
+
+            selectionUtil
+                .removeListeners(this.selectionListeners);
             this.selectionListeners = [];
 
             this.renderStats("g.nodeTypeGroup", this.nodeTypeWrappers.children, function (d) {

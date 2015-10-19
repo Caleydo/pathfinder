@@ -337,7 +337,7 @@ path.crossConnection.selected, line.stub.selected {
 
 }
 
-g.boxPlotAxisX, g.boxPlotAxisY, g.scoreAxis {
+g.boxPlotAxisX, g.boxPlotAxisY, g.scoreAxis, g.axis {
   path, line {
     fill: none;
     stroke: $defaultStrokeColor;
