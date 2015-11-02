@@ -13,6 +13,7 @@ $overlayFillColor: rgb(255, 255, 255);
 $overlayStrokeColor: rgb(30, 30, 30);
 $overlayHoverColor: rgb(150, 200, 255);
 $neighborFillColor: rgb(255, 255, 255);
+$progressBarFillColor: rgb(150, 200, 255);
 
 @mixin textIcon($fontSize) {
   font-family: FontAwesome, sans-serif;
@@ -60,6 +61,10 @@ text.collapseIconSmall {
 
 rect.filler {
   fill: $transparentColor;
+}
+
+rect.progressBarItem {
+  fill: $progressBarFillColor;
 }
 
 g.node {
@@ -382,6 +387,22 @@ path.nodeTypeSymbol {
   stroke-width: 1.5px;
 }
 
+div.progressBarItem {
+  fill: $progressBarFillColor;
+  display: inline-block;
+  //border-radius: 5px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+div.bar {
+  //color: white;
+  display: inline-block;
+  border-radius: 4px;
+  //margin-left: 2px;
+  //margin-right: 2px;
+}
+
 .outer {
 
   -webkit-flex: 1;
@@ -493,6 +514,8 @@ header {
   display: -webkit-flex;
   display: flex;
   flex-direction: column;
+  //-webkit-flex-flow: column wrap;
+  //overflow: auto;
 }
 
 #pathStatsView {
@@ -503,11 +526,12 @@ header {
   //  height: 100%;
   //  height: 100%;
   overflow: auto;
+
   //  vertical-align: top;
   //  display: block;
   //  width: 100%;
   //  height: 100%;
-   display: -webkit-flex;
+  display: -webkit-flex;
   display: flex;
   flex-direction: column;
 }
@@ -549,7 +573,7 @@ header {
   font-family: monospace;
 }
 
-#pathgraph {
+#pathgraph, #pathstats {
   -webkit-flex: 1 0 auto;
   flex: 1 0 auto;
 
@@ -557,25 +581,36 @@ header {
   display: flex;
   flex-direction: row;
   -webkit-flex-flow: column wrap;
+  overflow: auto;
 }
 
-#pathstats {
-  -webkit-flex: 1 0 auto;
-  flex: 1 0 auto;
+//#pathstats {
+//  -webkit-flex: 1 0 auto;
+//  flex: 1 0 auto;
+//
+//  display: -webkit-flex;
+//  display: flex;
+//  flex-direction: row;
+//  -webkit-flex-flow: column wrap;
+//  overflow: auto;
+//}
 
-  display: -webkit-flex;
-  display: flex;
-  flex-direction: row;
-  -webkit-flex-flow: column wrap;
+#pathProgress {
+  display: block;
+  height: 60px;
+  width: 100%;
+  vertical-align: bottom;
+  overflow: auto;
 }
 
 #pathlist, #pathQuery {
   display: block;
-  width: 100%;
-  height: 100%;
+  -webkit-flex: 1;
+  flex: 1;
   margin: 0px;
   padding: 0px;
   border: 0px;
+  overflow: auto;
 }
 
 #pathQueryView {

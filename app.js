@@ -3,13 +3,19 @@
  */
 require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
         './pathstats/pathstatsview', '../pathfinder_graph/search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
-        '../pathfinder_ccle/ccle', './extradata', 'font-awesome', 'bootstrap'],
+        '../pathfinder_ccle/ccle', './extradata', './list/progressbar', 'font-awesome', 'bootstrap'],
 
-    function ($, d3, C, ajax, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting, statisticsUtil, ccle, extradata) {
+    function ($, d3, C, ajax, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil, queryView, pathQuery, config, pathSorting, statisticsUtil, ccle, extradata, progressBar) {
 
         'use strict';
 
         //var jsonPaths = require('./testpaths1.json');
+
+        //$(function () {
+        //    $("#resizable").resizable({
+        //        containment: "#container"
+        //    });
+        //});
 
         var currentPathId = 0;
         var showSettings = false;
@@ -33,10 +39,17 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
 
         $(document).ready(function () {
 
-                $('.pathGraphView').resizable({
-                    handles: 'n,w,s,e', minWidth: 200,
-                    maxWidth: 400
-                });
+                //$('#listView').resizable({
+                //    handles: 'w,e', minWidth: 200
+                //});
+                //
+                //$('#pathGraphView').resizable({
+                //    handles: 'w,e', minWidth: 200
+                //});
+                //
+                // $('#pathStatsView').resizable({
+                //    handles: 'w,e', minWidth: 200
+                //});
 
 
                 //$.widget("custom.typedAutocomplete", $.ui.autocomplete, {
@@ -132,16 +145,23 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
                 ServerSearch.on({
                     query_start: function () {
                         //reset();
+                        progressBar.reset();
                     },
                     query_path: function (event, data) {
                         addPath(data.path);
                         //dataStore.addPath(data.path);
                         //console.log("added path " +(x++))
                     },
+
+                    query_done: function () {
+                        progressBar.render(-1);
+                    },
+
                     neighbor_neighbor: function (event, data) {
 
                         overviewGraph.addNeighbor(data.node, data.neighbor);
-                    },
+                    }
+                    ,
                     neighbor_done: function (event, data) {
                         console.log(data.node, data.neighbors);
                     }
@@ -189,6 +209,7 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
                     pathSorting.init();
                     queryView.init();
                     overviewGraph.init();
+                    progressBar.init();
 
 
                     listView.init().then(function () {
@@ -206,6 +227,7 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
 
                                     if (i >= paths.length) {
                                         clearInterval(interval);
+                                        progressBar.render(-1);
                                         return;
                                     }
                                     addPath(paths[i]);
@@ -234,7 +256,8 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
 
                 function addPath(path) {
                     path.id = currentPathId++;
-                    if (dataStore.addPath(path)) {
+                    var added = dataStore.addPath(path);
+                    if (added) {
                         pathQuery.addPath(path);
 
                         fetchSetInfos([path]);
@@ -243,7 +266,9 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
                         pathStatsView.render();
                         listView.addPath(path);
                         overviewGraph.addPath(path);
+                        progressBar.update(path);
                     }
+                    progressBar.update(path, added);
 
                 }
 
@@ -323,4 +348,5 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
 
 
     }
-);
+)
+;
