@@ -165,12 +165,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       columns.init(this);
 
-      this.updateDatasetsListener = function () {
-        that.pathWrappers.forEach(function (pathWrapper) {
-          pathWrapper.updateDatasets();
-        });
-        that.renderPaths();
-      };
+      //this.updateDatasetsListener = function () {
+      //  that.pathWrappers.forEach(function (pathWrapper) {
+      //    pathWrapper.updateDatasets();
+      //  });
+      //  that.renderPaths();
+      //};
 
       this.alignPathNodesUpdateListener = function (align) {
         //s.alignPathNodes = align;
@@ -303,7 +303,13 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       }
       ,
       init: function (parent) {
-        this.parent = parent;
+        if (typeof this.parent === "undefined") {
+          this.parent = parent;
+          this.parent.append("g")
+            .classed("lineGridContainer", true);
+          this.parent.append("g")
+            .classed("crossConnectionContainer", true);
+        }
         s.NODE_WIDTH = config.getNodeWidth();
         s.NODE_HEIGHT = config.getNodeHeight();
         s.EDGE_SIZE = config.getEdgeSize();
@@ -318,7 +324,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.add(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.add(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
         //listeners.add(this.sortUpdateListener, pathSorting.updateType);
-        listeners.add(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
+        //listeners.add(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
 
         selectionUtil.addListener("path", this.pathSelectionUpdateListener);
       },
@@ -379,7 +385,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.remove(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.remove(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
         //listeners.remove(this.sortUpdateListener, pathSorting.updateType);
-        listeners.remove(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
+        //listeners.remove(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
 
 
       },

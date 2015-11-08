@@ -1,9 +1,9 @@
 /**
  * Created by Christian on 06.11.2015.
  */
-define(["../../config", "../../pathutil", "../../query/pathquery", "../pathsorting", "../../sorting", "../../listeners",
-    "../../hierarchyelements", "../../dataStore", "./settings", "../../settings/visibilitysettings"],
-  function (config, pathUtil, pathQuery, pathSorting, sorting, listeners, hierarchyElements, dataStore, s, vs) {
+define(["d3", "../../config", "../../pathutil", "../../query/pathquery", "../pathsorting", "../../sorting", "../../listeners",
+    "../../hierarchyelements", "../../dataStore", "./settings", "../../settings/visibilitysettings", "./datasetrenderer"],
+  function (d3, config, pathUtil, pathQuery, pathSorting, sorting, listeners, hierarchyElements, dataStore, s, vs, dr) {
 
     var currentSetTypeId = 0;
     var pageSize = 5;
@@ -303,6 +303,14 @@ define(["../../config", "../../pathutil", "../../query/pathquery", "../pathsorti
           that.updateCrossPathData();
           that.notifyUpdateListeners();
         }, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
+
+        listeners.add(function () {
+          that.pathWrappers.forEach(function (pathWrapper) {
+            pathWrapper.updateDatasets();
+          });
+          that.notifyUpdateListeners();
+        }, listeners.updateType.DATASET_UPDATE);
+
 
       }
       ,
