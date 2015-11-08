@@ -15,8 +15,8 @@ define(['jquery', 'd3', '../../listeners', '../path/pathlist', '../../sorting', 
       return this.pathList.getSize();
     };
 
-    NoAggregationList.prototype.init = function () {
-      this.pathList.init();
+    NoAggregationList.prototype.init = function (parent) {
+      this.pathList.init(parent);
     };
 
     NoAggregationList.prototype.addUpdateListener = function (l) {

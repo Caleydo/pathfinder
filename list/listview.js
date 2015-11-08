@@ -186,7 +186,7 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
       //  listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
       //});
 
-      this.aggregateList.init();
+      this.aggregateList.init(svg);
       this.aggregateList.addUpdateListener(function (list) {
         that.updateViewSize();
       });

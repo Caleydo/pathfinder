@@ -599,8 +599,8 @@ header {
   display: block;
   height: 60px;
   width: 100%;
-  vertical-align: bottom;
-  overflow: auto;
+  vertical-align: top;
+  //overflow: auto;
 }
 
 #pathlist, #pathQuery {
