@@ -329,9 +329,13 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         selectionUtil.addListener("path", this.pathSelectionUpdateListener);
       },
 
-      onPathDataUpdate: function () {
+      onPathDataUpdate: function (changes) {
         this.pathWrappers = pathData.getPathWrappers(false);
-        this.renderPaths();
+        if(changes.pagePathsChanged) {
+          this.renderPaths();
+        } else if(changes.crossPathDataChanged){
+          this.updatePathList();
+        }
       },
 
 

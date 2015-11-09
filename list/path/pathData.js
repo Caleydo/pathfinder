@@ -319,11 +319,14 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       addPath: function (path) {
 
         var pathWrapper = new PathWrapper(path);
+        var firstPageIndex = this.currentPageIndex * pageSize;
+        var pagePathsChanged = ((this.pathWrappers.length >= firstPageIndex) && (this.pathWrappers.length <= (firstPageIndex + pageSize - 1)));
         this.pathWrappers.push(pathWrapper);
         var pathFiltered = pathQuery.isPathFiltered(path.id);
         var removeFilteredPaths = pathQuery.isRemoveFilteredPaths();
+        var crossPathDataChanged = false;
         if (!(pathFiltered && removeFilteredPaths)) {
-          this.updateCrossPathDataForPathWrapper(pathWrapper);
+          crossPathDataChanged = this.updateCrossPathDataForPathWrapper(pathWrapper);
         }
 
         if (removeFilteredPaths) {
@@ -334,8 +337,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         } else {
           this.lastVisiblePathIndex = this.pathWrappers.length - 1;
         }
-        this.sortPaths();
-        this.notifyUpdateListeners();
+
+        var c = this.sortPaths();
+        pagePathsChanged = pagePathsChanged || c;
+
+        this.notifyUpdateListeners({pagePathsChanged: pagePathsChanged, crossPathDataChanged: crossPathDataChanged});
       }
       ,
 
@@ -353,8 +359,13 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
           return this.pathWrappers.slice(minIndex, maxIndex);
         }
-      }
-      ,
+      },
+
+      getPaths: function (all) {
+        return this.getPathWrappers(all).map(function (pathWrapper) {
+          return pathWrapper.path;
+        });
+      },
 
       updateLastVisibleIndex: function () {
         if (pathQuery.isRemoveFilteredPaths()) {
@@ -376,20 +387,25 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       updateCrossPathData: function () {
         var that = this;
+        var changed = false;
         this.pathWrappers.forEach(function (pathWrapper) {
-          that.updateCrossPathDataForPathWrapper(pathWrapper);
-        })
+          var c = that.updateCrossPathDataForPathWrapper(pathWrapper);
+          changed = changed || c;
+        });
+        return changed;
       },
 
 
       updateCrossPathDataForPathWrapper: function (pathWrapper) {
         var that = this;
+        var changed = false;
 
         pathWrapper.setTypes.forEach(function (setTypeWrapper) {
           pathWrapper.path.nodes.forEach(function (node) {
             var numNodeSets = getNodeSetCount(node, setTypeWrapper);
             if (numNodeSets > that.maxNumNodeSets) {
               that.maxNumNodeSets = numNodeSets;
+              changed = true;
             }
 
             config.getNumericalNodeProperties(node).forEach(function (property) {
@@ -398,8 +414,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
               if (!scale) {
                 that.numericalPropertyScales[property] = d3.scale.linear().domain([Math.min(0, value), Math.max(0, value)]).range([0, s.NODE_WIDTH]);
+                changed = true;
               } else {
+                var oldMin = scale.domain()[0];
+                var oldMax = scale.domain()[1];
                 scale.domain([Math.min(0, Math.min(scale.domain()[0], value)), Math.max(0, Math.max(scale.domain()[1], value))]);
+                changed = (oldMin !== scale.domain()[0] || oldMax !== scale.domain()[1])
               }
             });
           });
@@ -408,9 +428,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             var numEdgeSets = getEdgeSetCount(edge, setTypeWrapper);
             if (numEdgeSets > that.maxNumEdgeSets) {
               that.maxNumEdgeSets = numEdgeSets;
+              changed = true;
             }
           });
         });
+
+        return changed;
       }
       ,
 
@@ -418,7 +441,24 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         var that = this;
         comparator = comparator || pathSorting.sortingManager.currentComparator;
 
-        that.pathWrappers.sort(comparator);
+        var oldPathIds = this.getPathWrappers(false).map(function (pw) {
+          return pw.path.id;
+        });
+
+
+        this.pathWrappers.sort(comparator);
+
+        var newPathIds = this.getPathWrappers(false).map(function (pw) {
+          return pw.path.id;
+        });
+
+        var changed = false;
+        for (var i = 0; i < oldPathIds.length; i++) {
+          if (oldPathIds[i] !== newPathIds[i]) {
+            changed = true;
+            break;
+          }
+        }
 
         var rankingStrategyChain = Object.create(pathSorting.sortingManager.currentStrategyChain);
         rankingStrategyChain.splice(rankingStrategyChain.length - 1, 1);
@@ -441,6 +481,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           prevWrapper = pathWrapper;
         });
 
+        return changed;
       }
       ,
 
@@ -466,10 +507,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         this.updateListeners.push(l);
       },
 
-      notifyUpdateListeners: function () {
+      notifyUpdateListeners: function (changes) {
         var that = this;
+        changes = changes || {crossPathDataChanged: true, pagePathsChanged: true};
         this.updateListeners.forEach(function (l) {
-          l(that);
+          l(changes);
         })
       }
 

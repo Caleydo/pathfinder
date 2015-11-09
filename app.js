@@ -267,10 +267,10 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
 
             fetchSetInfos([path]);
 
-            pathStatsView.addPath(path);
-            pathStatsView.render();
+            //pathStatsView.addPath(path);
+            //pathStatsView.render();
             //listView.addPath(path);
-            overviewGraph.addPath(path);
+            //overviewGraph.addPath(path);
             //progressBar.update(path);
           }
           progressBar.update(path, added);
