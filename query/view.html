@@ -1,10 +1,10 @@
-<form class="form-inline">
+<form class="form-inline" style="position:relative; top:-10px">
 
   <div id="pathQueryView" style="display:none">
     <!--<div class="outer">-->
-      <!--<div class="inner">-->
-        <div id="pathQuery"></div>
-      <!--</div>-->
+    <!--<div class="inner">-->
+    <div id="pathQuery"></div>
+    <!--</div>-->
     <!--</div>-->
   </div>
 
@@ -17,9 +17,10 @@
     <input type="text" id="endNode" style="width: 7em;">
   </div>
 
+
   <div style="display:none" id="advancedQueryWidgets">
 
-    <label for="at_most_k">Max paths </label>
+    <label for="at_most_k">Min paths </label>
 
     <input type="number" id="at_most_k" style="width: 5em;" maxlength="3" placeholder="k"
            value="10" min="1" required="required">
@@ -31,19 +32,36 @@
 
     <div class="checkbox" id="sets_as_edges_group">
       <label>
-        <input type="checkbox" id="sets_as_edges" value="false"> Consider set relationships as edges
+        <input type="checkbox" id="sets_as_edges" value="false"> Set relationships as edges
       </label>
     </div>
   </div>
 
+
   <button type="submit" class="btn btn-primary" title="Start new query"><i class="fa fa-search"></i></button>
-  <button id="filter_query" class="btn btn-default" title="Filter current result set"><i class="fa fa-filter"></i></button>
-  <button type="button" id="toggleQueryMode" class="btn btn-default btn-active" title="Show/Hide advanced query interface">Advanced Query</button>
+  <button id="filter_query" class="btn btn-default" title="Filter current result set"><i class="fa fa-filter"></i>
+  </button>
+  <button type="button" id="toggleQueryMode" class="btn btn-default btn-active"
+          title="Show/Hide advanced query interface">Advanced Query
+  </button>
+
+
+  <div id="pathProgress" style="display:inline-block;position:relative; bottom: -10px; margin-left: 10px">
+    <div style="display:inline-block">
+      <!--<div class="progressBarItem">-->
+      <label style="display: block;padding: 0px;margin: 0px">Length</label>
+
+      <!--<div class="bar">-->
+      <label style="display: block;padding: 0px;margin: 0px">Paths</label>
+      <!--</div>-->
+      <!--</div>-->
+    </div>
+
+  </div>
 
 
   <!--<div class="form-group form-inline">-->
   <!--<div class="form-group form-inline">-->
-
 
 
   <!--</div>-->
@@ -52,6 +70,7 @@
   <!--<button id="remove_filtered_paths" class="btn btn-default" type="radio"></button>-->
   <!--</div>-->
 </form>
+
 
 <div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">

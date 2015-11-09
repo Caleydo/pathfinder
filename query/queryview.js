@@ -1702,7 +1702,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
                 return {width: 200, height: 100};
             }
             var containerSize = this.container.getSize();
-            return {width: containerSize.width + 80, height: containerSize.height + 20};
+            return {width: containerSize.width + 80, height: containerSize.height + 10};
         };
 
         QueryView.prototype.init = function () {
@@ -1714,21 +1714,21 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
             $("#sets_as_edges_group").css({display: config.isSetEdgesOnly() ? "none" : "inline-block"});
 
-            var $progress = $('.progress-bar');
-            ServerSearch.on({
-                query_start: function () {
-                    $progress.css('width', '0%');
-                },
-                query_path: function (event, data) {
-                    var k = data.query.k;
-                    var i = data.i;
-                    d3.select($progress[0]).transition().duration(100).style('width', d3.round(i / k * 100, 0) + '%');
-                },
-                query_done: function () {
-                    d3.select($progress[0]).transition().duration(100).style('width', '100%');
-                    $progress.parent();
-                }
-            });
+            //var $progress = $('.progress-bar');
+            //ServerSearch.on({
+            //    query_start: function () {
+            //        $progress.css('width', '0%');
+            //    },
+            //    query_path: function (event, data) {
+            //        var k = data.query.k;
+            //        var i = data.i;
+            //        d3.select($progress[0]).transition().duration(100).style('width', d3.round(i / k * 100, 0) + '%');
+            //    },
+            //    query_done: function () {
+            //        d3.select($progress[0]).transition().duration(100).style('width', '100%');
+            //        $progress.parent();
+            //    }
+            //});
 
             var svg = d3.select(this.parentSelector + " svg");
 

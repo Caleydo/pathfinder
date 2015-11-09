@@ -1,9 +1,10 @@
 /**
  * Created by Christian on 06.11.2015.
  */
-define(["d3", "../../config", "../../pathutil", "../../query/pathquery", "../pathsorting", "../../sorting", "../../listeners",
-    "../../hierarchyelements", "../../dataStore", "./settings", "../../settings/visibilitysettings", "./datasetrenderer"],
-  function (d3, config, pathUtil, pathQuery, pathSorting, sorting, listeners, hierarchyElements, dataStore, s, vs, dr) {
+define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '../../selectionutil',
+    '../pathsorting', '../../pathutil', '../../query/pathquery', '../../datastore', '../../config', '../../listoverlay',
+    '../../query/queryview', '../../query/queryutil', '../../hierarchyelements', './settings', './datasetrenderer', '../../settings/visibilitysettings', '../../uiutil', './column'],
+  function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config, ListOverlay, queryView, queryUtil, hierarchyElements, s, dr, vs, uiUtil, columns) {
 
     var currentSetTypeId = 0;
     var pageSize = 5;

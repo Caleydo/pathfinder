@@ -1,12 +1,12 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './listeners', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
+require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './listeners',  './list/path/pathdata', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
     './pathstats/pathstatsview', '../pathfinder_graph/search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
-    '../pathfinder_ccle/ccle', './extradata', './list/progressbar', './list/path/pathdata', 'font-awesome', 'bootstrap'],
+    '../pathfinder_ccle/ccle', './extradata', './list/progressbar',  'font-awesome', 'bootstrap'],
 
-  function ($, d3, C, ajax, listeners, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil,
-            queryView, pathQuery, config, pathSorting, statisticsUtil, ccle, extradata, progressBar, pathData) {
+  function ($, d3, C, ajax, listeners, pathData, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil,
+            queryView, pathQuery, config, pathSorting, statisticsUtil, ccle, extradata, progressBar) {
 
     'use strict';
 
@@ -211,11 +211,12 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
           pathData.init();
           queryView.init();
           overviewGraph.init();
-          progressBar.init();
+
 
 
           listView.init().then(function () {
 
+            progressBar.init();
             pathStatsView.init();
 
             var initialPaths = config.getSamplePathsFile();
@@ -270,7 +271,7 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
             pathStatsView.render();
             //listView.addPath(path);
             overviewGraph.addPath(path);
-            progressBar.update(path);
+            //progressBar.update(path);
           }
           progressBar.update(path, added);
 

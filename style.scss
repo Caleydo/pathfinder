@@ -14,6 +14,7 @@ $overlayStrokeColor: rgb(30, 30, 30);
 $overlayHoverColor: rgb(150, 200, 255);
 $neighborFillColor: rgb(255, 255, 255);
 $progressBarFillColor: rgb(150, 200, 255);
+$borderColor: rgb(180, 180, 180);
 
 @mixin textIcon($fontSize) {
   font-family: FontAwesome, sans-serif;
@@ -441,6 +442,8 @@ div.bar {
 header {
   padding: 5px;
   flex: initial;
+
+  border-bottom: 1px solid $borderColor;
 }
 
 #container {
@@ -454,7 +457,7 @@ header {
 }
 
 #listView {
-  border-right: 1px solid grey;
+  border-right: 1px solid $borderColor;
   padding: 5px 5px 5px 5px;
 
   -webkit-flex: 4;
@@ -502,7 +505,7 @@ header {
 
 #pathGraphView {
 
-  border-right: 1px solid grey;
+  border-right: 1px solid $borderColor;
   //  padding: 5px;
   -webkit-flex: 3;
   flex: 3;
@@ -545,7 +548,7 @@ header {
 //}
 
 #settings {
-  border-left: 1px solid grey;
+  border-left: 1px solid $borderColor;
   padding-left: 10px;
   //  position: absolute;
   //  right: 0px;
@@ -568,6 +571,7 @@ header {
 //  flex: 1;
 //  //  position:relative;
 //}
+
 
 #scriptText {
   font-family: monospace;
@@ -595,13 +599,13 @@ header {
 //  overflow: auto;
 //}
 
-#pathProgress {
-  display: block;
-  height: 60px;
-  width: 100%;
-  vertical-align: top;
-  //overflow: auto;
-}
+//#pathProgress {
+//  display: inline-block;
+//  height: 60px;
+//  width: 100%;
+//  vertical-align: top;
+//  //overflow: auto;
+//}
 
 #pathlist, #pathQuery {
   display: block;
@@ -619,10 +623,13 @@ header {
   height: 120px;
   overflow: auto;
   vertical-align: top;
+  //margin-top: 5px;
+  position: relative;
+  top: 10px;
 }
 
 #query_interface {
-  padding: 5px;
+  padding: 0px 5px 0px 5px;
   display: inline-block;
   width: 100%;
   vertical-align: top;
