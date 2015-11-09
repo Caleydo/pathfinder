@@ -588,6 +588,14 @@ header {
   overflow: auto;
 }
 
+#pathPagination {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  li {
+    cursor: default;
+  }
+}
+
 //#pathstats {
 //  -webkit-flex: 1 0 auto;
 //  flex: 1 0 auto;

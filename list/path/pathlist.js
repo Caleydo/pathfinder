@@ -331,9 +331,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       onPathDataUpdate: function (changes) {
         this.pathWrappers = pathData.getPathWrappers(false);
-        if(changes.pagePathsChanged) {
+        if (changes.pagePathsChanged) {
           this.renderPaths();
-        } else if(changes.crossPathDataChanged){
+        } else if (changes.crossPathDataChanged) {
           this.updatePathList();
         }
       },
@@ -448,17 +448,18 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       },
 
       getSize: function () {
+        var that = this
         var totalHeight = 0;
         var currentMaxWidth = 0;
 
         this.pathWrappers.forEach(function (pathWrapper) {
           totalHeight += pathWrapper.getHeight() + s.PATH_SPACING;
-          var currentWidth = pathWrapper.getWidth();
+          var currentWidth = that.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH;
           if (currentWidth > currentMaxWidth) {
             currentMaxWidth = currentWidth;
           }
         });
-        return {width: currentMaxWidth + columns.getWidth(), height: totalHeight};
+        return {width: (currentMaxWidth + columns.getWidth() + 100), height: totalHeight};
       }
       ,
 

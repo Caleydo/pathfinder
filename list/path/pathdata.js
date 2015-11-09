@@ -7,7 +7,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
   function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config, ListOverlay, queryView, queryUtil, hierarchyElements, s, dr, vs, uiUtil, columns) {
 
     var currentSetTypeId = 0;
-    var pageSize = 5;
+    var pageSize = 20;
 
     function SetRep(setId, type) {
       this.id = setId;
@@ -302,6 +302,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.add(function () {
           that.updateLastVisibleIndex();
           that.updateCrossPathData();
+          that.updatePagination();
           that.notifyUpdateListeners();
         }, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
 
@@ -313,6 +314,14 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         }, listeners.updateType.DATASET_UPDATE);
 
 
+        d3.select("#pathPagination li.prevPage a")
+          .on("click", function () {
+            that.setActivePage(Math.max(0, that.currentPageIndex - 1));
+          });
+        d3.select("#pathPagination li.nextPage a")
+          .on("click", function () {
+            that.setActivePage(Math.min(Math.floor(that.lastVisiblePathIndex / pageSize), that.currentPageIndex + 1));
+          });
       }
       ,
 
@@ -340,6 +349,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
         var c = this.sortPaths();
         pagePathsChanged = pagePathsChanged || c;
+
+        this.updatePagination();
 
         this.notifyUpdateListeners({pagePathsChanged: pagePathsChanged, crossPathDataChanged: crossPathDataChanged});
       }
@@ -487,7 +498,6 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       updatePathWrappersToQuery: function () {
 
-
         if (pathQuery.isRemoteQuery()) {
           for (var i = 0; i < this.pathWrappers.length; i++) {
             var pathWrapper = this.pathWrappers[i];
@@ -501,6 +511,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         this.sortPaths();
         this.updateLastVisibleIndex();
         this.updateCrossPathData();
+        this.updatePagination();
       },
 
       addUpdateListener: function (l) {
@@ -513,8 +524,48 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         this.updateListeners.forEach(function (l) {
           l(changes);
         })
-      }
+      },
 
+      updatePagination: function () {
+        var that = this;
+        var pagination = d3.select("#pathPagination");
+
+        var lastPageIndex = Math.floor(this.lastVisiblePathIndex / pageSize);
+        var data = d3.range(lastPageIndex + 1);
+        var allpages = pagination.selectAll("li.pageNumber").data(data);
+
+        allpages.enter().insert("li", "li.nextPage")
+          .classed("pageNumber", true)
+          .append("a")
+          .text(function (d) {
+            return d + 1;
+          })
+          .on("click", function (pageIndex) {
+            that.setActivePage(pageIndex);
+          });
+
+        allpages.classed("active", function (d) {
+          return d === that.currentPageIndex;
+        });
+
+        pagination.select("li.prevPage")
+          .classed("disabled", that.currentPageIndex === 0);
+        pagination.select("li.nextPage")
+          .classed("disabled", that.currentPageIndex === lastPageIndex);
+
+
+        allpages.exit().remove();
+      },
+
+
+      setActivePage: function (pageIndex) {
+        if (pageIndex !== this.currentPageIndex) {
+          this.currentPageIndex = pageIndex;
+          this.updatePagination();
+          this.notifyUpdateListeners({pagePathsChanged: true, crossPathDataChanged: false});
+        }
+      }
     }
+
 
   });
