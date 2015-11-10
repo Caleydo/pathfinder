@@ -772,56 +772,62 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         return Object.keys(nodeProperties);
       },
 
-      addPath: function (path) {
+      addPaths: function (pathsToAdd) {
 
-        //FIXME: temp adding of properties
-        path.edges.forEach(function (edge) {
-          if (typeof edge.properties === "undefined") {
-            edge.properties = {};
-          }
-        });
+        var newPaths = [];
 
-
-        if (!pathExists(path)) {
-          paths.push(path);
-
-          path.nodes.forEach(function (node) {
-            var n = nodes[node.id];
-            if (typeof n === "undefined") {
-              nodes[node.id] = node;
-              addNodeProperties(node);
+        pathsToAdd.forEach(function (path) {
+          //FIXME: temp adding of properties
+          path.edges.forEach(function (edge) {
+            if (typeof edge.properties === "undefined") {
+              edge.properties = {};
             }
           });
 
-          path.edges.forEach(function (edge, i) {
 
-            var startNode = path.nodes[i];
-            var endNode = path.nodes[i + 1];
+          if (!pathExists(path)) {
+            paths.push(path);
 
-            var setDict = {};
-            pathUtil.forEachNodeSet(startNode, function (setType, setId) {
-              setDict[setType] = setDict[setType] || {};
-              setDict[setType][setId] = true;
-            });
-
-            Object.keys(setDict).forEach(function (setType) {
-              delete edge.properties[setType];
-            });
-
-            pathUtil.forEachNodeSet(endNode, function (setType, setId) {
-              if (setDict[setType] && setDict[setType][setId]) {
-                edge.properties[setType] = edge.properties[setType] || [];
-                edge.properties[setType].push(setId);
+            path.nodes.forEach(function (node) {
+              var n = nodes[node.id];
+              if (typeof n === "undefined") {
+                nodes[node.id] = node;
+                addNodeProperties(node);
               }
             });
 
-          });
+            path.edges.forEach(function (edge, i) {
 
+              var startNode = path.nodes[i];
+              var endNode = path.nodes[i + 1];
 
+              var setDict = {};
+              pathUtil.forEachNodeSet(startNode, function (setType, setId) {
+                setDict[setType] = setDict[setType] || {};
+                setDict[setType][setId] = true;
+              });
+
+              Object.keys(setDict).forEach(function (setType) {
+                delete edge.properties[setType];
+              });
+
+              pathUtil.forEachNodeSet(endNode, function (setType, setId) {
+                if (setDict[setType] && setDict[setType][setId]) {
+                  edge.properties[setType] = edge.properties[setType] || [];
+                  edge.properties[setType].push(setId);
+                }
+              });
+
+            });
+
+            newPaths.push(path);
+          }
+        });
+        if (newPaths.length > 0) {
           fetchData();
-          return true;
         }
-        return false;
+
+        return newPaths;
       },
 
       reset: function () {

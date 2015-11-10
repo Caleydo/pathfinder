@@ -275,6 +275,19 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       return numSets;
     }
 
+    function createChangeObject(changes) {
+      return {
+        //Identifies what caused the changes, typically some events update types
+        cause: changes.cause || "UNKNOWN",
+        //Applies, when cross path data, like maximum number of sets of a node, property max or min etc. changes
+        crossPathDataChanged: changes.crossPathDataChanged || false,
+        //Applies, when the paths of the active page are changed, or their order is changed
+        pagePathsChanged: changes.pagePathsChanged || false,
+        //Applies, when paths were added or removed
+        pathsChanged: changes.pathsChanged || false
+      }
+    }
+
     return {
 
       pathWrappers: [],
@@ -286,24 +299,32 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       updateListeners: [],
 
+
       init: function () {
         var that = this;
 
         listeners.add(function (comparator) {
-          that.sortPaths(comparator);
-          that.notifyUpdateListeners();
+          var changes = that.sortPaths(comparator);
+          changes.cause = pathSorting.updateType;
+          that.notifyUpdateListeners(createChangeObject(changes));
         }, pathSorting.updateType);
 
         listeners.add(function () {
-          that.updatePathWrappersToQuery();
-          that.notifyUpdateListeners();
+          var changes = that.updatePathWrappersToQuery();
+          changes.cause = listeners.updateType.QUERY_UPDATE;
+          that.notifyUpdateListeners(createChangeObject(changes));
         }, listeners.updateType.QUERY_UPDATE);
 
         listeners.add(function () {
-          that.updateLastVisibleIndex();
-          that.updateCrossPathData();
+          var changes = that.updateLastVisibleIndex();
+          var crossPathDataChanged = that.updateCrossPathData();
           that.updatePagination();
-          that.notifyUpdateListeners();
+          that.notifyUpdateListeners(createChangeObject({
+            cause: listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE,
+            pathsChanged: changes.pathsChanged,
+            pagePathsChanged: changes.pagePathsChanged,
+            crossPathDataChanged: crossPathDataChanged
+          }));
         }, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
 
         listeners.add(function () {
@@ -325,34 +346,45 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       }
       ,
 
-      addPath: function (path) {
+      addPaths: function (paths) {
 
-        var pathWrapper = new PathWrapper(path);
-        var firstPageIndex = this.currentPageIndex * pageSize;
-        var pagePathsChanged = ((this.pathWrappers.length >= firstPageIndex) && (this.pathWrappers.length <= (firstPageIndex + pageSize - 1)));
-        this.pathWrappers.push(pathWrapper);
-        var pathFiltered = pathQuery.isPathFiltered(path.id);
-        var removeFilteredPaths = pathQuery.isRemoveFilteredPaths();
+        var that = this;
+        var pagePathsChanged = false;
         var crossPathDataChanged = false;
-        if (!(pathFiltered && removeFilteredPaths)) {
-          crossPathDataChanged = this.updateCrossPathDataForPathWrapper(pathWrapper);
-        }
+        var firstPageIndex = this.currentPageIndex * pageSize;
+        paths.forEach(function (path) {
+          var pathWrapper = new PathWrapper(path);
+          pagePathsChanged = pagePathsChanged || ((that.pathWrappers.length >= firstPageIndex) && (that.pathWrappers.length <= (firstPageIndex + pageSize - 1)));
+          that.pathWrappers.push(pathWrapper);
+          var pathFiltered = pathQuery.isPathFiltered(path.id);
+          var removeFilteredPaths = pathQuery.isRemoveFilteredPaths();
 
-        if (removeFilteredPaths) {
-          //Index increases when path is not filtered, otherwise it stays the same
-          if (!pathFiltered) {
-            this.lastVisiblePathIndex++;
+          if (!(pathFiltered && removeFilteredPaths)) {
+            crossPathDataChanged = crossPathDataChanged || that.updateCrossPathDataForPathWrapper(pathWrapper);
           }
-        } else {
-          this.lastVisiblePathIndex = this.pathWrappers.length - 1;
-        }
 
-        var c = this.sortPaths();
+          if (removeFilteredPaths) {
+            //Index increases when path is not filtered, otherwise it stays the same
+            if (!pathFiltered) {
+              that.lastVisiblePathIndex++;
+            }
+          } else {
+            that.lastVisiblePathIndex = that.pathWrappers.length - 1;
+          }
+        });
+
+
+        var c = this.sortPaths().pagePathsChanged;
         pagePathsChanged = pagePathsChanged || c;
 
         this.updatePagination();
 
-        this.notifyUpdateListeners({pagePathsChanged: pagePathsChanged, crossPathDataChanged: crossPathDataChanged});
+        this.notifyUpdateListeners(createChangeObject({
+          cause: "ADD_PATH",
+          pagePathsChanged: pagePathsChanged,
+          crossPathDataChanged: crossPathDataChanged,
+          pathsChanged: true
+        }));
       }
       ,
 
@@ -379,21 +411,29 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       },
 
       updateLastVisibleIndex: function () {
+        var prevIndex = this.lastVisiblePathIndex;
+        var withinCurrentPage = Math.floor(prevIndex / pageSize) === this.currentPageIndex;
+        var pagePathsChanged = false;
         if (pathQuery.isRemoveFilteredPaths()) {
           //We assume that paths are sorted correctly, i.e., filtered paths are last
           for (var i = 0; i < this.pathWrappers.length; i++) {
             if (pathQuery.isPathFiltered(this.pathWrappers[i].path.id)) {
               this.lastVisiblePathIndex = i - 1;
               break;
+            } else if(i === this.pathWrappers.length -1) {
+              this.lastVisiblePathIndex = i;
             }
           }
 
           if (this.currentPageIndex * pageSize > this.lastVisiblePathIndex) {
             this.currentPageIndex = Math.floor(this.lastVisiblePathIndex / pageSize);
+            pagePathsChanged = true;
           }
         } else {
           this.lastVisiblePathIndex = this.pathWrappers.length - 1;
         }
+        var pathsChanged = prevIndex !== this.lastVisiblePathIndex;
+        return {pathsChanged: pathsChanged, pagePathsChanged: pagePathsChanged || (withinCurrentPage && pathsChanged)};
       },
 
       updateCrossPathData: function () {
@@ -459,15 +499,20 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
         this.pathWrappers.sort(comparator);
 
-        var newPathIds = this.getPathWrappers(false).map(function (pw) {
-          return pw.path.id;
-        });
+        var c = this.updateLastVisibleIndex();
 
-        var changed = false;
-        for (var i = 0; i < oldPathIds.length; i++) {
-          if (oldPathIds[i] !== newPathIds[i]) {
-            changed = true;
-            break;
+        var pagePathsChanged = c.pagePathsChanged;
+
+        if (!pagePathsChanged) {
+          var newPathIds = this.getPathWrappers(false).map(function (pw) {
+            return pw.path.id;
+          });
+
+          for (var i = 0; i < oldPathIds.length; i++) {
+            if (oldPathIds[i] !== newPathIds[i]) {
+              pagePathsChanged = true;
+              break;
+            }
           }
         }
 
@@ -492,26 +537,36 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           prevWrapper = pathWrapper;
         });
 
-        return changed;
+        return {pagePathsChanged: pagePathsChanged, pathsChanged: c.pathsChanged};
       }
       ,
 
       updatePathWrappersToQuery: function () {
 
+        var c = this.sortPaths();
+        var pagePathsChanged = c.pagePathsChanged;
+        var pathsChanged = c.pathsChanged;
+
         if (pathQuery.isRemoteQuery()) {
+
           for (var i = 0; i < this.pathWrappers.length; i++) {
             var pathWrapper = this.pathWrappers[i];
             if (pathQuery.isPathFiltered(pathWrapper.path.id)) {
-              this.pathWrappers.splice(i, 1);
-              i--;
+              var numElementsToRemove = this.pathWrappers.length - i;
+              this.pathWrappers.splice(i, numElementsToRemove);
+              pathsChanged = true;
+              break;
             }
           }
         }
 
-        this.sortPaths();
-        this.updateLastVisibleIndex();
-        this.updateCrossPathData();
+        var crossPathDataChanged = this.updateCrossPathData();
         this.updatePagination();
+        return {
+          pagePathsChanged: pagePathsChanged,
+          pathsChanged: pathsChanged,
+          crossPathDataChanged: crossPathDataChanged
+        }
       },
 
       addUpdateListener: function (l) {
@@ -520,7 +575,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       notifyUpdateListeners: function (changes) {
         var that = this;
-        changes = changes || {crossPathDataChanged: true, pagePathsChanged: true};
+        changes = changes || {
+            crossPathDataChanged: true,
+            pagePathsChanged: true,
+            filterStatusChanged: true,
+            pathsChanged: true
+          };
         this.updateListeners.forEach(function (l) {
           l(changes);
         })
@@ -562,7 +622,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         if (pageIndex !== this.currentPageIndex) {
           this.currentPageIndex = pageIndex;
           this.updatePagination();
-          this.notifyUpdateListeners({pagePathsChanged: true, crossPathDataChanged: false});
+          this.notifyUpdateListeners(createChangeObject({pagePathsChanged: true}));
         }
       }
     }

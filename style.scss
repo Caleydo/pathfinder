@@ -37,6 +37,12 @@ html, body {
 
 body {
   padding: 0px 5px 0px 5px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 text {
@@ -571,7 +577,6 @@ header {
 //  flex: 1;
 //  //  position:relative;
 //}
-
 
 #scriptText {
   font-family: monospace;

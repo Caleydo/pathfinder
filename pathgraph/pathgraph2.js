@@ -17,6 +17,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       this.currentGraphLayout = this.layeredLayout;
       this.neighbors = [];
       this.graph = newGraph();
+      this.showAllPaths = true;
     }
 
     PathGraphView.prototype = Object.create(View.prototype);
@@ -27,11 +28,19 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       View.prototype.init.call(this);
       var that = this;
 
-      pathData.addUpdateListener(function(changes){
-        if(changes.pagePathsChanged) {
-          that.paths = pathData.getPaths(false);
+      pathData.addUpdateListener(function (changes) {
+
+        if ((that.showAllPaths && changes.pathsChanged) || (!that.showAllPaths && changes.pagePathsChanged)) {
+          that.paths = pathData.getPaths(that.showAllPaths);
           that.updateGraph();
+        } else if (changes.cause === listeners.updateType.QUERY_UPDATE) {
+          that.currentGraphLayout.render(that.paths, that.graph);
         }
+
+        //if(changes.pagePathsChanged) {
+
+
+        //}
       });
 
       var nodeWidth = config.getNodeWidth();

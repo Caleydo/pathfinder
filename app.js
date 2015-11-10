@@ -1,9 +1,9 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './listeners',  './list/path/pathdata', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
+require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './listeners', './list/path/pathdata', './list/listview', './pathgraph/pathgraph2', './setinfo', './datastore',
     './pathstats/pathstatsview', '../pathfinder_graph/search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
-    '../pathfinder_ccle/ccle', './extradata', './list/progressbar',  'font-awesome', 'bootstrap'],
+    '../pathfinder_ccle/ccle', './extradata', './list/progressbar', 'font-awesome', 'bootstrap'],
 
   function ($, d3, C, ajax, listeners, pathData, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil,
             queryView, pathQuery, config, pathSorting, statisticsUtil, ccle, extradata, progressBar) {
@@ -141,7 +141,10 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
         //});
 
         statisticsUtil.statisticsOf([0, NaN, 5, 3, NaN, 7, 3]);
-        var x = 0;
+
+      //Add paths only every x seconds to keep interface interactive
+        var lastAdditionTime = -1;
+        var pathQueue = [];
 
         ServerSearch.on({
           query_start: function () {
@@ -149,12 +152,26 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
             progressBar.reset();
           },
           query_path: function (event, data) {
-            addPath(data.path);
+            if (lastAdditionTime === -1) {
+              addPaths([data.path]);
+              lastAdditionTime = Date.now();
+            } else {
+              var currentTime = Date.now();
+              pathQueue.push(data.path);
+              if (currentTime - lastAdditionTime > 1500) {
+                lastAdditionTime = currentTime;
+                addPaths(Object.create(pathQueue));
+                pathQueue = [];
+              }
+            }
             //dataStore.addPath(data.path);
             //console.log("added path " +(x++))
           },
 
           query_done: function () {
+            lastAdditionTime = -1;
+            addPaths(Object.create(pathQueue));
+            pathQueue = [];
             progressBar.render(-1);
           },
 
@@ -213,7 +230,6 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
           overviewGraph.init();
 
 
-
           listView.init().then(function () {
 
             progressBar.init();
@@ -233,7 +249,7 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
                     progressBar.render(-1);
                     return;
                   }
-                  addPath(paths[i]);
+                  addPaths([paths[i]]);
                   i++;
 
                 }, 100);
@@ -257,15 +273,18 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
           pathStatsView.reset();
         }
 
-        function addPath(path) {
-          path.id = currentPathId++;
-          var added = dataStore.addPath(path);
-          if (added) {
-            pathQuery.addPath(path);
+        function addPaths(paths) {
+          paths.forEach(function(path){
+             path.id = currentPathId++;
+          });
 
-            pathData.addPath(path);
+          var addedPaths = dataStore.addPaths(paths);
+          if (addedPaths.length > 0) {
+            pathQuery.addPaths(addedPaths);
 
-            fetchSetInfos([path]);
+            pathData.addPaths(paths);
+
+            fetchSetInfos(paths);
 
             //pathStatsView.addPath(path);
             //pathStatsView.render();
@@ -273,7 +292,8 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
             //overviewGraph.addPath(path);
             //progressBar.update(path);
           }
-          progressBar.update(path, added);
+
+          progressBar.update(paths, addedPaths);
 
         }
 
@@ -282,29 +302,29 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
         //}
 
         //function loadPaths(paths) {
-	//
+        //
         //  reset();
-	//
+        //
         //  for (var i = 0; i < paths.length; i++) {
         //    paths[i].id = currentPathId++;
         //    dataStore.addPath(paths[i]);
         //  }
         //  //dataStore.paths = paths;
         //  pathQuery.update();
-	//
-	//
+        //
+        //
         //  if (paths.length > 0) {
         //    //var allSetIds = [];
         //    //var setDict = {};
-	//
+        //
         //    fetchSetInfos(paths);
-	//
-	//
+        //
+        //
         //    listView.render(paths);
         //    //setList.render(paths);
-	//
+        //
         //    overviewGraph.render(paths);
-	//
+        //
         //    pathStatsView.setPaths(paths);
         //    pathStatsView.render();
         //  }

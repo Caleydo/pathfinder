@@ -73,105 +73,31 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
     }
   };
 
-  ProgressBar.prototype.update = function (path, added) {
+  ProgressBar.prototype.update = function (paths, addedPaths) {
 
-    this.lengthHistogram[path.nodes.length.toString()] = this.lengthHistogram[path.nodes.length.toString()] || {
-        length: path.nodes.length,
-        numPaths: 0
-      };
-    if (added) {
-      this.lengthHistogram[path.nodes.length.toString()].numPaths++;
-      if (path.nodes.length > this.maxLength) {
-        this.maxLength = path.nodes.length;
-        this.fillHistogram();
+    var that = this;
+    var currentMaxLength = 0;
+    paths.forEach(function (path) {
+      that.lengthHistogram[path.nodes.length.toString()] = that.lengthHistogram[path.nodes.length.toString()] || {
+          length: path.nodes.length,
+          numPaths: 0
+        };
+      if (path.nodes.length > currentMaxLength) {
+        currentMaxLength = path.nodes.length;
       }
-    }
+      if (addedPaths.indexOf(path) !== -1) {
+        that.lengthHistogram[path.nodes.length.toString()].numPaths++;
+        if (path.nodes.length > that.maxLength) {
+          that.maxLength = path.nodes.length;
+          that.fillHistogram();
+        }
+      }
+    });
 
-    this.render(path.nodes.length - 1);
+
+    this.render(currentMaxLength - 1);
   };
 
-  //ProgressBar.prototype.render = function (progressIndex) {
-  //    var that = this;
-  //    var svg = d3.select("#pathProgress svg");
-  //
-  //    var data = Object.keys(that.lengthHistogram).map(function (key) {
-  //        return that.lengthHistogram[key];
-  //    });
-  //
-  //
-  //    var allItems = svg.selectAll("g.lengthItem").data(data);
-  //
-  //    var items = allItems.enter().append("g")
-  //        .classed("lengthItem", true);
-  //
-  //
-  //    items.each(function (data, i) {
-  //        var item = d3.select(this);
-  //
-  //        item.append("rect")
-  //            .classed("progressBarItem", true)
-  //            .attr({
-  //                rx: 5,
-  //                ry: 5,
-  //                x: i * ITEM_WIDTH + (i - 1) * ITEM_SPACING,
-  //                y: 0,
-  //                width: ITEM_WIDTH,
-  //                height: ITEM_HEIGHT
-  //            });
-  //
-  //        item.append("text")
-  //            .classed("length", true)
-  //            .attr({
-  //                x: i * ITEM_WIDTH + (i - 1) * ITEM_SPACING,
-  //                y: 12
-  //            })
-  //            .text("\uf110")
-  //            .classed("fa-spin", true)
-  //            .style({"font-family": "FontAwesome, sans-serif"});
-  //
-  //        item.append("text")
-  //            .classed("numPaths", true)
-  //            .attr({
-  //                x: i * ITEM_WIDTH + (i - 1) * ITEM_SPACING,
-  //                y: 24
-  //            })
-  //            .text(data.numPaths);
-  //    });
-  //
-  //    allItems.each(function (data, i) {
-  //        var item = d3.select(this);
-  //
-  //        item.select("text.length")
-  //            .text("\uf110");
-  //        item.select("text.numPaths")
-  //            .text(data.numPaths);
-  //
-  //
-  //        var spinner = item.select("foreignObject.spinner");
-  //        if (i == progressIndex) {
-  //            if (spinner.empty()) {
-  //                item.append("foreignObject")
-  //                    .classed("spinner", true)
-  //                    .attr({
-  //                        x: i * ITEM_WIDTH + (i - 1) * ITEM_SPACING + 20,
-  //                        y: 2,
-  //                        width: 20,
-  //                        height: 20
-  //                    }).append("xhtml:div")
-  //                    .html('<i class="fa fa-spin fa-pulse">\uf110</i>');
-  //            }
-  //        } else {
-  //            spinner.remove();
-  //        }
-  //
-  //    });
-  //
-  //    allItems.exit().remove();
-  //
-  //    this.updateViewSize();
-  //
-  //
-  //};
 
   ProgressBar.prototype.render = function (progressIndex) {
     var that = this;

@@ -49,8 +49,10 @@ define(['../listeners', './querymodel', '../datastore', '../pathutil', '../confi
 
   return {
 
-    addPath: function (path) {
-      filterPath(path);
+    addPaths: function (paths) {
+      paths.forEach(function(path){
+        filterPath(path);
+      });
     },
 
     getQuery: function () {
