@@ -50,9 +50,10 @@ define(['../listeners', './querymodel', '../datastore', '../pathutil', '../confi
   return {
 
     addPaths: function (paths) {
-      paths.forEach(function(path){
+      paths.forEach(function (path) {
         filterPath(path);
       });
+      console.log("nodes: " + Object.keys(remainingNodeIds).length + ", sets: " + Object.keys(remainingNodeSetIds).length + ", edgesets: " + Object.keys(remainingEdgeSetIds).length);
     },
 
     getQuery: function () {

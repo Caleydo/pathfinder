@@ -316,7 +316,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         pathData.addUpdateListener(this.onPathDataUpdate.bind(this));
         listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.add(this.collapseElementListener, s.pathListUpdateTypes.COLLAPSE_ELEMENT_TYPE);
-        listeners.add(this.setVisibilityUpdateListener, vs.updateTypes.UPDATE_NODE_SET_VISIBILITY);
+        //listeners.add(this.setVisibilityUpdateListener, vs.updateTypes.UPDATE_NODE_SET_VISIBILITY);
         listeners.add(this.alignPathNodesUpdateListener, s.pathListUpdateTypes.ALIGN_PATH_NODES);
         listeners.add(this.alignColumnsUpdateListener, s.pathListUpdateTypes.ALIGN_COLUMNS);
         //listeners.add(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
@@ -331,9 +331,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       onPathDataUpdate: function (changes) {
         this.pathWrappers = pathData.getPathWrappers(false);
-        if (changes.pagePathsChanged) {
+        if (changes.pagePathsChanged || changes.crossPathDataChanged) {
+          this.updatePivotNodeIndex();
           this.renderPaths();
-        } else if (changes.crossPathDataChanged) {
+        } else if (changes.cause === pathSorting.updateType) {
           this.updatePathList();
         }
       },
@@ -448,7 +449,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       },
 
       getSize: function () {
-        var that = this
+        var that = this;
         var totalHeight = 0;
         var currentMaxWidth = 0;
 
@@ -493,20 +494,27 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       },
 
       setPivotNode: function (id) {
+
+        this.pivotNodeId = id;
+        this.updatePivotNodeIndex();
+        this.renderPaths();
+      },
+
+      updatePivotNodeIndex: function () {
+        if (this.pivotNodeId === -1) {
+          return;
+        }
+        var that = this;
         var maxNodeIndex = 0;
         this.pathWrappers.forEach(function (pathWrapper) {
           for (var i = pathWrapper.path.nodes.length - 1; i >= 0; i--) {
-            if (pathWrapper.path.nodes[i].id === id && i > maxNodeIndex) {
+            if (pathWrapper.path.nodes[i].id === that.pivotNodeId && i > maxNodeIndex) {
               maxNodeIndex = i;
               break;
             }
           }
         });
-
-        this.pivotNodeId = id;
         this.pivotNodeIndex = maxNodeIndex;
-
-        this.updatePathList();
       },
 
       getPivotNodeAlignedTranslationX: function (pathWrapper) {

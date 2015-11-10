@@ -173,6 +173,7 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
             addPaths(Object.create(pathQueue));
             pathQueue = [];
             progressBar.render(-1);
+            pathStatsView.render();
           },
 
           neighbor_neighbor: function (event, data) {

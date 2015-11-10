@@ -327,6 +327,15 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           }));
         }, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
 
+
+        listeners.add(function () {
+          var changed = that.updateCrossPathData();
+          that.notifyUpdateListeners(createChangeObject({
+            cause: vs.updateTypes.UPDATE_NODE_SET_VISIBILITY,
+            crossPathDataChanged: changed
+          }));
+        }, vs.updateTypes.UPDATE_NODE_SET_VISIBILITY);
+
         listeners.add(function () {
           that.pathWrappers.forEach(function (pathWrapper) {
             pathWrapper.updateDatasets();
@@ -420,7 +429,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             if (pathQuery.isPathFiltered(this.pathWrappers[i].path.id)) {
               this.lastVisiblePathIndex = i - 1;
               break;
-            } else if(i === this.pathWrappers.length -1) {
+            } else if (i === this.pathWrappers.length - 1) {
               this.lastVisiblePathIndex = i;
             }
           }
@@ -439,6 +448,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       updateCrossPathData: function () {
         var that = this;
         var changed = false;
+
+        this.numericalPropertyScales = {};
+        this.maxNumEdgeSets = 0;
+        this.maxNumNodeSets = 0;
         this.pathWrappers.forEach(function (pathWrapper) {
           var c = that.updateCrossPathDataForPathWrapper(pathWrapper);
           changed = changed || c;

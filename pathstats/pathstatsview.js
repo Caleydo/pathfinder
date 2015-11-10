@@ -40,9 +40,9 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       var that = this;
 
       pathData.addUpdateListener(function(changes){
-        if(changes.pagePathsChanged){
-          that.paths = pathData.getPaths(false);
-          //that.updateToAllPaths();
+        if(changes.pathsChanged){
+          that.paths = pathData.getPaths(true);
+          that.updateToFilteredPaths();
         }
       });
 
@@ -155,7 +155,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         }
       });
 
-      this.render();
+      //this.render();
     };
 
     PathStatsView.prototype.updateToAllPaths = function () {
