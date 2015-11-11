@@ -53,7 +53,7 @@ define(['../listeners', './querymodel', '../datastore', '../pathutil', '../confi
       paths.forEach(function (path) {
         filterPath(path);
       });
-      console.log("nodes: " + Object.keys(remainingNodeIds).length + ", sets: " + Object.keys(remainingNodeSetIds).length + ", edgesets: " + Object.keys(remainingEdgeSetIds).length);
+      //console.log("nodes: " + Object.keys(remainingNodeIds).length + ", sets: " + Object.keys(remainingNodeSetIds).length + ", edgesets: " + Object.keys(remainingEdgeSetIds).length);
     },
 
     getQuery: function () {

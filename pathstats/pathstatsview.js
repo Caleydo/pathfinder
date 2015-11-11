@@ -1,5 +1,5 @@
 define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners',
-  '../query/pathquery', '../sorting', '../setinfo', '../config', '../query/queryutil', '../uiutil', '../list/path/pathdata'],
+    '../query/pathquery', '../sorting', '../setinfo', '../config', '../query/queryutil', '../uiutil', '../list/path/pathdata'],
   function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo, config, queryUtil, uiUtil, pathData) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
@@ -12,12 +12,23 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
     var BAR_START_X = 110;
     var MAX_BAR_WIDTH = 80;
 
+    function appendLabelClipPath(svg) {
+      //  .classed("setTypeGroup", true);
+      svg.append("clipPath")
+        .attr("id", "LabelClipPath")
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", 90)
+        .attr("height", 20);
+    }
+
     function getKey(d) {
       return d.id;
     }
 
     function PathStatsView() {
-      view.call(this, "#pathstats");
+      //view.call(this, "#pathstats");
       this.paths = [];
       this.nodeTypeDict = {};
       this.setTypeDict = {};
@@ -31,35 +42,28 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       this.selectionListeners = [];
     }
 
-    PathStatsView.prototype = Object.create(view.prototype);
+    //PathStatsView.prototype = Object.create(view.prototype);
 
 
     PathStatsView.prototype.init = function () {
-      view.prototype.init.call(this);
+      //view.prototype.init.call(this);
 
       var that = this;
 
-      pathData.addUpdateListener(function(changes){
-        if(changes.pathsChanged){
+      pathData.addUpdateListener(function (changes) {
+        if (changes.pathsChanged) {
           that.paths = pathData.getPaths(true);
           that.updateToFilteredPaths();
         }
       });
 
-      var svg = d3.select("#pathstats svg");
+      //var svg = d3.select("#pathstats svg");
       //svg.append("g")
       //  .classed("nodeTypeGroup", true);
       //svg.append("g")
-      //  .classed("setTypeGroup", true);
-      svg.append("clipPath")
-        .attr("id", "LabelClipPath")
-        .append("rect")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("width", 90)
-        .attr("height", 20);
 
-      this.textSizeDomElement = uiUtil.createFontSizeTextElement(svg);
+
+
 
       //listeners.add(function (query) {
       //  if (pathQuery.isRemoveFilteredPaths() || pathQuery.isRemoteQuery()) {
@@ -81,8 +85,13 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
 
       listeners.add(function (showNonEdgeSets) {
-        that.updateView();
+        that.render();
       }, "UPDATE_SET_VISIBILITY");
+
+
+      $(window).on('resize.updatev', function (e) {
+        that.updateViewSize();
+      });
     };
 
     PathStatsView.prototype.getTextWidth = function (string, fontStyle) {
@@ -155,7 +164,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         }
       });
 
-      //this.render();
+      this.render();
     };
 
     PathStatsView.prototype.updateToAllPaths = function () {
@@ -276,128 +285,19 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         .range([0, MAX_BAR_WIDTH]);
     };
 
-    PathStatsView.prototype.updateView = function () {
-
-      var scaleX = this.getBarScale();
-
-      //d3.selectAll("g.nodeTypeGroup").data([this.nodeTypeWrappers]);
-      var that = this;
-      var statTypeGroups = d3.selectAll("g.level1HierarchyElement")
-        .transition()
-        .attr({
-          transform: hierarchyElements.transformFunction
-        });
-
-      var comparator = sorting.chainComparators([function (a, b) {
-        return d3.descending(a.pathIds.length, b.pathIds.length);
-      }, function (a, b) {
-        return d3.descending(a.id, b.id);
-      }]);
-
-      statTypeGroups.each(function (d) {
-        d.children.sort(comparator);
-        var allStatTypes = d3.select(this).selectAll("g.statTypes")
-          .data(d.children, getKey);
-
-        d3.select(this).selectAll("g.statTypes rect.pathOccurrences")
-          .data(d.children, getKey)
-          .transition()
-          .attr("width", function (d) {
-            return scaleX(d.pathIds.length)
-          });
-
-        d3.select(this).selectAll("g.statTypes rect.pathOccurrences title")
-          .data(d.children, getKey)
-          .text(function (d) {
-            return d.getTooltip()
-          });
-
-
-        allStatTypes
-          .sort(comparator)
-          .transition()
-          .attr({
-            display: hierarchyElements.displayFunction,
-            transform: hierarchyElements.transformFunction
-          });
-
-        allStatTypes.each(function (typeWrapper) {
-
-          typeWrapper.children.sort(comparator);
-
-
-          var stats = d3.select(this).selectAll("g.stats")
-            .data(typeWrapper.children, getKey);
-
-
-          stats.selectAll("rect.pathOccurrences")
-            .data(typeWrapper.children, getKey)
-            .transition()
-            .attr("width", function (d) {
-              return scaleX(d.pathIds.length)
-            });
-
-          stats.selectAll("rect.pathOccurrences title")
-            .data(typeWrapper.children, getKey)
-            .text(function (d) {
-              return d.getTooltip()
-            });
-
-          d3.select(this).selectAll("g.statTypeCont")
-            .transition()
-            .style("opacity", function (d) {
-              return d.isFiltered() ? 0.5 : 1;
-            });
-
-          d3.select(this).selectAll("g.stats")
-            .sort(comparator)
-            .transition()
-            .attr({
-              display: hierarchyElements.displayFunction,
-              transform: hierarchyElements.transformFunction
-            })
-            .style("opacity", function (d) {
-              return d.isFiltered() ? 0.5 : 1;
-            });
-        });
-
-        allStatTypes.selectAll("g.statGroup")
-          .transition()
-          .each("start", function (typeWrapper) {
-            if (typeWrapper.collapsed) {
-              d3.select(this)
-                .attr({
-                  display: "none"
-                });
-            }
-          })
-          .each("end", function (typeWrapper) {
-            if (!typeWrapper.collapsed) {
-              d3.select(this)
-                .attr({
-                  display: "inline"
-                });
-            }
-          });
-
-      });
-
-
-      this.updateViewSize();
-    };
 
     function updateSets(setInfo) {
 
-      var svg = d3.select("#pathstats svg");
+      var svg = d3.select("#pathstats");
 
       //Title needs to be appended every time as text() on a text element removes existing subelements with the text
       svg.selectAll("g.set_stat text")
-        .text(function (d) {
-          return setInfo.getSetLabel(d.setId);
+        .text(function (stat) {
+          return stat.getLabel();
         })
         .append("title")
-        .text(function (d) {
-          return setInfo.getSetLabel(d.setId);
+        .text(function (stat) {
+          return stat.getLabel();
         });
 
       //var titles = svg.selectAll("g.set_stat text title");
@@ -430,16 +330,30 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       var that = this;
 
-      var allLevel1HierarchyElements = d3.select("#pathstats svg").selectAll("g.level1HierarchyElement").data(this.dataRoot.children);
+      var allLevel1HierarchyElements = d3.select("#pathstats").selectAll("div.level1HierarchyElement").data(this.dataRoot.children);
 
       allLevel1HierarchyElements.enter()
-        .append("g")
+        .append("div")
         .classed("level1HierarchyElement", true)
         .each(function (d) {
+
+          var svg = d3.select(this).append("svg")
+            .attr({
+              height: function (d) {
+                return d.getBaseHeight() + 2;
+              },
+              width: 200
+            });
+
+          if(!that.textSizeDomElement){
+            that.textSizeDomElement = uiUtil.createFontSizeTextElement(svg);
+          }
+
           if (d === that.nodeTypeWrappers) {
-            d3.select(this)
-              .classed("nodeTypeGroup", true)
-              .append("text")
+
+            d3.select(this).classed("nodeTypeGroup", true);
+
+            svg.append("text")
               .text("Nodes")
               .attr({
                 x: 0,
@@ -450,9 +364,8 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
               });
 
           } else if (d === that.setTypeWrappers) {
-            d3.select(this)
-              .classed("setTypeGroup", true)
-              .append("text")
+            d3.select(this).classed("setTypeGroup", true);
+            svg.append("text")
               .text("Sets")
               .attr({
                 x: 0,
@@ -464,12 +377,12 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
           }
 
-          appendAxis(d3.select(this), that.getBarScale(), d.getBaseHeight());
+          appendAxis(svg, that.getBarScale(), d.getBaseHeight());
         });
 
 
       allLevel1HierarchyElements.each(function (d) {
-        updateAxis(d3.select(this), that.getBarScale());
+        updateAxis(d3.select(this).select("svg"), that.getBarScale());
       });
 
       function appendAxis(parent, scaleX, posY) {
@@ -501,225 +414,219 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         .removeListeners(this.selectionListeners);
       this.selectionListeners = [];
 
-      this.renderStats("g.nodeTypeGroup", this.nodeTypeWrappers.children, function (d) {
+      this.renderStats(d3.select("#pathstats div.nodeTypeGroup"), this.nodeTypeWrappers.children, function (d) {
         return d.node.id;
       }, "node");
       //this.renderStats();
-      this.renderStats("g.setTypeGroup", this.setTypeWrappers.children, function (d) {
+      this.renderStats(d3.select("#pathstats div.setTypeGroup"), this.setTypeWrappers.children, function (d) {
         return d.setId;
       }, "set");
 
-      this.updateView();
+      //this.updateView();
 
     };
 
-    PathStatsView.prototype.renderStats = function (rootSelector, statTypes, statSelectionFunction, idType) {
+    PathStatsView.prototype.renderStats = function (parent, statTypes, statSelectionFunction, idType) {
 
-      var statTypeGroup = d3.selectAll(rootSelector);
-      //.attr({
-      //  transform: hierarchyElements.transformFunction
-      //});
       var that = this;
 
-      var allStatTypes = statTypeGroup.selectAll("g.statTypes")
+      var allStatTypes = parent.selectAll("div.statTypes")
         .data(statTypes, getKey);
-
-      allStatTypes.exit()
-        .remove();
 
       var scaleX = this.getBarScale();
 
       var statType = allStatTypes
         .enter()
-        .append("g")
+        .append("div")
         .classed("statTypes", true)
         .attr({
-          display: hierarchyElements.displayFunction,
-          transform: "translate(0," + Math.max($(this.parentSelector)[0].offsetHeight, that.getMinSize().height) + ")"
+          display: function (d) {
+            return d.canBeShown() ? "block" : "none";
+          }
+          //transform: "translate(0," + Math.max($(this.parentSelector)[0].offsetHeight, that.getMinSize().height) + ")"
         });
 
-      var typeCont = statType.append("g")
-        .classed("statTypeCont", true);
 
-      typeCont.each(function (d, i) {
-        if (d.hasOverlayItems()) {
-          uiUtil.createTemporalMenuOverlayButton(d3.select(this), BAR_START_X - 20, d.getBaseHeight() - uiUtil.SMALL_BUTTON_SIZE - 2, true, function () {
-            return d.getOverlayMenuItems();
+      statType.each(function (statType, i) {
+
+        var $statType = d3.select(this);
+
+        var typeCont = $statType.append("svg")
+          .classed("statTypeCont", true)
+          .attr({
+            width: 200,
+            height: function (d) {
+              return d.getBaseHeight();
+            }
           });
 
-          //queryUtil.createAddNodeFilterButton(d3.select(this), d3.select("#pathstats svg"), d.getNodeConstraintType(), d.getFilterText(), BAR_START_X - 20, 0, true);
+        appendLabelClipPath(typeCont);
+
+        if (statType.hasOverlayItems()) {
+          uiUtil.createTemporalMenuOverlayButton(typeCont, BAR_START_X - 20, statType.getBaseHeight() - uiUtil.SMALL_BUTTON_SIZE - 2, true, function () {
+            return statType.getOverlayMenuItems();
+          });
         }
-      });
 
-      typeCont.append("rect")
-        .classed("filler", true)
-        .attr({
-          x: 0,
-          y: 0,
-          width: "100%",
-          height: function (d) {
-            return d.getBaseHeight();
-          }
-        });
+        typeCont.append("rect")
+          .classed("filler", true)
+          .attr({
+            x: 0,
+            y: 0,
+            width: "100%",
+            height: statType.getBaseHeight()
 
-      typeCont.append("text")
-        .attr("class", "collapseIconSmall")
-        .attr("x", 5)
-        .attr("y", function (d) {
-          return d.getBaseHeight() - 2;
-        })
-        .text(function (typeWrapper) {
-          return typeWrapper.collapsed ? "\uf0da" : "\uf0dd";
-        })
-        .on("click", function (typeWrapper) {
-          typeWrapper.collapsed = !typeWrapper.collapsed;
-          d3.select(this).text(typeWrapper.collapsed ? "\uf0da" : "\uf0dd");
-          that.updateView();
-        });
+          });
 
-      var typeLabelStyle = {"font-weight": "bolder"};
+        typeCont.append("text")
+          .attr("class", "collapseIconSmall")
+          .attr("x", 5)
+          .attr("y", statType.getBaseHeight() - 2)
+          .text(statType.collapsed ? "\uf0da" : "\uf0dd")
+          .on("click", function (typeWrapper) {
+            typeWrapper.collapsed = !typeWrapper.collapsed;
+            d3.select(this).text(typeWrapper.collapsed ? "\uf0da" : "\uf0dd");
+            that.updateView();
+          });
 
-      if (idType === "node") {
-        typeCont.each(function (d) {
-          var symbolType = config.getNodeTypeSymbol(d.type);
+        var typeLabelStyle = {"font-weight": "bolder"};
+
+        if (idType === "node") {
+          var symbolType = config.getNodeTypeSymbol(statType.type);
 
           if (typeof symbolType !== "undefined") {
             var symbol = d3.svg.symbol().type(symbolType)
               .size(40);
-            var textWidth = that.getTextWidth(d.type, typeLabelStyle);
+            var textWidth = that.getTextWidth(statType.type, typeLabelStyle);
 
-            d3.select(this).append("path")
+            typeCont.append("path")
               .classed("nodeTypeSymbol", true)
               .attr({
                 d: symbol,
-                transform: "translate(" + (COLLAPSE_BUTTON_SPACING + textWidth + 8) + "," + (d.getBaseHeight() / 2 + 2) + ")"
+                transform: "translate(" + (COLLAPSE_BUTTON_SPACING + textWidth + 8) + "," + (statType.getBaseHeight() / 2 + 2) + ")"
               });
           }
-        });
-      }
+        }
 
-      var typeLabel = typeCont.append("text")
-        .text(function (typeWrapper) {
-          return typeWrapper.getLabel();
-        })
-        .attr({
-          x: function (d) {
-            //var symbolPresent = false;
-            //if (idType === "node") {
-            //  symbolPresent = (typeof config.getNodeTypeSymbol(d.type) !== "undefined");
-            //}
+        var typeLabel = typeCont.append("text")
+          .text(statType.getLabel())
+          .attr({
+            x: COLLAPSE_BUTTON_SPACING,
+            y: statType.getBaseHeight() - 2,
+            "clip-path": "url(#LabelClipPath)"
+          })
+          .style(typeLabelStyle);
 
-            return COLLAPSE_BUTTON_SPACING;// + (symbolPresent ? 10 : 0);
-          },
-          y: function (d) {
-            return d.getBaseHeight() - 2;
-          },
-          "clip-path": "url(#LabelClipPath)"
-        })
-        .style(typeLabelStyle);
+        typeLabel.append("title")
+          .text(statType.getLabel());
 
-      typeLabel.append("title")
-        .text(function (typeWrapper) {
-          return typeWrapper.getLabel();
-        });
+        if (idType === "set") {
+          typeLabel.style("fill", config.getSetColorFromSetTypePropertyName(statType.type));
+        }
 
-      if (idType === "set") {
-        typeLabel.style("fill", function (d) {
+        addPathOccurrenceBar(typeCont, idType === "set" ? function (d) {
           return config.getSetColorFromSetTypePropertyName(d.type);
-        });
-      }
-
-      addPathOccurrenceBar(typeCont, idType === "set" ? function (d) {
-        return config.getSetColorFromSetTypePropertyName(d.type);
-      } : function (d) {
-        return "gray";
-      });
-
-      var statGroup = statType.append("g")
-        .classed("statGroup", true);
-
-
-      var allStats = allStatTypes.selectAll("g.statGroup").selectAll("g.stats")
-        .data(function (typeWrapper) {
-          return typeWrapper.children;
-        }, getKey);
-
-      allStats.exit()
-        .remove();
-
-      var stats = allStats
-        .enter()
-        .append("g")
-        .classed("stats", true)
-        .classed(idType + "_stat", true)
-        .attr({
-          display: hierarchyElements.displayFunction,
-          transform: "translate(0," + Math.max($(this.parentSelector)[0].offsetHeight, that.getMinSize().height) + ")"
-        })
-        .on("dblclick", function (d) {
-          d.onDoubleClick();
+        } : function () {
+          return "gray";
         });
 
-      stats.each(function (d, i) {
-        if (d.hasOverlayItems()) {
-          uiUtil.createTemporalMenuOverlayButton(d3.select(this), BAR_START_X - 20, 0, true, function () {
-            return d.getOverlayMenuItems();
+
+        var statGroup = $statType.append("div")
+          .classed("statGroup", true)
+          .style({
+            overflow: "auto",
+            width: "100%",
+            height: "100px",
+            "vertical-align": "top"
           });
 
+        var svg = statGroup.append("svg")
+          .attr({
+            width: 200,
+            height: statType.getHeight() - statType.getBaseHeight()
+          });
 
-          //queryUtil.createAddNodeFilterButton(d3.select(this), d3.select("#pathstats svg"), d.getNodeConstraintType(), d.getFilterText(), BAR_START_X - 20, 0, true);
-        }
+        appendLabelClipPath(svg);
+
       });
 
+      allStatTypes.each(function (statType) {
+        var allStats = d3.select(this).select("div.statGroup svg").selectAll("g.stats")
+          .data(statType.getVisibleChildren(), getKey);
 
-      stats.append("rect")
-        .classed("filler", true)
-        .attr({
-          x: COLLAPSE_BUTTON_SPACING,
-          y: 0,
-          width: "100%",
-          height: HIERARCHY_ELEMENT_HEIGHT
-        });
 
-      var l = selectionUtil.addDefaultListener(allStatTypes.selectAll("g.statGroup"), "g.stats", statSelectionFunction, idType
-      );
-      that.selectionListeners.push(l);
+        var stats = allStats
+          .enter()
+          .append("g")
+          .classed("stats", true)
+          .classed(idType + "_stat", true)
+          .attr({
+            display: hierarchyElements.displayFunction,
+            transform: function (stat) {
+              var posY = (stat.getPosYRelativeToParent() - statType.getBaseHeight());
 
-      var setLabel = stats.append("text")
-        .text(function (stat) {
-          return stat.getLabel();
-        })
-        .attr({
-          x: COLLAPSE_BUTTON_SPACING,
-          y: HIERARCHY_ELEMENT_HEIGHT - 2,
-          "clip-path": "url(#LabelClipPath)"
-        });
-      if (idType === "set") {
-        setLabel.style("fill", function (d) {
-          return config.getSetColorFromSetTypePropertyName(d.parent.type);
-        });
-      }
-
-      setLabel.append("title")
-        .text(function (stat) {
-
-          if (idType === "set") {
-            var info = setInfo.get(stat.setId);
-
-            if (typeof info === "undefined") {
-              return stat.setId;
+              return "translate(0," + posY + ")";
             }
-            return info.properties[config.getSetNameProperty(info)];
+          })
+          .on("dblclick", function (d) {
+            d.onDoubleClick();
+          });
+
+        stats.each(function (stat) {
+          var $stat = d3.select(this);
+          if (stat.hasOverlayItems()) {
+            uiUtil.createTemporalMenuOverlayButton($stat, BAR_START_X - 20, 0, true, function () {
+              return stat.getOverlayMenuItems();
+            });
           }
 
-          return stat.getLabel();
+          $stat.append("rect")
+            .classed("filler", true)
+            .attr({
+              x: COLLAPSE_BUTTON_SPACING,
+              y: 0,
+              width: "100%",
+              height: HIERARCHY_ELEMENT_HEIGHT
+            });
+
+
+          var statLabel = $stat.append("text")
+            .text(stat.getLabel())
+            .attr({
+              x: COLLAPSE_BUTTON_SPACING,
+              y: HIERARCHY_ELEMENT_HEIGHT - 2,
+              "clip-path": "url(#LabelClipPath)"
+            });
+          if (idType === "set") {
+            statLabel.style("fill", config.getSetColorFromSetTypePropertyName(stat.parent.type));
+          }
+
+          statLabel.append("title")
+            .text(function () {
+              return stat.getLabel();
+            });
+
+          addPathOccurrenceBar($stat, idType === "set" ? function (d) {
+            return config.getSetColorFromSetTypePropertyName(d.parent.type);
+          } : function (d) {
+            return "gray";
+          });
+
         });
 
-      addPathOccurrenceBar(stats, idType === "set" ? function (d) {
-        return config.getSetColorFromSetTypePropertyName(d.parent.type);
-      } : function (d) {
-        return "gray";
+        allStats.exit()
+          .remove();
       });
+
+
+      this.updateView();
+
+
+      allStatTypes.exit()
+        .remove();
+
+      var l = selectionUtil.addDefaultListener(allStatTypes.selectAll("div.statGroup svg"), "g.stats", statSelectionFunction, idType);
+      that.selectionListeners.push(l);
 
       function addPathOccurrenceBar(parent, barColor) {
         var setPathOccurrenceBar = parent.append("rect")
@@ -743,6 +650,199 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       }
 
 
+    }
+    ;
+
+    PathStatsView.prototype.updateViewSize = function () {
+      var totalViewHeight = $("#pathStatsView")[0].offsetHeight;
+
+      var usedHeight = this.nodeTypeWrappers.getBaseHeight() + this.setTypeWrappers.getBaseHeight() + 4;
+      var numStatTypes = 0;
+      this.nodeTypeWrappers.children.forEach(function (statType) {
+        if (statType.canBeShown()) {
+          usedHeight += statType.getBaseHeight();
+          numStatTypes++;
+        }
+      });
+      this.setTypeWrappers.children.forEach(function (statType) {
+        if (statType.canBeShown()) {
+          usedHeight += statType.getBaseHeight();
+          numStatTypes++;
+        }
+      });
+
+      var maxStatHeight = Math.max((totalViewHeight - usedHeight - (15 * numStatTypes)) / numStatTypes, 50);
+
+
+      var statTypeGroups = d3.selectAll("div.level1HierarchyElement");
+
+      statTypeGroups.each(function (d) {
+        var allStatTypes = d3.select(this).selectAll("div.statTypes")
+          .data(d.children, getKey);
+
+        allStatTypes.selectAll("div.statGroup")
+          .transition()
+          .each("start", function (statType) {
+            if (statType.collapsed) {
+              d3.select(this)
+                .attr({
+                  display: "none"
+                })
+            }
+          })
+          .style({
+            height: function (statType) {
+              return statType.collapsed ? "0px" : (Math.min(statType.getHeight() - statType.getBaseHeight() + 5, maxStatHeight) + "px")
+            }
+          })
+          .each("end", function (statType) {
+            if (!statType.collapsed) {
+              d3.select(this)
+                .attr({
+                  display: "block"
+                })
+
+            }
+          });
+      });
+
+    };
+
+    PathStatsView.prototype.updateView = function () {
+
+      var scaleX = this.getBarScale();
+
+      //d3.selectAll("g.nodeTypeGroup").data([this.nodeTypeWrappers]);
+      var that = this;
+      var statTypeGroups = d3.selectAll("div.level1HierarchyElement");
+
+
+      //.transition()
+      //.attr({
+      //  transform: hierarchyElements.transformFunction
+      //});
+
+      var comparator = sorting.chainComparators([function (a, b) {
+        return d3.descending(a.pathIds.length, b.pathIds.length);
+      }, function (a, b) {
+        return d3.descending(a.id, b.id);
+      }]);
+
+      statTypeGroups.each(function (d) {
+        d.children.sort(comparator);
+        var allStatTypes = d3.select(this).selectAll("div.statTypes")
+          .data(d.children, getKey);
+
+        allStatTypes
+          .sort(comparator)
+          .transition()
+          .attr({
+            display: function (d) {
+              return d.canBeShown() ? "block" : "none";
+            },
+            transform: hierarchyElements.transformFunction
+          });
+
+        allStatTypes.each(function (statType) {
+
+          var typeCont = d3.select(this).select("svg.statTypeCont");
+
+          statType.children.sort(comparator);
+
+          typeCont.select("rect.pathOccurrences")
+            .transition()
+            .attr("width", scaleX(statType.pathIds.length));
+
+          typeCont.select("rect.pathOccurrences title")
+            .text(statType.getTooltip());
+
+          typeCont.transition()
+            .style("opacity", function (d) {
+              return d.isFiltered() ? 0.5 : 1;
+            });
+
+          d3.select(this).select("div.statGroup svg").transition()
+            .attr({
+              height: statType.getHeight() - statType.getBaseHeight()
+            });
+
+
+          var stats = d3.select(this).select("div.statGroup svg").selectAll("g.stats")
+            .data(statType.getVisibleChildren(), getKey);
+
+          stats.each(function (stat) {
+            var $stat = d3.select(this);
+
+            $stat.select("rect.pathOccurrences")
+              .transition()
+              .attr("width", scaleX(stat.pathIds.length));
+
+            $stat.select("rect.pathOccurrences title")
+              .text(stat.getTooltip());
+
+            $stat.transition()
+              .attr({
+                display: hierarchyElements.displayFunction,
+                transform: function (stat) {
+                  var posY = (stat.getPosYRelativeToParent() - statType.getBaseHeight());
+
+                  return "translate(0," + posY + ")";
+                }
+              })
+              .style("opacity", stat.isFiltered() ? 0.5 : 1);
+          });
+
+
+          //d3.select(this).selectAll("g.statTypeCont")
+          //  .transition()
+          //  .style("opacity", function (d) {
+          //    return d.isFiltered() ? 0.5 : 1;
+          //  });
+          //
+          //d3.select(this).selectAll("g.stats")
+          //  .sort(comparator)
+          //  .transition()
+          //  .attr({
+          //    display: hierarchyElements.displayFunction,
+          //    transform: hierarchyElements.transformFunction
+          //  })
+          //  .style("opacity", function (d) {
+          //    return d.isFiltered() ? 0.5 : 1;
+          //  });
+        });
+
+        //  allStatTypes.selectAll("div.statGroup")
+        //    .transition()
+        //    .each("start", function (statType) {
+        //      if (statType.collapsed) {
+        //        d3.select(this)
+        //          .attr({
+        //            display: "none"
+        //          })
+        //      }
+        //    })
+        //    .style({
+        //      height: function (statType) {
+        //        return statType.collapsed ? "0px" : "100px"
+        //      }
+        //    })
+        //    .each("end", function (statType) {
+        //      if (!statType.collapsed) {
+        //        d3.select(this)
+        //          .attr({
+        //            display: "block"
+        //          })
+        //          .style({
+        //            height: "100px"
+        //          });
+        //        ;
+        //      }
+        //    });
+        //
+      });
+
+
+      this.updateViewSize();
     };
 
     return new PathStatsView();
