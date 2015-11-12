@@ -59,6 +59,21 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .attr("width", nodeWidth - 6)
         .attr("height", nodeHeight);
 
+      //svg.append("rect")
+      //  .attr("style", {
+      //    fill: "none",
+      //    "pointer-events": "all"
+      //  })
+      //  .attr("width", "100%")
+      //  .attr("height", "100%");
+      //
+      //svg.append("g")
+      //  .call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom))
+      //  .append("g");
+      //
+      //function zoom() {
+      //  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+      //}
 
       var graphGroup = svg.append("g")
         .attr("class", "graph");
@@ -67,6 +82,19 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .classed("edgeGroup", true);
       graphGroup.append("g")
         .classed("nodeGroup", true);
+
+
+      var zoom = d3.behavior.zoom()
+        .scaleExtent([0.1, 1])
+        .on("zoom", function () {
+          var translate = zoom.translate();
+          var scale = zoom.scale();
+           svg.select("g.graph").attr("transform", "translate(" + zoom.translate() + ")scale(" + zoom.scale() + ")");
+          //svg.select("nodeGroup").attr("transform", "translate(" + zoom.translate() + ")scale(" + zoom.scale() + ")");
+          //svg.select("edgeGroup").attr("transform", "translate(" + zoom.translate() + ")scale(" + zoom.scale() + ")")
+        });
+
+      svg.call(zoom);
 
       $("#showActivePagePaths").on("click", function () {
         if (that.showAllPaths) {
