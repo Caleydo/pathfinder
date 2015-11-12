@@ -159,8 +159,13 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
         visibilitySettings.showNonEdgeSets(this.checked);
       });
 
-      $("#alignPathNodes").on("click", function () {
-        pathSettings.alignPathNodes(this.checked);
+      $("#alignPivotNode").on("click", function () {
+        pathSettings.alignPathNodes(false);
+        //listeners.notify("ALIGN_PATH_NODES", this.checked);
+      });
+
+      $("#alignAllNodes").on("click", function () {
+        pathSettings.alignPathNodes(true);
         //listeners.notify("ALIGN_PATH_NODES", this.checked);
       });
 
@@ -190,6 +195,7 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
       this.aggregateList.addUpdateListener(function (list) {
         that.updateViewSize();
       });
+      this.aggregateList.parent = svg;
 
     };
 

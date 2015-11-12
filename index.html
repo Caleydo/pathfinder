@@ -41,7 +41,10 @@
     <section id="listView">
 
 
-      <div id="listViewWidgets"></div>
+      <div id="listViewWidgets">
+
+
+      </div>
       <!--<div class="outer">-->
       <!--<div class="inner">-->
       <div id="pathlist">
@@ -49,7 +52,7 @@
       <!--</div>-->
       <!--</div>-->
       <div class="text-center">
-        <ul id="pathPagination" class="pagination pagination-sm">
+        <ul id="pathPagination" class="pagination pagination-sm" style="margin-bottom:0px">
           <li class="prevPage">
             <a aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
@@ -72,6 +75,17 @@
     <!--<div id="overviewRow">-->
 
     <section id="pathGraphView">
+      <div>
+        <div style="display:inline-block"><label>Path Topology</label></div>
+        <div class="btn-group btn-group-xs" data-toggle="buttons" style="display:inline-block;float: right">
+          <label id="showActivePagePaths" class="btn btn-default active" title="Show paths of active page">
+            <input type="radio" name="pathAlign" checked="">Active Page
+          </label>
+          <label id="showAllPaths" class="btn btn-default" title="Show all paths">
+            <input type="radio" name="pathAlign">All
+          </label>
+        </div>
+      </div>
       <div class="outer">
         <div class="inner">
           <div id="pathgraph">
@@ -82,6 +96,11 @@
 
 
     <section id="pathStatsView">
+      <div style="padding: 3px">
+        <div style="display:inline-block"><label>Path Attributes</label></div>
+        <div class="btn-group btn-group-xs" role="group" style="display:inline-block; float: right">
+        </div>
+      </div>
       <div class="outer">
         <div class="inner">
           <div id="pathstats">
@@ -116,9 +135,9 @@
         <h4>List view</h4>
 
 
-        <div class="checkbox" title="Force equal nodes to be aligned accross paths.">
-          <label><input type="checkbox" id="alignPathNodes"/>Align nodes</label>
-        </div>
+        <!--<div class="checkbox" title="Force equal nodes to be aligned accross paths.">-->
+        <!--<label><input type="checkbox" id="alignPathNodes"/>Align nodes</label>-->
+        <!--</div>-->
         <div class="checkbox" title="Show straight rank columns.">
           <label><input type="checkbox" id="alignColumns" checked/>Align columns</label>
         </div>

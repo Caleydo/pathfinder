@@ -17,7 +17,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       this.currentGraphLayout = this.layeredLayout;
       this.neighbors = [];
       this.graph = newGraph();
-      this.showAllPaths = true;
+      this.showAllPaths = false;
     }
 
     PathGraphView.prototype = Object.create(View.prototype);
@@ -37,10 +37,6 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           that.currentGraphLayout.render(that.paths, that.graph);
         }
 
-        //if(changes.pagePathsChanged) {
-
-
-        //}
       });
 
       var nodeWidth = config.getNodeWidth();
@@ -71,6 +67,25 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .classed("edgeGroup", true);
       graphGroup.append("g")
         .classed("nodeGroup", true);
+
+      $("#showActivePagePaths").on("click", function () {
+        if (that.showAllPaths) {
+          that.showAllPaths = false;
+          that.paths = pathData.getPaths(that.showAllPaths);
+          that.updateGraph();
+        }
+        //listeners.notify("ALIGN_PATH_NODES", this.checked);
+      });
+
+      $("#showAllPaths").on("click", function () {
+        if (!that.showAllPaths) {
+          that.showAllPaths = true;
+          that.paths = pathData.getPaths(that.showAllPaths);
+          that.updateGraph();
+        }
+        //listeners.notify("ALIGN_PATH_NODES", this.checked);
+      });
+
 
       $(window).on('resize.center', function (e) {
         if (that.currentGraphLayout === that.layeredLayout) {

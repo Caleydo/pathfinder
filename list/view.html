@@ -1,36 +1,43 @@
-<div>
+<!--<div style="padding: 3px;display:inline-block">-->
 
-  <!--<label>Path Aggregation</label>-->
-  <!--<select id="aggregationType">-->
-    <!--<option value="0">None</option>-->
-    <!--<option value="1">Edge Sets</option>-->
-    <!--<option value="2">Node Type</option>-->
-  <!--</select>-->
+<!--</div>-->
+<!--<div id="rankPaths">-->
+<!--<label>Rank Paths By</label>-->
+<!--&lt;!&ndash;<select id="pathSortingOptions">&ndash;&gt;-->
+<!--&lt;!&ndash;<option value="0">Set Count Edge Weight</option>&ndash;&gt;-->
+<!--&lt;!&ndash;<option value="1">Path Length</option>&ndash;&gt;-->
+<!--&lt;!&ndash;</select>&ndash;&gt;-->
+<!--<div id="pathRankConfig">-->
 
+<!--</div>-->
+<!--&lt;!&ndash;<input type="checkbox" id="reversePathSorting"/>&ndash;&gt;-->
+<!--&lt;!&ndash;<label>Reverse</label>&ndash;&gt;-->
+<!--<br>-->
 
+<!--<div id="aggregateWidgets">-->
+<!--<label>Rank Aggregates By</label>-->
 
+<!--<div id="aggregateRankConfig"></div>-->
+<!--</div>-->
+<!--&lt;!&ndash;<input type="checkbox" id="reverseAggregateSorting"/><label>Reverse</label>&ndash;&gt;-->
+<!--</div>-->
+<div style="display:inline-block; width:100%">
+  <div style="display:inline-block"><label>Path List</label></div>
+  <div class="btn-group btn-group-xs" data-toggle="buttons" style="display:inline-block;float: right">
+    <label id="alignPivotNode" class="btn btn-default active" title="Align pivot node">
+      <input type="radio" name="pathAlign" checked=""><i class="fa fa-align-left"></i>
+    </label>
+    <label id="alignAllNodes" class="btn btn-default" title="Align all nodes">
+      <input type="radio" name="pathAlign"><i class="fa fa-align-justify"></i>
+    </label>
+  </div>
 
+  <!--<div class="btn-group btn-group-xs" role="group" data-toggle="buttons" style="display:inline-block;float: right">-->
+  <!--<button id="alignPivotNode" type="radio" class="btn btn-default" title="Align pivot node"><i class="fa fa-align-left"></i></button>-->
+  <!--<button id="alignAllNodes" type="radio" class="btn btn-default" title="Align all nodes"><i class="fa fa-align-justify"></i></button>-->
+  <!--</div>-->
+</div>
+
+<div id="columnHeaders">
 
 </div>
-<!--<div id="rankPaths">-->
-  <!--<label>Rank Paths By</label>-->
-  <!--&lt;!&ndash;<select id="pathSortingOptions">&ndash;&gt;-->
-  <!--&lt;!&ndash;<option value="0">Set Count Edge Weight</option>&ndash;&gt;-->
-  <!--&lt;!&ndash;<option value="1">Path Length</option>&ndash;&gt;-->
-  <!--&lt;!&ndash;</select>&ndash;&gt;-->
-  <!--<div id="pathRankConfig">-->
-
-  <!--</div>-->
-  <!--&lt;!&ndash;<input type="checkbox" id="reversePathSorting"/>&ndash;&gt;-->
-  <!--&lt;!&ndash;<label>Reverse</label>&ndash;&gt;-->
-  <!--<br>-->
-
-  <!--<div id="aggregateWidgets">-->
-    <!--<label>Rank Aggregates By</label>-->
-
-    <!--<div id="aggregateRankConfig"></div>-->
-  <!--</div>-->
-  <!--&lt;!&ndash;<input type="checkbox" id="reverseAggregateSorting"/><label>Reverse</label>&ndash;&gt;-->
-<!--</div>-->
-
-<div id="columnHeaders"></div>
