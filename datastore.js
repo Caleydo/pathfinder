@@ -681,7 +681,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
           extraLoaded = true;
           if (ccleLoaded) {
             nodesWithData = {};
-            fetchData();
+            //fetchData();
           }
         });
 
@@ -735,7 +735,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
                 //Reset node status as new datasets are available
                 if (extraLoaded) {
                   nodesWithData = {};
-                  fetchData();
+                  //fetchData();
                 }
               }
             });
@@ -823,9 +823,9 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
             newPaths.push(path);
           }
         });
-        if (newPaths.length > 0) {
-          fetchData();
-        }
+        //if (newPaths.length > 0) {
+        //  fetchData();
+        //}
 
         return newPaths;
       },

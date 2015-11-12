@@ -442,6 +442,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           this.lastVisiblePathIndex = this.pathWrappers.length - 1;
         }
         var pathsChanged = prevIndex !== this.lastVisiblePathIndex;
+        withinCurrentPage = withinCurrentPage || Math.floor(this.lastVisiblePathIndex / pageSize) === this.currentPageIndex;
         return {pathsChanged: pathsChanged, pagePathsChanged: pagePathsChanged || (withinCurrentPage && pathsChanged)};
       },
 
