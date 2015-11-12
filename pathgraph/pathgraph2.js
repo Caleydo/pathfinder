@@ -8,7 +8,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
     }
 
     function PathGraphView() {
-      View.call(this, "#pathgraph");
+      //View.call(this, "#pathgraph");
       this.grabHSpace = true;
       this.grabVSpace = true;
       this.layeredLayout = new LayeredLayout(this);
@@ -20,12 +20,12 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       this.showAllPaths = false;
     }
 
-    PathGraphView.prototype = Object.create(View.prototype);
+    //PathGraphView.prototype = Object.create(View.prototype);
 
 
     PathGraphView.prototype.init = function () {
 
-      View.prototype.init.call(this);
+      //View.prototype.init.call(this);
       var that = this;
 
       pathData.addUpdateListener(function (changes) {
@@ -42,7 +42,15 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       var nodeWidth = config.getNodeWidth();
       var nodeHeight = config.getNodeHeight();
 
-      var svg = d3.select(this.parentSelector + " svg");
+      var svg = d3.select("#pathgraph").append("svg")
+        .attr({
+          width: "100%",
+          height: "100%"
+        })
+        .style({
+          "-webkit-flex": "1 0 auto",
+          flex: "1 0 auto"
+        });
 
       this.textSizeDomElement = svg.append("text")
         .attr('class', "textSizeElement")
@@ -84,17 +92,13 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .classed("nodeGroup", true);
 
 
-      var zoom = d3.behavior.zoom()
+      this.zoom = d3.behavior.zoom()
         .scaleExtent([0.1, 1])
         .on("zoom", function () {
-          var translate = zoom.translate();
-          var scale = zoom.scale();
-           svg.select("g.graph").attr("transform", "translate(" + zoom.translate() + ")scale(" + zoom.scale() + ")");
-          //svg.select("nodeGroup").attr("transform", "translate(" + zoom.translate() + ")scale(" + zoom.scale() + ")");
-          //svg.select("edgeGroup").attr("transform", "translate(" + zoom.translate() + ")scale(" + zoom.scale() + ")")
+          svg.select("g.graph").attr("transform", "translate(" + that.zoom.translate() + ")scale(" + that.zoom.scale() + ")");
         });
 
-      svg.call(zoom);
+      svg.call(this.zoom);
 
       $("#showActivePagePaths").on("click", function () {
         if (that.showAllPaths) {
@@ -162,7 +166,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         that.currentGraphLayout = that.layeredLayout;
         //that.render(that.paths);
         that.currentGraphLayout.render(that.paths, that.graph);
-        that.updateViewSize();
+        //that.updateViewSize();
       });
 
       $("#forceLayout").on("click", function () {
@@ -171,7 +175,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         that.currentGraphLayout = that.forceLayout;
         //that.render(that.paths);
         that.currentGraphLayout.render(that.paths, that.graph);
-        that.updateViewSize();
+        //that.updateViewSize();
       });
     };
 

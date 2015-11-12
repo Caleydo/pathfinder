@@ -112,8 +112,8 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
 
                 allNodes.each(function (d) {
                     //if (!node.fixed) {
-                    d.x = Math.max(nodeWidth / 2, Math.min(w - (nodeWidth / 2), d.x));
-                    d.y = Math.max(nodeHeight / 2, Math.min(h - nodeHeight / 2, d.y));
+                    //d.x = Math.max(nodeWidth / 2, Math.min(w - (nodeWidth / 2), d.x));
+                    //d.y = Math.max(nodeHeight / 2, Math.min(h - nodeHeight / 2, d.y));
                     d3.select(this)
                         .attr("transform", "translate(" + d.x + ", " + d.y + ")");
                     //}
