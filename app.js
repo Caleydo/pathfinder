@@ -283,9 +283,9 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
           if (addedPaths.length > 0) {
             pathQuery.addPaths(addedPaths);
 
-            pathData.addPaths(paths);
+            pathData.addPaths(addedPaths);
 
-            fetchSetInfos(paths);
+            fetchSetInfos(addedPaths);
 
             //pathStatsView.addPath(path);
             //pathStatsView.render();

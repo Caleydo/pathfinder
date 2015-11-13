@@ -331,7 +331,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       onPathDataUpdate: function (changes) {
         this.pathWrappers = pathData.getPathWrappers(false);
-        if (changes.pagePathsChanged || changes.crossPathDataChanged) {
+        if (changes.pagePathsChanged || changes.crossPathDataChanged || changes.cause === listeners.updateType.DATASET_UPDATE) {
           this.updatePivotNodeIndex();
           this.renderPaths();
         } else if (changes.cause === pathSorting.updateType) {

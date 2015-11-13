@@ -340,7 +340,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           that.pathWrappers.forEach(function (pathWrapper) {
             pathWrapper.updateDatasets();
           });
-          that.notifyUpdateListeners();
+          that.notifyUpdateListeners(createChangeObject({cause: listeners.updateType.DATASET_UPDATE}));
         }, listeners.updateType.DATASET_UPDATE);
 
 
@@ -546,6 +546,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             if (rankComparator(prevWrapper, pathWrapper) !== 0) {
               currentRank = rankCounter;
             }
+          }
+          if (pathWrapper.rank !== currentRank.toString()) {
+            pagePathsChanged = true;
           }
           pathWrapper.rank = currentRank.toString() + ".";
           prevWrapper = pathWrapper;
