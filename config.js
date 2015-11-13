@@ -527,8 +527,6 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
           return dsConfig;
         }
       }
-
-
     }
     ,
 

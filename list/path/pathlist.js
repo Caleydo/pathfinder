@@ -1723,6 +1723,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
                 var posX = that.getNodePositionX(pathWrapper, nodeIndex, false);
                 var scale = pathData.numericalPropertyScales[property.name];
+                var domain = scale.domain();
+                var range = scale.range();
+
 
                 bar.select("rect.valueBg").transition()
                   .attr({

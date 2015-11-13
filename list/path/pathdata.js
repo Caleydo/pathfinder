@@ -473,20 +473,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               changed = true;
             }
 
-            config.getNumericalNodeProperties(node).forEach(function (property) {
-              var scale = that.numericalPropertyScales[property];
-              var value = node.properties[property];
 
-              if (!scale) {
-                that.numericalPropertyScales[property] = d3.scale.linear().domain([Math.min(0, value), Math.max(0, value)]).range([0, s.NODE_WIDTH]);
-                changed = true;
-              } else {
-                var oldMin = scale.domain()[0];
-                var oldMax = scale.domain()[1];
-                scale.domain([Math.min(0, Math.min(scale.domain()[0], value)), Math.max(0, Math.max(scale.domain()[1], value))]);
-                changed = (oldMin !== scale.domain()[0] || oldMax !== scale.domain()[1])
-              }
-            });
           });
 
           pathWrapper.path.edges.forEach(function (edge) {
@@ -494,6 +481,23 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             if (numEdgeSets > that.maxNumEdgeSets) {
               that.maxNumEdgeSets = numEdgeSets;
               changed = true;
+            }
+          });
+        });
+
+        pathWrapper.path.nodes.forEach(function (node) {
+          config.getNumericalNodeProperties(node).forEach(function (property) {
+            var scale = that.numericalPropertyScales[property];
+            var value = node.properties[property];
+
+            if (!scale) {
+              that.numericalPropertyScales[property] = d3.scale.linear().domain([Math.min(0, value), Math.max(0, value)]).range([0, s.NODE_WIDTH]);
+              changed = true;
+            } else {
+              var oldMin = scale.domain()[0];
+              var oldMax = scale.domain()[1];
+              scale.domain([Math.min(0, Math.min(scale.domain()[0], value)), Math.max(0, Math.max(scale.domain()[1], value))]);
+              changed = (oldMin !== scale.domain()[0] || oldMax !== scale.domain()[1])
             }
           });
         });
