@@ -131,6 +131,15 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         that.currentGraphLayout.onPathSelectionUpdate(selectionType, source);
       });
 
+      listeners.add(function () {
+        svg.select("#graphNodeClipPath rect")
+          .attr({
+            x: -config.getNodeWidth() / 2 + 3,
+            width: config.getNodeWidth() - 6
+          });
+        that.updateGraph();
+      }, config.NODE_SIZE_UPDATE);
+
 
       //listeners.add(function (query) {
       //  if (pathQuery.isRemoveFilteredPaths() || pathQuery.isRemoteQuery()) {

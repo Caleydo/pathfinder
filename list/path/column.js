@@ -59,7 +59,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     }
 
     function getPathTranslation(pathWrapper, pathList) {
-      return pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH;
+      return pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + config.getNodeWidth();
     }
 
     function getMaxLengthPathWrapper(pathWrappers) {

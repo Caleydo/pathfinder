@@ -8,6 +8,8 @@ define(['d3', 'jquery', "../caleydo_core/main", "colors", "./list/path/settings"
   var isAutoColor = true;
   var colorsEnabled = true;
 
+  var nodeWidth = DEFAULT_NODE_WIDTH;
+
   var config = {};
   var nodeNamePropertyNames = {};
 
@@ -23,10 +25,16 @@ define(['d3', 'jquery', "../caleydo_core/main", "colors", "./list/path/settings"
   return {
 
     COLOR_UPDATE: "COLOR_UPDATE",
+    NODE_SIZE_UPDATE: "NODE_SIZE_UPDATE",
 
     setConfig: function (c) {
       var that = this;
       config = c;
+
+
+      nodeWidth = config.settings["node_width"];
+      nodeWidth = (typeof nodeWidth === "undefined") ? DEFAULT_NODE_WIDTH : nodeWidth;
+      $("#nodeWidth").val(nodeWidth);
 
       var symbols = d3.svg.symbolTypes;
 
@@ -101,6 +109,15 @@ define(['d3', 'jquery', "../caleydo_core/main", "colors", "./list/path/settings"
         listeners.notify(that.COLOR_UPDATE, colorsEnabled);
       });
 
+
+      $("#applyNodeWidth").on("click", function () {
+        var width = parseInt($("#nodeWidth").val());
+        if (width !== nodeWidth) {
+          nodeWidth = width;
+          listeners.notify(that.NODE_SIZE_UPDATE, nodeWidth);
+        }
+      });
+
       config.edges.forEach(function (edgeConfig) {
 
         Object.keys(edgeConfig.properties).forEach(function (key) {
@@ -127,7 +144,7 @@ define(['d3', 'jquery', "../caleydo_core/main", "colors", "./list/path/settings"
       colorsEnabled = enable;
     },
 
-    isEnableColors: function() {
+    isEnableColors: function () {
       return colorsEnabled;
     },
 
@@ -297,14 +314,13 @@ define(['d3', 'jquery', "../caleydo_core/main", "colors", "./list/path/settings"
     ,
 
     getNodeWidth: function () {
-      var nodeWidth = config.settings["node_width"];
-      return (typeof nodeWidth === "undefined") ? DEFAULT_NODE_WIDTH : nodeWidth;
+      return nodeWidth;
     }
     ,
 
     getNodeHeight: function () {
       var nodeHeight = config.settings["node_height"];
-      return (typeof nodeWidth === "undefined") ? DEFAULT_NODE_HEIGHT : nodeHeight;
+      return (typeof nodeHeight === "undefined") ? DEFAULT_NODE_HEIGHT : nodeHeight;
     }
     ,
 

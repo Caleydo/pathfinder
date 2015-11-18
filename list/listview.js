@@ -30,6 +30,8 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
 
     ListView.prototype.initImpl = function () {
       view.prototype.init.call(this);
+
+      var that = this;
       var svg = d3.select("#pathlist svg");
       svg.append("clipPath")
         .attr("id", "SetLabelClipPath")
@@ -43,10 +45,10 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
         .style({height: pathSettings.COLUMN_HEADER_HEIGHT + "px"})
         .append("svg")
         .attr({
-          width: "100%",
-          height: "100%"
-        }
-      );
+            width: "100%",
+            height: "100%"
+          }
+        );
 
       var nodeWidth = config.getNodeWidth();
       var nodeHeight = config.getNodeHeight();
@@ -66,94 +68,11 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
         .style("font", "10px sans-serif")
         .style("opacity", 0);
 
+      listeners.add(function () {
+        svg.select("#pathNodeClipPath rect")
+          .attr("width", config.getNodeWidth() - 6);
+      }, config.NODE_SIZE_UPDATE);
 
-      //var initialPathSortingStrategies = Object.create(pathSorting.sortingManager.currentStrategyChain);
-      //initialPathSortingStrategies.splice(pathSorting.sortingManager.currentStrategyChain.length - 1, 1);
-      //var selectablePathSortingStrategies = [pathSorting.sortingStrategies.pathQueryStrategy, pathSorting.sortingStrategies.selectionSortingStrategy,
-      //  pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.setCountEdgeWeight];
-      //selectablePathSortingStrategies = selectablePathSortingStrategies.concat(dataStore.getDataBasedPathSortingStrategies());
-      //var pathRankConfigView = new RankConfigView("#pathRankConfig",
-      //  selectablePathSortingStrategies
-      //  , initialPathSortingStrategies);
-      //pathRankConfigView.addUpdateListener(function (view) {
-      //  var chain = view.getStrategyChain();
-      //  chain.push(pathSorting.sortingStrategies.pathId);
-      //  pathSorting.sortingManager.setStrategyChain(chain);
-      //  listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-      //});
-      //pathRankConfigView.init();
-      //d3.select("#pathRankConfig svg").style({"vertical-align": "bottom"});
-      //
-      //var initialAggregateSortingStrategies = Object.create(aggregateSorting.sortingManager.currentStrategyChain);
-      //initialAggregateSortingStrategies.splice(aggregateSorting.sortingManager.currentStrategyChain.length - 1, 1);
-      //var aggregateRankConfigView = new RankConfigView("#aggregateRankConfig",
-      //  [aggregateSorting.sortingStrategies.numPaths]
-      //  , initialAggregateSortingStrategies);
-      //aggregateRankConfigView.addUpdateListener(function (view) {
-      //  var chain = view.getStrategyChain();
-      //  chain.push(aggregateSorting.sortingStrategies.aggregateId);
-      //  aggregateSorting.sortingManager.setStrategyChain(chain);
-      //  listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
-      //});
-      //aggregateRankConfigView.init();
-      //d3.select("#aggregateRankConfig svg").style({"vertical-align": "bottom"});
-      //
-      //d3.select("#aggregateWidgets").style({display: "none"});
-
-
-      var that = this;
-
-
-      //$("#aggregationType").on("change", function () {
-      //  if (this.value == '0' && !(that.aggregateList instanceof NoAggregationList)) {
-      //    changeAggregation(NoAggregationList);
-      //    d3.select("#aggregateWidgets").style({display: "none"});
-      //  }
-      //  if (this.value == '1' && !(that.aggregateList instanceof SetComboList)) {
-      //    changeAggregation(SetComboList);
-      //    d3.select("#aggregateWidgets").style({display: "block"});
-      //    updateAggregateRankConfigView();
-      //  }
-      //  if (this.value == '2' && !(that.aggregateList instanceof NodeTypeComboList)) {
-      //    changeAggregation(NodeTypeComboList);
-      //    d3.select("#aggregateWidgets").style({display: "block"});
-      //    updateAggregateRankConfigView();
-      //  }
-      //});
-      //
-      //function updateAggregateRankConfigView() {
-      //  var initialAggregateSortingStrategies = Object.create(aggregateSorting.sortingManager.currentStrategyChain);
-      //  initialAggregateSortingStrategies.splice(aggregateSorting.sortingManager.currentStrategyChain.length - 1, 1);
-      //  aggregateRankConfigView.reset([that.aggregateList.getNodeSelectionSortingStrategy(), aggregateSorting.sortingStrategies.numPaths], initialAggregateSortingStrategies);
-      //}
-      //
-      //function changeAggregation(constructor) {
-      //  that.aggregateList.destroy();
-      //  aggregateSorting.sortingManager.reset();
-      //  that.aggregateList = new constructor(that);
-      //  that.aggregateList.init();
-      //  that.aggregateList.addUpdateListener(function (list) {
-      //    that.updateViewSize();
-      //  });
-      //  that.render(that.paths);
-      //}
-
-
-      //$("#pathSortingOptions").on("change", function () {
-      //  if (this.value == '0') {
-      //    pathSorting.sortingManager.setStrategyChain([pathSorting.sortingStrategies.setCountEdgeWeight, pathSorting.sortingStrategies.pathId]);
-      //    listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-      //  }
-      //  if (this.value == '1') {
-      //    pathSorting.sortingManager.setStrategyChain([pathSorting.sortingStrategies.pathLength, pathSorting.sortingStrategies.pathId]);
-      //    listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-      //  }
-      //});
-      //
-      //$("#reversePathSorting").on("click", function () {
-      //  pathSorting.sortingManager.ascending = !this.checked;
-      //  listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator);
-      //});
 
       $("#hideNonRelSets").on("click", function () {
         visibilitySettings.showNonEdgeSets(this.checked);
@@ -170,7 +89,6 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
       });
 
 
-
       $("#alignColumns").on("click", function () {
         pathSettings.alignColumns(this.checked);
         //listeners.notify("TILT_ATTRIBUTES", this.checked);
@@ -181,7 +99,7 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
         //listeners.notify("TILT_ATTRIBUTES", this.checked);
       });
 
-      $("#verticalOrientation").click( function () {
+      $("#verticalOrientation").click(function () {
         pathSettings.tiltAttributes(true);
         //listeners.notify("TILT_ATTRIBUTES", this.checked);
       });

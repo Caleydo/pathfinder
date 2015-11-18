@@ -345,7 +345,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     //        .attr({
     //            x: s.SET_TYPE_INDENT,
     //            y: -10,
-    //            width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH,
+    //            width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + config.getNodeWidth(),
     //            height: s.isTiltAttributes() ? DATA_AXIS_SIZE : s.DEFAULT_BAR_SIZE + 20
     //        })
     //        .style({
@@ -520,7 +520,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         .attr({
           x: s.SET_TYPE_INDENT,
           y: DATA_GROUP_V_PADDING,
-          width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
+          width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + config.getNodeWidth() + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
           height: s.isTiltAttributes() ? DATA_AXIS_SIZE : BOX_WIDTH
         })
         .style({
@@ -533,7 +533,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       $group.select("rect.background")
         .transition()
         .attr({
-          width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
+          width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + config.getNodeWidth() + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
           height: s.isTiltAttributes() ? DATA_AXIS_SIZE : BOX_WIDTH
         });
 
@@ -701,7 +701,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
         .attr({
           x: s.SET_TYPE_INDENT,
           y: DATA_GROUP_V_PADDING,
-          width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
+          width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + config.getNodeWidth() + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
           height: s.isTiltAttributes() ? DATA_AXIS_SIZE : BOX_WIDTH
         })
         .style({
@@ -716,7 +716,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       $group.select("rect.background")
         .transition()
         .attr({
-          width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
+          width: pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + config.getNodeWidth() + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2),
           height: s.isTiltAttributes() ? DATA_AXIS_SIZE : BOX_WIDTH
         });
 

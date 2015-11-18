@@ -118,7 +118,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       },
 
       getWidth: function () {
-        return s.NODE_START + this.path.nodes.length * s.NODE_WIDTH + this.path.edges.length * s.EDGE_SIZE;
+        return s.NODE_START + this.path.nodes.length * config.getNodeWidth() + this.path.edges.length * s.EDGE_SIZE;
       },
 
       updateDatasets: function () {
@@ -293,7 +293,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       pathWrappers: [],
       maxNumNodeSets: 0,
       maxNumEdgeSets: 0,
-      numericalPropertyScales: {},
+      numericalPropertyDomains: {},
       lastVisiblePathIndex: -1,
       currentPageIndex: 0,
 
@@ -463,7 +463,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         var that = this;
         var changed = false;
 
-        this.numericalPropertyScales = {};
+        this.numericalPropertyDomains = {};
         this.maxNumEdgeSets = 0;
         this.maxNumNodeSets = 0;
         this.pathWrappers.forEach(function (pathWrapper) {
@@ -500,17 +500,18 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
         pathWrapper.path.nodes.forEach(function (node) {
           config.getNumericalNodeProperties(node).forEach(function (property) {
-            var scale = that.numericalPropertyScales[property];
+            var domain = that.numericalPropertyDomains[property];
             var value = node.properties[property];
 
-            if (!scale) {
-              that.numericalPropertyScales[property] = d3.scale.linear().domain([Math.min(0, value), Math.max(0, value)]).range([0, s.NODE_WIDTH]);
+            if (!domain) {
+              that.numericalPropertyDomains[property] = [Math.min(0, value), Math.max(0, value)];
               changed = true;
             } else {
-              var oldMin = scale.domain()[0];
-              var oldMax = scale.domain()[1];
-              scale.domain([Math.min(0, Math.min(scale.domain()[0], value)), Math.max(0, Math.max(scale.domain()[1], value))]);
-              changed = (oldMin !== scale.domain()[0] || oldMax !== scale.domain()[1])
+              var oldMin = domain[0];
+              var oldMax = domain[1];
+              domain[0] = Math.min(0, Math.min(domain[0], value));
+              domain[1] = Math.max(0, Math.max(domain[1], value));
+              changed = (oldMin !== domain[0] || oldMax !== domain[1])
             }
           });
         });

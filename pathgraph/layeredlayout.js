@@ -100,8 +100,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       var scale = Math.min(svgWidth / graphWidth, svgHeight / graphHeight);
       scale = scale < 1 ? scale : 1;
 
-      var translateX = ((svgWidth - (graphWidth*scale)) / 2);
-      var translateY = ((svgHeight - (graphHeight*scale)) / 2);
+      var translateX = ((svgWidth - (graphWidth * scale)) / 2);
+      var translateY = ((svgHeight - (graphHeight * scale)) / 2);
 
       this.view.zoom.translate([translateX, translateY]);
       this.view.zoom.scale(scale);
@@ -391,29 +391,11 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         });
 
       node.each(function (d) {
-        var items = pathUtil.getDefaultNodeOverlayItems(d.node);
-        items.push({
-          text: "Add Neighbors",
-          icon: "\uf067",
-          callback: function () {
-            ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp");
-          }
-        });
-        items.push({
-          text: d.isNeighborNode ? "Remove" : "Remove Neighbors",
-          icon: "\uf068",
-          callback: function () {
-            if (d.isNeighborNode) {
-              that.view.removeNeighborNode(d.node.id);
-            } else {
-              that.view.removeNeighborsOfNode(d.node.id);
-            }
-          }
-        });
+
 
         pathUtil.renderNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
-          return that.view.getTextWidth(text)
-        }, items, true);
+          return that.view.getTextWidth(text);
+        }, getNodeOverlayItems(d), true);
       });
 
 
@@ -437,6 +419,11 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           //var n = that.graph.node(d);
           return "translate(" + d.x + ", " + d.y + ")";
         })
+        .each(function (d) {
+          pathUtil.updateNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, function (text) {
+            return that.view.getTextWidth(text);
+          }, getNodeOverlayItems(d));
+        });
 
 
       allNodes.exit()
@@ -446,6 +433,29 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
       //this.view.updateViewSize();
       this.centerGraph();
+
+      function getNodeOverlayItems(d) {
+        var items = pathUtil.getDefaultNodeOverlayItems(d.node);
+        items.push({
+          text: "Add Neighbors",
+          icon: "\uf067",
+          callback: function () {
+            ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp");
+          }
+        });
+        items.push({
+          text: d.isNeighborNode ? "Remove" : "Remove Neighbors",
+          icon: "\uf068",
+          callback: function () {
+            if (d.isNeighborNode) {
+              that.view.removeNeighborNode(d.node.id);
+            } else {
+              that.view.removeNeighborsOfNode(d.node.id);
+            }
+          }
+        });
+        return items;
+      }
 
     };
 

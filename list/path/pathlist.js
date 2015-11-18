@@ -100,7 +100,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         } else {
           delete s.referencePathId;
         }
-        if(config.isAutoColor()) {
+        if (config.isAutoColor()) {
           config.enableColors(permanent);
           listeners.notify(config.COLOR_UPDATE, permanent);
         }
@@ -213,6 +213,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         that.updatePathList();
       };
 
+      this.updateNodeSizeListener = function () {
+        that.renderPaths();
+      };
+
       //this.removeFilterChangedListener = function (remove) {
       //  if (typeof that.parent === "undefined") {
       //    return;
@@ -318,7 +322,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           this.parent.append("g")
             .classed("crossConnectionContainer", true);
         }
-        s.NODE_WIDTH = config.getNodeWidth();
+        //s.NODE_WIDTH = config.getNodeWidth();
         s.NODE_HEIGHT = config.getNodeHeight();
         s.EDGE_SIZE = config.getEdgeSize();
         pathData.addUpdateListener(this.onPathDataUpdate.bind(this));
@@ -332,6 +336,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.add(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.add(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
         listeners.add(this.updateColorListener, config.COLOR_UPDATE);
+        listeners.add(this.updateNodeSizeListener, config.NODE_SIZE_UPDATE);
         //listeners.add(this.sortUpdateListener, pathSorting.updateType);
         //listeners.add(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
 
@@ -399,6 +404,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.remove(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.remove(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
         listeners.remove(this.updateColorListener, config.COLOR_UPDATE);
+        listeners.remove(this.updateNodeSizeListener, config.NODE_SIZE_UPDATE);
         //listeners.remove(this.sortUpdateListener, pathSorting.updateType);
         //listeners.remove(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
 
@@ -465,7 +471,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
         this.pathWrappers.forEach(function (pathWrapper) {
           totalHeight += pathWrapper.getHeight() + s.PATH_SPACING;
-          var currentWidth = that.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH;
+          var currentWidth = that.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + config.getNodeWidth();
           if (currentWidth > currentMaxWidth) {
             currentMaxWidth = currentWidth;
           }
@@ -547,7 +553,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           return nodeStart;
         }
 
-        return nodeStart + (this.pivotNodeIndex - index) * (s.NODE_WIDTH + s.EDGE_SIZE);
+        return nodeStart + (this.pivotNodeIndex - index) * (config.getNodeWidth() + s.EDGE_SIZE);
       },
 
       getPivotNodeAlignedTransform: function (pathWrapper) {
@@ -731,7 +737,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .x(function (d) {
             var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
             var translate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-            return translate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+            return translate + position * (config.getNodeWidth() + s.EDGE_SIZE) + config.getNodeWidth() / 2;
           })
           .y(function (d) {
             var translate = s.getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
@@ -784,7 +790,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             x1: function (d) {
               var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
               var translate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-              return translate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+              return translate + position * (config.getNodeWidth() + s.EDGE_SIZE) + config.getNodeWidth() / 2;
             },
             y1: function (d) {
               var translate = s.getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
@@ -793,7 +799,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             x2: function (d) {
               var position = that.pathWrappers[d.pathIndex].nodePositions[d.nodeIndex];
               var translate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-              return translate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+              return translate + position * (config.getNodeWidth() + s.EDGE_SIZE) + config.getNodeWidth() / 2;
             },
             y2: function (d) {
               var translate = s.getPathContainerTranslateY(that.pathWrappers, d.pathIndex);
@@ -1037,14 +1043,14 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 x1: function (d) {
                   //var pivotNodeTranslate = getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
                   //var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex];
-                  return that.getNodePositionX(pathWrapper, d, true); // + s.NODE_WIDTH / 2;
+                  return that.getNodePositionX(pathWrapper, d, true); // + config.getNodeWidth() / 2;
                 }
                 ,
                 y1: s.SET_TYPE_HEIGHT / 2,
                 x2: function (d) {
                   //var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
                   //var position = that.pathWrappers[d.pathIndex].nodePositions[d.relIndex + 1];
-                  //return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + s.NODE_WIDTH / 2;
+                  //return pivotNodeTranslate + position * (config.getNodeWidth() + s.EDGE_SIZE) + config.getNodeWidth() / 2;
                   return that.getNodePositionX(pathWrapper, d + 1, true);
                 },
                 y2: s.SET_TYPE_HEIGHT / 2,
@@ -1067,10 +1073,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             allLines.transition()
               .attr({
                 x1: function (d) {
-                  return that.getNodePositionX(pathWrapper, d, true); // + s.NODE_WIDTH / 2;
+                  return that.getNodePositionX(pathWrapper, d, true); // + config.getNodeWidth() / 2;
                 },
                 x2: function (d) {
-                  return that.getNodePositionX(pathWrapper, d + 1, true); // + s.NODE_WIDTH / 2;
+                  return that.getNodePositionX(pathWrapper, d + 1, true); // + config.getNodeWidth() / 2;
                 },
                 stroke: config.getSetColorFromSetTypePropertyName(setTypeWrapper.type),
                 "stroke-width": function (d) {
@@ -1348,7 +1354,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       getNodePositionX: function (pathWrapper, nodeIndex, centerPosition) {
         var pivotNodeTranslate = this.getPivotNodeAlignedTranslationX(pathWrapper);
         var position = pathWrapper.nodePositions[nodeIndex];
-        return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE) + (centerPosition ? s.NODE_WIDTH / 2 : 0);
+        return pivotNodeTranslate + position * (config.getNodeWidth() + s.EDGE_SIZE) + (centerPosition ? config.getNodeWidth() / 2 : 0);
       }
 
       ,
@@ -1681,7 +1687,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               if (typeof value !== "undefined") {
 
                 var posX = that.getNodePositionX(pathWrapper, nodeIndex, false);
-                var scale = pathData.numericalPropertyScales[property.name];
+                var scale = d3.scale.linear().domain(pathData.numericalPropertyDomains[property.name]).range([0, config.getNodeWidth()]);
 
                 bar.append("rect")
                   .classed("valueBg", true)
@@ -1745,7 +1751,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 var bar = d3.select(this);
 
                 var posX = that.getNodePositionX(pathWrapper, nodeIndex, false);
-                var scale = pathData.numericalPropertyScales[property.name];
+                var scale = d3.scale.linear().domain(pathData.numericalPropertyDomains[property.name]).range([0, config.getNodeWidth()]);
                 var domain = scale.domain();
                 var range = scale.range();
 
@@ -1753,7 +1759,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 bar.select("rect.valueBg").transition()
                   .attr({
                     x: posX,
-                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2,
+                    width: scale.range()[1]
                   });
 
                 bar.select("rect.value").transition()
@@ -1761,13 +1768,14 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     x: posX + (node.properties < 0 ? scale(value) : scale(0)),
                     y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2,
                     width: Math.abs(scale(0) - scale(value)),
-                    fill: config.getNodePropertyColorFromPropertyName(property.name),
+                    fill: config.getNodePropertyColorFromPropertyName(property.name)
                   });
 
                 bar.select("rect.valueFrame").transition()
                   .attr({
                     x: posX,
-                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2,
+                    width: scale.range()[1]
                   });
 
                 bar.select("line.zero").transition()
@@ -1966,12 +1974,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               x1: function (d, i) {
                 var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
                 var position = that.pathWrappers[d.pathIndex].nodePositions[i];
-                return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE);
+                return pivotNodeTranslate + position * (config.getNodeWidth() + s.EDGE_SIZE);
               },
               x2: function (d, i) {
                 var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
                 var position = that.pathWrappers[d.pathIndex].nodePositions[i + 1];
-                return pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE);
+                return pivotNodeTranslate + position * (config.getNodeWidth() + s.EDGE_SIZE);
               }
             });
         });
@@ -2009,7 +2017,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         that.selectionListeners.push(l);
 
         node.each(function (d) {
-          pathUtil.renderNode(d3.select(this), d.node, 0, 0, s.NODE_WIDTH, s.NODE_HEIGHT, "url(#pathNodeClipPath)", function (text) {
+          pathUtil.renderNode(d3.select(this), d.node, 0, 0, config.getNodeWidth(), s.NODE_HEIGHT, "url(#pathNodeClipPath)", function (text) {
             return that.listView.getTextWidth(text);
           }, pathUtil.getDefaultNodeOverlayItems(d.node), false);
         });
@@ -2021,57 +2029,63 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .attr("transform", function (d, i) {
             var position = that.pathWrappers[d.pathIndex].nodePositions[i];
             var pivotNodeTranslate = that.getPivotNodeAlignedTranslationX(that.pathWrappers[d.pathIndex]);
-            return "translate(" + (pivotNodeTranslate + position * (s.NODE_WIDTH + s.EDGE_SIZE)) + "," + s.V_SPACING + ")";
+            return "translate(" + (pivotNodeTranslate + position * (config.getNodeWidth() + s.EDGE_SIZE)) + "," + s.V_SPACING + ")";
           })
           .each(function (node, nodeIndex) {
-            if (typeof s.referencePathId === "undefined") {
-              d3.select(this).select("text.refPathStatus").remove();
-              d3.select(this).select("text.refPathPosDiff").remove();
-            } else {
 
-              if (that.pathWrappers[node.pathIndex].path.id !== s.referencePathId) {
-                var nodeIndexInRefPath = pathUtil.indexOfNodeInPath(node.node, referencePath);
-                var t = d3.select(this).select("text.refPathStatus");
-                if (t.empty()) {
-                  t = d3.select(this).append("text")
-                    .classed("refPathStatus", true)
-                    .attr({
-                      x: -2,
-                      y: s.NODE_HEIGHT / 2 - 4
-                    });
-                }
+              pathUtil.updateNode(d3.select(this), node.node, 0, 0, config.getNodeWidth(), s.NODE_HEIGHT, function (text) {
+                return that.listView.getTextWidth(text);
+              }, pathUtil.getDefaultNodeOverlayItems(node.node));
 
-                t.style({
-                  fill: nodeIndexInRefPath >= 0 ? "green" : "red"
-                }).text(nodeIndexInRefPath >= 0 ? "\uf00c" : "\uf00d");
+              if (typeof s.referencePathId === "undefined") {
+                d3.select(this).select("text.refPathStatus").remove();
+                d3.select(this).select("text.refPathPosDiff").remove();
+              } else {
 
-                var nodePosDiff = nodeIndex - nodeIndexInRefPath;
-
-                if (nodeIndexInRefPath >= 0 && nodePosDiff !== 0) {
-                  var diffText = d3.select(this).select("text.refPathPosDiff");
-                  if (diffText.empty()) {
-                    diffText = d3.select(this).append("text")
-                      .classed("refPathPosDiff", true)
+                if (that.pathWrappers[node.pathIndex].path.id !== s.referencePathId) {
+                  var nodeIndexInRefPath = pathUtil.indexOfNodeInPath(node.node, referencePath);
+                  var t = d3.select(this).select("text.refPathStatus");
+                  if (t.empty()) {
+                    t = d3.select(this).append("text")
+                      .classed("refPathStatus", true)
                       .attr({
                         x: -2,
-                        y: s.NODE_HEIGHT + 2
+                        y: s.NODE_HEIGHT / 2 - 4
                       });
                   }
 
-                  diffText.style({
-                    fill: "red",
-                    "text-anchor": "end"
-                  }).text((nodePosDiff > 0 ? "+" : "") + nodePosDiff);
+                  t.style({
+                    fill: nodeIndexInRefPath >= 0 ? "green" : "red"
+                  }).text(nodeIndexInRefPath >= 0 ? "\uf00c" : "\uf00d");
+
+                  var nodePosDiff = nodeIndex - nodeIndexInRefPath;
+
+                  if (nodeIndexInRefPath >= 0 && nodePosDiff !== 0) {
+                    var diffText = d3.select(this).select("text.refPathPosDiff");
+                    if (diffText.empty()) {
+                      diffText = d3.select(this).append("text")
+                        .classed("refPathPosDiff", true)
+                        .attr({
+                          x: -2,
+                          y: s.NODE_HEIGHT + 2
+                        });
+                    }
+
+                    diffText.style({
+                      fill: "red",
+                      "text-anchor": "end"
+                    }).text((nodePosDiff > 0 ? "+" : "") + nodePosDiff);
+                  } else {
+                    d3.select(this).select("text.refPathPosDiff").remove();
+                  }
+
                 } else {
+                  d3.select(this).select("text.refPathStatus").remove();
                   d3.select(this).select("text.refPathPosDiff").remove();
                 }
-
-              } else {
-                d3.select(this).select("text.refPathStatus").remove();
-                d3.select(this).select("text.refPathPosDiff").remove();
               }
             }
-          });
+          );
 
 
         pathContainer.append("g")
