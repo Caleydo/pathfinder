@@ -1,9 +1,12 @@
-define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
+define(['d3', 'jquery', "../caleydo_core/main", "colors", "./list/path/settings", "./listeners"], function (d3, $, C, colors, pathSettings, listeners) {
 
   var DEFAULT_NODE_WIDTH = 60;
   var DEFAULT_NODE_HEIGHT = 20;
 
   var DEFAULT_EDGE_SIZE = 30;
+
+  var isAutoColor = true;
+  var colorsEnabled = true;
 
   var config = {};
   var nodeNamePropertyNames = {};
@@ -18,7 +21,11 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
   var datasetColors = {};
 
   return {
+
+    COLOR_UPDATE: "COLOR_UPDATE",
+
     setConfig: function (c) {
+      var that = this;
       config = c;
 
       var symbols = d3.svg.symbolTypes;
@@ -75,6 +82,25 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
         }
       }
 
+      $("#enable_colors").on("click", function () {
+        colorsEnabled = true;
+        isAutoColor = false;
+        listeners.notify(that.COLOR_UPDATE, colorsEnabled);
+      });
+
+      $("#disable_colors").on("click", function () {
+        colorsEnabled = false;
+        isAutoColor = false;
+        listeners.notify(that.COLOR_UPDATE, colorsEnabled);
+      });
+
+      $("#auto_colors").on("click", function () {
+        isAutoColor = true;
+        colorsEnabled = (typeof pathSettings.referencePathId === "undefined");
+
+        listeners.notify(that.COLOR_UPDATE, colorsEnabled);
+      });
+
       config.edges.forEach(function (edgeConfig) {
 
         Object.keys(edgeConfig.properties).forEach(function (key) {
@@ -91,6 +117,18 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
         });
 
       });
+    },
+
+    isAutoColor: function () {
+      return isAutoColor;
+    },
+
+    enableColors: function (enable) {
+      colorsEnabled = enable;
+    },
+
+    isEnableColors: function() {
+      return colorsEnabled;
     },
 
     isSetEdgesOnly: function () {
@@ -119,17 +157,26 @@ define(['d3', "../caleydo_core/main", "colors"], function (d3, C, colors) {
     ,
 
     getSetColorFromSetTypePropertyName: function (name) {
-      return setTypeColors[name];
+      if (colorsEnabled) {
+        return setTypeColors[name];
+      }
+      return "gray";
     }
     ,
 
     getDatasetColorFromDatasetId: function (id) {
-      return datasetColors[id];
+      if (colorsEnabled) {
+        return datasetColors[id];
+      }
+      return "gray";
     }
     ,
 
     getNodePropertyColorFromPropertyName: function (name) {
-      return propertyColors[name];
+      if (colorsEnabled) {
+        return propertyColors[name];
+      }
+      return "gray";
     }
     ,
 

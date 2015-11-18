@@ -720,7 +720,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
             if (info.type === "table") {
               configs.forEach(function (c) {
                 if (info.id === c.id) {
-                  info.color = config.getDatasetColorFromDatasetId(info.id);
+                  //info.color = config.getDatasetColorFromDatasetId(info.id);
 
                   allDatasets[info.id] = allDatasets[info.id] || {};
                   allDatasets[info.id].info = info;
@@ -771,7 +771,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
           var fetchDataset = function (index) {
             var info = datasetInfos[index];
             ccle.stats(info.id).then(function (stats) {
-              info.color = config.getDatasetColorFromDatasetId(info.id);
+              //info.color = config.getDatasetColorFromDatasetId(info.id);
               allDatasets[info.id] = allDatasets[info.id] || {};
 
               allDatasets[info.id].info = info;

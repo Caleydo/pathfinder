@@ -63,8 +63,6 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       //svg.append("g")
 
 
-
-
       //listeners.add(function (query) {
       //  if (pathQuery.isRemoveFilteredPaths() || pathQuery.isRemoteQuery()) {
       //    that.updateToFilteredPaths();
@@ -87,6 +85,10 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       listeners.add(function (showNonEdgeSets) {
         that.render();
       }, "UPDATE_SET_VISIBILITY");
+
+      listeners.add(function () {
+        that.updateView();
+      }, config.COLOR_UPDATE);
 
 
       $(window).on('resize.updatev', function (e) {
@@ -345,7 +347,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
               width: 200
             });
 
-          if(!that.textSizeDomElement){
+          if (!that.textSizeDomElement) {
             that.textSizeDomElement = uiUtil.createFontSizeTextElement(svg);
           }
 
@@ -509,6 +511,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         }
 
         var typeLabel = typeCont.append("text")
+          .classed("typeLabel", true)
           .text(statType.getLabel())
           .attr({
             x: COLLAPSE_BUTTON_SPACING,
@@ -520,14 +523,11 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
         typeLabel.append("title")
           .text(statType.getLabel());
 
-        if (idType === "set") {
-          typeLabel.style("fill", config.getSetColorFromSetTypePropertyName(statType.type));
-        }
+        typeLabel.style("fill", statType.getColor());
 
-        addPathOccurrenceBar(typeCont, idType === "set" ? function (d) {
-          return config.getSetColorFromSetTypePropertyName(d.type);
-        } : function () {
-          return "gray";
+
+        addPathOccurrenceBar(typeCont, function (d) {
+          return d.getColor();
         });
 
 
@@ -591,25 +591,24 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
 
           var statLabel = $stat.append("text")
+            .classed("statLabel", true)
             .text(stat.getLabel())
             .attr({
               x: COLLAPSE_BUTTON_SPACING,
               y: HIERARCHY_ELEMENT_HEIGHT - 2,
               "clip-path": "url(#LabelClipPath)"
             });
-          if (idType === "set") {
-            statLabel.style("fill", config.getSetColorFromSetTypePropertyName(stat.parent.type));
-          }
+
+          statLabel.style("fill", stat.getColor());
+
 
           statLabel.append("title")
             .text(function () {
               return stat.getLabel();
             });
 
-          addPathOccurrenceBar($stat, idType === "set" ? function (d) {
-            return config.getSetColorFromSetTypePropertyName(d.parent.type);
-          } : function (d) {
-            return "gray";
+          addPathOccurrenceBar($stat, function (d) {
+            return d.getColor();
           });
 
         });
@@ -749,9 +748,15 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
           statType.children.sort(comparator);
 
+          typeCont.select("text.typeLabel")
+            .style("fill", statType.getColor());
+
           typeCont.select("rect.pathOccurrences")
             .transition()
-            .attr("width", scaleX(statType.pathIds.length));
+            .attr({
+              width: scaleX(statType.pathIds.length),
+              fill: statType.getColor()
+            });
 
           typeCont.select("rect.pathOccurrences title")
             .text(statType.getTooltip());
@@ -773,9 +778,15 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           stats.each(function (stat) {
             var $stat = d3.select(this);
 
+            $stat.select("text.statLabel")
+              .style("fill", statType.getColor());
+
             $stat.select("rect.pathOccurrences")
               .transition()
-              .attr("width", scaleX(stat.pathIds.length));
+              .attr({
+                width: scaleX(stat.pathIds.length),
+                fill: stat.getColor()
+              });
 
             $stat.select("rect.pathOccurrences title")
               .text(stat.getTooltip());

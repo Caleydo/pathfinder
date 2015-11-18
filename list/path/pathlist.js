@@ -100,6 +100,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         } else {
           delete s.referencePathId;
         }
+        if(config.isAutoColor()) {
+          config.enableColors(permanent);
+          listeners.notify(config.COLOR_UPDATE, permanent);
+        }
         listeners.notify(s.pathListUpdateTypes.UPDATE_REFERENCE_PATH, s.referencePathId);
       };
     }
@@ -202,6 +206,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           return;
         }
 
+        that.updatePathList();
+      };
+
+      this.updateColorListener = function () {
         that.updatePathList();
       };
 
@@ -323,6 +331,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.add(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.add(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
+        listeners.add(this.updateColorListener, config.COLOR_UPDATE);
         //listeners.add(this.sortUpdateListener, pathSorting.updateType);
         //listeners.add(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
 
@@ -389,6 +398,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.remove(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
         listeners.remove(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
+        listeners.remove(this.updateColorListener, config.COLOR_UPDATE);
         //listeners.remove(this.sortUpdateListener, pathSorting.updateType);
         //listeners.remove(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
 
@@ -850,6 +860,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
 
           setType.append("text")
+            .classed("setTypeLabel", true)
             .text(function (d) {
               return config.getSetTypeFromSetPropertyName(d.type);
             })
@@ -879,6 +890,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 .text(function (d) {
                   return d.collapsed ? "\uf0da" : "\uf0dd";
                 });
+
+              d3.select(this).select("text.setTypeLabel").style("fill", function (d) {
+                return config.getSetColorFromSetTypePropertyName(d.type);
+              });
 
             })
             .attr("transform", function (d, i) {
@@ -1033,9 +1048,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                   return that.getNodePositionX(pathWrapper, d + 1, true);
                 },
                 y2: s.SET_TYPE_HEIGHT / 2,
-                stroke: function (d) {
-                  return config.getSetColorFromSetTypePropertyName(setTypeWrapper.type);
-                },
+                stroke: config.getSetColorFromSetTypePropertyName(setTypeWrapper.type),
                 "stroke-dasharray": function (d) {
                   if (!config.isSetTypeEdgeOrigin(setTypeWrapper.type)) {
                     return "0,0";
@@ -1059,6 +1072,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 x2: function (d) {
                   return that.getNodePositionX(pathWrapper, d + 1, true); // + s.NODE_WIDTH / 2;
                 },
+                stroke: config.getSetColorFromSetTypePropertyName(setTypeWrapper.type),
                 "stroke-width": function (d) {
                   var numSets = getEdgeSetCount(pathWrapper.path.edges[d],
                     setTypeWrapper);
@@ -1089,9 +1103,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     setTypeWrapper);
                   return numSets == 0 ? 0 : nodeSetScale(numSets);
                 },
-                fill: function (d) {
-                  return config.getSetColorFromSetTypePropertyName(setTypeWrapper.type);
-                }
+                fill: config.getSetColorFromSetTypePropertyName(setTypeWrapper.type)
               });
 
             circle.append("title");
@@ -1105,7 +1117,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                   var numSets = getNodeSetCount(pathWrapper.path.nodes[d],
                     setTypeWrapper);
                   return numSets == 0 ? 0 : nodeSetScale(numSets);
-                }
+                },
+                fill: config.getSetColorFromSetTypePropertyName(setTypeWrapper.type)
               });
 
             allCircles.each(function (nodeIndex) {
@@ -1155,6 +1168,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               });
 
             set.append("text")
+              .classed("setLabel", true)
               .text(function (d) {
                 return setInfo.getSetLabel(d.id);
               })
@@ -1162,9 +1176,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 x: s.SET_TYPE_INDENT,
                 y: s.SET_HEIGHT
               })
-              .style("fill", function (d) {
-                return config.getSetColorFromSetTypePropertyName(setTypeWrapper.type);
-              })
+              .style("fill", config.getSetColorFromSetTypePropertyName(setTypeWrapper.type))
               .attr("clip-path", "url(#SetLabelClipPath)");
 
             set.append("title")
@@ -1200,6 +1212,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 }
               });
 
+            allSets.each(function () {
+              d3.select(this).select("text.setLabel")
+                .style("fill", config.getSetColorFromSetTypePropertyName(setTypeWrapper.type));
+            });
+
 
             var setVisContainer = set.append("g")
               .classed("setVisContainer", true);
@@ -1230,7 +1247,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 .attr({
                   cx: function (d) {
                     return that.getNodePositionX(pathWrapper, d, true);
-                  }
+                  },
+                  fill: config.getSetColorFromSetTypePropertyName(setTypeWrapper.type)
                 });
 
 
@@ -1265,7 +1283,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                   },
                   x2: function (d) {
                     return that.getNodePositionX(pathWrapper, d + 1, true);
-                  }
+                  },
+                  stroke: config.getSetColorFromSetTypePropertyName(setTypeWrapper.type)
                 });
 
               allLines.exit().remove();
@@ -1626,6 +1645,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             //  }).style({stroke: "black", fill:"white"});
 
             prop.append("text")
+              .classed("propertyLabel", true)
               .text(property.name)
               .attr("x", 10)
               .attr("y", (property.getBaseHeight() - 10) / 2 + 9)
@@ -1641,6 +1661,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               .attr({
                 transform: "translate(0," + property.getPosYRelativeToParent(pathWrapper.properties) + ")"
               });
+
+            prop.select("text.propertyLabel")
+              .style("fill", config.getNodePropertyColorFromPropertyName(property.name));
 
             var allBars = prop.selectAll("g.bar").data(pathWrapper.path.nodes, function (d) {
               return d.id
@@ -1737,7 +1760,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                   .attr({
                     x: posX + (node.properties < 0 ? scale(value) : scale(0)),
                     y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2,
-                    width: Math.abs(scale(0) - scale(value))
+                    width: Math.abs(scale(0) - scale(value)),
+                    fill: config.getNodePropertyColorFromPropertyName(property.name),
                   });
 
                 bar.select("rect.valueFrame").transition()
