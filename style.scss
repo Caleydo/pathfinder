@@ -271,41 +271,41 @@ g.stats.selected, g.path.selected {
 }
 
 g.set.hovered {
-  text {
-    fill: $hoverColor;
-  }
+  //text {
+  //  fill: $hoverColor;
+  //}
 
-  line {
-    stroke: $hoverColor;
-    //    stroke-width: 2px;
-  }
+  //line {
+  //  stroke: $hoverColor;
+  //  //    stroke-width: 2px;
+  //}
 
   rect.filler {
     fill: $hoverColorSoft;
   }
 
-  circle {
-    fill: $hoverColor;
-  }
+  //circle {
+  //  fill: $hoverColor;
+  //}
 }
 
 g.set.selected {
-  text {
-    fill: $selectionColor;
-  }
+  //text {
+  //  fill: $selectionColor;
+  //}
 
-  line {
-    stroke: $selectionColor;
-    //    stroke-width: 2px;
-  }
+  //line {
+  //  stroke: $selectionColor;
+  //  //    stroke-width: 2px;
+  //}
 
   rect.filler {
     fill: $selectionColorSoft;
   }
 
-  circle {
-    fill: $selectionColor;
-  }
+  //circle {
+  //  fill: $selectionColor;
+  //}
 }
 
 .edgePath path {
