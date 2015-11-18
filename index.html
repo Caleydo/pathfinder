@@ -87,10 +87,10 @@
         </div>
       </div>
       <!--<div class="outer">-->
-        <!--<div class="inner">-->
-          <div id="pathgraph">
-          </div>
-        <!--</div>-->
+      <!--<div class="inner">-->
+      <div id="pathgraph">
+      </div>
+      <!--</div>-->
       <!--</div>-->
     </section>
 
@@ -121,19 +121,40 @@
         <h4>General</h4>
 
         <div class="checkbox" title="Show filtered paths.">
-          <label><input type="checkbox" id="remove_filtered_paths" checked>Show filtered paths</label>
+          <label><input type="checkbox" id="remove_filtered_paths">Show filtered paths</label>
         </div>
         <div class="checkbox" title="Show sets even if they do not connect nodes in any path.">
           <label><input type="checkbox" id="hideNonRelSets"/>Show all sets</label>
         </div>
 
-        <input type="button" id="savePaths" value="Save Paths"/>
+        <label>Coloring</label>
+
+        <div class="btn-group btn-group-xs" data-toggle="buttons" style="display:inline-block;float: right">
+          <label id="enable_colors" class="btn btn-default" title="Show all paths">
+            <input type="radio" name="coloring">Enabled
+          </label>
+          <label id="disable_colors" class="btn btn-default" title="Show all paths">
+            <input type="radio" name="coloring">Disabled
+          </label>
+          <label id="auto_colors" class="btn btn-default active" title="Show paths of active page">
+            <input type="radio" name="coloring" checked="">Auto
+          </label>
+        </div>
+
+        <br>
+        <input style="margin-top: 5px" type="button" id="savePaths" value="Save Paths"/>
       </div>
 
+      <hr width="98%">
 
       <div>
         <h4>List view</h4>
 
+        <label for="page_size">Paths per page </label>
+
+        <input type="number" id="page_size" style="width: 5em;" maxlength="3" placeholder="k"
+               value="20" min="1">
+        <input type="button" id="apply_page_size" value="Apply"/>
 
         <!--<div class="checkbox" title="Force equal nodes to be aligned accross paths.">-->
         <!--<label><input type="checkbox" id="alignPathNodes"/>Align nodes</label>-->
@@ -164,6 +185,9 @@
           <!--</div>-->
         </div>
       </div>
+
+      <hr width="98%">
+
       <div>
         <h4>Topology view</h4>
         <!--<h1 style="display:inline">Caleydo Pathfinder</h1>-->

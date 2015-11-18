@@ -352,6 +352,19 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           .on("click", function () {
             that.setActivePage(Math.min(Math.floor(that.lastVisiblePathIndex / pageSize), that.currentPageIndex + 1));
           });
+
+        $("#apply_page_size").on("click", function () {
+          var numPaths = parseInt($("#page_size").val());
+          if (numPaths !== pageSize) {
+            pageSize = numPaths;
+            //var changes = that.updateLastVisibleIndex();
+            that.updatePagination();
+            that.notifyUpdateListeners(createChangeObject({
+              cause: "PAGE_SIZE_UPDATE",
+              pagePathsChanged: true
+            }))
+          }
+        });
       }
       ,
 
@@ -435,7 +448,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           }
 
           if (this.currentPageIndex * pageSize > this.lastVisiblePathIndex) {
-            this.currentPageIndex = Math.floor(this.lastVisiblePathIndex / pageSize);
+            this.currentPageIndex = Math.max(0, Math.floor(this.lastVisiblePathIndex / pageSize));
             pagePathsChanged = true;
           }
         } else {

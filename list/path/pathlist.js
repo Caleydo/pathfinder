@@ -1987,7 +1987,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         node.each(function (d) {
           pathUtil.renderNode(d3.select(this), d.node, 0, 0, s.NODE_WIDTH, s.NODE_HEIGHT, "url(#pathNodeClipPath)", function (text) {
             return that.listView.getTextWidth(text);
-          }, pathUtil.getDefaultNodeOverlayItems(d.node));
+          }, pathUtil.getDefaultNodeOverlayItems(d.node), false);
         });
 
         var referencePath = dataStore.getPath(s.referencePathId);

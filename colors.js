@@ -5,7 +5,7 @@ define(["d3"], function (d3) {
   //scheme.splice(1, 1);
 
   var scale = d3.scale.ordinal()
-    .domain(d3.range(9))
+    .domain(d3.range(colorScheme.length))
     .range(colorScheme);
   var numTypes = -1;
 
@@ -14,10 +14,11 @@ define(["d3"], function (d3) {
       numTypes++;
       this.colorsLeft--;
       return scale(numTypes);
+      //return "gray";
     },
 
-    maxNumColors: 9,
-    colorsLeft: 9
+    maxNumColors: colorScheme.length,
+    colorsLeft: colorScheme.length
   };
 
 });

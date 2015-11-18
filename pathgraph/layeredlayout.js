@@ -413,7 +413,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
         pathUtil.renderNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
           return that.view.getTextWidth(text)
-        }, items);
+        }, items, true);
       });
 
 

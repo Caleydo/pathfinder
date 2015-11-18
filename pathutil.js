@@ -205,7 +205,7 @@ define(["d3", "./config", "./setinfo", "./uiutil"], function (d3, config, setInf
             return setIds.values();
         },
 
-        renderNode: function (parent, node, x, y, width, height, clipPath, textWidthFunction, overlayItems) {
+        renderNode: function (parent, node, x, y, width, height, clipPath, textWidthFunction, overlayItems, showOnNodeMapping) {
             parent.append("rect")
                 .attr({
                     rx: 5,
@@ -286,6 +286,10 @@ define(["d3", "./config", "./setinfo", "./uiutil"], function (d3, config, setInf
             if (typeof overlayItems !== "undefined" && overlayItems.length > 0) {
                 uiUtil.createTemporalMenuOverlayButton(parent, x + width, y, false, overlayItems);
             }
+
+          //if(showOnNodeMapping) {
+          //  uiUtil.appendBars()
+          //}
 
         }
 

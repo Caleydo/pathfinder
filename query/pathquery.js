@@ -43,7 +43,7 @@ define(['../listeners', './querymodel', '../datastore', '../pathutil', '../confi
     }
   }
 
-  var removeFilteredPaths = false;
+  var removeFilteredPaths = true;
   var justNetworkEdges = false;
 
 
