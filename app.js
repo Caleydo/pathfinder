@@ -142,7 +142,7 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
 
         statisticsUtil.statisticsOf([0, NaN, 5, 3, NaN, 7, 3]);
 
-      //Add paths only every x seconds to keep interface interactive
+        //Add paths only every x seconds to keep interface interactive
         var lastAdditionTime = -1;
         var pathQueue = [];
 
@@ -183,7 +183,20 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
           ,
           neighbor_done: function (event, data) {
             console.log(data.node, data.neighbors);
+          },
+
+          found_start: function(event, data) {
+
+            var paths = data.nodes.map(function (node) {
+              return {nodes: [node], edges: []};
+            });
+
+            addPaths(paths);
           }
+	  //
+          //find: function (event, data) {
+	  //
+          //}
         });
 
         //var selectPaths = d3.select('#select_dump');
@@ -275,8 +288,8 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
         }
 
         function addPaths(paths) {
-          paths.forEach(function(path){
-             path.id = currentPathId++;
+          paths.forEach(function (path) {
+            path.id = currentPathId++;
           });
 
           var addedPaths = dataStore.addPaths(paths);

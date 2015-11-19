@@ -48,13 +48,13 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
     this.lengthHistogram = {};
     this.maxLength = 0;
     allPaths.forEach(function (p) {
-      that.lengthHistogram[p.nodes.length.toString()] = that.lengthHistogram[p.nodes.length.toString()] || {
-          length: p.nodes.length,
+      that.lengthHistogram[p.edges.length.toString()] = that.lengthHistogram[p.edges.length.toString()] || {
+          length: p.edges.length,
           numPaths: 0
         };
-      that.lengthHistogram[p.nodes.length.toString()].numPaths++;
-      if (that.maxLength < p.nodes.length) {
-        that.maxLength = p.nodes.length;
+      that.lengthHistogram[p.edges.length.toString()].numPaths++;
+      if (that.maxLength < p.edges.length) {
+        that.maxLength = p.edges.length;
       }
     });
 
@@ -65,7 +65,7 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
 
   ProgressBar.prototype.fillHistogram = function () {
     var that = this;
-    for (var i = 1; i <= (that.maxLength < 1 ? 1 : that.maxLength); i++) {
+    for (var i = 0; i < (that.maxLength < 1 ? 1 : that.maxLength); i++) {
       that.lengthHistogram[i.toString()] = that.lengthHistogram[i.toString()] || {
           length: i,
           numPaths: 0
@@ -78,17 +78,17 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
     var that = this;
     var currentMaxLength = 0;
     paths.forEach(function (path) {
-      that.lengthHistogram[path.nodes.length.toString()] = that.lengthHistogram[path.nodes.length.toString()] || {
-          length: path.nodes.length,
+      that.lengthHistogram[path.edges.length.toString()] = that.lengthHistogram[path.edges.length.toString()] || {
+          length: path.edges.length,
           numPaths: 0
         };
-      if (path.nodes.length > currentMaxLength) {
-        currentMaxLength = path.nodes.length;
+      if (path.edges.length > currentMaxLength) {
+        currentMaxLength = path.edges.length;
       }
       if (addedPaths.indexOf(path) !== -1) {
-        that.lengthHistogram[path.nodes.length.toString()].numPaths++;
-        if (path.nodes.length > that.maxLength) {
-          that.maxLength = path.nodes.length;
+        that.lengthHistogram[path.edges.length.toString()].numPaths++;
+        if (path.edges.length > that.maxLength) {
+          that.maxLength = path.edges.length;
           that.fillHistogram();
         }
       }
