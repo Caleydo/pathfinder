@@ -97,9 +97,14 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             }
           });
 
+          selectionUtil.selections["path"].setSelection(s.referencePathId, "reference");
+          selectionUtil.notify("path", "reference");
         } else {
+          selectionUtil.selections["path"].removeFromSelection(s.referencePathId, "reference");
           delete s.referencePathId;
+          selectionUtil.notify("path", "reference");
         }
+
         if (config.isAutoColor()) {
           config.enableColors(permanent);
           listeners.notify(config.COLOR_UPDATE, permanent);

@@ -15,6 +15,9 @@ $overlayHoverColor: rgb(150, 200, 255);
 $neighborFillColor: rgb(255, 255, 255);
 $progressBarFillColor: rgb(150, 200, 255);
 $borderColor: rgb(180, 180, 180);
+$referencePathColor: rgb(231, 41, 138);
+$referencePathColorSoft: rgba(231, 41, 138, 0.2);
+
 
 @mixin textIcon($fontSize) {
   font-family: FontAwesome, sans-serif;
@@ -113,6 +116,13 @@ g.node.hovered {
   }
 }
 
+g.node.path_reference {
+   rect {
+    stroke: $referencePathColor;
+    stroke-width: 3px;
+  }
+}
+
 g.node.path_hovered {
   rect {
     stroke: $hoverColor;
@@ -125,6 +135,7 @@ g.node.selected {
     fill: $selectionColor;
   }
 }
+
 
 g.node.path_selected {
   rect {
@@ -226,6 +237,12 @@ g.edge {
   }
 }
 
+g.edge.path_reference line, g.edge.path_reference path {
+  stroke: $referencePathColor;
+  fill: $referencePathColor;
+  //  stroke-width: 3px;
+}
+
 g.edge.path_hovered line, g.edge.path_hovered path {
   stroke: $hoverColor;
   fill: $hoverColor;
@@ -255,6 +272,12 @@ g.overlayButton {
 g.overlayButton.smallButton {
   text {
     font-size: 10px;
+  }
+}
+
+g.path.reference {
+  rect.filler {
+    fill: $referencePathColorSoft;
   }
 }
 
@@ -334,6 +357,12 @@ path.crossConnection.hovered, line.stub.hovered {
 path.crossConnection.selected, line.stub.selected {
   stroke: $selectionColorMedium;
   stroke-width: 5px;
+}
+
+.edgePath path.path_reference {
+  stroke: $referencePathColor;
+  fill: $referencePathColor;
+  //  stroke-width: 3px;
 }
 
 .edgePath path.path_hovered {
