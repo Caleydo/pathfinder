@@ -1894,6 +1894,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             column.header.updateWidth();
             that.updateHeaderHeights();
             that.notify();
+            that.pathList.listView.updateViewSize();
           }
         },
           {
@@ -1905,6 +1906,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
               column.header.updateWidth();
               that.updateHeaderHeights();
               that.notify();
+              that.pathList.listView.updateViewSize();
             }
           },
           {
@@ -1916,6 +1918,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
               column.header.updateWidth();
               that.updateHeaderHeights();
               that.notify();
+              that.pathList.listView.updateViewSize();
             }
           }];
       },

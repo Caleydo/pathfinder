@@ -481,7 +481,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             currentMaxWidth = currentWidth;
           }
         });
-        return {width: (currentMaxWidth + columns.getWidth() + 100), height: totalHeight};
+        return {width: (currentMaxWidth + columns.getWidth() + 120), height: totalHeight};
       }
       ,
 

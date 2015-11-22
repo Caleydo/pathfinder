@@ -408,6 +408,9 @@ g.barAxis {
 #columnHeaders {
   margin: 0px;
   padding: 0px;
+  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: hidden;
   //height: 22px;
 }
 
@@ -649,7 +652,21 @@ header {
 //  //overflow: auto;
 //}
 
-#pathlist, #pathQuery {
+
+
+#pathlist {
+  display: block;
+  //height: 300px;
+  //-webkit-flex: 1;
+  //flex: 1;
+  //margin: 0px;
+  //padding: 0px;
+  //border: 0px;
+  overflow: auto;
+  //overflow-x: hidden;
+}
+
+#pathQuery {
   display: block;
   -webkit-flex: 1;
   flex: 1;

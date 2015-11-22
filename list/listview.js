@@ -45,7 +45,6 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
         .style({height: pathSettings.COLUMN_HEADER_HEIGHT + "px"})
         .append("svg")
         .attr({
-            width: "100%",
             height: "100%"
           }
         );
@@ -104,6 +103,10 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
         //listeners.notify("TILT_ATTRIBUTES", this.checked);
       });
 
+      $("#pathlist").scroll(function () {
+        $("#columnHeaders").scrollLeft($("#pathlist").scrollLeft());
+    });
+
       //$("#reverseAggregateSorting").on("click", function () {
       //  aggregateSorting.sortingManager.ascending = !this.checked;
       //  listeners.notify(aggregateSorting.updateType, aggregateSorting.sortingManager.currentComparator);
@@ -112,6 +115,7 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
       this.aggregateList.init(svg);
       this.aggregateList.addUpdateListener(function (list) {
         that.updateViewSize();
+
       });
       this.aggregateList.parent = svg;
 
@@ -132,6 +136,34 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
 
       return this.aggregateList.getSize();
     };
+
+     ListView.prototype.updateViewSize = function () {
+        var minSize = this.getMinSize();
+        var svg = d3.select(this.parentSelector + " svg");
+        //var parent = $(this.parentSelector)[0];
+        //var pw = $(this.parentSelector)[0].offsetWidth;
+        var p = $(this.parentSelector);
+        var p2 = $(this.parentSelector)[0];
+        var height = 0;
+        if ($(this.parentSelector)[0].offsetHeight > minSize.height && this.grabVSpace) {
+          svg.style({
+            "-webkit-flex": 1,
+            "flex": 1
+          });
+          svg.attr("height", null);
+        } else {
+          svg.attr("height", minSize.height);
+          //height = minSize.height;
+        }
+
+
+        svg.attr("width", $(this.parentSelector)[0].offsetWidth > minSize.width && this.grabHSpace ? "100%" : minSize.width);
+        svg.style("width", $(this.parentSelector)[0].offsetWidth > minSize.width && this.grabHSpace ? "100%" : minSize.width);
+
+        d3.select("#columnHeaders svg").attr("width", minSize.width+30)
+          .style("width", minSize.width+30);
+
+     };
 
 
     ListView.prototype.render = function (paths) {
