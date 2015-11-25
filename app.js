@@ -145,6 +145,7 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
         //Add paths only every x seconds to keep interface interactive
         var lastAdditionTime = -1;
         var pathQueue = [];
+        var neighborCache = {};
 
         ServerSearch.on({
           query_start: function () {
@@ -178,14 +179,24 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
 
           neighbor_neighbor: function (event, data) {
 
-            overviewGraph.addNeighbor(data.node, data.neighbor);
+            if(!neighborCache[data.node]) {
+              neighborCache[data.node] = [];
+            }
+            neighborCache[data.node].push(data.neighbor);
+
           }
           ,
           neighbor_done: function (event, data) {
+            if (data.tag === "all") {
+              overviewGraph.addNeighbor(data.node,  neighborCache[data.node]);
+            } else if (data.tag === "links") {
+              overviewGraph.addLink(data.node,  neighborCache[data.node]);
+            }
+            delete neighborCache[data.node];
             console.log(data.node, data.neighbors);
           },
 
-          found_start: function(event, data) {
+          found_start: function (event, data) {
 
             var paths = data.nodes.map(function (node) {
               return {nodes: [node], edges: []};
@@ -193,9 +204,9 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
 
             addPaths(paths);
           }
-	  //
+          //
           //find: function (event, data) {
-	  //
+          //
           //}
         });
 

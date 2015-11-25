@@ -370,6 +370,82 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
       }
 
       return textElement.node().getBBox();
+    },
+
+    calcIntersectionX: function(source, target, nodeWidth, nodeHeight) {
+      if (source.x === target.x) {
+        return source.x;
+      } else if (source.y === target.y) {
+        if (source.x < target.x) {
+          return source.x + nodeWidth / 2;
+        } else {
+          return source.x - nodeWidth / 2;
+        }
+      }
+
+      var vector = {x: target.x - source.x, y: target.y - source.y};
+
+      var vecRatio = Math.abs(vector.x / vector.y);
+      var boxRatio = nodeWidth / nodeHeight;
+
+      if (source.x < target.x) {
+        //if (d.source.y < d.target.y) {
+        if (boxRatio > vecRatio) {
+          return source.x + nodeHeight / 2 * vecRatio;
+        } else {
+          return source.x + nodeWidth / 2;
+        }
+        //} else {
+        //  if (boxRatio > vecRatio) {
+        //    return d.source.x + nodeHeight / 2 * vecRatio;
+        //  } else {
+        //    return d.source.x + nodeWidth / 2;
+        //  }
+      } else {
+        if (boxRatio > vecRatio) {
+          return source.x - nodeHeight / 2 * vecRatio;
+        } else {
+          return source.x - nodeWidth / 2;
+        }
+      }
+    },
+
+    calcIntersectionY: function(source, target, nodeWidth, nodeHeight) {
+      if (source.x === target.x) {
+        if (source.y < target.y) {
+          return source.y + nodeHeight / 2;
+        } else {
+          return source.y - nodeHeight / 2;
+        }
+      } else if (source.y === target.y) {
+        return source.y;
+      }
+
+      var vector = {x: target.x - source.x, y: target.y - source.y};
+
+      var vecRatio = Math.abs(vector.x / vector.y);
+      var boxRatio = nodeWidth / nodeHeight;
+
+      if (source.y < target.y) {
+        //if (d.source.y < d.target.y) {
+        if (boxRatio > vecRatio) {
+          return source.y + nodeHeight / 2;
+        } else {
+          return source.y + (nodeWidth / 2 * 1 / vecRatio);
+        }
+        //} else {
+        //  if (boxRatio > vecRatio) {
+        //    return d.source.x + nodeHeight / 2 * vecRatio;
+        //  } else {
+        //    return d.source.x + nodeWidth / 2;
+        //  }
+      } else {
+        if (boxRatio > vecRatio) {
+          return source.y - nodeHeight / 2;
+        } else {
+          return source.y - (nodeWidth / 2 * 1 / vecRatio);
+        }
+      }
     }
 
 

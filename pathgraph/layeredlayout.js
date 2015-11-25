@@ -139,7 +139,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
     };
 
-    LayeredLayout.prototype.render = function (paths, graph) {
+    LayeredLayout.prototype.render = function (paths, graph, centerGraph) {
       this.paths = paths;
       //if (paths.length > 0) {
       this.graph = graph;
@@ -155,7 +155,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       var svg = d3.select("#pathgraph svg");
       //this.addPathsToGraph(paths);
 
-      this.renderGraph(svg);
+      this.renderGraph(svg, centerGraph);
 
     };
 
@@ -165,7 +165,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       //this.graph = newGraph();
     };
 
-    LayeredLayout.prototype.renderGraph = function (svg) {
+    LayeredLayout.prototype.renderGraph = function (svg, centerGraph) {
 
 
       var that = this;
@@ -288,8 +288,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             //var points = Object.create(d.edge.points);
             //points.splice(0, 1);
             //points.splice(points.length - 1, 1);
-            var sourceNode = that.graph.node(d.v);
-            var targetNode = that.graph.node(d.w);
+            //var sourceNode = that.graph.node(d.v);
+            //var targetNode = that.graph.node(d.w);
             //
             //points.splice(0, 0, {x: sourceNode.x + nodeWidth / 2, y: sourceNode.y});
             //points.splice(1, 0, {x: sourceNode.x + nodeWidth / 2 + 20, y: sourceNode.y});
@@ -317,8 +317,8 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
             //var points = Object.create(d.edge.points);
             //points.splice(0, 1);
             //points.splice(points.length - 1, 1);
-            var sourceNode = that.graph.node(d.v);
-            var targetNode = that.graph.node(d.w);
+            //var sourceNode = that.graph.node(d.v);
+            //var targetNode = that.graph.node(d.w);
             //
             //points.splice(0, 0, {x: sourceNode.x + nodeWidth / 2, y: sourceNode.y});
             //points.splice(1, 0, {x: sourceNode.x + nodeWidth / 2 + 20, y: sourceNode.y});
@@ -360,6 +360,9 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       allEdges.exit()
         .remove();
 
+      this.renderTempLinks(svg);
+
+
       var nodeGroup = svg.select("g.nodeGroup");
 
       var allNodes = nodeGroup.selectAll("g.node")
@@ -396,6 +399,19 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         pathUtil.renderNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
           return that.view.getTextWidth(text);
         }, getNodeOverlayItems(d), true);
+
+        d3.select(this)
+          .on("click.neighborLinks", function () {
+            var neighborSource = that.view.neighborCache[d.node.id];
+            that.view.clearLinks();
+            if (neighborSource) {
+              that.view.showLinksOfNode(d.node.id);
+              that.renderTempLinks(svg);
+            } else {
+              that.renderTempLinks(svg);
+              ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp", "links");
+            }
+          });
       });
 
 
@@ -432,7 +448,9 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       this.updateFilter();
 
       //this.view.updateViewSize();
-      this.centerGraph();
+      if (centerGraph) {
+        this.centerGraph();
+      }
 
       function getNodeOverlayItems(d) {
         var items = pathUtil.getDefaultNodeOverlayItems(d.node);
@@ -440,9 +458,18 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           text: "Add Neighbors",
           icon: "\uf067",
           callback: function () {
-            ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp");
+            ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp", "all");
           }
         });
+
+        //items.push({
+        //  text: "Show Links",
+        //  icon: "\uf067",
+        //  callback: function () {
+        //    ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp", "links");
+        //  }
+        //});
+
         items.push({
           text: d.isNeighborNode ? "Remove" : "Remove Neighbors",
           icon: "\uf068",
@@ -456,6 +483,74 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         });
         return items;
       }
+
+    };
+
+    LayeredLayout.prototype.renderTempLinks = function (svg) {
+      var that = this;
+      var allTempLinks = svg.select("g.edgeGroup").selectAll("g.link").data(that.view.shownLinks, function (link) {
+        return link.id;
+      });
+
+      var tempLinks = allTempLinks.enter().append("g")
+        .classed("link", true)
+        .each(function (link) {
+
+          var l = d3.select(this);
+          l.append("defs")
+            .append("marker")
+            .attr("id", function (d) {
+              return "arrowhead" + link.id;
+            })
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", "9")
+            .attr("refY", "5")
+            .attr("markerUnits", "strokeWidth")
+            .attr("markerWidth", "8")
+            .attr("markerHeight", "6")
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M 0 0 L 10 5 L 0 10 z");
+
+          var source = that.graph.node(link.sourceNodeId);
+          var target = that.graph.node(link.targetNodeId);
+
+          l.append("line")
+            .attr({
+              x1: uiUtil.calcIntersectionX(source, target, source.width, source.height),
+              y1: uiUtil.calcIntersectionY(source, target, source.width, source.height),
+              x2: uiUtil.calcIntersectionX(target, source, target.width, target.height),
+              y2: uiUtil.calcIntersectionY(target, source, target.width, target.height),
+              //"marker-start": config.isNetworkEdge(link) ? "url(#arrowhead" + link.id + ")" : null,
+              //FIXME ask whether it is a real network edge
+              "marker-end": (config.getUseCase() !== "dblp") ? "url(#arrowhead" + link.id + ")" : null
+            });
+            //.
+            //style({
+            //  "stroke-dasharray": "1,5",
+            //  "stroke-width": "1.5",
+            //  stroke: "black"
+            //})
+
+
+        });
+
+
+      allTempLinks.transition().each(function (link) {
+
+        var source = that.graph.node(link.sourceNodeId);
+        var target = that.graph.node(link.targetNodeId);
+
+        d3.select(this).select("line")
+          .attr({
+            x1: uiUtil.calcIntersectionX(source, target, source.width, source.height),
+            y1: uiUtil.calcIntersectionY(source, target, source.width, source.height),
+            x2: uiUtil.calcIntersectionX(target, source, target.width, target.height),
+            y2: uiUtil.calcIntersectionY(target, source, target.width, target.height)
+          });
+      });
+
+      allTempLinks.exit().remove();
 
     };
 

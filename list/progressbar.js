@@ -95,7 +95,7 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
     });
 
 
-    this.render(currentMaxLength - 1);
+    this.render(currentMaxLength);
   };
 
 

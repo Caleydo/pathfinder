@@ -16,8 +16,11 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       this.paths = [];
       this.currentGraphLayout = this.layeredLayout;
       this.neighbors = [];
+      this.neighborCache = {};
       this.graph = newGraph();
       this.showAllPaths = false;
+      this.shownLinks = [];
+      this.shownLinkSources = {};
     }
 
     //PathGraphView.prototype = Object.create(View.prototype);
@@ -82,6 +85,26 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       //function zoom() {
       //  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
       //}
+
+      var isDrag = false;
+      svg.append("rect")
+        .classed("background", true)
+        .attr({
+          x: 0, y: 0, width: "100%", height: "100%",
+          fill: "rgba(0,0,0,0)"
+        })
+        .on("mousedown", function(){
+          isDrag = false;
+        })
+        .on("mousemove", function(){
+          isDrag = true;
+        })
+        .on("mouseup", function () {
+          if (!isDrag && that.shownLinks.length > 0) {
+            that.clearLinks();
+            that.currentGraphLayout.render(that.paths, that.graph);
+          }
+        });
 
       var graphGroup = svg.append("g")
         .attr("class", "graph");
@@ -174,7 +197,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         that.currentGraphLayout.prepareLayoutChange();
         that.currentGraphLayout = that.layeredLayout;
         //that.render(that.paths);
-        that.currentGraphLayout.render(that.paths, that.graph);
+        that.currentGraphLayout.render(that.paths, that.graph, true);
         //that.updateViewSize();
       });
 
@@ -267,9 +290,104 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
       );
     };
 
-    PathGraphView.prototype.addNeighbor = function (sourceId, neighbor) {
-      this.neighbors.push({sourceId: sourceId, neighbor: neighbor});
-      this.addNeighborToGraph(sourceId, neighbor);
+    PathGraphView.prototype.addLink = function (sourceId, neighbors) {
+
+      var that = this;
+
+      if (that.neighborCache[sourceId]) {
+        //already added
+        return;
+      }
+
+      that.neighborCache[sourceId] = neighbors;
+      //neighbors.forEach(function (neighbor) {
+      //  if (!that.neighborCache[sourceId]) {
+      //    that.neighborCache[sourceId] = [];
+      //  }
+      //
+      //});
+
+      this.showLinksOfNode(sourceId);
+      this.currentGraphLayout.render(this.paths, this.graph);
+    };
+
+    PathGraphView.prototype.showLinksOfNode = function (sourceId) {
+
+      var that = this;
+
+      var neighbors = this.neighborCache[sourceId];
+
+      if (!neighbors || neighbors.length === 0) {
+        return;
+      }
+
+      that.shownLinkSources[sourceId] = sourceId;
+
+      var sourceNode = this.graph.node(sourceId);
+      if (!sourceNode) {
+        return;
+      }
+
+      neighbors.forEach(function (neighbor) {
+        var targetNode = that.graph.node(neighbor.id);
+
+        if (!targetNode) {
+          return;
+        }
+
+        var edge = neighbor._edge;
+        var e = that.graph.edge({v: edge.sourceNodeId, w: edge.targetNodeId}) || that.graph.edge({
+            v: edge.targetNodeId, w: edge.sourceNodeId
+          });
+        var add = true;
+
+        //FIXME not generic at all
+        var isNetworkEdge = config.getUseCase() !== "dblp"; //config.isNetworkEdge(edge)
+
+        if (e) {
+
+
+          add = (isNetworkEdge && edge.id !== e.edge.id);
+        }
+
+        if (add) {
+
+          for (var i = 0; i < that.shownLinks.length; i++) {
+            var link = that.shownLinks[i];
+            if ((link.sourceNodeId === edge.sourceNodeId && link.targetNodeId === edge.targetNodeId) ||
+              (link.targetNodeId === edge.sourceNodeId && link.sourceNodeId === edge.targetNodeId)) {
+              if (isNetworkEdge && edge.id !== e.edge.id) {
+                return;
+              }
+            }
+          }
+          that.shownLinks.push(edge);
+        }
+      });
+    };
+
+    PathGraphView.prototype.clearLinks = function () {
+      this.shownLinks = [];
+      this.shownLinkSources = {};
+    };
+
+    PathGraphView.prototype.addNeighbor = function (sourceId, neighbors) {
+      var that = this;
+      if (that.neighborCache[sourceId]) {
+        //already added
+        return;
+      }
+
+      that.neighborCache[sourceId] = neighbors;
+      neighbors.forEach(function (neighbor) {
+        //if (!that.neighborCache[sourceId]) {
+        //  that.neighborCache[sourceId] = [];
+        //}
+        //that.neighborCache[sourceId].push(sourceId);
+        that.neighbors.push({sourceId: sourceId, neighbor: neighbor});
+        that.addNeighborToGraph(sourceId, neighbor);
+      });
+
       this.currentGraphLayout.render(this.paths, this.graph);
     };
 
@@ -291,9 +409,14 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         });
       }
 
-      var edge = neighbor._edge;
+      this.addEdge(neighbor._edge);
+
+    };
+
+    PathGraphView.prototype.addEdge = function (edge) {
+      var that = this;
       var exists = that.graph.edge({v: edge.sourceNodeId, w: edge.targetNodeId}) || that.graph.edge({
-          v: edge.sourceNodeId, w: edge.targetNodeId
+          v: edge.targetNodeId, w: edge.sourceNodeId
         });
 
       if (!exists) {
@@ -328,7 +451,12 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         that.addNeighborToGraph(n.sourceId, n.neighbor);
       });
 
-      this.currentGraphLayout.render(this.paths, this.graph);
+      this.shownLinks = [];
+      Object.keys(this.shownLinkSources).forEach(function (key) {
+        that.showLinksOfNode(that.shownLinkSources[key]);
+      });
+
+      this.currentGraphLayout.render(this.paths, this.graph, true);
     };
 
     //PathGraphView.prototype.updateGraphToAllPaths = function () {
