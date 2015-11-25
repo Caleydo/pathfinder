@@ -93,10 +93,10 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           x: 0, y: 0, width: "100%", height: "100%",
           fill: "rgba(0,0,0,0)"
         })
-        .on("mousedown", function(){
+        .on("mousedown", function () {
           isDrag = false;
         })
-        .on("mousemove", function(){
+        .on("mousemove", function () {
           isDrag = true;
         })
         .on("mouseup", function () {
@@ -373,22 +373,31 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
     PathGraphView.prototype.addNeighbor = function (sourceId, neighbors) {
       var that = this;
-      if (that.neighborCache[sourceId]) {
-        //already added
+
+      that.neighborCache[sourceId] = neighbors;
+
+      var sourceNode = this.graph.node(sourceId);
+
+      if (!sourceNode) {
+        return;
+      }
+      this.showNeighborsOfNode(sourceId);
+
+      this.currentGraphLayout.render(this.paths, this.graph);
+    };
+
+    PathGraphView.prototype.showNeighborsOfNode = function (sourceId) {
+      var that = this;
+      var neighbors = this.neighborCache[sourceId];
+
+      if (!neighbors) {
         return;
       }
 
-      that.neighborCache[sourceId] = neighbors;
       neighbors.forEach(function (neighbor) {
-        //if (!that.neighborCache[sourceId]) {
-        //  that.neighborCache[sourceId] = [];
-        //}
-        //that.neighborCache[sourceId].push(sourceId);
         that.neighbors.push({sourceId: sourceId, neighbor: neighbor});
         that.addNeighborToGraph(sourceId, neighbor);
       });
-
-      this.currentGraphLayout.render(this.paths, this.graph);
     };
 
     PathGraphView.prototype.addNeighborToGraph = function (sourceId, neighbor) {
@@ -490,6 +499,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
     PathGraphView.prototype.removeNeighborsOfNode = function (nodeId) {
 
       var that = this;
+
       var neighbors = this.graph.neighbors(nodeId);
 
       if (neighbors) {
@@ -501,6 +511,19 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
               if (n.sourceId.toString() === neighborId.toString() || n.neighbor.id.toString() === neighborId.toString()) {
                 that.neighbors.splice(i, 1);
                 i--;
+              }
+            }
+          } else {
+            var edge = that.graph.edge(nodeId, neighborId) || that.graph.edge(neighborId, nodeId);
+            if (edge && edge.neighborEdge) {
+              for (var i = 0; i < that.neighbors.length; i++) {
+                var nEdge = that.neighbors[i].neighbor._edge;
+
+                if ((nEdge.sourceNodeId.toString() === nodeId.toString() && nEdge.targetNodeId.toString() === neighborId.toString()) ||
+                  (nEdge.targetNodeId.toString() === nodeId.toString() && nEdge.sourceNodeId.toString() === neighborId.toString())) {
+                  that.neighbors.splice(i, 1);
+                  i--;
+                }
               }
             }
           }

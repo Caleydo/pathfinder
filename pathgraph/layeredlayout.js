@@ -458,7 +458,13 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
           text: "Add Neighbors",
           icon: "\uf067",
           callback: function () {
-            ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp", "all");
+            var neighborSource = that.view.neighborCache[d.node.id];
+            if (neighborSource) {
+              that.view.showNeighborsOfNode(d.node.id);
+              that.view.currentGraphLayout.render(that.paths, that.graph);
+            } else {
+              ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp", "all");
+            }
           }
         });
 
