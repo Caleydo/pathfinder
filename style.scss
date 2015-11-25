@@ -478,12 +478,23 @@ div.bar {
   -webkit-flex-flow: column wrap;
 }
 
+#allContent {
+  padding: 0;
+  display: -webkit-flex;
+  display: flex;
+  flex-direction: row;
+
+}
+
 #contentBody {
-  padding: 0px;
+  padding: 0;
   display: -webkit-flex;
   display: flex;
   flex-direction: column;
   height: 100vh;
+
+  -webkit-flex: 7;
+  flex: 7;
 }
 
 header {
@@ -552,7 +563,6 @@ header {
 
 #pathGraphView {
   padding: 5px 5px 5px 5px;
-  border-right: 1px solid $borderColor;
   //  padding: 5px;
   -webkit-flex: 3;
   flex: 3;
@@ -570,8 +580,10 @@ header {
 
 #pathStatsView {
   padding: 5px 5px 5px 5px;
+  border-left: 1px solid $borderColor;
   -webkit-flex: 1.2;
   flex: 1.2;
+  height: 100vh;
   //  position: absolute;
   //  height: 100%;
   //  height: 100%;
@@ -581,9 +593,9 @@ header {
   //  display: block;
   //  width: 100%;
   //  height: 100%;
-  display: -webkit-flex;
-  display: flex;
-  flex-direction: column;
+  //display: -webkit-flex;
+  //display: flex;
+  //flex-direction: column;
 }
 
 //#mainContent {
@@ -623,7 +635,7 @@ header {
   font-family: monospace;
 }
 
-#pathgraph, #pathstats {
+#pathgraph {
   -webkit-flex: 1 0 auto;
   flex: 1 0 auto;
 
@@ -631,6 +643,18 @@ header {
   display: flex;
   flex-direction: row;
   -webkit-flex-flow: column wrap;
+  overflow: auto;
+}
+
+#pathstats {
+  //-webkit-flex: 1 0 auto;
+  //flex: 1 0 auto;
+
+  //display: -webkit-flex;
+  //display: flex;
+  //flex-direction: row;
+  //-webkit-flex-flow: column wrap;
+  width: 100%;
   overflow: auto;
 }
 
