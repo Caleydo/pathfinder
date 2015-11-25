@@ -553,8 +553,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
               y1: uiUtil.calcIntersectionY(source, target, source.width, source.height),
               x2: uiUtil.calcIntersectionX(target, source, target.width, target.height),
               y2: uiUtil.calcIntersectionY(target, source, target.width, target.height),
-              //FIXME ask whether it is a real network edge
-              "marker-end": (config.getUseCase() !== "dblp") ? "url(#arrowhead" + link.id + ")" : null
+              "marker-end": config.isNetworkEdge(link) ? "url(#arrowhead" + link.id + ")" : null
             });
             //.style({
             //  "stroke-dasharray": "1,5",

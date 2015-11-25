@@ -342,7 +342,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         var add = true;
 
         //FIXME not generic at all
-        var isNetworkEdge = config.getUseCase() !== "dblp"; //config.isNetworkEdge(edge)
+        var isNetworkEdge = config.isNetworkEdge(edge);
 
         if (e) {
 
