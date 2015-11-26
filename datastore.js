@@ -21,12 +21,6 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
     var pathStats = {};
 
-    var allNodeIds = {};
-
-    var allEdgeIds = {};
-
-    var allSetIds = {};
-
 
     /**
      * Sort by stats for the whole dataset or a whole group.
@@ -663,7 +657,12 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
     return {
 
+      allNodeIds: {},
+      allEdgeIds: {},
+      allSetIds: {},
+
       init: function () {
+        var that = this;
         listeners.add(function (pathQuery) {
             if (pathQuery.isRemoteQuery()) {
 
@@ -690,6 +689,28 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
               });
 
               nodes = remainingNodes;
+
+              that.allNodeIds = {};
+              that.allEdgeIds = {};
+              that.allSetIds = {};
+
+              paths.forEach(function (path) {
+                path.nodes.forEach(function (node) {
+                  var nodeType = config.getNodeType(node);
+
+                  that.allNodeIds[nodeType] = that.allNodeIds[nodeType] || {};
+                  that.allNodeIds[nodeType][node.id] = true;
+
+                  pathUtil.forEachNodeSet(node, function (setType, setId) {
+                    that.allSetIds[setType] = that.allSetIds[setType] || {};
+                    that.allSetIds[setType][setId] = true;
+                  });
+                });
+
+                path.edges.forEach(function (edge) {
+                  that.allEdgeIds[edge.id] = true;
+                })
+              });
 
             }
           },
@@ -831,6 +852,7 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       },
 
       addPaths: function (pathsToAdd) {
+        var that = this;
 
         var newPaths = [];
 
@@ -852,10 +874,21 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
                 nodes[node.id] = node;
                 addNodeProperties(node);
                 addDatasets(node);
+
+                var nodeType = config.getNodeType(node);
+                that.allNodeIds[nodeType] = that.allNodeIds[nodeType] || {};
+                that.allNodeIds[nodeType][node.id] = true;
+
+                pathUtil.forEachNodeSet(node, function (setType, setId) {
+                  that.allSetIds[setType] = that.allSetIds[setType] || {};
+                  that.allSetIds[setType][setId] = true;
+                });
               }
             });
 
             path.edges.forEach(function (edge, i) {
+
+              that.allEdgeIds[edge.id] = true;
 
               var startNode = path.nodes[i];
               var endNode = path.nodes[i + 1];

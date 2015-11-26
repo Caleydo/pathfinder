@@ -1,6 +1,6 @@
 define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners',
-    '../query/pathquery', '../sorting', '../setinfo', '../config', '../query/queryutil', '../uiutil', '../list/path/pathdata'],
-  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo, config, queryUtil, uiUtil, pathData) {
+    '../query/pathquery', '../sorting', '../setinfo', '../config', '../query/queryutil', '../uiutil', '../list/path/pathdata', '../datastore'],
+  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo, config, queryUtil, uiUtil, pathData, dataStore) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
     var NodeTypeWrapper = statData.NodeTypeWrapper;
@@ -493,7 +493,9 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
         var typeLabelStyle = {"font-weight": "bolder"};
 
-        var typeText = statType.getLabel() + " (" + statType.getVisibleChildren().length + ")";
+        var allTypeIds = idType === "node" ? Object.keys(dataStore.allNodeIds[statType.type]) : Object.keys(dataStore.allSetIds[statType.type]);
+
+        var typeText = statType.getLabel() + " (" + statType.getVisibleChildren().length + "/" + allTypeIds.length + ")";
         var useSymbol = false;
 
         if (idType === "node") {
@@ -509,7 +511,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
               .classed("nodeTypeSymbol", true)
               .attr({
                 d: symbol,
-                transform: "translate(" + (COLLAPSE_BUTTON_SPACING+4) + "," + (statType.getBaseHeight() / 2 + 2) + ")"
+                transform: "translate(" + (COLLAPSE_BUTTON_SPACING + 4) + "," + (statType.getBaseHeight() / 2 + 2) + ")"
               });
           }
         }
@@ -520,7 +522,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           .attr({
             x: COLLAPSE_BUTTON_SPACING + ((useSymbol) ? 10 : 0),
             y: statType.getBaseHeight() - 2,
-            "clip-path": "url(#LabelClipPath)"
+            //"clip-path": "url(#LabelClipPath)"
           })
           .style(typeLabelStyle);
 
@@ -752,8 +754,12 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
           statType.children.sort(comparator);
 
+          var allTypeIds = statType instanceof NodeTypeWrapper ? Object.keys(dataStore.allNodeIds[statType.type]) : Object.keys(dataStore.allSetIds[statType.type]);
+
+          var typeText = statType.getLabel() + " (" + statType.getVisibleChildren().length + "/" + allTypeIds.length + ")";
+
           typeCont.select("text.typeLabel")
-            .text(statType.getLabel() + " (" + statType.getVisibleChildren().length + ")")
+            .text(typeText)
             .style("fill", statType.getColor());
 
           typeCont.select("rect.pathOccurrences")
