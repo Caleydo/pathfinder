@@ -518,7 +518,7 @@ define(['jquery', 'd3', '../path/pathlist', './aggregatesorting', '../../listene
 
     CombinationAggregateList.prototype.init = function () {
       AggregateList.prototype.init.call(this);
-      a.sortingManager.setStrategyChain([this.getNodeSelectionSortingStrategy(), a.sortingStrategies.numPaths, a.sortingStrategies.aggregateId]);
+      a.sortingManager.setStrategyChain([this.getNodeSelectionSortingStrategy(), a.sortingStrategies.numVisiblePaths, a.sortingStrategies.aggregateId]);
 
     };
 

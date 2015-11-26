@@ -19,7 +19,7 @@ define(['../../sorting', '../../pathutil', '../../query/querymodel', '../../list
     var sortingManager = new sorting.SortingManager(true);
 
     sortingManager.reset = function () {
-      this.currentStrategyChain = [sortingStrategies.numPaths, sortingStrategies.aggregateId];
+      this.currentStrategyChain = [sortingStrategies.numVisiblePaths, sortingStrategies.aggregateId];
       this.currentComparator = sorting.getComparatorFromStrategyChain(this.currentStrategyChain);
     };
 
@@ -27,15 +27,15 @@ define(['../../sorting', '../../pathutil', '../../query/querymodel', '../../list
       aggregateId: new sorting.IdSortingStrategy(function (aggregate) {
         return aggregate.id
       }, "AGGREGATE_ID"),
-      numPaths: new NumPathsSortingStrategy()
+      numVisiblePaths: new NumPathsSortingStrategy()
     };
 
 
-    sortingManager.setStrategyChain([sortingStrategies.numPaths, sortingStrategies.aggregateId]);
+    sortingManager.setStrategyChain([sortingStrategies.numVisiblePaths, sortingStrategies.aggregateId]);
 
 
     return {
-      selectableSortingStrategies: [sortingStrategies.numPaths],
+      selectableSortingStrategies: [sortingStrategies.numVisiblePaths],
       sortingManager: sortingManager,
       sortingStrategies: sortingStrategies,
       updateType: "UPDATE_AGGREGATE_SORTING",

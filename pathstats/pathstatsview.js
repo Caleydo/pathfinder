@@ -493,28 +493,32 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
         var typeLabelStyle = {"font-weight": "bolder"};
 
+        var typeText = statType.getLabel() + " (" + statType.getVisibleChildren().length + ")";
+        var useSymbol = false;
+
         if (idType === "node") {
           var symbolType = config.getNodeTypeSymbol(statType.type);
 
           if (typeof symbolType !== "undefined") {
+            useSymbol = true;
             var symbol = d3.svg.symbol().type(symbolType)
               .size(40);
-            var textWidth = that.getTextWidth(statType.type, typeLabelStyle);
+            //var textWidth = that.getTextWidth(typeText, typeLabelStyle);
 
             typeCont.append("path")
               .classed("nodeTypeSymbol", true)
               .attr({
                 d: symbol,
-                transform: "translate(" + (COLLAPSE_BUTTON_SPACING + textWidth + 8) + "," + (statType.getBaseHeight() / 2 + 2) + ")"
+                transform: "translate(" + (COLLAPSE_BUTTON_SPACING+4) + "," + (statType.getBaseHeight() / 2 + 2) + ")"
               });
           }
         }
 
         var typeLabel = typeCont.append("text")
           .classed("typeLabel", true)
-          .text(statType.getLabel())
+          .text(typeText)
           .attr({
-            x: COLLAPSE_BUTTON_SPACING,
+            x: COLLAPSE_BUTTON_SPACING + ((useSymbol) ? 10 : 0),
             y: statType.getBaseHeight() - 2,
             "clip-path": "url(#LabelClipPath)"
           })
@@ -749,6 +753,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           statType.children.sort(comparator);
 
           typeCont.select("text.typeLabel")
+            .text(statType.getLabel() + " (" + statType.getVisibleChildren().length + ")")
             .style("fill", statType.getColor());
 
           typeCont.select("rect.pathOccurrences")

@@ -21,6 +21,13 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
     var pathStats = {};
 
+    var allNodeIds = {};
+
+    var allEdgeIds = {};
+
+    var allSetIds = {};
+
+
     /**
      * Sort by stats for the whole dataset or a whole group.
      *

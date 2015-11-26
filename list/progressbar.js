@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 02.11.2015.
  */
-define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/search'], function ($, d3, dataStore, view, ServerSearch) {
+define(["jquery", "d3", "../datastore", "../view", "../listeners", "../query/pathquery", '../../pathfinder_graph/search'], function ($, d3, dataStore, view, listeners, query, ServerSearch) {
 
   var ITEM_WIDTH = 50;
   var ITEM_HEIGHT = 20;
@@ -17,6 +17,7 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
   ProgressBar.prototype = Object.create(view.prototype);
 
   ProgressBar.prototype.init = function () {
+    var that = this;
     //view.prototype.init.call(this);
     //var that = this;
     //ServerSearch.on({
@@ -35,6 +36,15 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
     //});
 
     //var svg = d3.select
+
+    listeners.add(function () {
+      that.reset();
+    }, listeners.updateType.QUERY_UPDATE);
+
+    listeners.add(function () {
+      that.reset();
+    }, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
+
   };
 
 
@@ -50,9 +60,13 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
     allPaths.forEach(function (p) {
       that.lengthHistogram[p.edges.length.toString()] = that.lengthHistogram[p.edges.length.toString()] || {
           length: p.edges.length,
-          numPaths: 0
+          numVisiblePaths: 0,
+          totalNumPaths: 0
         };
-      that.lengthHistogram[p.edges.length.toString()].numPaths++;
+      that.lengthHistogram[p.edges.length.toString()].totalNumPaths++;
+      if (!(query.isRemoveFilteredPaths() && query.isPathFiltered(p.id))) {
+        that.lengthHistogram[p.edges.length.toString()].numVisiblePaths++;
+      }
       if (that.maxLength < p.edges.length) {
         that.maxLength = p.edges.length;
       }
@@ -60,7 +74,7 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
 
     this.fillHistogram();
 
-    this.render(0);
+    this.render(-1);
   };
 
   ProgressBar.prototype.fillHistogram = function () {
@@ -68,7 +82,7 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
     for (var i = 0; i < (that.maxLength < 1 ? 1 : that.maxLength); i++) {
       that.lengthHistogram[i.toString()] = that.lengthHistogram[i.toString()] || {
           length: i,
-          numPaths: 0
+          numVisiblePaths: 0
         };
     }
   };
@@ -78,20 +92,26 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
     var that = this;
     var currentMaxLength = 0;
     paths.forEach(function (path) {
+
       that.lengthHistogram[path.edges.length.toString()] = that.lengthHistogram[path.edges.length.toString()] || {
           length: path.edges.length,
-          numPaths: 0
+          numVisiblePaths: 0,
+          totalNumPaths: 0
         };
       if (path.edges.length > currentMaxLength) {
         currentMaxLength = path.edges.length;
       }
       if (addedPaths.indexOf(path) !== -1) {
-        that.lengthHistogram[path.edges.length.toString()].numPaths++;
+        that.lengthHistogram[path.edges.length.toString()].totalNumPaths++;
+        if (!(query.isRemoveFilteredPaths() && query.isPathFiltered(path.id))) {
+          that.lengthHistogram[path.edges.length.toString()].numVisiblePaths++;
+        }
         if (path.edges.length > that.maxLength) {
           that.maxLength = path.edges.length;
           that.fillHistogram();
         }
       }
+
     });
 
 
@@ -164,7 +184,23 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
         //    x: i * ITEM_WIDTH + (i - 1) * ITEM_SPACING,
         //    y: 24
         //})
-        .text(data.numPaths);
+        .text(data.numVisiblePaths);
+
+      //textCont.append("label")
+      // .classed("totalNumPaths", true)
+      // .style({
+      //   //"font-weight": 400,
+      //   "font-size": "10px",
+      //   display: "inline-block",
+      //   "text-align": "center",
+      //   "padding": 0,
+      //   "margin": 0
+      // })
+      // //.attr({
+      // //    x: i * ITEM_WIDTH + (i - 1) * ITEM_SPACING,
+      // //    y: 24
+      // //})
+      // .text("(888)");
     });
 
     allItems.each(function (data, i) {
@@ -173,7 +209,7 @@ define(["jquery", "d3", "../datastore", "../view", '../../pathfinder_graph/searc
         item.select("label.length")
           .text(data.length);
         item.select("label.numPaths")
-          .text(data.numPaths);
+          .text(data.numVisiblePaths);
 
         var bar = item.select("div.bar");
 
