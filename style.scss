@@ -68,6 +68,10 @@ text.collapseIconSmall {
   @include selectableTextIcon(10px);
 }
 
+text.pin {
+  @include textIcon(10px);
+}
+
 rect.filler {
   fill: $transparentColor;
 }

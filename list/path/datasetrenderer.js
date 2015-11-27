@@ -183,11 +183,44 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       groupLabel.append("title")
         .text(that.name);
 
+      uiUtil.createTemporalMenuOverlayButton(parent, s.NODE_START, 4, true, function () {
+
+        return [{
+          text: "Pin/Unpin",
+          icon: "\uf276",
+          callback: function () {
+
+            if (s.isDataGroupSticky(dataset.id, that.name)) {
+              s.unstickDataGroup(dataset.id, that.name);
+            } else {
+              s.incStickyDataGroupOwners(dataset.id, that.name);
+            }
+            pathList.renderPaths();
+          }
+        }];
+      });
+
       this.getRenderer().onDataGroupEnter(parent, pathWrapper, dataset, that, pathList);
     };
 
     DatasetSubsetWrapper.prototype.renderUpdate = function (parent, pathWrapper, dataset, pathList) {
       var that = this;
+
+      var pinIcon = parent.select("text.pin");
+
+      if (s.isDataGroupSticky(dataset.id, that.name)) {
+        if (pinIcon.empty()) {
+          parent.append("text")
+            .classed("pin", true)
+            .attr({
+              x: s.SET_TYPE_INDENT / 2,
+              y: that.getLabelPosY()
+            })
+            .text("\uf276");
+        }
+      } else {
+        pinIcon.remove();
+      }
 
       parent.select("text.groupLabel")
         .style({

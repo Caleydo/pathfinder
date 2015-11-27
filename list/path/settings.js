@@ -41,6 +41,11 @@ define(["../../listeners"], function (listeners) {
       stickyDataGroup[datasetId][groupId] = Math.max(stickyDataGroup[datasetId][groupId] - 1, 0);
     },
 
+    unstickDataGroup: function(datasetId, groupId) {
+      stickyDataGroup[datasetId] = stickyDataGroup[datasetId] || {};
+      stickyDataGroup[datasetId][groupId] = 0;
+    },
+
     isDataGroupSticky: function (datasetId, groupId) {
       stickyDataGroup[datasetId] = stickyDataGroup[datasetId] || {};
       if (!stickyDataGroup[datasetId][groupId]) {
