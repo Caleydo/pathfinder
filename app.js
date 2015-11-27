@@ -147,34 +147,51 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
         var pathQueue = [];
         var neighborCache = {};
 
+        function newPath(path) {
+          if (lastAdditionTime === -1) {
+            addPaths([path]);
+            lastAdditionTime = Date.now();
+          } else {
+            var currentTime = Date.now();
+            pathQueue.push(path);
+            if (currentTime - lastAdditionTime > 1500) {
+              lastAdditionTime = currentTime;
+              addPaths(Object.create(pathQueue));
+              pathQueue = [];
+            }
+          }
+        }
+
+        function pathsDone() {
+          lastAdditionTime = -1;
+          addPaths(Object.create(pathQueue));
+          pathQueue = [];
+          progressBar.render(-1);
+          pathStatsView.render();
+        }
+
         ServerSearch.on({
           query_start: function () {
             //reset();
             progressBar.reset();
           },
           query_path: function (event, data) {
-            if (lastAdditionTime === -1) {
-              addPaths([data.path]);
-              lastAdditionTime = Date.now();
-            } else {
-              var currentTime = Date.now();
-              pathQueue.push(data.path);
-              if (currentTime - lastAdditionTime > 1500) {
-                lastAdditionTime = currentTime;
-                addPaths(Object.create(pathQueue));
-                pathQueue = [];
-              }
-            }
+            newPath(data.path);
             //dataStore.addPath(data.path);
             //console.log("added path " +(x++))
           },
 
           query_done: function () {
-            lastAdditionTime = -1;
-            addPaths(Object.create(pathQueue));
-            pathQueue = [];
-            progressBar.render(-1);
-            pathStatsView.render();
+            pathsDone();
+          },
+
+          //For single node paths
+          found: function(event, data) {
+            newPath(data.path);
+          },
+
+          found_done: function(event, data) {
+           pathsDone();
           },
 
           neighbor_neighbor: function (event, data) {
@@ -196,13 +213,13 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
             console.log(data.node, data.neighbors);
           },
 
-          found_start: function (event, data) {
+          found_end: function (event, data) {
 
-            var paths = data.nodes.map(function (node) {
-              return {nodes: [node], edges: []};
-            });
-
-            addPaths(paths);
+            //var paths = data.nodes.map(function (node) {
+            //  return {nodes: [node], edges: []};
+            //});
+            //
+            //addPaths(paths);
           }
           //
           //find: function (event, data) {

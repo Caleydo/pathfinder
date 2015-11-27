@@ -1750,16 +1750,16 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         .attr("id", "queryOverlay");
 
 
-      $('#filter_query').click(function () {
-          //that.addNodeFilter("type", "Compound", true);
-
-          that.updateQuery();
-          //var query = that.container.getPathQuery();
-          //
-          //pathQuery.setQuery(query, false);
-          return false;
-        }
-      );
+      //$('#filter_query').click(function () {
+      //    //that.addNodeFilter("type", "Compound", true);
+      //
+      //    that.updateQuery();
+      //    //var query = that.container.getPathQuery();
+      //    //
+      //    //pathQuery.setQuery(query, false);
+      //    return false;
+      //  }
+      //);
 
 
       $("#toggleQueryMode").click(function () {
@@ -1855,6 +1855,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         $('#query_interface button[type="submit"] i').attr('class', 'fa fa-search');
       });
 
+       ServerSearch.on('found_done', function () {
+        $('#query_interface button[type="submit"] i').attr('class', 'fa fa-search');
+      });
+
       $('#query_interface form').on('submit', function (event) {
         event.stopPropagation();
         event.preventDefault();
@@ -1896,10 +1900,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     QueryView.prototype.reset = function () {
       var svg = d3.select(this.parentSelector + " svg");
 
-      svg.select("g.elementContainer").remove();
+      svg.select("#queryOverlay").remove();
+      svg.select("g.queryElement").remove();
       this.container = new ElementContainer();
       this.container.init(svg);
       this.container.add(new PathContainer(this.container));
+
+       svg.append("g")
+        .attr("id", "queryOverlay");
     };
 
     /**
