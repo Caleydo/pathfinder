@@ -1,7 +1,20 @@
 {
   "uc": {
     "dblp": {
-      "sample_paths": "dump/partl-shneiderman.json",
+      "sample_query": {
+        "start": {
+          "id": "Hanspeter_Pfister",
+          "label": "Hanspeter Pfister",
+          "value": 155,
+          "category": "Name"
+        },
+        "end": {
+          "id": "Ben_Shneiderman",
+          "label": "Ben Shneiderman",
+          "value": 1180,
+          "category": "Name"
+        }
+      },
       "settings": {
         "node_width": 90,
         "edge_size": 30,
@@ -175,7 +188,20 @@
       ]
     },
     "pathways": {
-      "sample_paths": "dump/egfr-sos1.json",
+      "sample_query": {
+        "start": {
+          "id": "C00062",
+          "label": "L-Arginine",
+          "value": 12751,
+          "category": "Name"
+        },
+        "end": {
+          "id": "C00300",
+          "label": "Creatine",
+          "value": 19760,
+          "category": "Name"
+        }
+      },
       "settings": {
       },
       "nodes": [
@@ -313,7 +339,7 @@
               "type": "flag",
               "set": "pathways"
             },
-             "_edgeOrigin": "pathways",
+            "_edgeOrigin": "pathways",
             "pathways": {
               "type": "set",
               "set": "pathways"

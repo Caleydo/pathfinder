@@ -160,6 +160,21 @@ define(['d3', 'jquery', "../caleydo_core/main", "colors", "./list/path/settings"
       return config["sample_paths"];
     },
 
+    getSampleQueryInfo: function(key) {
+      var sampleQueryConfig = config["sample_query"];
+      if(sampleQueryConfig){
+        return sampleQueryConfig[key];
+      }
+    },
+
+    getSampleQueryStartInfo: function() {
+      return this.getSampleQueryInfo("start");
+    },
+
+    getSampleQueryEndInfo: function() {
+      return this.getSampleQueryInfo("end");
+    },
+
     isNodeSetProperty: function (node, property) {
       var type = this.getNodeType(node);
       var sets = nodeSets[type];

@@ -179,7 +179,7 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
 
           neighbor_neighbor: function (event, data) {
 
-            if(!neighborCache[data.node]) {
+            if (!neighborCache[data.node]) {
               neighborCache[data.node] = [];
             }
             neighborCache[data.node].push(data.neighbor);
@@ -188,9 +188,9 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
           ,
           neighbor_done: function (event, data) {
             if (data.tag === "all") {
-              overviewGraph.addNeighbor(data.node,  neighborCache[data.node]);
+              overviewGraph.addNeighbor(data.node, neighborCache[data.node]);
             } else if (data.tag === "links") {
-              overviewGraph.addLink(data.node,  neighborCache[data.node]);
+              overviewGraph.addLink(data.node, neighborCache[data.node]);
             }
             delete neighborCache[data.node];
             console.log(data.node, data.neighbors);
@@ -260,27 +260,34 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
             progressBar.init();
             pathStatsView.init();
 
-            var initialPaths = config.getSamplePathsFile();
-            if (initialPaths) {
+            var startNodeInfo = config.getSampleQueryStartInfo();
 
-              ajax.getJSON(initialPaths).then(function (paths) {
-
-                var i = 0;
-
-                var interval = setInterval(function () {
-
-                  if (i >= paths.length) {
-                    clearInterval(interval);
-                    progressBar.render(-1);
-                    return;
-                  }
-                  addPaths([paths[i]]);
-                  i++;
-
-                }, 100);
-
-              });
+            if (startNodeInfo) {
+              queryView.setSimpleQuery(startNodeInfo, config.getSampleQueryEndInfo());
+              queryView.submitQuery();
             }
+
+            //var initialPaths = config.getSamplePathsFile();
+            //if (initialPaths) {
+            //
+            //  ajax.getJSON(initialPaths).then(function (paths) {
+            //
+            //    var i = 0;
+            //
+            //    var interval = setInterval(function () {
+            //
+            //      if (i >= paths.length) {
+            //        clearInterval(interval);
+            //        progressBar.render(-1);
+            //        return;
+            //      }
+            //      addPaths([paths[i]]);
+            //      i++;
+            //
+            //    }, 100);
+            //
+            //  });
+            //}
 
 
           });

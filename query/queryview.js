@@ -1840,9 +1840,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         }
       }
 
-      function isJustNetworkEdges() {
-        return !(config.isSetEdgesOnly() || ($('#sets_as_edges').is(':checked')));
-      }
+
 
       $('#remove_filtered_paths').click(function () {
           pathQuery.setRemoveFilteredPaths(!($('#remove_filtered_paths').prop("checked")));
@@ -1850,7 +1848,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       );
 
       $('#sets_as_edges').click(function () {
-        pathQuery.setJustNetworkEdges(isJustNetworkEdges());
+        pathQuery.setJustNetworkEdges(that.isJustNetworkEdges());
       });
 
       ServerSearch.on('query_done', function () {
@@ -1861,25 +1859,49 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         event.stopPropagation();
         event.preventDefault();
 
-        var k = +$('#at_most_k').val();
-        var maxDepth = +$('#longest_path').val();
-        //var justNetworkEdges = $('#just_network_edges').is(':checked');
-        var startNodeMatcher = that.findSingleStartNodeMatcher();
-        var query = that.container.getPathQuery();
-
-        pathQuery.setQuery(query, true);
-
-        $('#query_interface button[type="submit"] i').attr('class', 'fa fa-spinner fa-pulse');
-        if (startNodeMatcher) {
-          ServerSearch.find(query, k);
-        } else {
-          ServerSearch.loadQuery(query, k, maxDepth, isJustNetworkEdges());
-        }
+        that.submitQuery();
 
 
         return false;
       });
     };
+
+    QueryView.prototype.isJustNetworkEdges = function() {
+        return !(config.isSetEdgesOnly() || ($('#sets_as_edges').is(':checked')));
+      }
+
+    QueryView.prototype.submitQuery = function () {
+      var k = +$('#at_most_k').val();
+      var maxDepth = +$('#longest_path').val();
+      //var justNetworkEdges = $('#just_network_edges').is(':checked');
+      var startNodeMatcher = this.findSingleStartNodeMatcher();
+      var query = this.container.getPathQuery();
+
+      pathQuery.setQuery(query, true);
+
+      $('#query_interface button[type="submit"] i').attr('class', 'fa fa-spinner fa-pulse');
+      if (startNodeMatcher) {
+        ServerSearch.find(query, k);
+      } else {
+        ServerSearch.loadQuery(query, k, maxDepth, this.isJustNetworkEdges());
+      }
+    };
+
+    QueryView.prototype.setSimpleQuery = function (startNodeInfo, endNodeInfo) {
+      this.reset();
+      this.asBoundingNode(startNodeInfo, true);
+      this.asBoundingNode(endNodeInfo, false);
+    };
+
+    QueryView.prototype.reset = function () {
+      var svg = d3.select(this.parentSelector + " svg");
+
+      svg.select("g.elementContainer").remove();
+      this.container = new ElementContainer();
+      this.container.init(svg);
+      this.container.add(new PathContainer(this.container));
+    };
+
     /**
      * Finds the unambiguous start or end node constraint in the path query if it exists.
      * @param isStartNode
