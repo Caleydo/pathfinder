@@ -339,7 +339,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //listeners.add(this.queryChangedListener, listeners.updateType.QUERY_UPDATE);
         //listeners.add(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.add(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
-        listeners.add(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
+        //listeners.add(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
         listeners.add(this.updateColorListener, config.COLOR_UPDATE);
         listeners.add(this.updateNodeSizeListener, config.NODE_SIZE_UPDATE);
         //listeners.add(this.sortUpdateListener, pathSorting.updateType);
@@ -350,7 +350,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       onPathDataUpdate: function (changes) {
         this.pathWrappers = pathData.getPathWrappers(false);
-        if (changes.pagePathsChanged || changes.crossPathDataChanged || changes.cause === listeners.updateType.DATASET_UPDATE) {
+        if (changes.pagePathsChanged || changes.crossPathDataChanged || changes.cause === listeners.updateType.DATASET_UPDATE || changes.cause === s.pathListUpdateTypes.UPDATE_REFERENCE_PATH) {
           this.updatePivotNodeIndex();
           this.renderPaths();
         } else if (changes.cause === pathSorting.updateType) {
@@ -407,7 +407,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //listeners.remove(this.removeFilterChangedListener, listeners.updateType.REMOVE_FILTERED_PATHS_UPDATE);
         listeners.remove(updateSets, listeners.updateType.SET_INFO_UPDATE);
         listeners.remove(this.tiltAttributesListener, s.pathListUpdateTypes.TILT_ATTRIBUTES);
-        listeners.remove(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
+        //listeners.remove(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
         listeners.remove(this.updateColorListener, config.COLOR_UPDATE);
         listeners.remove(this.updateNodeSizeListener, config.NODE_SIZE_UPDATE);
         //listeners.remove(this.sortUpdateListener, pathSorting.updateType);

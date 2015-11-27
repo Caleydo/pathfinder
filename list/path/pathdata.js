@@ -310,6 +310,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         }, pathSorting.updateType);
 
         listeners.add(function () {
+          var changes = that.sortPaths(pathSorting.sortingManager.currentComparator);
+          changes.cause = s.pathListUpdateTypes.UPDATE_REFERENCE_PATH;
+          that.notifyUpdateListeners(createChangeObject(changes));
+        }, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
+
+        listeners.add(function () {
           var changes = that.updatePathWrappersToQuery();
           changes.cause = listeners.updateType.QUERY_UPDATE;
           that.notifyUpdateListeners(createChangeObject(changes));
