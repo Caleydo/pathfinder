@@ -3,6 +3,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     var listOverlay = new ListOverlay();
 
+    var lastAutoCompleteResult = [];
+
 
     var DEFAULT_OVERLAY_BUTTON_SIZE = 16;
     var OR_BUTTON_WIDTH = 24;
@@ -16,7 +18,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       _renderItem: function (ul, item) {
 
         return $("<li>")
-          .append($("<a>").text(item.label))
+          .append($("<a>").text(item.label + " (" + item.type + ")"))
           .appendTo(ul);
         //return $( "<li>" )
         //  .attr( "data-value", item.value )
@@ -31,23 +33,60 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           return d3.ascending(a.category, b.category);
         });
 
-        var currentCategory = 0;
+        //var currentCategory = 0;
         $.each(items, function (index, item) {
 
-          if (item.category !== currentCategory) {
-
-            $("<a>").text(item.category)
-              .css({
-                "font-style": "italic",
-                "font-weight": "bold",
-                "font-size": 11
-              })
-              .appendTo(ul);
-            currentCategory = item.category;
-          }
+          //if (item.category !== currentCategory) {
+          //
+          //  $("<a>").text(item.category)
+          //    .css({
+          //      "font-style": "italic",
+          //      "font-weight": "bold",
+          //      "font-size": 11
+          //    })
+          //    .appendTo(ul);
+          //  currentCategory = item.category;
+          //}
           that._renderItemData(ul, item);
         });
       }
+
+
+      // _renderItem: function (ul, item) {
+      //
+      //  return $("<li>")
+      //    .append($("<a>").text(item.label))
+      //    .appendTo(ul);
+      //  //return $( "<li>" )
+      //  //  .attr( "data-value", item.value )
+      //  //  .css("color", item.color)
+      //  //  .append( item.label )
+      //  //  .appendTo( ul );
+      //},
+      //
+      //_renderMenu: function (ul, items) {
+      //  var that = this;
+      //  items.sort(function (a, b) {
+      //    return d3.ascending(a.category, b.category);
+      //  });
+      //
+      //  var currentCategory = 0;
+      //  $.each(items, function (index, item) {
+      //
+      //    if (item.category !== currentCategory) {
+      //
+      //      $("<a>").text(item.category)
+      //        .css({
+      //          "font-style": "italic",
+      //          "font-weight": "bold",
+      //          "font-size": 11
+      //        })
+      //        .appendTo(ul);
+      //      currentCategory = item.category;
+      //    }
+      //    that._renderItemData(ul, item);
+      //  });
+      //}
     });
 
 
@@ -515,6 +554,15 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
       var size = this.getSize();
 
+      domParent.append("defs")
+       .append("clipPath")
+        .attr("id", "captionLabelClipPath")
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", 30)
+        .attr("height", 20);
+
       domParent.append("rect")
         .attr({
           x: 0,
@@ -527,7 +575,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       domParent.append("text")
         .attr({
           x: 5,
-          y: 14
+          y: 14,
+          "clip-path": "url(#captionLabelClipPath)"
         }).text(initialText)
         .classed("caption", true);
 
@@ -597,7 +646,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           //input.val(ui.item.label);
           //that.id = ui.item.value;
           return false; // Prevent the widget from inserting the value.
-        }
+        },
+        autoFocus: true
       });
 
       input.on("input", function (e) {
@@ -618,7 +668,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       } else {
         this.info = info;
         $(this.myDomElements[0]).find("input").val(info.label);
-        this.setCaption(info.category);
+        this.setCaption(info.type);
       }
       queryView.updateQuery(typeof updateSimpleUINodes === "undefined" ? true : false);
       //pathQuery.setQuery(queryView.container.getPathQuery(), false);
@@ -635,6 +685,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         if (setNodeLabels.length > 0) {
           fetchSetsOfType(term, 0, [], setNodeLabels, response);
         } else {
+          lastAutoCompleteResult = [];
           response([]);
         }
       }
@@ -691,21 +742,34 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         setResults.forEach(function (element) {
           element.category = "Set";
           element.setNodeLabel = label;
+          element.type = config.getSetTypeFromLabel(label);
         });
         results = results.concat(setResults);
         if (index + 1 < setNodeLabels.length) {
           fetchSetsOfType(term, index + 1, results, setNodeLabels, response);
         } else {
+          lastAutoCompleteResult = results;
           response(results);
         }
       });
     }
+
 
     function nodeAutoCompleteSource(request, response) {
       var term = request.term;
       ServerSearch.search(term, 'name', '_Network_Node').then(function (nameResults) {
         nameResults.forEach(function (element) {
           element.category = "Name";
+
+          var type = "";
+          for (var i = 0; i <element.labels.length; i++){
+            var label = element.labels[i];
+            if(config.isNodeLabel(label)){
+              type = label;
+              break;
+            }
+          }
+          element.type = type;
         });
 
         var nodeTypes = config.getNodeTypes();
@@ -717,7 +781,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           return {
             label: type,
             value: type,
-            category: "Type"
+            category: "Type",
+            type: "Type"
           }
         });
 
@@ -725,7 +790,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         if (setNodeLabels.length > 0) {
           fetchSetsOfType(term, 0, nameResults.concat(typeResults), setNodeLabels, response);
         } else {
-          response(nameResults.concat(typeResults));
+          lastAutoCompleteResult = nameResults.concat(typeResults);
+          response(lastAutoCompleteResult);
         }
 
       });
@@ -1798,7 +1864,33 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         },
         focus: function (event, ui) {
           return false; // Prevent the widget from inserting the value.
+        },
+        autoFocus: true
+      });
+
+      //startInput.keypress(function (event) {
+      //
+      //  if (event.keyCode === 13) {
+      //    var info = getNodeInfo(true);
+      //    if(info && info.label !== startInput.val()){
+      //      if(lastAutoCompleteResult.length > 0) {
+      //        startInput.autocomplete( "close" );
+      //        var item = lastAutoCompleteResult[0];
+      //        startInput.val(item.label);
+      //        setNodeInfo(true, item);
+      //      }
+      //    }
+      //  }
+      //
+      //});
+
+      startInput.on("blur", function () {
+        if (lastAutoCompleteResult.length > 0) {
+
         }
+
+        //startInput.val(ui.item.label);
+        //  setNodeInfo(true, ui.item);
       });
 
       //startInput.on("input", function (e) {
@@ -1821,7 +1913,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         },
         focus: function (event, ui) {
           return false; // Prevent the widget from inserting the value.
-        }
+        },
+        autoFocus: true
       });
 
       //endInput.on("input", function (e) {
@@ -1840,6 +1933,12 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         }
       }
 
+      function getNodeInfo(isStartNode) {
+        var constraint = that.findUnambiguousPathNodeConstraint(isStartNode);
+        if (constraint) {
+          return constraint.info;
+        }
+      }
 
 
       $('#remove_filtered_paths').click(function () {
@@ -1852,14 +1951,14 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       });
 
       ServerSearch.on('query_done', function () {
-        $('#query_interface button[type="submit"] i').attr('class', 'fa fa-search');
+        $('#submitQuery i').attr('class', 'fa fa-search');
       });
 
-       ServerSearch.on('found_done', function () {
-        $('#query_interface button[type="submit"] i').attr('class', 'fa fa-search');
+      ServerSearch.on('found_done', function () {
+        $('#submitQuery i').attr('class', 'fa fa-search');
       });
 
-      $('#query_interface form').on('submit', function (event) {
+      $('#submitQuery').click(function (event) {
         event.stopPropagation();
         event.preventDefault();
 
@@ -1870,9 +1969,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       });
     };
 
-    QueryView.prototype.isJustNetworkEdges = function() {
-        return !(config.isSetEdgesOnly() || ($('#sets_as_edges').is(':checked')));
-      }
+    QueryView.prototype.isJustNetworkEdges = function () {
+      return !(config.isSetEdgesOnly() || ($('#sets_as_edges').is(':checked')));
+    };
 
     QueryView.prototype.submitQuery = function () {
       var k = +$('#at_most_k').val();
@@ -1883,7 +1982,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
       pathQuery.setQuery(query, true);
 
-      $('#query_interface button[type="submit"] i').attr('class', 'fa fa-spinner fa-pulse');
+      $('#submitQuery i').attr('class', 'fa fa-spinner fa-pulse');
       if (startNodeMatcher) {
         ServerSearch.find(query, k);
       } else {
@@ -1906,7 +2005,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       this.container.init(svg);
       this.container.add(new PathContainer(this.container));
 
-       svg.append("g")
+      svg.append("g")
         .attr("id", "queryOverlay");
     };
 

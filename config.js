@@ -160,18 +160,18 @@ define(['d3', 'jquery', "../caleydo_core/main", "colors", "./list/path/settings"
       return config["sample_paths"];
     },
 
-    getSampleQueryInfo: function(key) {
+    getSampleQueryInfo: function (key) {
       var sampleQueryConfig = config["sample_query"];
-      if(sampleQueryConfig){
+      if (sampleQueryConfig) {
         return sampleQueryConfig[key];
       }
     },
 
-    getSampleQueryStartInfo: function() {
+    getSampleQueryStartInfo: function () {
       return this.getSampleQueryInfo("start");
     },
 
-    getSampleQueryEndInfo: function() {
+    getSampleQueryEndInfo: function () {
       return this.getSampleQueryInfo("end");
     },
 
@@ -358,6 +358,16 @@ define(['d3', 'jquery', "../caleydo_core/main", "colors", "./list/path/settings"
       }
     }
     ,
+
+    isNodeLabel: function (label) {
+      for (var j = 0; j < config.nodes.length; j++) {
+        var nodeConfig = config.nodes[j];
+        if (nodeConfig["node_label"] === label) {
+          return true;
+        }
+      }
+      return false;
+    },
 
     getEdgeConfig: function (edge) {
       for (var j = 0; j < config.edges.length; j++) {

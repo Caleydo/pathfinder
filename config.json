@@ -5,14 +5,24 @@
         "start": {
           "id": "Hanspeter_Pfister",
           "label": "Hanspeter Pfister",
+          "labels": [
+            "_Network_Node",
+            "Author"
+          ],
           "value": 155,
-          "category": "Name"
+          "category": "Name",
+          "type": "Author"
         },
         "end": {
           "id": "Ben_Shneiderman",
           "label": "Ben Shneiderman",
+          "labels": [
+            "_Network_Node",
+            "Author"
+          ],
           "value": 1180,
-          "category": "Name"
+          "category": "Name",
+          "type": "Author"
         }
       },
       "settings": {
@@ -192,14 +202,24 @@
         "start": {
           "id": "C00062",
           "label": "L-Arginine",
+          "labels": [
+            "_Network_Node",
+            "Compound"
+          ],
           "value": 12751,
-          "category": "Name"
+          "category": "Name",
+          "type": "Compound"
         },
         "end": {
           "id": "C00300",
           "label": "Creatine",
+          "labels": [
+            "_Network_Node",
+            "Compound"
+          ],
           "value": 19760,
-          "category": "Name"
+          "category": "Name",
+          "type": "Compound"
         }
       },
       "settings": {
