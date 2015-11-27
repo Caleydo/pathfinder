@@ -1426,7 +1426,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator, that.column.columnManager);
         });
 
-      this.scoreRepresentation.appendScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), (typeof groupId === "undefined") ? dataset.color : d3.hsl(dataset.color).brighter(1).toString());
+      var datasetColor = config.getDatasetColorFromDatasetId(dataset.id);
+
+      this.scoreRepresentation.appendScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), (typeof groupId === "undefined") ? datasetColor : d3.hsl(datasetColor).brighter(1).toString());
 
 
       datasetGroup.append("title")
@@ -1459,9 +1461,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         .attr({
           transform: "translate(0," + datasetPosY + ")"
         });
+ var datasetColor = config.getDatasetColorFromDatasetId(dataset.id);
 
-
-      this.scoreRepresentation.updateScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), dataset.color);
+      this.scoreRepresentation.updateScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), datasetColor);
       datasetGroup.select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
       addSelectionTrigger(datasetGroup, scoreInfo);
       datasetGroup.style("display", scoreInfo.hideScore ? "none" : "block");
@@ -1501,7 +1503,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
                 listeners.notify(pathSorting.updateType, pathSorting.sortingManager.currentComparator, that.column.columnManager);
               });
 
-            that.scoreRepresentation.appendScore(d3.select(this), score, group.getBaseHeight(), (groupId === group.name), dataset.color);
+            that.scoreRepresentation.appendScore(d3.select(this), score, group.getBaseHeight(), (groupId === group.name), datasetColor);
 
             d3.select(this).append("title")
               .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
@@ -1526,7 +1528,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             transform: "translate(0," + (datasetPosY + group.getPosYRelativeToParent()) + ")"
           });
 
-          that.scoreRepresentation.updateScore(d3.select(this), scoreInfo.score, group.getBaseHeight(), (groupId === group.name), dataset.color);
+          that.scoreRepresentation.updateScore(d3.select(this), scoreInfo.score, group.getBaseHeight(), (groupId === group.name), datasetColor);
           d3.select(this).select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
           addSelectionTrigger(d3.select(this), scoreInfo);
           d3.select(this).style("display", scoreInfo.hideScore ? "none" : "block");
@@ -1605,7 +1607,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           transform: "translate(0, " + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight() + datasetWrapper.getPosYRelativeToParent(pathWrapper.datasets) + tableColumnWrapper.getPosYRelativeToParent()) + ")"
         });
       that.scoreRepresentation.setValueRange(valueRange);
-      that.scoreRepresentation.appendScore(p, scoreInfo.score, tableColumnWrapper.getHeight(), true, datasetWrapper.color);
+      that.scoreRepresentation.appendScore(p, scoreInfo.score, tableColumnWrapper.getHeight(), true, config.getDatasetColorFromDatasetId(datasetWrapper.id));
 
       p.append("title")
         .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
@@ -1634,7 +1636,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           transform: "translate(0, " + (s.PATH_HEIGHT + pathWrapper.getSetHeight() + pathWrapper.getPropertyHeight() + datasetWrapper.getPosYRelativeToParent(pathWrapper.datasets) + tableColumnWrapper.getPosYRelativeToParent()) + ")"
         });
       that.scoreRepresentation.setValueRange(valueRange);
-      that.scoreRepresentation.updateScore(p, scoreInfo.score, tableColumnWrapper.getHeight(), true, datasetWrapper.color);
+      that.scoreRepresentation.updateScore(p, scoreInfo.score, tableColumnWrapper.getHeight(), true, config.getDatasetColorFromDatasetId(datasetWrapper.id));
       p.select("title")
         .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
       addSelectionTrigger(p, scoreInfo);

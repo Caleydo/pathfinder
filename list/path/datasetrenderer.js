@@ -186,7 +186,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
       uiUtil.createTemporalMenuOverlayButton(parent, s.NODE_START, 4, true, function () {
 
         return [{
-          text: "Pin/Unpin",
+          text: s.isDataGroupSticky(dataset.id, that.name) ? "Unpin" : "Pin",
           icon: "\uf276",
           callback: function () {
 
