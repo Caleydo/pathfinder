@@ -13,6 +13,8 @@
     <label for="startNode">Start </label>
     <input type="text" id="startNode" style="width: 7em;">
 
+    <span id="complexQueryLabel" style="display:none" class="label label-danger" title="Complex query defined!">!</span>
+
     <label for="endNode">End </label>
     <input type="text" id="endNode" style="width: 7em;">
   </div>
@@ -60,50 +62,50 @@
 
 
   <!--<div id="setInfoView" style="display:inline-block; margin-left: 50px">-->
-    <!--<div style="display:inline-block">-->
-      <!--<label>Verycomplicatedpathwayname</label>-->
-    <!--</div>-->
-    <!--<div style="display:inline-block; overflow: auto; width:300px; height: 50px">-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-       <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-       <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--</div>-->
+  <!--<div style="display:inline-block">-->
+  <!--<label>Verycomplicatedpathwayname</label>-->
+  <!--</div>-->
+  <!--<div style="display:inline-block; overflow: auto; width:300px; height: 50px">-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+  <!--</div>-->
 
   <!--</div>-->
 

@@ -1689,6 +1689,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         updateSimpleUINodeText(false);
       }
 
+      $("#complexQueryLabel").css("display", that.isComplexQuery() ? "inline" : "none");
+
       function updateSimpleUINodeText(isStartNode) {
         var constraint = that.findUnambiguousPathNodeConstraint(isStartNode);
         if (constraint) {
@@ -1908,6 +1910,25 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
     //          }
     //      }
     //  };
+
+    /**
+     *
+     * @returns {True, if there is anything defined other than a single lane of start and end nodes}
+     */
+    QueryView.prototype.isComplexQuery = function () {
+
+      var pathContainers = [];
+      this.findPathContainers(this.container, pathContainers);
+      if (pathContainers.length > 1) {
+        return true;
+      }
+
+      var pathContainer = pathContainers[0];
+      if (pathContainer.children.length === 3 && pathContainer.children[1] instanceof SequenceFiller) {
+        return false;
+      }
+      return true;
+    };
 
     QueryView.prototype.findSingleStartNodeMatcher = function () {
 
