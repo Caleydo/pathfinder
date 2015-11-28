@@ -236,7 +236,8 @@
             "pathways": {
               "type": "set",
               "set": "pathways"
-            }
+            },
+            "degree": "numerical"
           }
         },
         {
@@ -251,7 +252,8 @@
             "pathways": {
               "type": "set",
               "set": "pathways"
-            }
+            },
+            "degree": "numerical"
           }
         }
       ],
@@ -332,7 +334,8 @@
             "pathways": {
               "type": "set",
               "set": "pathways"
-            }
+            },
+            "degree": "numerical"
           }
         },
         {
@@ -346,7 +349,8 @@
             "pathways": {
               "type": "set",
               "set": "pathways"
-            }
+            },
+            "degree": "numerical"
           }
         }
       ],

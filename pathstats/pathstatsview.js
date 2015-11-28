@@ -11,6 +11,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
     var COLLAPSE_BUTTON_SPACING = 10;
     var BAR_START_X = 110;
     var MAX_BAR_WIDTH = 80;
+    var MAX_LIST_HEIGHT = 200;
 
     function appendLabelClipPath(svg) {
       //  .classed("setTypeGroup", true);
@@ -739,7 +740,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
     PathStatsView.prototype.updateViewSize = function () {
       var totalViewHeight = $("#pathStatsView")[0].offsetHeight;
 
-      var usedHeight = this.nodeTypeWrappers.getBaseHeight() + this.setTypeWrappers.getBaseHeight() + 4;
+      var usedHeight = this.nodeTypeWrappers.getBaseHeight() + this.setTypeWrappers.getBaseHeight() + 300;
       var numStatTypes = 0;
       this.nodeTypeWrappers.children.forEach(function (statType) {
         if (statType.canBeShown()) {

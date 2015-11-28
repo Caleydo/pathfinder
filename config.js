@@ -44,7 +44,7 @@ define(['d3', 'jquery', "../caleydo_core/main", "colors", "./list/path/settings"
         }, setTypeColors);
       }
 
-      var numericalNodeProperties = [];
+      var numericalNodeProperties = {};
       config.nodes.forEach(function (nodeConfig, i) {
 
         Object.keys(nodeConfig.properties).forEach(function (key) {
@@ -63,13 +63,13 @@ define(['d3', 'jquery', "../caleydo_core/main", "colors", "./list/path/settings"
           }
 
           if (prop === "numerical") {
-            numericalNodeProperties.push(key);
+            numericalNodeProperties[key] = true;
           }
 
         });
       });
 
-      assignColors(numericalNodeProperties, function (property) {
+      assignColors(Object.keys(numericalNodeProperties), function (property) {
         return property;
       }, propertyColors);
       if (config.datasets) {
