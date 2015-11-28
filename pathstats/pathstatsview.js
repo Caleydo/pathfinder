@@ -1,6 +1,6 @@
 define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', './statdata', '../pathutil', '../listeners',
-    '../query/pathquery', '../sorting', '../setinfo', '../config', '../query/queryutil', '../uiutil', '../list/path/pathdata', '../datastore'],
-  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo, config, queryUtil, uiUtil, pathData, dataStore) {
+    '../query/pathquery', '../sorting', '../setinfo', '../config', '../query/queryutil', '../uiutil', '../list/path/pathdata', '../datastore', '../settings/visibilitysettings'],
+  function ($, d3, view, hierarchyElements, selectionUtil, statData, pathUtil, listeners, pathQuery, sorting, setInfo, config, queryUtil, uiUtil, pathData, dataStore, vs) {
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
     var NodeTypeWrapper = statData.NodeTypeWrapper;
@@ -53,7 +53,8 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       pathData.addUpdateListener(function (changes) {
         if (changes.pathsChanged) {
           that.paths = pathData.getPaths(true);
-          that.updateToFilteredPaths();
+          that.updateToAllPaths();
+          //that.updateToFilteredPaths();
         }
       });
 
@@ -254,32 +255,35 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       this.nodeTypeDict = {};
       this.setTypeDict = {};
-      this.dataRoot = new HierarchyElement();
-      this.nodeTypeWrappers = new Level1HierarchyElement(this.dataRoot);
-      this.setTypeWrappers = new Level1HierarchyElement(this.dataRoot);
+      //this.dataRoot = new HierarchyElement();
+      this.nodeTypeWrappers.children = [];
+      this.setTypeWrappers.children = [];
+      this.dataRoot.children = [];
       this.dataRoot.children.push(this.nodeTypeWrappers);
       this.dataRoot.children.push(this.setTypeWrappers);
+      //this.dataRoot.children.push(this.nodeTypeWrappers);
+      //this.dataRoot.children.push(this.setTypeWrappers);
       selectionUtil.removeListeners(this.selectionListeners);
       this.selectionListeners = [];
       //currentNodeTypeWrapperId = 0;
       //currentNodeWrapperId = 0;
-      var svg = d3.select("#pathstats svg");
-      svg.selectAll("g.nodeTypeGroup")
-        .remove();
-      svg.selectAll("g.setTypeGroup")
-        .remove();
-      svg.append("g")
-        .classed("nodeTypeGroup", true);
-      svg.append("g")
-        .classed("setTypeGroup", true);
+      //var svg = d3.select("#pathstats svg");
+      //svg.selectAll("g.nodeTypeGroup")
+      //  .remove();
+      //svg.selectAll("g.setTypeGroup")
+      //  .remove();
+      //svg.append("g")
+      //  .classed("nodeTypeGroup", true);
+      //svg.append("g")
+      //  .classed("setTypeGroup", true);
 
     };
 
     PathStatsView.prototype.getBarScale = function () {
       var scaleDomain = [0, Math.max(this.nodeTypeWrappers.children.length <= 0 ? 0 : (d3.max(this.nodeTypeWrappers.children, function (d) {
-        return d.pathIds.length;
+        return d.getNumPaths();
       })), this.setTypeWrappers.children.length <= 0 ? 0 : d3.max(this.setTypeWrappers.children, function (d) {
-        return d.pathIds.length;
+        return d.getNumPaths();
       }))];
 
       return d3.scale.linear()
@@ -332,6 +336,53 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       var that = this;
 
+      function appendLevel1Text(parent, text, countText, countId) {
+        parent.append("text")
+          .text(text)
+          .attr({
+            x: 0,
+            y: 18
+          })
+          .style({
+            "font-size": 14,
+            "font-weight": "bolder",
+            "fill": "gray"
+          });
+        parent.append("text")
+          .text(countText)
+          .attr({
+            id: countId,
+            x: BAR_START_X - 10,
+            y: 18
+          })
+          .style({
+            "font-size": 12,
+            "text-anchor": "end",
+            "font-weight": "bolder",
+            "fill": "gray"
+          });
+      }
+
+      if (d3.select("#pathstats div.pathCounts").empty()) {
+        var svg = d3.select("#pathstats").append("div").style({height:"22px"}).classed("pathCounts", true).append("svg")
+          .attr({
+            height: 22,
+            width: 200
+          });
+        appendLevel1Text(svg, "Paths", pathQuery.getRemainingPathIds().length + "/" + dataStore.getPaths().length, "numPaths");
+
+      }
+
+      if (d3.select("#pathstats div.edgeCounts").empty()) {
+        var svg = d3.select("#pathstats").append("div").style({height:"22px"}).classed("edgeCounts", true).append("svg")
+          .attr({
+            height: 22,
+            width: 200
+          });
+
+        appendLevel1Text(svg, "Edges", pathQuery.getRemainingEdgeIds().length + "/" + Object.keys(dataStore.allEdgeIds).length, "numEdges");
+      }
+
       var allLevel1HierarchyElements = d3.select("#pathstats").selectAll("div.level1HierarchyElement").data(this.dataRoot.children);
 
       allLevel1HierarchyElements.enter()
@@ -355,27 +406,54 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
             d3.select(this).classed("nodeTypeGroup", true);
 
-            svg.append("text")
-              .text("Nodes")
-              .attr({
-                x: 0,
-                y: d.getBaseHeight()
-              })
-              .style({
-                "font-size": 18
-              });
+            appendLevel1Text(svg, "Nodes", pathQuery.getRemainingNodeIds().length + "/" + dataStore.getTotalNumNodes(), "numNodes");
+
+            //svg.append("text")
+            //  .text("Nodes")
+            //  .attr({
+            //    x: 0,
+            //    y: d.getBaseHeight()
+            //  })
+            //  .style({
+            //    "font-size": 14
+            //  });
+            //svg.append("text")
+            //  .text(pathQuery.getRemainingNodeIds().length + "/" + dataStore.getTotalNumNodes())
+            //  .attr({
+            //    id: "numNodes",
+            //    x: BAR_START_X - 10,
+            //    y: d.getBaseHeight()
+            //  })
+            //  .style({
+            //    "font-size": 12,
+            //    "text-anchor": "end"
+            //  });
 
           } else if (d === that.setTypeWrappers) {
             d3.select(this).classed("setTypeGroup", true);
-            svg.append("text")
-              .text("Sets")
-              .attr({
-                x: 0,
-                y: d.getBaseHeight()
-              })
-              .style({
-                "font-size": 18
-              });
+
+            appendLevel1Text(svg, "Sets", (vs.isShowNonEdgeSets() ? pathQuery.getRemainingNodeSetIds().length : pathQuery.getRemainingEdgeSetIds().length) + "/" + dataStore.getTotalNumSets(), "numSets");
+            //svg.append("text")
+            //  .text("Sets")
+            //  .attr({
+            //    x: 0,
+            //    y: d.getBaseHeight()
+            //  })
+            //  .style({
+            //    "font-size": 14
+            //  });
+	    //
+            //svg.append("text")
+            //  .text((vs.isShowNonEdgeSets() ? pathQuery.getRemainingNodeSetIds().length : pathQuery.getRemainingEdgeSetIds().length) + "/" + dataStore.getTotalNumSets())
+            //  .attr({
+            //    id: "numSets",
+            //    x: BAR_START_X - 10,
+            //    y: d.getBaseHeight()
+            //  })
+            //  .style({
+            //    "font-size": 12,
+            //    "text-anchor": "end"
+            //  });
 
           }
 
@@ -495,7 +573,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
         var allTypeIds = idType === "node" ? Object.keys(dataStore.allNodeIds[statType.type]) : Object.keys(dataStore.allSetIds[statType.type]);
 
-        var typeText = statType.getLabel() + " (" + statType.getVisibleChildren().length + "/" + allTypeIds.length + ")";
+        var typeText = statType.getLabel() + " (" + statType.getVisibleChildren(true).length + "/" + allTypeIds.length + ")";
         var useSymbol = false;
 
         if (idType === "node") {
@@ -642,7 +720,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
               return stat.getBaseHeight() + 2 - HIERARCHY_ELEMENT_HEIGHT;
             },
             width: function (stat) {
-              return scaleX(stat.pathIds.length);
+              return scaleX(stat.getNumPaths());
             },
             height: HIERARCHY_ELEMENT_HEIGHT - 4,
             fill: barColor
@@ -679,13 +757,14 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       var maxStatHeight = Math.max((totalViewHeight - usedHeight - (15 * numStatTypes)) / numStatTypes, 50);
 
 
-      var statTypeGroups = d3.selectAll("div.level1HierarchyElement");
+      var statTypeGroups = d3.selectAll("div.level1HierarchyElement").data(this.dataRoot.children);
 
       statTypeGroups.each(function (d) {
         var allStatTypes = d3.select(this).selectAll("div.statTypes")
           .data(d.children, getKey);
 
         allStatTypes.selectAll("div.statGroup")
+          .data(d.children, getKey)
           .transition()
           .each("start", function (statType) {
             if (statType.collapsed) {
@@ -719,6 +798,19 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
       //d3.selectAll("g.nodeTypeGroup").data([this.nodeTypeWrappers]);
       var that = this;
+
+      d3.select("#numPaths")
+        .text(pathQuery.getRemainingPathIds().length + "/" + dataStore.getPaths().length);
+
+      d3.select("#numEdges")
+        .text(pathQuery.getRemainingEdgeIds().length + "/" + Object.keys(dataStore.allEdgeIds).length);
+
+      d3.select("#numNodes")
+        .text(pathQuery.getRemainingNodeIds().length + "/" + dataStore.getTotalNumNodes());
+
+      d3.select("#numSets")
+        .text((vs.isShowNonEdgeSets() ? pathQuery.getRemainingNodeSetIds().length : pathQuery.getRemainingEdgeSetIds().length) + "/" + dataStore.getTotalNumSets());
+
       var statTypeGroups = d3.selectAll("div.level1HierarchyElement");
 
 
@@ -728,7 +820,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       //});
 
       var comparator = sorting.chainComparators([function (a, b) {
-        return d3.descending(a.pathIds.length, b.pathIds.length);
+        return d3.descending(a.getNumPaths(), b.getNumPaths());
       }, function (a, b) {
         return d3.descending(a.id, b.id);
       }]);
@@ -756,16 +848,24 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
           var allTypeIds = statType instanceof NodeTypeWrapper ? Object.keys(dataStore.allNodeIds[statType.type]) : Object.keys(dataStore.allSetIds[statType.type]);
 
-          var typeText = statType.getLabel() + " (" + statType.getVisibleChildren().length + "/" + allTypeIds.length + ")";
+          var typeText = statType.getLabel() + " (" + statType.getVisibleChildren(true).length + "/" + allTypeIds.length + ")";
 
           typeCont.select("text.typeLabel")
             .text(typeText)
             .style("fill", statType.getColor());
 
+          typeCont.select("text.collapseIconSmall")
+          .attr("class", "collapseIconSmall")
+          .on("click", function () {
+            statType.collapsed = !statType.collapsed;
+            d3.select(this).text(statType.collapsed ? "\uf0da" : "\uf0dd");
+            that.updateView();
+          });
+
           typeCont.select("rect.pathOccurrences")
             .transition()
             .attr({
-              width: scaleX(statType.pathIds.length),
+              width: scaleX(statType.getNumPaths()),
               fill: statType.getColor()
             });
 
@@ -795,7 +895,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
             $stat.select("rect.pathOccurrences")
               .transition()
               .attr({
-                width: scaleX(stat.pathIds.length),
+                width: scaleX(stat.getNumPaths()),
                 fill: stat.getColor()
               });
 

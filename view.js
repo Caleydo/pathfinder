@@ -41,10 +41,13 @@ define(['jquery', 'd3'],
         var svg = d3.select(this.parentSelector + " svg");
         //var parent = $(this.parentSelector)[0];
         //var pw = $(this.parentSelector)[0].offsetWidth;
-        var p = $(this.parentSelector);
-        var p2 = $(this.parentSelector)[0];
+        //var p = $(this.parentSelector);
+        var p = $(this.parentSelector)[0];
+        if(typeof p === "undefined") {
+          return;
+        }
         var height = 0;
-        if ($(this.parentSelector)[0].offsetHeight > minSize.height && this.grabVSpace) {
+        if (p.offsetHeight > minSize.height && this.grabVSpace) {
           svg.style({
             "-webkit-flex": 1,
             "flex": 1

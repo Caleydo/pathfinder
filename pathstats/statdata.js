@@ -3,12 +3,13 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
 
     var HierarchyElement = hierarchyElements.HierarchyElement;
 
-    var LEVEL1_HIERARCHY_ELEMENT_HEIGHT = 24;
+    var LEVEL1_HIERARCHY_ELEMENT_HEIGHT = 20;
     var LEVEL2_HIERARCHY_ELEMENT_HEIGHT = 16;
     var HIERARCHY_ELEMENT_HEIGHT = 12;
 
     function BaseHierarchyElement(parentElement) {
       HierarchyElement.call(this, parentElement);
+      this.pathIds = {};
     }
 
     BaseHierarchyElement.prototype = Object.create(HierarchyElement.prototype);
@@ -18,6 +19,10 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
 
     BaseHierarchyElement.prototype.getColor = function () {
       return "gray";
+    };
+
+     BaseHierarchyElement.prototype.getNumPaths = function () {
+      return Object.keys(this.pathIds).length;
     };
 
     function Level1HierarchyElement(parentElement) {
@@ -33,22 +38,23 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       BaseHierarchyElement.call(this, parentElement);
       this.id = node.id;
       this.node = node;
-      this.pathIds = [];
+      //this.pathIds = {};
     }
 
     NodeWrapper.prototype = Object.create(BaseHierarchyElement.prototype);
 
     NodeWrapper.prototype.addPath = function (path) {
-      if (this.pathIds.indexOf(path.id) === -1) {
-        this.pathIds.push(path.id);
-      }
+      //if (this.pathIds.indexOf(path.id) === -1) {
+      //  this.pathIds.push(path.id);
+      //}
+      this.pathIds[path.id] = true;
     };
 
     NodeWrapper.prototype.removePath = function (path) {
-      var index = this.pathIds.indexOf(path.id);
-      if (index !== -1) {
-        this.pathIds.splice(index, 1);
-      }
+      //var index = this.pathIds.indexOf(path.id);
+      //if (index !== -1) {
+      //  this.pathIds.splice(index, 1);
+      //}
     };
 
     NodeWrapper.prototype.onDoubleClick = function () {
@@ -83,7 +89,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     };
 
     NodeWrapper.prototype.getTooltip = function () {
-      return this.pathIds.length + " paths contain node " + this.getLabel();
+      return this.getNumPaths() + " paths contain node " + this.getLabel();
     };
 
     function NodeTypeWrapper(parentElement, type) {
@@ -91,7 +97,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       BaseHierarchyElement.call(this, parentElement);
       this.type = type;
       this.nodeWrapperDict = {};
-      this.pathIds = [];
+      //this.pathIds = {};
     }
 
     NodeTypeWrapper.prototype = Object.create(BaseHierarchyElement.prototype);
@@ -103,9 +109,10 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     NodeTypeWrapper.prototype.addNode = function (node, path) {
       var nodeWrapper = this.nodeWrapperDict[node.id.toString()];
 
-      if (this.pathIds.indexOf(path.id) === -1) {
-        this.pathIds.push(path.id);
-      }
+      this.pathIds[path.id] = true;
+      //if (this.pathIds.indexOf(path.id) === -1) {
+      //  this.pathIds.push(path.id);
+      //}
 
       if (typeof nodeWrapper === "undefined") {
         nodeWrapper = new NodeWrapper(this, node);
@@ -159,98 +166,102 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     //};
 
     NodeTypeWrapper.prototype.removePath = function (path) {
-      var index = this.pathIds.indexOf(path.id);
-      if (index !== -1) {
-        this.pathIds.splice(index, 1);
-      }
-
-      this.children.forEach(function (child) {
-        child.removePath(path);
-      });
+      //var index = this.pathIds.indexOf(path.id);
+      //if (index !== -1) {
+      //  this.pathIds.splice(index, 1);
+      //}
+      //
+      //this.children.forEach(function (child) {
+      //  child.removePath(path);
+      //});
     };
 
     NodeTypeWrapper.prototype.getTooltip = function () {
-      return this.pathIds.length + " paths contain nodes of type " + this.getLabel();
+      return this.getNumPaths()+ " paths contain nodes of type " + this.getLabel();
     };
 
     function SetWrapper(parentElement, setId) {
       this.id = setId;
       BaseHierarchyElement.call(this, parentElement);
       this.setId = setId;
-      this.pathIds = [];
-      this.nodeIds = {};
-      this.edgeIds = {};
+      //this.pathIds = {};
+      this.edgeSetPathIds = {};
+      //this.nodeIds = {};
+      //this.edgeIds = {};
     }
 
     SetWrapper.prototype = Object.create(BaseHierarchyElement.prototype);
 
     SetWrapper.prototype.addNode = function (node, path) {
-      if (this.pathIds.indexOf(path.id) === -1) {
-        this.pathIds.push(path.id);
-      }
+      this.pathIds[path.id] = true;
+      //if (this.pathIds.indexOf(path.id) === -1) {
+      //  this.pathIds.push(path.id);
+      //}
 
-      var pathIdsForNode = this.nodeIds[node.id.toString()];
-
-      if (typeof pathIdsForNode === "undefined") {
-        pathIdsForNode = [];
-        this.nodeIds[node.id.toString()] = pathIdsForNode;
-      }
-
-      pathIdsForNode.push(path.id);
+      //var pathIdsForNode = this.nodeIds[node.id.toString()];
+      //
+      //if (typeof pathIdsForNode === "undefined") {
+      //  pathIdsForNode = [];
+      //  this.nodeIds[node.id.toString()] = pathIdsForNode;
+      //}
+      //
+      //pathIdsForNode.push(path.id);
 
     };
 
     SetWrapper.prototype.removePath = function (path) {
-      var index = this.pathIds.indexOf(path.id);
-      if (index !== -1) {
-        this.pathIds.splice(index, 1);
-      }
-      var that = this;
-
-      path.nodes.forEach(function (node) {
-        var pathIdsForNode = that.nodeIds[node.id.toString()];
-
-        if (typeof pathIdsForNode !== "undefined") {
-          var i = pathIdsForNode.indexOf(path.id);
-          if (i !== -1) {
-            pathIdsForNode.splice(i, 1);
-          }
-          if (pathIdsForNode.length <= 0) {
-            delete that.nodeIds[node.id.toString()];
-          }
-        }
-      });
-
-      path.edges.forEach(function (edge) {
-        var pathIdsForEdge = that.edgeIds[edge.id.toString()];
-
-        if (typeof pathIdsForEdge !== "undefined") {
-          var i = pathIdsForEdge.indexOf(path.id);
-          if (i !== -1) {
-            pathIdsForEdge.splice(i, 1);
-          }
-
-          if (pathIdsForEdge.length <= 0) {
-            delete that.edgeIds[edge.id.toString()];
-          }
-        }
-      });
+      //var index = this.pathIds.indexOf(path.id);
+      //if (index !== -1) {
+      //  this.pathIds.splice(index, 1);
+      //}
+      //var that = this;
+      //
+      //path.nodes.forEach(function (node) {
+      //  var pathIdsForNode = that.nodeIds[node.id.toString()];
+      //
+      //  if (typeof pathIdsForNode !== "undefined") {
+      //    var i = pathIdsForNode.indexOf(path.id);
+      //    if (i !== -1) {
+      //      pathIdsForNode.splice(i, 1);
+      //    }
+      //    if (pathIdsForNode.length <= 0) {
+      //      delete that.nodeIds[node.id.toString()];
+      //    }
+      //  }
+      //});
+      //
+      //path.edges.forEach(function (edge) {
+      //  var pathIdsForEdge = that.edgeIds[edge.id.toString()];
+      //
+      //  if (typeof pathIdsForEdge !== "undefined") {
+      //    var i = pathIdsForEdge.indexOf(path.id);
+      //    if (i !== -1) {
+      //      pathIdsForEdge.splice(i, 1);
+      //    }
+      //
+      //    if (pathIdsForEdge.length <= 0) {
+      //      delete that.edgeIds[edge.id.toString()];
+      //    }
+      //  }
+      //});
 
     };
 
     SetWrapper.prototype.addEdge = function (edge, path) {
-      if (this.pathIds.indexOf(path.id) === -1) {
-        this.pathIds.push(path.id);
-      }
+      //if (this.pathIds.indexOf(path.id) === -1) {
+      //  this.pathIds.push(path.id);
+      //}
 
-      var pathIdsForEdge = this.edgeIds[edge.id.toString()];
+      this.edgeSetPathIds[path.id] = true;
 
-      if (typeof pathIdsForEdge === "undefined") {
-        pathIdsForEdge = [];
-        this.edgeIds[edge.id.toString()] = pathIdsForEdge;
-      }
-
-      pathIdsForEdge.push(path.id);
+      //var pathIdsForEdge = this.edgeIds[edge.id.toString()];
+      //
+      //if (typeof pathIdsForEdge === "undefined") {
+      //  pathIdsForEdge = [];
+      //  this.edgeIds[edge.id.toString()] = pathIdsForEdge;
+      //}
+      //
+      //pathIdsForEdge.push(path.id);
     };
 
     SetWrapper.prototype.isFiltered = function () {
@@ -258,7 +269,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     };
 
     SetWrapper.prototype.canBeShown = function () {
-      return visibilitySettings.isShowNonEdgeSets() || Object.keys(this.edgeIds).length > 0;
+      return visibilitySettings.isShowNonEdgeSets() || !pathQuery.isEdgeSetFiltered(this.setId);
     };
 
     SetWrapper.prototype.onDoubleClick = function () {
@@ -299,7 +310,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     };
 
     SetWrapper.prototype.getTooltip = function () {
-      return this.pathIds.length + " paths contain set " + this.getLabel();
+      return this.getNumPaths() + " paths contain set " + this.getLabel();
     };
 
     //SetWrapper.prototype.getNodeConstraintType = function () {
@@ -315,7 +326,8 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       BaseHierarchyElement.call(this, parentElement);
       this.type = type;
       this.setWrapperDict = {};
-      this.pathIds = [];
+      //this.pathIds = {};
+      this.edgeSetPathIds = {};
       //this.nodeIds = [];
       //this.edgeIds = [];
     }
@@ -330,9 +342,11 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     SetTypeWrapper.prototype.addNode = function (setId, node, path) {
       var setWrapper = this.setWrapperDict[setId.toString()];
 
-      if (this.pathIds.indexOf(path.id) === -1) {
-        this.pathIds.push(path.id);
-      }
+      this.pathIds[path.id] = true;
+
+      //if (this.pathIds.indexOf(path.id) === -1) {
+      //  this.pathIds.push(path.id);
+      //}
 
       if (typeof setWrapper === "undefined") {
         setWrapper = new SetWrapper(this, setId);
@@ -406,22 +420,24 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     };
 
     SetTypeWrapper.prototype.removePath = function (path) {
-      var index = this.pathIds.indexOf(path.id);
-      if (index !== -1) {
-        this.pathIds.splice(index, 1);
-      }
-
-      this.children.forEach(function (child) {
-        child.removePath(path);
-      });
+      //var index = this.pathIds.indexOf(path.id);
+      //if (index !== -1) {
+      //  this.pathIds.splice(index, 1);
+      //}
+      //
+      //this.children.forEach(function (child) {
+      //  child.removePath(path);
+      //});
     };
 
     SetTypeWrapper.prototype.addEdge = function (setId, edge, path) {
       var setWrapper = this.setWrapperDict[setId.toString()];
 
-      if (this.pathIds.indexOf(path.id) === -1) {
-        this.pathIds.push(path.id);
-      }
+      this.edgeSetPathIds[path.id] = true;
+
+      //if (this.pathIds.indexOf(path.id) === -1) {
+      //  this.pathIds.push(path.id);
+      //}
 
       if (typeof setWrapper === "undefined") {
         setWrapper = new SetWrapper(this, setId);
@@ -432,7 +448,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     };
 
     SetTypeWrapper.prototype.getTooltip = function () {
-      return this.pathIds.length + " paths contain sets of type " + this.getLabel();
+      return this.getNumPaths() + " paths contain sets of type " + this.getLabel();
     };
 
     return {

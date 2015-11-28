@@ -16,10 +16,10 @@ define(function () {
       return height;
     },
 
-    getVisibleChildren: function () {
+    getVisibleChildren: function (ignoreCollapsed) {
       var that = this;
       return this.children.filter(function (child) {
-        if (that.collapsed) {
+        if (that.collapsed && !ignoreCollapsed) {
           return child.isSticky() && child.canBeShown();
         }
         return child.canBeShown();

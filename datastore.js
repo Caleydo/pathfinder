@@ -719,24 +719,24 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         $("#savePaths").click(function () {
 
           //paths.forEach(function (path) {
-	  //
+          //
           //  path.nodes.forEach(function (node) {
-	  //
+          //
           //      Object.keys(allDatasets).forEach(function (datasetId) {
           //        //var dataset = allDatasets[datasetId][node.id];
-	  //
+          //
           //        if (!allDatasets[datasetId][node.id]) {
           //          return;
           //        }
-	  //
+          //
           //        var dataset = node.properties[datasetId] = {};
-	  //
+          //
           //        setData(dataset, "_all", allDatasets[datasetId][node.id].stats, allDatasets[datasetId][node.id].data);
-	  //
+          //
           //        Object.keys(allDatasets[datasetId].groups).forEach(function (groupId) {
           //          setData(dataset, groupId, allDatasets[datasetId].groups[groupId][node.id].stats, allDatasets[datasetId].groups[groupId][node.id].data);
           //        });
-	  //
+          //
           //        function setData(dataset, groupId, stats, data) {
           //          dataset[groupId] = {
           //            stats: stats,
@@ -744,10 +744,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
           //          };
           //        }
           //      });
-	  //
+          //
           //    }
           //  );
-	  //
+          //
           //});
 
 
@@ -986,6 +986,26 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
 
       getDataSet: function (datasetId) {
         return allDatasets[datasetId];
+      },
+
+      getTotalNumNodes: function () {
+        var that = this;
+
+        var numNodes = 0;
+        Object.keys(this.allNodeIds).forEach(function (nodeType) {
+          numNodes += Object.keys(that.allNodeIds[nodeType]).length;
+        });
+        return numNodes;
+      },
+
+      getTotalNumSets: function () {
+        var that = this;
+
+        var numSets = 0;
+        Object.keys(this.allSetIds).forEach(function (setType) {
+          numSets += Object.keys(that.allSetIds[setType]).length;
+        });
+        return numSets;
       },
 
       getMatrixDataForNode: getDataForNode,

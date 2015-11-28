@@ -265,8 +265,11 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         $(this.myDomElements[0]).mouseleave(function () {
           if (!e) var e = window.event;
           var relTarg = e.relatedTarget || e.toElement;
+          if(!relTarg){
+            return;
+          }
 
-          var classname = relTarg.parentNode.className
+          var classname = relTarg.parentNode.className;
 
           if (classname.baseVal !== "overlayButton") {
             d3.select("#queryOverlay").selectAll("g.overlayButton")
