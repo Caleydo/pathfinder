@@ -1,6 +1,25 @@
-define(["d3", "jquery", "./config", "./setinfo", "./uiutil"], function (d3, $, config, setInfo, uiUtil, queryUtil) {
+define(["d3", "jquery", "./config", "./setinfo", "./list/path/settings", "./uiutil"], function (d3, $, config, setInfo, pathSettings, uiUtil) {
+
+  function PropertyMapper(propertyName, domainAccessor) {
+    this.propertyName = propertyName;
+    this.getScaleDomain = domainAccessor;
+  }
+
+  PropertyMapper.prototype = {
+    getValue: function (node) {
+      return node.properties[this.propertyName];
+    },
+    getLabel: function (node) {
+      return this.propertyName;
+    },
+    getColor: function (node) {
+      return config.getNodePropertyColorFromPropertyName(this.propertyName);
+    }
+  };
 
   return {
+    PropertyMapper: PropertyMapper,
+
     isNodeSetProperty: function (node, key) {
 
       return config.isNodeSetProperty(node, key);
@@ -287,13 +306,19 @@ define(["d3", "jquery", "./config", "./setinfo", "./uiutil"], function (d3, $, c
         uiUtil.createTemporalMenuOverlayButton(parent, x + width, y, false, overlayItems);
       }
 
-      //if(showOnNodeMapping) {
-      //  uiUtil.appendBars()
-      //}
+      if (showOnNodeMapping) {
+        var onNodeMapping = parent.append("g").
+          classed("onNodeMapping", true)
+          .attr({
+            transform: "translate(" + (x+5) + "," + (y + height-3) + ")"
+          });
+        uiUtil.appendBars(onNodeMapping, [pathSettings.onNodeMapper.getValue(node)], d3.scale.linear().domain(pathSettings.onNodeMapper.getScaleDomain()).range([0, width]),
+          5, pathSettings.onNodeMapper.getColor(), pathSettings.onNodeMapper.getLabel(), false, false);
+      }
 
     },
 
-    updateNode: function (parent, node, x, y, width, height, textWidthFunction, overlayItems) {
+    updateNode: function (parent, node, x, y, width, height, textWidthFunction, overlayItems, showOnNodeMapping) {
       parent.select("rect")
         .attr({
           rx: 5,
@@ -366,6 +391,25 @@ define(["d3", "jquery", "./config", "./setinfo", "./uiutil"], function (d3, $, c
 
       if (typeof overlayItems !== "undefined" && overlayItems.length > 0) {
         uiUtil.createTemporalMenuOverlayButton(parent, x + width, y, false, overlayItems);
+      }
+
+      if (showOnNodeMapping) {
+        var onNodeMapping = parent.select("g.onNodeMapping");
+        if (onNodeMapping.empty()) {
+          onNodeMapping = parent.append("g")
+            .classed("onNodeMapping", true)
+            .attr({
+              transform: "translate(" + (x+5) + "," + (y + height-3) + ")"
+            });
+
+          uiUtil.appendBars(onNodeMapping, [pathSettings.onNodeMapper.getValue(node)], d3.scale.linear().domain(pathSettings.onNodeMapper.getScaleDomain()).range([0, width-10]),
+            5, pathSettings.onNodeMapper.getColor(), pathSettings.onNodeMapper.getLabel(), false, false);
+        } else {
+          uiUtil.updateBars(onNodeMapping, [pathSettings.onNodeMapper.getValue(node)], d3.scale.linear().domain(pathSettings.onNodeMapper.getScaleDomain()).range([0, width-10]),
+            5, pathSettings.onNodeMapper.getColor(), pathSettings.onNodeMapper.getLabel(), false)
+        }
+      } else {
+        parent.select("g.onNodeMapping").remove();
       }
 
     }

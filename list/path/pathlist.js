@@ -1654,6 +1654,14 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             //    width: "100%",
             //    height: property.getBaseHeight()
             //  }).style({stroke: "black", fill:"white"});
+            prop.append("rect")
+              .classed("filler", true)
+              .attr({
+                x: 0,
+                y:0,
+                width: "100%",
+                height: property.getBaseHeight()
+              });
 
             prop.append("text")
               .classed("propertyLabel", true)
@@ -1663,6 +1671,33 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               .style("fill", config.getNodePropertyColorFromPropertyName(property.name))
               .attr("clip-path", "url(#SetLabelClipPath)")
               .append("title").text(property.name);
+
+            uiUtil.createTemporalMenuOverlayButton(prop, s.NODE_START, 0, true, function () {
+
+              function isPropertyMapped(){
+                 return s.onNodeMapper instanceof pathUtil.PropertyMapper && s.onNodeMapper.propertyName === property.name;
+              }
+
+              return [{
+                text: isPropertyMapped() ? "Unmap from nodes" : "Map to nodes",
+                //icon: "\uf276",
+                callback: function () {
+
+                  if (!isPropertyMapped()) {
+                    s.onNodeMapper = new pathUtil.PropertyMapper(property.name, function () {
+                      return pathData.numericalPropertyDomains[property.name];
+                    });
+                    s.showOnNodeMapping = true;
+                  } else {
+                    s.onNodeMapper = {};
+                     s.showOnNodeMapping = false;
+                  }
+
+
+                  listeners.notify(listeners.updateType.UPDATE_ON_NODE_MAPPING, s.showOnNodeMapping);
+                }
+              }];
+            });
 
           });
 

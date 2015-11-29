@@ -1,5 +1,6 @@
-define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../pathutil', './neighboredge', '../query/queryutil', '../../pathfinder_graph/search', '../uiutil'],
-  function ($, d3, webcola, dagreD3, listeners, selectionUtil, pathSorting, pathQuery, config, pathUtil, neighborEdgeManager, queryUtil, ServerSearch, uiUtil) {
+define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery',
+  '../config', '../pathutil', './neighboredge', '../query/queryutil', '../../pathfinder_graph/search', '../uiutil', '../list/path/settings'],
+  function ($, d3, webcola, dagreD3, listeners, selectionUtil, pathSorting, pathQuery, config, pathUtil, neighborEdgeManager, queryUtil, ServerSearch, uiUtil, pathSettings) {
     'use strict';
 
     var sideSpacing = 10;
@@ -464,7 +465,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
           "node"
         );
 
-        node.each(function (d) {
+        function getNodeOverlayItems(d) {
           var items = pathUtil.getDefaultNodeOverlayItems(d.node);
           items.push({
             text: "Add Neighbors",
@@ -484,9 +485,13 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
               }
             }
           });
+        }
+
+        node.each(function (d) {
+
           pathUtil.renderNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
             return that.view.getTextWidth(text)
-          }, items, true);
+          }, getNodeOverlayItems(d), pathSettings.showOnNodeMapping);
 
           d3.select(this)
             .on("click.neighborLinks", function () {
@@ -504,7 +509,11 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
 
         allNodes.classed("neighbor", function (d) {
           return d.isNeighborNode;
-        });
+        }).each(function(d){
+          pathUtil.updateNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, function (text) {
+            return that.view.getTextWidth(text);
+          }, getNodeOverlayItems(d), pathSettings.showOnNodeMapping);
+        }) ;
 
 
         allNodes.exit()

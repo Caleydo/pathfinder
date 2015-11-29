@@ -178,7 +178,8 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
               height: barHeight
             })
             .style({
-              fill: "white"
+              fill: "white",
+              stroke: "rgba(0,0,0,0)"
             });
 
           var x = (0 < scale.domain()[0] || 0 > scale.domain[1]) ? scale(scale.domain()[0]) : (value < 0 ? scale(value) : scale(0));
@@ -189,9 +190,12 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
             .attr({
               x: x,
               y: posY,
-              fill: color,
               width: width,
               height: barHeight
+            })
+            .style({
+              fill: color,
+              stroke: "rgba(0,0,0,0)"
             });
 
           bar.append("rect")
@@ -205,7 +209,8 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
             .style({
               "shape-rendering": "crispEdges",
               fill: "rgba(0,0,0,0)",
-              stroke: "rgb(80,80,80)"
+              stroke: "rgb(80,80,80)",
+              "stroke-width": "1px"
             });
 
           bar.append("line")
@@ -219,7 +224,8 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
             .style({
               "opacity": (scale.domain()[0] < 0 && scale.domain()[1] > 0) ? 1 : 0,
               "shape-rendering": "crispEdges",
-              stroke: "rgb(80,80,80)"
+              stroke: "rgb(80,80,80)",
+              "stroke-width": "1px"
             });
 
           bar.append("title").text(name + ": " + that.formatNumber(value));
@@ -273,10 +279,11 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
             .attr({
               x: x,
               y: posY,
-              fill: color,
               width: width,
               height: barHeight
-            });
+            }).style({
+            fill: color
+          });
 
           bar.select("rect.valueFrame")
             .attr({
@@ -372,7 +379,7 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
       return textElement.node().getBBox();
     },
 
-    calcIntersectionX: function(source, target, nodeWidth, nodeHeight) {
+    calcIntersectionX: function (source, target, nodeWidth, nodeHeight) {
       if (source.x === target.x) {
         return source.x;
       } else if (source.y === target.y) {
@@ -410,7 +417,7 @@ define(["d3", "jquery", "./listoverlay"], function (d3, $, ListOverlay) {
       }
     },
 
-    calcIntersectionY: function(source, target, nodeWidth, nodeHeight) {
+    calcIntersectionY: function (source, target, nodeWidth, nodeHeight) {
       if (source.x === target.x) {
         if (source.y < target.y) {
           return source.y + nodeHeight / 2;

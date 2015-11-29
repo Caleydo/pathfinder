@@ -1,5 +1,6 @@
-define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../view', '../pathutil', '../../pathfinder_graph/search', '../uiutil', '../query/queryutil', './neighboredge'],
-  function ($, d3, webcola, dagre, listeners, selectionUtil, pathSorting, pathQuery, config, View, pathUtil, ServerSearch, uiUtil, queryUtil, neighborEdgeManager) {
+define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery',
+  '../config', '../view', '../pathutil', '../../pathfinder_graph/search', '../uiutil', '../list/path/settings', '../query/queryutil', './neighboredge'],
+  function ($, d3, webcola, dagre, listeners, selectionUtil, pathSorting, pathQuery, config, View, pathUtil, ServerSearch, uiUtil, pathSettings, queryUtil, neighborEdgeManager) {
     'use strict';
 
 
@@ -398,7 +399,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
 
         pathUtil.renderNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, "url(#graphNodeClipPath)", function (text) {
           return that.view.getTextWidth(text);
-        }, getNodeOverlayItems(d), true);
+        }, getNodeOverlayItems(d), pathSettings.showOnNodeMapping);
 
         d3.select(this)
           .on("click.neighborLinks", function () {
@@ -438,7 +439,7 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         .each(function (d) {
           pathUtil.updateNode(d3.select(this), d.node, -d.width / 2, -d.height / 2, d.width, d.height, function (text) {
             return that.view.getTextWidth(text);
-          }, getNodeOverlayItems(d));
+          }, getNodeOverlayItems(d), pathSettings.showOnNodeMapping);
         });
 
 

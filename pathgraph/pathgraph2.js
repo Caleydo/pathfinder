@@ -163,6 +163,10 @@ define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', 
         that.updateGraph();
       }, config.NODE_SIZE_UPDATE);
 
+      listeners.add(function() {
+        that.currentGraphLayout.render(that.paths, that.graph);
+      }, listeners.updateType.UPDATE_ON_NODE_MAPPING);
+
 
       //listeners.add(function (query) {
       //  if (pathQuery.isRemoveFilteredPaths() || pathQuery.isRemoteQuery()) {

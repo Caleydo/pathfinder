@@ -21,12 +21,16 @@ define(["../../listeners"], function (listeners) {
     COLUMN_HEADER_HEIGHT: 22,
     DEFAULT_BAR_SIZE: 8,
 
+    showOnNodeMapping: false,
+    onNodeMapper: {},
+
     pathListUpdateTypes: {
       ALIGN_PATH_NODES: "ALIGN_PATH_NODES",
       ALIGN_COLUMNS: "ALIGN_COLUMNS",
       TILT_ATTRIBUTES: "TILT_ATTRIBUTES",
       COLLAPSE_ELEMENT_TYPE: "COLLAPSE_ELEMENT_TYPE",
       UPDATE_REFERENCE_PATH: "UPDATE_REFERENCE_PATH"
+
     },
 
     incStickyDataGroupOwners: function (datasetId, groupId) {
