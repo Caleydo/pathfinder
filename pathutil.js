@@ -185,7 +185,7 @@ define(["d3", "jquery", "./config", "./setinfo", "./list/path/settings", "./uiut
     getDefaultNodeOverlayItems: function (node) {
       //var items = queryUtil.getFilterOverlayItems("name", d.node.properties[config.getNodeNameProperty(node)]);
 
-      var items = require("./query/queryutil").getFilterOverlayItems("name", node.properties[config.getNodeNameProperty(node)]);
+      var items = require("./query/queryutil").getFilterOverlayItems("name", node.properties[config.getNodeNameProperty(node)], config.getNodeType(node));
       var url = this.getNodeUrl(node);
       if (url) {
         items.push({
