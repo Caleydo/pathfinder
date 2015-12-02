@@ -471,7 +471,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
             text: "Add Neighbors",
             icon: "\uf067",
             callback: function () {
-              ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp");
+              ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp", "all");
             }
           });
           items.push({
@@ -485,6 +485,7 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
               }
             }
           });
+          return items;
         }
 
         node.each(function (d) {

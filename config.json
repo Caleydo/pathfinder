@@ -47,7 +47,8 @@
             },
             "cited": "numerical",
             "tvcg_publications": "numerical",
-            "chi_publications": "numerical"
+            "chi_publications": "numerical",
+            "degree": "numerical"
           }
         }
       ],
