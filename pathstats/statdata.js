@@ -21,7 +21,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
       return "gray";
     };
 
-     BaseHierarchyElement.prototype.getNumPaths = function () {
+    BaseHierarchyElement.prototype.getNumPaths = function () {
       return Object.keys(this.pathIds).length;
     };
 
@@ -177,7 +177,7 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
     };
 
     NodeTypeWrapper.prototype.getTooltip = function () {
-      return this.getNumPaths()+ " paths contain nodes of type " + this.getLabel();
+      return this.getNumPaths() + " paths contain nodes of type " + this.getLabel();
     };
 
     function SetWrapper(parentElement, setId) {
@@ -311,6 +311,10 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
 
     SetWrapper.prototype.getTooltip = function () {
       return this.getNumPaths() + " paths contain set " + this.getLabel();
+    };
+
+    SetWrapper.prototype.getNumPaths = function () {
+      return visibilitySettings.isShowNonEdgeSets() ? Object.keys(this.pathIds).length : Object.keys(this.edgeSetPathIds).length;
     };
 
     //SetWrapper.prototype.getNodeConstraintType = function () {
@@ -449,6 +453,10 @@ define(['../hierarchyelements', '../listeners', '../list/pathsorting', '../query
 
     SetTypeWrapper.prototype.getTooltip = function () {
       return this.getNumPaths() + " paths contain sets of type " + this.getLabel();
+    };
+
+    SetTypeWrapper.prototype.getNumPaths = function () {
+      return visibilitySettings.isShowNonEdgeSets() ? Object.keys(this.pathIds).length : Object.keys(this.edgeSetPathIds).length;
     };
 
     return {

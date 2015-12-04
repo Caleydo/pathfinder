@@ -73,7 +73,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
       //  }
       //}, listeners.updateType.QUERY_UPDATE);
 
-      listeners.add(updateSets, listeners.updateType.SET_INFO_UPDATE);
+      listeners.add(this.updateSets.bind(this), listeners.updateType.SET_INFO_UPDATE);
 
       //listeners.add(function (remove) {
       //  if (remove) {
@@ -293,7 +293,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
     };
 
 
-    function updateSets(setInfo) {
+    PathStatsView.prototype.updateSets = function(setInfo) {
 
       var svg = d3.select("#pathstats");
 
@@ -307,13 +307,15 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
           return stat.getLabel();
         });
 
+      this.updateView();
+
       //var titles = svg.selectAll("g.set_stat text title");
       //
       //titles
       //  .text(function (d) {
       //    return setInfo.getSetLabel(d.setId);
       //  });
-    }
+    },
 
     PathStatsView.prototype.getMinSize = function () {
       var totalHeight = 0;

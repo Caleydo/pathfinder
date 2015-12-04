@@ -335,11 +335,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
 
         listeners.add(function () {
+          var changes = that.sortPaths(pathSorting.sortingManager.currentComparator);
+
           var changed = that.updateCrossPathData();
-          that.notifyUpdateListeners(createChangeObject({
-            cause: vs.updateTypes.UPDATE_NODE_SET_VISIBILITY,
-            crossPathDataChanged: changed
-          }));
+          changes.crossPathDataChanged = changed;
+          changes.cause = vs.updateTypes.UPDATE_NODE_SET_VISIBILITY
+          that.notifyUpdateListeners(createChangeObject(changes));
         }, vs.updateTypes.UPDATE_NODE_SET_VISIBILITY);
 
         listeners.add(function () {

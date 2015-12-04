@@ -350,10 +350,11 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       onPathDataUpdate: function (changes) {
         this.pathWrappers = pathData.getPathWrappers(false);
-        if (changes.pagePathsChanged || changes.crossPathDataChanged || changes.cause === listeners.updateType.DATASET_UPDATE || changes.cause === s.pathListUpdateTypes.UPDATE_REFERENCE_PATH) {
+        if (changes.pagePathsChanged || changes.crossPathDataChanged || changes.cause === listeners.updateType.DATASET_UPDATE
+          || changes.cause === s.pathListUpdateTypes.UPDATE_REFERENCE_PATH) {
           this.updatePivotNodeIndex();
           this.renderPaths();
-        } else if (changes.cause === pathSorting.updateType) {
+        } else if (changes.cause === pathSorting.updateType || changes.cause === vs.updateTypes.UPDATE_NODE_SET_VISIBILITY) {
           this.updatePathList();
         }
       },
@@ -1658,7 +1659,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               .classed("filler", true)
               .attr({
                 x: 0,
-                y:0,
+                y: 0,
                 width: "100%",
                 height: property.getBaseHeight()
               });
@@ -1674,8 +1675,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
             uiUtil.createTemporalMenuOverlayButton(prop, s.NODE_START, 0, true, function () {
 
-              function isPropertyMapped(){
-                 return s.onNodeMapper instanceof pathUtil.PropertyMapper && s.onNodeMapper.propertyName === property.name;
+              function isPropertyMapped() {
+                return s.onNodeMapper instanceof pathUtil.PropertyMapper && s.onNodeMapper.propertyName === property.name;
               }
 
               return [{
@@ -1690,7 +1691,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                     s.showOnNodeMapping = true;
                   } else {
                     s.onNodeMapper = {};
-                     s.showOnNodeMapping = false;
+                    s.showOnNodeMapping = false;
                   }
 
 
