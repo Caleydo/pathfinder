@@ -2069,9 +2069,11 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       if (pathContainers.length === 1) {
         var pathContainer = pathContainers[0];
         if (pathContainer.children.length === 3 && pathContainer.children[1] instanceof SequenceFiller) {
-          var endNodeConstraint = this.findUnambiguousPathNodeConstraint(false);
 
-          if (!endNodeConstraint || endNodeConstraint.isEmpty()) {
+
+        var endNodeContainer = pathContainer.children[pathContainer.children.length - 1];
+        var child = endNodeContainer.children[0];
+        if (!child || (child instanceof NodeConstraintElement && child.isEmpty())) {
             return pathContainer.children[0];
           }
         }
