@@ -265,7 +265,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         $(this.myDomElements[0]).mouseleave(function () {
           if (!e) var e = window.event;
           var relTarg = e.relatedTarget || e.toElement;
-          if(!relTarg){
+          if (!relTarg) {
             return;
           }
 
@@ -558,7 +558,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       var size = this.getSize();
 
       domParent.append("defs")
-       .append("clipPath")
+        .append("clipPath")
         .attr("id", "captionLabelClipPath")
         .append("rect")
         .attr("x", 0)
@@ -765,9 +765,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           element.category = "Name";
 
           var type = "";
-          for (var i = 0; i <element.labels.length; i++){
+          for (var i = 0; i < element.labels.length; i++) {
             var label = element.labels[i];
-            if(config.isNodeLabel(label)){
+            if (config.isNodeLabel(label)) {
               type = label;
               break;
             }
@@ -1830,6 +1830,30 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       //  }
       //);
 
+      $("#swap_start_end").click(function () {
+        var pathContainers = [];
+        that.findPathContainers(that.container, pathContainers);
+        pathContainers.forEach(function (pathContainer) {
+          var startNodeContainer = pathContainer.children[0];
+          var endNodeContainer = pathContainer.children[pathContainer.children.length - 1];
+          pathContainer.children[0] = endNodeContainer;
+          pathContainer.children[pathContainer.children.length - 1] = startNodeContainer;
+
+          $(startNodeContainer.rootElement[0]).insertBefore($(endNodeContainer.rootElement[0]));
+
+          //var a = startNodeContainer.rootElement[0];
+          //var b = endNodeContainer.rootElement[0];
+          //var aparent = a.parentNode;
+          //var asibling = a.nextSibling === b ? a : a.nextSibling;
+          //b.parentNode.insertBefore(a, b);
+          //aparent.insertBefore(b, asibling);
+          endNodeContainer.setPosition(0);
+          startNodeContainer.setPosition(-1);
+          pathContainer.updateParent();
+          that.updateQuery(true);
+        });
+      });
+
 
       $("#toggleQueryMode").click(function () {
         that.advancedMode = !that.advancedMode;
@@ -2071,9 +2095,9 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         if (pathContainer.children.length === 3 && pathContainer.children[1] instanceof SequenceFiller) {
 
 
-        var endNodeContainer = pathContainer.children[pathContainer.children.length - 1];
-        var child = endNodeContainer.children[0];
-        if (!child || (child instanceof NodeConstraintElement && child.isEmpty())) {
+          var endNodeContainer = pathContainer.children[pathContainer.children.length - 1];
+          var child = endNodeContainer.children[0];
+          if (!child || (child instanceof NodeConstraintElement && child.isEmpty())) {
             return pathContainer.children[0];
           }
         }
