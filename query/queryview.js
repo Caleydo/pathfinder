@@ -1746,6 +1746,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       this.grabHSpace = false;
       this.grabVSpace = false;
       this.advancedMode = false;
+      this.firstExternalModification = true;
     }
 
     QueryView.prototype = Object.create(View.prototype);
@@ -1856,26 +1857,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
 
       $("#toggleQueryMode").click(function () {
-        that.advancedMode = !that.advancedMode;
-        $(this).toggleClass("btn-active");
-        $(this).toggleClass("btn-default");
-
-        if (that.advancedMode) {
-          //$("#advancedQueryWidgets").show(500, "linear", function(){
-          $("#advancedQueryWidgets").css({display: "inline-block"});
-          //});
-          //$("#pathQueryView").show(500, "linear", function(){
-          $("#pathQueryView").css({display: "inline-block"});
-          //});
-          $("#simpleQueryWidgets").hide();
-
-
-          //$("#simpleQueryWidgets").css({display: "none"});
-        } else {
-          $("#advancedQueryWidgets").css({display: "none"});
-          $("#pathQueryView").css({display: "none"});
-          $("#simpleQueryWidgets").css({display: "inline-block"});
-        }
+        that.toggleMode();
       });
 
 
@@ -1996,6 +1978,29 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       });
     };
 
+    QueryView.prototype.toggleMode = function () {
+      this.advancedMode = !this.advancedMode;
+      $(this).toggleClass("btn-active");
+      $(this).toggleClass("btn-default");
+
+      if (this.advancedMode) {
+        //$("#advancedQueryWidgets").show(500, "linear", function(){
+        $("#advancedQueryWidgets").css({display: "inline-block"});
+        //});
+        //$("#pathQueryView").show(500, "linear", function(){
+        $("#pathQueryView").css({display: "inline-block"});
+        //});
+        $("#simpleQueryWidgets").hide();
+
+
+        //$("#simpleQueryWidgets").css({display: "none"});
+      } else {
+        $("#advancedQueryWidgets").css({display: "none"});
+        $("#pathQueryView").css({display: "none"});
+        $("#simpleQueryWidgets").css({display: "inline-block"});
+      }
+    };
+
     QueryView.prototype.isJustNetworkEdges = function () {
       return !(config.isSetEdgesOnly() || ($('#sets_as_edges').is(':checked')));
     };
@@ -2019,8 +2024,8 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     QueryView.prototype.setSimpleQuery = function (startNodeInfo, endNodeInfo) {
       this.reset();
-      this.asBoundingNode(startNodeInfo, true);
-      this.asBoundingNode(endNodeInfo, false);
+      this.asBoundingNodeInternal(startNodeInfo, true);
+      this.asBoundingNodeInternal(endNodeInfo, false);
     };
 
     QueryView.prototype.reset = function () {
@@ -2155,12 +2160,19 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
         constraintElement.setInfo(constraintInfo);
       }
 
+      if (this.firstExternalModification) {
+        this.firstExternalModification = false;
+        if (!this.advancedMode) {
+          this.toggleMode();
+        }
+      }
+
       //var query = this.container.getPathQuery();
       //pathQuery.setQuery(query, false);
 
     };
 
-    QueryView.prototype.asBoundingNode = function (constraintInfo, isStartNode) {
+     QueryView.prototype.asBoundingNodeInternal = function (constraintInfo, isStartNode) {
       var pathContainers = [];
       this.findPathContainers(this.container, pathContainers);
 
@@ -2177,6 +2189,18 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
           constraintElement.setInfo(constraintInfo);
         }
       });
+    };
+
+    QueryView.prototype.asBoundingNode = function (constraintInfo, isStartNode) {
+      this.asBoundingNodeInternal(constraintInfo, isStartNode);
+
+      if (this.firstExternalModification) {
+        this.firstExternalModification = false;
+        if (!this.advancedMode) {
+          this.toggleMode();
+        }
+      }
+
     };
 
 

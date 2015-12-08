@@ -1664,6 +1664,19 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 height: property.getBaseHeight()
               });
 
+            prop.on("mouseover.propScales", function () {
+                d3.select(this).selectAll("text.minValue, text.maxValue")
+                  .style({
+                    display: "inline-block"
+                  })
+              })
+              .on("mouseout.propScales", function () {
+                d3.select(this).selectAll("text.minValue, text.maxValue")
+                  .style({
+                    display: "none"
+                  })
+              });
+
             prop.append("text")
               .classed("propertyLabel", true)
               .text(property.name)
@@ -1727,8 +1740,31 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
               if (typeof value !== "undefined") {
 
-                var posX = that.getNodePositionX(pathWrapper, nodeIndex, false);
-                var scale = d3.scale.linear().domain(pathData.numericalPropertyDomains[property.name]).range([0, config.getNodeWidth()]);
+                var posX = that.getNodePositionX(pathWrapper, nodeIndex, false) + s.NODE_PROPERTY_SIDE_SPACING;
+                var scale = d3.scale.linear().domain(pathData.numericalPropertyDomains[property.name]).range([0, config.getNodeWidth() - s.NODE_PROPERTY_SIDE_SPACING * 2]);
+
+                bar.append("text")
+                  .classed("minValue", true)
+                  .attr({
+                    x: posX - 2,
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2 + 8
+                  })
+                  .text(scale.domain()[0])
+                  .style({
+                    "text-anchor": "end",
+                    "display": "none"
+                  });
+
+                bar.append("text")
+                  .classed("maxValue", true)
+                  .attr({
+                    x: posX + scale.range()[1] + 2,
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2 + 8
+                  })
+                  .text(scale.domain()[1])
+                  .style({
+                    "display": "none"
+                  });
 
                 bar.append("rect")
                   .classed("valueBg", true)
@@ -1791,11 +1827,24 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               if (typeof value !== "undefined") {
                 var bar = d3.select(this);
 
-                var posX = that.getNodePositionX(pathWrapper, nodeIndex, false);
-                var scale = d3.scale.linear().domain(pathData.numericalPropertyDomains[property.name]).range([0, config.getNodeWidth()]);
+                var posX = that.getNodePositionX(pathWrapper, nodeIndex, false) + s.NODE_PROPERTY_SIDE_SPACING;
+                var scale = d3.scale.linear().domain(pathData.numericalPropertyDomains[property.name]).range([0, config.getNodeWidth() - s.NODE_PROPERTY_SIDE_SPACING * 2]);
                 var domain = scale.domain();
                 var range = scale.range();
 
+                bar.select("text.minValue")
+                  .attr({
+                    x: posX - 2,
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2 + 8
+                  })
+                  .text(scale.domain()[0]);
+
+                bar.select("text.maxValue")
+                  .attr({
+                    x: posX + scale.range()[1] + 2,
+                    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2 + 8
+                  })
+                  .text(scale.domain()[1]);
 
                 bar.select("rect.valueBg").transition()
                   .attr({
