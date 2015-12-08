@@ -663,6 +663,13 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       this.setInfo(ui.item);
     };
 
+    MultiConstraintElement.prototype.isEmpty = function () {
+      var el = this.myDomElements.select("input");
+      var val = $(el[0]).val();
+
+      return (typeof this.info === "undefined" || val === "");
+    };
+
     MultiConstraintElement.prototype.setInfo = function (info, updateSimpleUINodes) {
       if (!info) {
         delete this.info;
@@ -837,12 +844,6 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       );
     }
 
-    NodeConstraintElement.prototype.isEmpty = function () {
-      var el = this.myDomElements.select("input");
-      var val = $(el[0]).val();
-
-      return (typeof this.info === "undefined" || val === "");
-    }
 
     NodeConstraintElement.prototype.getPathQuery = function () {
       var el = this.myDomElements.select("input");
@@ -985,9 +986,26 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       if (this.children.length == 0) {
         return new q.Or(new q.PathQuery(), new q.PathQuery());
       } else if (this.children.length == 1) {
-        return new q.Or(this.children[0].getPathQuery(), new q.PathQuery());
+        return this.children[0].getPathQuery(), new q.PathQuery();
       }
-      return new q.Or(this.children[0].getPathQuery(), this.children[1].getPathQuery());
+      var child1Valid = validateChild(this.children[0]);
+      var child2Valid = validateChild(this.children[1]);
+
+      function validateChild(child) {
+        if (child instanceof MultiConstraintElement) {
+          return !child.isEmpty();
+        }
+        return true;
+      }
+
+      if (child1Valid && child2Valid) {
+        return new q.Or(this.children[0].getPathQuery(), this.children[1].getPathQuery());
+      } else if (child1Valid) {
+        return this.children[0].getPathQuery();
+      } else if (child2Valid) {
+        return this.children[1].getPathQuery();
+      }
+      return new q.PathQuery();
     };
 
 
@@ -2172,7 +2190,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     };
 
-     QueryView.prototype.asBoundingNodeInternal = function (constraintInfo, isStartNode) {
+    QueryView.prototype.asBoundingNodeInternal = function (constraintInfo, isStartNode) {
       var pathContainers = [];
       this.findPathContainers(this.container, pathContainers);
 

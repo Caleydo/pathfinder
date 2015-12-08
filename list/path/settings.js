@@ -20,7 +20,7 @@ define(["../../listeners"], function (listeners) {
     PATH_SPACING: 15,
     COLUMN_HEADER_HEIGHT: 22,
     DEFAULT_BAR_SIZE: 8,
-    NODE_PROPERTY_SIDE_SPACING: 10,
+    NODE_PROPERTY_SIDE_SPACING: 8,
 
     showOnNodeMapping: false,
     onNodeMapper: {},
