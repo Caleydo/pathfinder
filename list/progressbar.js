@@ -82,6 +82,7 @@ define(["jquery", "d3", "../datastore", "../view", "../listeners", "../query/pat
     for (var i = 0; i < (that.maxLength < 1 ? 1 : that.maxLength); i++) {
       that.lengthHistogram[i.toString()] = that.lengthHistogram[i.toString()] || {
           length: i,
+          totalNumPaths: 0,
           numVisiblePaths: 0
         };
     }
@@ -184,7 +185,7 @@ define(["jquery", "d3", "../datastore", "../view", "../listeners", "../query/pat
         //    x: i * ITEM_WIDTH + (i - 1) * ITEM_SPACING,
         //    y: 24
         //})
-        .text(data.numVisiblePaths);
+        .text(data.numVisiblePaths + (data.numVisiblePaths === data.totalNumPaths ? "" : ("/" + data.totalNumPaths)));
 
       //textCont.append("label")
       // .classed("totalNumPaths", true)
@@ -209,7 +210,7 @@ define(["jquery", "d3", "../datastore", "../view", "../listeners", "../query/pat
         item.select("label.length")
           .text(data.length);
         item.select("label.numPaths")
-          .text(data.numVisiblePaths);
+          .text(data.numVisiblePaths + (data.numVisiblePaths === data.totalNumPaths ? "" : ("/" + data.totalNumPaths)));
 
         var bar = item.select("div.bar");
 

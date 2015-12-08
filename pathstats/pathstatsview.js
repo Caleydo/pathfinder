@@ -742,7 +742,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
     PathStatsView.prototype.updateViewSize = function () {
       var totalViewHeight = $("#pathStatsView")[0].offsetHeight;
 
-      var usedHeight = this.nodeTypeWrappers.getBaseHeight() + this.setTypeWrappers.getBaseHeight() + 300;
+      var usedHeight = this.nodeTypeWrappers.getBaseHeight() + this.setTypeWrappers.getBaseHeight() + 100;
       var numStatTypes = 0;
       this.nodeTypeWrappers.children.forEach(function (statType) {
         if (statType.canBeShown()) {
