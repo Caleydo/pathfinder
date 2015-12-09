@@ -268,7 +268,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       var numSets = 0;
 
       pathUtil.forEachEdgeSetOfType(edge, setTypeWrapper.type, function (type, setId) {
-        if (setTypeWrapper.setDict[setId].canBeShown()) {
+        if (setTypeWrapper.setDict[setId].canBeShown() && (!config.isSetTypeEdgeOrigin(setTypeWrapper.type) || config.isSetOriginOfEdge(setId, edge))) {
           numSets++;
         }
       });

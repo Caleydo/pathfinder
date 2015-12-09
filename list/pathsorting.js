@@ -68,7 +68,9 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
           var numSets = 0;
           pathUtil.forEachEdgeSet(edge, function (type, setId) {
             if (typeof setType === "undefined" || type === setType) {
-              numSets++;
+              if((!config.isSetTypeEdgeOrigin(type) || config.isSetOriginOfEdge(setId, edge))) {
+                numSets++;
+              }
             }
           });
           setsPerEdge.push(numSets);
