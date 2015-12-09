@@ -878,12 +878,16 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             })
             .attr({
               x: 10,
-              y: ( s.SET_TYPE_HEIGHT - 10) / 2 + 9
+              y: ( s.SET_TYPE_HEIGHT - 10) / 2 + 9,
+              "clip-path": "url(#SetLabelClipPath)"
             })
-            .style("fill", function (d) {
-              return config.getSetColorFromSetTypePropertyName(d.type);
-            })
-            .attr("clip-path", "url(#SetLabelClipPath)");
+            .style({
+              fill: function (d) {
+                return "gray";
+                //return config.getSetColorFromSetTypePropertyName(d.type);
+              },
+              "font-weight": "bolder"
+            });
 
           setType.append("g")
             .classed("setTypeSummary", true)
@@ -904,7 +908,8 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 });
 
               d3.select(this).select("text.setTypeLabel").style("fill", function (d) {
-                return config.getSetColorFromSetTypePropertyName(d.type);
+                return "gray";
+                //return config.getSetColorFromSetTypePropertyName(d.type);
               });
 
             })
@@ -1188,7 +1193,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 x: s.SET_TYPE_INDENT,
                 y: s.SET_HEIGHT
               })
-              .style("fill", config.getSetColorFromSetTypePropertyName(setTypeWrapper.type))
+              .style("fill", "gray") //config.getSetColorFromSetTypePropertyName(setTypeWrapper.type))
               .attr("clip-path", "url(#SetLabelClipPath)");
 
             set.append("title")
@@ -1226,7 +1231,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
             allSets.each(function () {
               d3.select(this).select("text.setLabel")
-                .style("fill", config.getSetColorFromSetTypePropertyName(setTypeWrapper.type));
+                .style("fill", "gray"); //config.getSetColorFromSetTypePropertyName(setTypeWrapper.type));
             });
 
 
@@ -1682,7 +1687,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               .text(property.name)
               .attr("x", 10)
               .attr("y", (property.getBaseHeight() - 10) / 2 + 9)
-              .style("fill", config.getNodePropertyColorFromPropertyName(property.name))
+              .style({
+                fill: "gray",
+                "font-weight": "bolder"
+              }) //config.getNodePropertyColorFromPropertyName(property.name))
               .attr("clip-path", "url(#SetLabelClipPath)")
               .append("title").text(property.name);
 
@@ -1723,7 +1731,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
               });
 
             prop.select("text.propertyLabel")
-              .style("fill", config.getNodePropertyColorFromPropertyName(property.name));
+              .style("fill", "gray"); //config.getNodePropertyColorFromPropertyName(property.name));
 
             var allBars = prop.selectAll("g.bar").data(pathWrapper.path.nodes, function (d) {
               return d.id
@@ -1849,7 +1857,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 //    y: (property.getBaseHeight() - s.DEFAULT_BAR_SIZE) / 2 + 8
                 //  })
                 //  .text(scale.domain()[0]);
-		//
+                //
                 //bar.select("text.maxValue")
                 //  .attr({
                 //    x: posX + scale.range()[1] + 2,

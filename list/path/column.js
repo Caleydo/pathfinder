@@ -1192,6 +1192,10 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           x: 5,
           y: maxHeight / 2 + 4
         })
+        .style({
+          "font-size": 12,
+          "font-weight": "bolder"
+        })
         .text(uiUtil.formatNumber(score));
     };
 

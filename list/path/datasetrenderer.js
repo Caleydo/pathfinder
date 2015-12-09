@@ -70,7 +70,8 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
           "clip-path": "url(#SetLabelClipPath)"
         })
         .style({
-          fill: config.getDatasetColorFromDatasetId(this.id)
+          fill: "gray",//config.getDatasetColorFromDatasetId(this.id)
+          "font-weight": "bolder"
         })
         .text(function (d) {
           return d.name;
@@ -89,7 +90,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
       parent.select("text.datasetLabel")
         .style({
-          fill: config.getDatasetColorFromDatasetId(this.id)
+          fill: "gray" //config.getDatasetColorFromDatasetId(this.id)
         });
 
       parent.select("text.collapseIconSmall")
@@ -176,7 +177,8 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
           "clip-path": "url(#SetLabelClipPath)"
         })
         .style({
-          fill: config.getDatasetColorFromDatasetId(dataset.id)
+          fill: "gray", //config.getDatasetColorFromDatasetId(dataset.id)
+          "font-weight": "bolder"
         })
         .text(that.name);
 
@@ -224,7 +226,7 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
 
       parent.select("text.groupLabel")
         .style({
-          fill: config.getDatasetColorFromDatasetId(dataset.id)
+          fill: "gray"//config.getDatasetColorFromDatasetId(dataset.id)
         });
 
       this.getRenderer().onDataGroupUpdate(parent, pathWrapper, dataset, this, pathList);

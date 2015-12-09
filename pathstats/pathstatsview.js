@@ -855,7 +855,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
 
           typeCont.select("text.typeLabel")
             .text(typeText)
-            .style("fill", statType.getColor());
+            .style("fill", "gray"); //statType.getColor());
 
           typeCont.select("text.collapseIconSmall")
           .attr("class", "collapseIconSmall")
@@ -893,7 +893,7 @@ define(['jquery', 'd3', '../view', '../hierarchyelements', '../selectionutil', '
             var $stat = d3.select(this);
 
             $stat.select("text.statLabel")
-              .style("fill", statType.getColor());
+              .style("fill", "gray");//statType.getColor());
 
             $stat.select("rect.pathOccurrences")
               .transition()

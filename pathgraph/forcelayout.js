@@ -467,6 +467,24 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
 
         function getNodeOverlayItems(d) {
           var items = pathUtil.getDefaultNodeOverlayItems(d.node);
+
+          items.push({
+          text: "Add Links",
+          icon: "\uf067",
+          callback: function () {
+
+             var neighborSource = that.view.neighborCache[d.node.id];
+            //that.view.clearLinks();
+            if (neighborSource) {
+              that.view.showLinksOfNode(d.node.id);
+              that.renderTempLinks(svg);
+            } else {
+              that.renderTempLinks(svg);
+              ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp", "links");
+            }
+          }
+        });
+
           items.push({
             text: "Add Neighbors",
             icon: "\uf067",
@@ -494,18 +512,18 @@ define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil
             return that.view.getTextWidth(text)
           }, getNodeOverlayItems(d), pathSettings.showOnNodeMapping);
 
-          d3.select(this)
-            .on("click.neighborLinks", function () {
-              var neighborSource = that.view.neighborCache[d.node.id];
-              that.view.clearLinks();
-              if (neighborSource) {
-                that.view.showLinksOfNode(d.node.id);
-                that.renderTempLinks(svg);
-              } else {
-                that.renderTempLinks(svg);
-                ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp", "links");
-              }
-            });
+          //d3.select(this)
+          //  .on("click.neighborLinks", function () {
+          //    var neighborSource = that.view.neighborCache[d.node.id];
+          //    that.view.clearLinks();
+          //    if (neighborSource) {
+          //      that.view.showLinksOfNode(d.node.id);
+          //      that.renderTempLinks(svg);
+          //    } else {
+          //      that.renderTempLinks(svg);
+          //      ServerSearch.loadNeighbors(d.node.id, config.getUseCase() !== "dblp", "links");
+          //    }
+          //  });
         });
 
         allNodes.classed("neighbor", function (d) {
