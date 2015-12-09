@@ -986,7 +986,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
       if (this.children.length == 0) {
         return new q.Or(new q.PathQuery(), new q.PathQuery());
       } else if (this.children.length == 1) {
-        return this.children[0].getPathQuery(), new q.PathQuery();
+        return this.children[0].getPathQuery();
       }
       var child1Valid = validateChild(this.children[0]);
       var child2Valid = validateChild(this.children[1]);
