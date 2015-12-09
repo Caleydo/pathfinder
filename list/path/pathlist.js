@@ -834,9 +834,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
         var referencePathWrapper = 0;
         if (typeof s.referencePathId !== "undefined") {
-          for (var i = 0; i < this.pathWrappers.length; i++) {
-            if (this.pathWrappers[i].path.id === s.referencePathId) {
-              referencePathWrapper = this.pathWrappers[i];
+          for (var i = 0; i < pathData.pathWrappers.length; i++) {
+            if (pathData.pathWrappers[i].path.id === s.referencePathId) {
+              referencePathWrapper = pathData.pathWrappers[i];
             }
           }
         }
