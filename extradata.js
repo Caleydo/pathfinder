@@ -2,7 +2,7 @@
  * Created by Samuel Gratzl on 26.08.2015.
  */
 
-define(['exports', '../caleydo_core/main', '../caleydo_core/plugin', 'config'], function (exports, C, plugin, config) {
+define(['exports', '../caleydo_core/main', '../caleydo_core/plugin', './config'], function (exports, C, plugin, config) {
 
     exports.getData = function (ids, datasetId) {
         var plugins = plugin.list('pathfinder_data');
