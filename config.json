@@ -425,6 +425,55 @@
           ]
         }
       ]
+    },
+    "marclab": {
+      "settings": {
+      },
+      "nodes": [
+        {
+          "name": "Structure",
+          "node_label": "Structure",
+          "properties": {
+            "id": "id",
+            "name": "name",
+            "labels": {
+              "type": "set",
+              "set": "labels"
+            }
+          }
+        }
+      ],
+      "edges": [
+        {
+          "label": "Edge",
+          "properties": {
+            "_isNetworkEdge": "flag_network",
+            "_isSetEdge": {
+              "type": "flag",
+              "set": "labels"
+            },
+            "Type": "string",
+            "Label": "string"
+          }
+        }
+      ],
+      "sets": [
+        {
+          "id": "labels",
+          "name": "Labels",
+          "node_label": "_Set_Node",
+          "properties": {
+            "name": "name"
+          },
+          "inline": {
+            "source": "ConsistsOf",
+            "target": "Edge"
+          },
+          "flag_property": "_isSetEdge",
+          "set_property": "labels",
+          "originOf": "Edge"
+        }
+      ]
     }
   }
 }
