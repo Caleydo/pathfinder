@@ -427,6 +427,30 @@
       ]
     },
     "marclab": {
+      "sample_query": {
+        "start": {
+          "id": "410",
+          "label": "410",
+          "labels": [
+            "_Network_Node",
+            "Structure"
+          ],
+          "value": 14341,
+          "category": "Name",
+          "type": "Structure"
+        },
+        "end": {
+          "id": "419",
+          "label": "419",
+          "labels": [
+            "_Network_Node",
+            "Structure"
+          ],
+          "value": 14342,
+          "category": "Name",
+          "type": "Structure"
+        }
+      },
       "settings": {
       },
       "nodes": [
@@ -452,6 +476,10 @@
               "type": "flag",
               "set": "labels"
             },
+            "labels": {
+              "type": "set",
+              "set": "labels"
+            },
             "Type": "string",
             "Label": "string"
           }
@@ -470,8 +498,7 @@
             "target": "Edge"
           },
           "flag_property": "_isSetEdge",
-          "set_property": "labels",
-          "originOf": "Edge"
+          "set_property": "labels"
         }
       ]
     }
