@@ -952,6 +952,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
                 }
               });
 
+            $setType.select("text.setTypeLabel")
+              .text(config.getSetTypeFromSetPropertyName(setTypeWrapper.type));
+
             if (typeof s.referencePathId === "undefined") {
               d3.select(this).select("g.setStatusOverview").remove();
             } else {
