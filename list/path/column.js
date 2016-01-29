@@ -24,12 +24,82 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
     //var RANK_CRITERION_ELEMENT_HEIGHT = 22;
 
     var currentColumnID = 0;
+    var dragging = false;
+
+    var columnDrag = d3.behavior.drag()
+      //.origin(function (column) {
+      //  var columns = column.columnManager.columns;
+      //  var x = getColumnHeaderTranslateX(column.columnManager.columns, columns[0], column.pathList.pathWrappers);
+      //  //y does not matter
+      //  return {
+      //    x: 690,
+      //    y: 0
+      //  };
+      //})
+      .on("dragstart", function (d) {
+
+      })
+      .on("drag", function (column) {
+         $('html,body').css('cursor', 'move');
+        //d3.event.sourceEvent.stopPropagation();
+        if(d3.event.dx >= 2) {
+          dragging = true;
+        }
+        var columns = column.columnManager.columns;
+        if (columns.length <= 1) {
+          return;
+        }
+        var myIndex = columns.indexOf(column);
+        //var columnsCopy = Object.create(columns);
+        //columnsCopy.splice(myIndex, 1);
+        var coordinates = d3.mouse(d3.select("#columnHeaders svg g.headers")[0][0]);
+        var newIndex = mouseXToColumnIndex(coordinates[0], columns);
+        console.log("new index: " + newIndex + ", columnid: " + column.id);
+        if (myIndex !== newIndex && newIndex !== myIndex + 1) {
+          if (newIndex < myIndex) {
+            columns.splice(myIndex, 1);
+            columns.splice(newIndex, 0, column);
+          } else {
+            columns.splice(newIndex, 0, column);
+            columns.splice(myIndex, 1);
+          }
+
+          //columnsCopy.splice(newIndex, 0, column);
+          //column.columnManager.columns = columnsCopy;
+          column.columnManager.renderColumns(column.bgRoot.select(function () {
+            return this.parentNode;
+          }), column.pathList.pathWrappers);
+
+        }
+        //d3.event.sourceEvent.stopPropagation();
+      })
+      .on("dragend", function (column) {
+        $('html,body').css('cursor', 'auto');
+        //d3.event.sourceEvent.stopPropagation();
+        column.columnManager.notify();
+        //dragging = false;
+      });
+
+    function mouseXToColumnIndex(x, columns) {
+      var pos = getColumnHeaderTranslateX(columns, columns[0], columns[0].pathList.pathWrappers);
+      for (var i = 0; i < columns.length; i++) {
+        var limit = pos + columns[i].getWidth() / 2;
+        if (x <= limit) {
+          //console.log("limit: " + limit + ", x: " + x);
+          return i;
+        }
+        pos += columns[i].getWidth();
+        pos += COLUMN_SPACING;
+      }
+      //console.log("last , x: " + x);
+      return columns.length;
+    }
+
     //var allColumns = [];
 
     function getTotalColumnWidth(columns, index) {
 
       var maxIndex = (typeof index === "undefined") ? columns.length - 1 : index;
-
       var width = 0;
       for (var i = 0; i < maxIndex; i++) {
         width += columns[i].getWidth();
@@ -39,10 +109,16 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       return width;
     }
 
-    function getColumnItemTranlateX(columns, column, pathWrappers, index) {
-      var pathTranslation = s.isAlignColumns() ? getMaxPathTranslation(pathWrappers, column.pathList) : getPathTranslation(pathWrappers[index], column.pathList);
-      var translateX = pathTranslation + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
-      translateX += getTotalColumnWidth(columns, columns.indexOf(column));
+    function getColumnHeaderTranslateX(columns, column, pathWrappers) {
+      return getColumnItemTranslateX(columns, column, pathWrappers, 0);
+    }
+
+    function getColumnItemTranslateX(columns, column, pathWrappers, index) {
+      var translateX = getTotalColumnWidth(columns, columns.indexOf(column));
+      if (pathWrappers.length !== 0) {
+        var pathTranslation = s.isAlignColumns() ? getMaxPathTranslation(pathWrappers, column.pathList) : getPathTranslation(pathWrappers[index], column.pathList);
+        translateX += pathTranslation + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
+      }
       return translateX;
     }
 
@@ -79,7 +155,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
 
     function RankColumnHeader(priority, column, columnManager, sortingStrategy) {
-      this.priority = priority;
+      //this.priority = priority;
       this.column = column;
       this.columnManager = columnManager;
       this.sortingStrategy = sortingStrategy;
@@ -89,9 +165,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
     RankColumnHeader.prototype = {
 
-      setPriority: function (priority) {
-        this.priority = priority;
-      },
+      //setPriority: function (priority) {
+      //  this.priority = priority;
+      //},
 
       setMinHeight: function (height) {
         this.minHeight = height;
@@ -103,8 +179,15 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         var that = this;
         var columnWidth = that.column.getWidth();
 
+        //this.rootDomElement = parent.selectAll("g.rankCriterionElement")
+        //  .data([that.column])
+        //  .enter()
+        //  .append("g")
+        //  .classed("rankCriterionElement", true)
+        //  .call(columnDrag);
         this.rootDomElement = parent.append("g")
           .classed("rankCriterionElement", true);
+
 
         this.rootDomElement.append("rect")
           .classed("colBg", true)
@@ -118,7 +201,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             fill: "rgb(240,240,240)"
           });
 
-        var columnGroup = this.rootDomElement.append("g");
+        var columnGroup = this.rootDomElement.selectAll("g.columnGroup")
+          .data([that.column]).enter()
+          .append("g")
+          .classed("columnGroup", true)
+          .call(columnDrag);
 
         var headerBackground = columnGroup.append("rect")
           .classed("headerBg", true)
@@ -167,7 +254,11 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           .style({font: "12px 'Arial'"})
           .text(this.sortingStrategy.label);
 
-        columnGroup.on("click.openOptions", function () {
+        columnGroup.on("mouseup.openOptions", function () {
+          if(dragging) {
+            dragging = false;
+            return;
+          }
 
           var listItems = [{
             text: "Rank by...",
@@ -330,7 +421,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           .attr({
             transform: function (d, i) {
               var translateY = s.getPathContainerTranslateY(pathWrappers, i);
-              return "translate(" + getColumnItemTranlateX(that.columnManager.columns, that, pathWrappers, i) + "," + translateY + ")";
+              return "translate(" + getColumnItemTranslateX(that.columnManager.columns, that, pathWrappers, i) + "," + translateY + ")";
             }
           });
 
@@ -370,7 +461,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           .attr({
             transform: function (d, i) {
               var translateY = s.getPathContainerTranslateY(pathWrappers, i);
-              return "translate(" + getColumnItemTranlateX(that.columnManager.columns, that, pathWrappers, i) + "," + translateY + ")";
+              return "translate(" + getColumnItemTranslateX(that.columnManager.columns, that, pathWrappers, i) + "," + translateY + ")";
               //var pathWrapper = s.isAlignColumns() ? maxLengthPathWrapper : d;
               //var translateX = that.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
               //translateX += getTotalColumnWidth(that.columnManager.columns, that.columnManager.columns.indexOf(that));
@@ -391,13 +482,15 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       renderHeader: function (pathWrappers) {
         var that = this;
-        var translateX = getTotalColumnWidth(that.columnManager.columns, that.columnManager.columns.indexOf(this));
-        if (pathWrappers.length !== 0) {
-          var pathTranslation = s.isAlignColumns() ? getMaxPathTranslation(pathWrappers, this.pathList) : getPathTranslation(pathWrappers[0], this.pathList);
-          translateX += pathTranslation + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
-          //var pathWrapper = s.isAlignColumns() ? getMaxLengthPathWrapper(pathWrappers) : pathWrappers[0];
-          //translateX += this.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
-        }
+        var translateX = getColumnHeaderTranslateX(that.columnManager.columns, this, pathWrappers);
+
+        //  getTotalColumnWidth(that.columnManager.columns, that.columnManager.columns.indexOf(this));
+        //if (pathWrappers.length !== 0) {
+        //  var pathTranslation = s.isAlignColumns() ? getMaxPathTranslation(pathWrappers, this.pathList) : getPathTranslation(pathWrappers[0], this.pathList);
+        //  translateX += pathTranslation + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
+        //  //var pathWrapper = s.isAlignColumns() ? getMaxLengthPathWrapper(pathWrappers) : pathWrappers[0];
+        //  //translateX += this.pathList.getNodePositionX(pathWrapper, pathWrapper.path.nodes.length - 1, false) + s.NODE_WIDTH + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
+        //}
 
 
         if (!this.headerElement) {
@@ -433,7 +526,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
         for (var i = 0, j = pathWrappers.length - 1; i < pathWrappers.length && j >= 0; i++, j--) {
 
-          var translateX = getColumnItemTranlateX(that.columnManager.columns, that, pathWrappers, i);
+          var translateX = getColumnItemTranslateX(that.columnManager.columns, that, pathWrappers, i);
           var translateY = s.getPathContainerTranslateY(pathWrappers, i);
 
           bgDataLeft.push({
@@ -445,7 +538,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
             y: translateY + pathWrappers[i].getHeight()
           });
 
-          translateX = getColumnItemTranlateX(that.columnManager.columns, that, pathWrappers, j);
+          translateX = getColumnItemTranslateX(that.columnManager.columns, that, pathWrappers, j);
           translateY = s.getPathContainerTranslateY(pathWrappers, j);
 
           bgDataRight.push({
@@ -1465,7 +1558,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         .attr({
           transform: "translate(0," + datasetPosY + ")"
         });
- var datasetColor = config.getDatasetColorFromDatasetId(dataset.id);
+      var datasetColor = config.getDatasetColorFromDatasetId(dataset.id);
 
       this.scoreRepresentation.updateScore(datasetGroup, score, dataset.getBaseHeight(), (typeof groupId === "undefined"), datasetColor);
       datasetGroup.select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
@@ -1859,9 +1952,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           this.columns.splice(index, 1);
           col.destroy();
 
-          this.columns.forEach(function (column, i) {
-            column.header.setPriority(i + 1);
-          });
+          //this.columns.forEach(function (column, i) {
+          //  column.header.setPriority(i + 1);
+          //});
           this.updateHeaderHeights();
           //this.pathList.renderPaths();
         }
@@ -1971,7 +2064,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         });
 
         this.addColumnButton.transition().attr({
-          transform: "translate(" + ((this.columns.length > 0 && pathWrappers.length > 0) ? getColumnItemTranlateX(this.columns, this.columns[this.columns.length - 1], pathWrappers, 0) + this.columns[this.columns.length - 1].getWidth() + COLUMN_SPACING : 0) + ", 3)"
+          transform: "translate(" + ((this.columns.length > 0 && pathWrappers.length > 0) ? getColumnItemTranslateX(this.columns, this.columns[this.columns.length - 1], pathWrappers, 0) + this.columns[this.columns.length - 1].getWidth() + COLUMN_SPACING : 0) + ", 3)"
         });
       }
       ,
