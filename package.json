@@ -23,6 +23,7 @@
     "products":[{
       "name": "Pathfinder",
       "type": "python",
+      "bundle": true,
       "plugins": [
         "pathfinder",
         "pathfinder_ccle",
