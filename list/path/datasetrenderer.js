@@ -1,5 +1,5 @@
-define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', './settings', '../../config', '../../uiutil'],
-  function (d3, hierarchyElements, dataStore, listeners, s, config, uiUtil) {
+define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', './settings', '../../config', '../../uiutil', '../pathsorting', '../../settings/visibilitysettings'],
+  function (d3, hierarchyElements, dataStore, listeners, s, config, uiUtil, pathSorting, vs) {
 
     var BOX_WIDTH = 10;
     var DATA_AXIS_WIDTH = 16;
@@ -52,6 +52,12 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
     DatasetWrapper.prototype.getHeight = function () {
       var h = hierarchyElements.HierarchyElement.prototype.getHeight.call(this);
       return (this.dataset.info.type === "matrix" && !s.isTiltAttributes() && !this.collapsed) ? h + DATA_AXIS_WIDTH : h;
+    };
+
+    DatasetWrapper.prototype.canBeShown = function () {
+      var sortingDependencies = pathSorting.getAllSortingDependencies()["dataset"];
+      var visibleBySorting = (typeof sortingDependencies !== "undefined") && (sortingDependencies.indexOf(this.id) >= 0);
+      return (vs.isShowDatasetsInList() || visibleBySorting);
     };
 
     DatasetWrapper.prototype.renderEnter = function (parent, pathWrapper, pathList) {
@@ -1115,7 +1121,9 @@ define(['d3', '../../hierarchyelements', '../../datastore', '../../listeners', '
             });
 
             var allDatasets = p.selectAll("g.dataset")
-              .data(pathWrapper.datasets);
+              .data(pathWrapper.datasets.filter(function (ds){
+                return ds.canBeShown();
+              }));
 
             var dataset = allDatasets.enter()
               .append("g")

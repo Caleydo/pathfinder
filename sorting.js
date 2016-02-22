@@ -22,6 +22,9 @@ define(['d3'], function(d3) {
     },
     compare: function (a, b) {
       return 0;
+    },
+    getDependencies: function () {
+      return {};
     }
   };
 

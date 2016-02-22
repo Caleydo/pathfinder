@@ -68,7 +68,7 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
           var numSets = 0;
           pathUtil.forEachEdgeSet(edge, function (type, setId) {
             if (typeof setType === "undefined" || type === setType) {
-              if((!config.isSetTypeEdgeOrigin(type) || config.isSetOriginOfEdge(setId, edge))) {
+              if ((!config.isSetTypeEdgeOrigin(type) || config.isSetOriginOfEdge(setId, edge))) {
                 numSets++;
               }
             }
@@ -80,6 +80,10 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
       var stats = statisticsUtil.statisticsOf(setsPerEdge);
 
       return {score: stats[this.stat]};
+    };
+
+    SetConnectionStrengthSortingStrategy.prototype.getDependencies = function () {
+      return (typeof this.setType === "undefined") ? {} : {setType: [this.setType]};
     };
 
 
@@ -133,6 +137,11 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
     NumericalTableAttributeSortingStrategy.prototype = Object.create(NumericalPerNodeSortingStrategy.prototype);
 
+
+    NumericalTableAttributeSortingStrategy.prototype.getDependencies = function () {
+      return {dataset: [this.datasetId]};
+    };
+
     function NumericalNodePropertySortingStrategy(stat, label, property) {
       NumericalPerNodeSortingStrategy.call(this, stat, label, function (node) {
         return node.properties[property];
@@ -141,6 +150,10 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
     }
 
     NumericalNodePropertySortingStrategy.prototype = Object.create(NumericalPerNodeSortingStrategy.prototype);
+
+    NumericalNodePropertySortingStrategy.prototype.getDependencies = function () {
+      return {property: [this.property]};
+    };
 
 
     function PathPresenceSortingStrategy(pathIds) {
@@ -398,6 +411,10 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
 
       return {score: 0};
 
+    };
+
+    ReferencePathDifferenceSortingStrategy.prototype.getDependencies = function () {
+      return this.wrappee.getDependencies();
     };
 
     function CommonNodesWithRefPathSortingStrategy() {
@@ -989,6 +1006,21 @@ define(['jquery', '../sorting', '../pathutil', '../query/querymodel', '../listen
       sortingManager: sortingManager,
       sortingStrategies: sortingStrategies,
       updateType: "UPDATE_PATH_SORTING",
+
+      getAllSortingDependencies: function() {
+        var dependencies = {};
+        this.sortingManager.currentStrategyChain.forEach(function(strat){
+          var deps = strat.getDependencies();
+          Object.keys(deps).forEach(function(key) {
+            if(typeof dependencies[key] === "undefined"){
+              dependencies[key] = [];
+            }
+            dependencies[key] = dependencies[key].concat(deps[key]);
+          })
+        });
+
+        return dependencies;
+      },
 
       PathPresenceSortingStrategy: PathPresenceSortingStrategy,
 

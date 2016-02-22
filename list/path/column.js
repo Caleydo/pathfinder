@@ -40,9 +40,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
 
       })
       .on("drag", function (column) {
-         $('html,body').css('cursor', 'move');
+        $('html,body').css('cursor', 'move');
         //d3.event.sourceEvent.stopPropagation();
-        if(d3.event.dx >= 2) {
+        if (d3.event.dx >= 2) {
           dragging = true;
         }
         var columns = column.columnManager.columns;
@@ -54,7 +54,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         //columnsCopy.splice(myIndex, 1);
         var coordinates = d3.mouse(d3.select("#columnHeaders svg g.headers")[0][0]);
         var newIndex = mouseXToColumnIndex(coordinates[0], columns);
-        console.log("new index: " + newIndex + ", columnid: " + column.id);
+        //console.log("new index: " + newIndex + ", columnid: " + column.id);
         if (myIndex !== newIndex && newIndex !== myIndex + 1) {
           if (newIndex < myIndex) {
             columns.splice(myIndex, 1);
@@ -255,7 +255,7 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           .text(this.sortingStrategy.label);
 
         columnGroup.on("mouseup.openOptions", function () {
-          if(dragging) {
+          if (dragging) {
             dragging = false;
             return;
           }
@@ -1331,6 +1331,9 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
       var valueRange = getScoreValueRange(pathData.getPathWrappers(true), column.sortingStrategy);
 
       this.scoreRepresentation.setValueRange(valueRange);
+      //var filteredSetTypes = pathWrapper.setTypes.filter(function(type){return type.canBeShown()});
+
+
       if (pathWrapper.setTypes.length > 1) {
 
         var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
@@ -1351,9 +1354,34 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         pathGroup.style("display", scoreInfo.hideScore ? "none" : "block");
       }
 
-      var setTypes = item.selectAll("g.setType").data(pathWrapper.setTypes, function (d) {
+
+    };
+
+    SetItemRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
+      var that = this;
+      var originalSortingStrategy = unwrapSortingStrategy(column.sortingStrategy);
+
+      var pathData = require("./pathdata");
+      var valueRange = getScoreValueRange(pathData.getPathWrappers(true), column.sortingStrategy);
+      this.scoreRepresentation.setValueRange(valueRange);
+
+
+      if (pathWrapper.setTypes.length > 1) {
+        var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
+        this.scoreRepresentation.updateScore(item, scoreInfo.score, s.PATH_HEIGHT, typeof originalSortingStrategy.setType === "undefined");
+        item.select("g.path").select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
+
+        addSelectionTrigger(item.select("g.path"), scoreInfo);
+        item.select("g.path").style("display", scoreInfo.hideScore ? "none" : "block");
+      }
+
+      var allSetTypes = item.selectAll("g.setType").data(pathWrapper.setTypes.filter(function (type) {
+        return type.canBeShown();
+      }), function (d) {
         return d.id;
-      }).enter()
+      });
+
+      var setTypes = allSetTypes.enter()
         .append("g")
         .classed("setType", true);
 
@@ -1375,28 +1403,6 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
           .text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
         d3.select(this).style("display", scoreInfo.hideScore ? "none" : "block");
       });
-    };
-
-    SetItemRenderer.prototype.update = function (item, pathWrapper, index, pathWrappers, column) {
-      var that = this;
-      var originalSortingStrategy = unwrapSortingStrategy(column.sortingStrategy);
-
-      var pathData = require("./pathdata");
-      var valueRange = getScoreValueRange(pathData.getPathWrappers(true), column.sortingStrategy);
-      this.scoreRepresentation.setValueRange(valueRange);
-
-      if (pathWrapper.setTypes.length > 1) {
-        var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path);
-        this.scoreRepresentation.updateScore(item, scoreInfo.score, s.PATH_HEIGHT, typeof originalSortingStrategy.setType === "undefined");
-        item.select("g.path").select("title").text(that.tooltipTextAccessor(column.sortingStrategy, scoreInfo));
-
-        addSelectionTrigger(item.select("g.path"), scoreInfo);
-        item.select("g.path").style("display", scoreInfo.hideScore ? "none" : "block");
-      }
-
-      var allSetTypes = item.selectAll("g.setType").data(pathWrapper.setTypes, function (d) {
-        return d.id;
-      });
 
       allSetTypes.each(function (setType, i) {
         var scoreInfo = column.sortingStrategy.getScoreInfo(pathWrapper.path, setType.type);
@@ -1410,6 +1416,8 @@ define(["jquery", "d3", "./settings", "../../listeners", "../../uiutil", "../pat
         addSelectionTrigger(d3.select(this), scoreInfo);
         d3.select(this).style("display", scoreInfo.hideScore ? "none" : "block");
       });
+
+      allSetTypes.exit().remove();
     };
 
 

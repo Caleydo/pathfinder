@@ -51,7 +51,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       },
 
       canBeShown: function () {
-        return vs.isShowNonEdgeSets() || (!vs.isShowNonEdgeSets() && this.relIndices.length > 0);
+        var sortingDependencies = pathSorting.getAllSortingDependencies()["setType"];
+        var visibleBySorting = (typeof sortingDependencies !== "undefined") && (sortingDependencies.indexOf(this.type) >= 0);
+        return (vs.isShowSetsInList() || visibleBySorting) && (vs.isShowNonEdgeSets() || (!vs.isShowNonEdgeSets() && this.relIndices.length > 0));
       }
     };
 
@@ -64,6 +66,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
     NodeProperty.prototype.getBaseHeight = function () {
       return s.SET_TYPE_HEIGHT;
+    };
+
+    NodeProperty.prototype.canBeShown = function () {
+      var sortingDependencies = pathSorting.getAllSortingDependencies()["property"];
+      var visibleBySorting = (typeof sortingDependencies !== "undefined") && (sortingDependencies.indexOf(this.name) >= 0);
+      return (vs.isShowAttributesInList() || visibleBySorting);
     };
 
 
@@ -339,7 +347,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
           var changed = that.updateCrossPathData();
           changes.crossPathDataChanged = changed;
-          changes.cause = vs.updateTypes.UPDATE_NODE_SET_VISIBILITY
+          changes.cause = vs.updateTypes.UPDATE_NODE_SET_VISIBILITY;
           that.notifyUpdateListeners(createChangeObject(changes));
         }, vs.updateTypes.UPDATE_NODE_SET_VISIBILITY);
 

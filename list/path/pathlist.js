@@ -218,6 +218,10 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         that.updatePathList();
       };
 
+      this.updateListVisibilityListener = function () {
+        that.updatePathList();
+      };
+
       this.updateNodeSizeListener = function () {
         that.renderPaths();
       };
@@ -342,6 +346,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //listeners.add(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
         listeners.add(this.updateColorListener, config.COLOR_UPDATE);
         listeners.add(this.updateNodeSizeListener, config.NODE_SIZE_UPDATE);
+        listeners.add(this.updateListVisibilityListener, vs.updateTypes.UPDATE_LIST_VISIBILITY);
         //listeners.add(this.sortUpdateListener, pathSorting.updateType);
         //listeners.add(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
 
@@ -411,6 +416,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         //listeners.remove(this.updateReferencePathListener, s.pathListUpdateTypes.UPDATE_REFERENCE_PATH);
         listeners.remove(this.updateColorListener, config.COLOR_UPDATE);
         listeners.remove(this.updateNodeSizeListener, config.NODE_SIZE_UPDATE);
+        listeners.remove(this.updateListVisibilityListener, vs.updateTypes.UPDATE_LIST_VISIBILITY);
         //listeners.remove(this.sortUpdateListener, pathSorting.updateType);
         //listeners.remove(this.updateDatasetsListener, listeners.updateType.DATASET_UPDATE);
 
@@ -1440,7 +1446,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
         allBgPathWrappers.each(function (pathWrapper, index) {
           var item = d3.select(this);
 
-          var allBgSetTypes = item.selectAll("g.bgSetType").data(pathWrapper.setTypes, function (d) {
+          var allBgSetTypes = item.selectAll("g.bgSetType").data(pathWrapper.setTypes.filter(function (setType) {
+            return setType.canBeShown();
+          }), function (d) {
             return d.id;
           });
 
@@ -1521,7 +1529,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
           allBgSetTypes.exit().remove();
 
-          var allBgNodeProperties = item.selectAll("rect.bgNodeProperty").data(pathWrapper.properties, function (d) {
+          var allBgNodeProperties = item.selectAll("rect.bgNodeProperty").data(pathWrapper.properties.filter(function (prop) {
+            return prop.canBeShown();
+          }), function (d) {
             return d.name
           });
 
@@ -1548,8 +1558,12 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
             });
           });
 
+          allBgNodeProperties.exit().remove();
 
-          var allBgDatasets = item.selectAll("g.bgDataset").data(pathWrapper.datasets, function (d) {
+
+          var allBgDatasets = item.selectAll("g.bgDataset").data(pathWrapper.datasets.filter(function (ds) {
+            return ds.canBeShown();
+          }), function (d) {
             return d.id;
           });
 
@@ -1642,7 +1656,9 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           });
 
           var allProperties = d3.select(this).selectAll("g.property")
-            .data(pathWrapper.properties, function (d) {
+            .data(pathWrapper.properties.filter(function (prop) {
+              return prop.canBeShown();
+            }), function (d) {
               return d.name
             });
 

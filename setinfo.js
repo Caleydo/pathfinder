@@ -112,7 +112,7 @@ define(['d3', './listeners', './config', './colors'], function (d3, listeners, c
       var currentChunk = [];
       lookupChunks.push(currentChunk);
       lookup.forEach(function (d) {
-        that.currentlyLoading[d] = true
+        that.currentlyLoading[d] = true;
         if (currentChunk.length >= 100) {
           currentChunk = [];
           lookupChunks.push(currentChunk)

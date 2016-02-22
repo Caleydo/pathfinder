@@ -57,6 +57,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       return {score: groupId ? getPathGroupStats(path, datasetId, groupId)[this.stat] : getPathDatasetStats(path, datasetId)[this.stat]};
     };
 
+    OverallStatsSortingStrategy.prototype.getDependencies = function () {
+      return {dataset: [this.datasetId]};
+    };
+
     /**
      * Sort by stats of individual nodes.
      *
@@ -105,6 +109,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
       };
     };
 
+    PerNodeStatsSortingStrategy.prototype.getDependencies = function () {
+      return {dataset: [this.datasetId]};
+    };
+
 
     //-------------------------------------------------------------
 
@@ -149,6 +157,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         group2: desc.el2.group,
         score: desc.diff
       }
+    };
+
+    OverallBetweenGroupsSortingStrategy.prototype.getDependencies = function () {
+      return {dataset: [this.datasetId]};
     };
 
 
@@ -199,6 +211,10 @@ define(['d3', 'jquery', './listeners', './query/pathquery', './config', './stati
         idType: "node",
         ids: [desc.el1.node.id]
       };
+    };
+
+    PerNodeBetweenGroupsSortingStrategy.prototype.getDependencies = function () {
+      return {dataset: [this.datasetId]};
     };
 
 
