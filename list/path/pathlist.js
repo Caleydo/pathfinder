@@ -183,7 +183,6 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
       this.alignPathNodesUpdateListener = function (align) {
         //s.alignPathNodes = align;
-
         that.renderPaths();
       };
 
@@ -522,7 +521,6 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
       },
 
       setPivotNode: function (id) {
-
         this.pivotNodeId = id;
         this.updatePivotNodeIndex();
         this.renderPaths();
@@ -549,7 +547,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
 
         var nodeStart = s.NODE_START + (s.isTiltAttributes() ? 0 : s.EDGE_SIZE / 2);
 
-        if (s.isAlignPathNodes()) {
+        if (s.getAlignment() !== s.alignmentTypes.PIVOT) {
           return nodeStart;
         }
 
@@ -669,7 +667,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
           pathWrapper.nodePositions = d3.range(0, pathWrapper.path.nodes.length);
         });
 
-        if (!s.isAlignPathNodes()) {
+        if (s.getAlignment() !== s.alignmentTypes.ALL) {
           return;
         }
 

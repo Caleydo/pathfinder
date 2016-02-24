@@ -89,13 +89,22 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
         visibilitySettings.showDatasetsInList(this.checked);
       });
 
+
+      $("#alignLeft").on("click", function () {
+        //pathSettings.alignPathNodes(false);
+        pathSettings.setAlignmet(pathSettings.alignmentTypes.LEFT);
+        //listeners.notify("ALIGN_PATH_NODES", this.checked);
+      });
+
       $("#alignPivotNode").on("click", function () {
-        pathSettings.alignPathNodes(false);
+        pathSettings.setAlignmet(pathSettings.alignmentTypes.PIVOT);
+        //pathSettings.alignPathNodes(false);
         //listeners.notify("ALIGN_PATH_NODES", this.checked);
       });
 
       $("#alignAllNodes").on("click", function () {
-        pathSettings.alignPathNodes(true);
+        pathSettings.setAlignmet(pathSettings.alignmentTypes.ALL);
+        //pathSettings.alignPathNodes(true);
         //listeners.notify("ALIGN_PATH_NODES", this.checked);
       });
 

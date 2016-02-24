@@ -1,8 +1,10 @@
 define(["../../listeners"], function (listeners) {
 
-  var alignPathNodes = false;
+  //var alignPathNodes = false;
   var tiltAttributes = false;
   var alignColumns = true;
+
+  var alignment = "PIVOT";
 
   var stickyDataGroup = {};
 
@@ -34,6 +36,12 @@ define(["../../listeners"], function (listeners) {
 
     },
 
+    alignmentTypes: {
+      LEFT: "LEFT",
+      PIVOT: "PIVOT",
+      ALL: "ALL"
+    },
+
     incStickyDataGroupOwners: function (datasetId, groupId) {
       stickyDataGroup[datasetId] = stickyDataGroup[datasetId] || {};
       stickyDataGroup[datasetId][groupId] = stickyDataGroup[datasetId][groupId] || 0;
@@ -46,7 +54,7 @@ define(["../../listeners"], function (listeners) {
       stickyDataGroup[datasetId][groupId] = Math.max(stickyDataGroup[datasetId][groupId] - 1, 0);
     },
 
-    unstickDataGroup: function(datasetId, groupId) {
+    unstickDataGroup: function (datasetId, groupId) {
       stickyDataGroup[datasetId] = stickyDataGroup[datasetId] || {};
       stickyDataGroup[datasetId][groupId] = 0;
     },
@@ -59,14 +67,23 @@ define(["../../listeners"], function (listeners) {
       return stickyDataGroup[datasetId][groupId] > 0;
     },
 
-    alignPathNodes: function (align) {
-      alignPathNodes = align;
+    setAlignmet: function (align) {
+      alignment = align;
       listeners.notify(this.pathListUpdateTypes.ALIGN_PATH_NODES, align);
     },
 
-    isAlignPathNodes: function () {
-      return alignPathNodes;
+    getAlignment: function() {
+      return alignment;
     },
+
+    //alignPathNodes: function (align) {
+    //  alignPathNodes = align;
+    //  listeners.notify(this.pathListUpdateTypes.ALIGN_PATH_NODES, align);
+    //},
+
+    //isAlignPathNodes: function () {
+    //  return alignPathNodes;
+    //},
 
     tiltAttributes: function (tilt) {
       tiltAttributes = tilt;
