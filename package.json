@@ -9,7 +9,7 @@
     "caleydo_core": "*",
     "pathfinder_ccle": "*",
     "pathfinder_graph": "*",
-    "wrapper_bootstrap_fontawesome": "*"
+    "caleydo_bootstrap_fontawesome": "*"
   },
   "caleydo": {
     "plugins": {
