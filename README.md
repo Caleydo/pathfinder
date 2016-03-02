@@ -14,14 +14,14 @@ Make sure to have Caleydo web Installed (see https://github.com/Caleydo/caleydo_
 To install our test graph databases, change to the folder of the pathfinder_graph plugin and run the deployment script:
 
 ~~~bash
-cd plugins/pathfinder_graph/_deploy
-./setup_pathfinder_graph.sh setup
+ cd plugins/pathfinder_graph/_deploy
+ ./setup_pathfinder_graph.sh setup
 ~~~
 
 To run the database services, run:
 ~~~bash
-sudo ~/neo4j_dblp start
-sudo ~/neo4j_pathways start
+ sudo ~/neo4j_dblp start
+ sudo ~/neo4j_pathways start
 ~~~
 
 ## Running Pathfinder
