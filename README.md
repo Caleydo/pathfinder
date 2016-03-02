@@ -1,22 +1,28 @@
-Pathfinder / Kute 
+Pathfinder
 ==========
-Kute is a Caleydo Web plugin, i.e., you need to install Caleydo Web client and server:
+Pathfinder is a Caleydo Web plugin for the visual exploration of paths in large graphs.
 
-## Pre-conditions: 
-Server-side:
- * Install [caleydo-web-server](https://github.com/Caleydo/caleydo-web-server). This will set up a virtual machine that you can run through Vagrant. For details see documentation of caleydo-web-server.
- * Install neo4j (see [instructions](ReadMe-Neo4j.md))
- * What's the process fo the deta
- 
-Client-side:
- * Install [caleydo-web](https://github.com/Caleydo/caleydo-web)
- * Install this repository in the claeydo-web/external folder
+## Installation
+Make sure to have Caleydo web Installed (see https://github.com/Caleydo/caleydo_web_container](https://github.com/Caleydo/caleydo_web_container)). Run the following commands in the caleydo_web_container directory within the virtual machine.
 
-## Running Kute
-* Go to claeydo-web-server directory and run `vagrant up`
-* SSH into vagrant using `vagrant ssh`
-* Go to folder `/vagrant/` (the caleydo-web-server directory)
-* To update: pull in this direcotry
-* Start neo4j with `sudo service neo4j-service start`
-* Run `source /vagrant/run.sh`
-* Go to [localhost:9000/caleydo-pathfinder/](localhost:9000/caleydo-pathfinder/)
+~~~bash
+ ./manage.sh clone Caleydo/pathfinder
+ ./manage.sh clone_deps pathfinder
+ ./manage.sh resolve
+~~~
+
+To install our test graph databases, change to the folder of the pathfinder_graph plugin and run the deployment script:
+
+~~~bash
+cd plugins/pathfinder_graph/_deploy
+./setup_pathfinder_graph.sh setup
+~~~
+
+To run the database services, run:
+~~~bash
+sudo ~/neo4j_dblp start
+sudo ~/neo4j_pathways start
+~~~
+
+## Running Pathfinder
+Make sure that the web server and the graph databases are running. Then you can access Pathfinder via [http://localhost:9000/pathfinder/](http://localhost:9000/pathfinder/). You may want to use Google Chrome for best compatibility.
