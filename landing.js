@@ -2,6 +2,8 @@
  * Created by Christian on 11.12.2014.
  */
 require(['jquery', 'bootstrap'], function ($) {
+
+  $(document).ready(function () {
     navigator.sayswho = (function () {
       var ua = navigator.userAgent, tem,
         M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
@@ -25,6 +27,14 @@ require(['jquery', 'bootstrap'], function ($) {
        display: "block"
      });
     }
+
+
+     $('body').load('landingcontent.html', function () {
+        });
+
+  });
+
+
 
   }
 )
