@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -14,307 +13,309 @@
 <body>
 <!--search interface-->
 
-
-<div id="allContent">
-
-  <div id="contentBody">
-
-    <header>
-
-      <!--<div id="query_interface" style="width:calc(100% - 50px)">-->
-      <div id="query_interface" style="width:100%">
-
-      </div>
+<div id="all">
+  <div id="allContent">
 
 
-      <!--<div class="progress progress-info progress-striped"-->
-      <!--style="margin-bottom: 5px; margin-top: 5px; height: 0.5em;">-->
-      <!--<div class="progress-bar" style="width: 0%"></div>-->
-      <!--</div>-->
+    <div id="contentBody">
 
+      <header>
 
-    </header>
-
-    <div id="container">
-
-      <!--<div id="mainContent">-->
-
-
-      <section id="listView">
-
-
-        <div id="listViewWidgets">
-
+        <!--<div id="query_interface" style="width:calc(100% - 50px)">-->
+        <div id="query_interface" style="width:100%">
 
         </div>
-        <!--<div class="outer">-->
-        <!--<div class="inner">-->
-        <div id="pathlist">
-        </div>
+
+
+        <!--<div class="progress progress-info progress-striped"-->
+        <!--style="margin-bottom: 5px; margin-top: 5px; height: 0.5em;">-->
+        <!--<div class="progress-bar" style="width: 0%"></div>-->
         <!--</div>-->
-        <!--</div>-->
-        <div class="text-center">
-          <ul id="pathPagination" class="pagination pagination-sm" style="margin-bottom:0px">
-            <li class="prevPage">
-              <a aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-            <li class="nextPage">
-              <a aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-
-      </section>
 
 
-      <!--<div id="rightCol">-->
+      </header>
+
+      <div id="container">
+
+        <!--<div id="mainContent">-->
 
 
-      <!--<div id="overviewRow">-->
+        <section id="listView">
 
-      <section id="pathGraphView">
-        <div>
-          <div style="display:inline-block"><label>Path Topology</label></div>
-          <div class="btn-group btn-group-xs" data-toggle="buttons" style="display:inline-block;float: right">
-            <label id="showActivePagePaths" class="btn btn-default active" title="Show paths of active page">
-              <input type="radio" name="pathAlign" checked="">Active Page
-            </label>
-            <label id="showAllPaths" class="btn btn-default" title="Show all paths">
-              <input type="radio" name="pathAlign">All
-            </label>
+
+          <div id="listViewWidgets">
+
+
           </div>
-        </div>
-        <!--<div class="outer">-->
-        <!--<div class="inner">-->
-        <div id="pathgraph">
-        </div>
+          <!--<div class="outer">-->
+          <!--<div class="inner">-->
+          <div id="pathlist">
+          </div>
+          <!--</div>-->
+          <!--</div>-->
+          <div class="text-center">
+            <ul id="pathPagination" class="pagination pagination-sm" style="margin-bottom:0px">
+              <li class="prevPage">
+                <a aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <li class="nextPage">
+                <a aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+        </section>
+
+
+        <!--<div id="rightCol">-->
+
+
+        <!--<div id="overviewRow">-->
+
+        <section id="pathGraphView">
+          <div>
+            <div style="display:inline-block"><label>Path Topology</label></div>
+            <div class="btn-group btn-group-xs" data-toggle="buttons" style="display:inline-block;float: right">
+              <label id="showActivePagePaths" class="btn btn-default active" title="Show paths of active page">
+                <input type="radio" name="pathAlign" checked="">Active Page
+              </label>
+              <label id="showAllPaths" class="btn btn-default" title="Show all paths">
+                <input type="radio" name="pathAlign">All
+              </label>
+            </div>
+          </div>
+          <!--<div class="outer">-->
+          <!--<div class="inner">-->
+          <div id="pathgraph">
+          </div>
+          <!--</div>-->
+          <!--</div>-->
+        </section>
+
+
         <!--</div>-->
+
         <!--</div>-->
-      </section>
+
+        <!--</div>-->
 
 
-      <!--</div>-->
-
-      <!--</div>-->
-
-      <!--</div>-->
-
-
-    </div>
-
-
-  </div>
-
-  <section id="pathStatsView">
-    <div style="padding: 3px">
-      <div style="display:inline-block"><label>Path Statistics</label></div>
-      <div class="btn-group btn-group-xs" role="group" style="display:inline-block; float: right">
       </div>
-      <button id="toggleSettingsButton" class="btn btn-default" style="display:inline-block; float:right"><i
-        class="fa fa-bars"></i>
-      </button>
+
+
     </div>
 
-    <!--<div class="outer">-->
-    <!--<div class="inner">-->
-    <div id="pathstats">
-      <!--<ul class="statsList">-->
+    <section id="pathStatsView">
+      <div style="padding: 3px">
+        <div style="display:inline-block"><label>Path Statistics</label></div>
+        <div class="btn-group btn-group-xs" role="group" style="display:inline-block; float: right">
+        </div>
+        <!--<button id="toggleSettingsButton" class="btn btn-default" style="display:inline-block; float:right"><i-->
+          <!--class="fa fa-bars"></i>-->
+        <!--</button>-->
+      </div>
+
+      <!--<div class="outer">-->
+      <!--<div class="inner">-->
+      <div id="pathstats">
+        <!--<ul class="statsList">-->
         <!--<li>Paths <span id="numPaths">0/0</span></li>-->
         <!--<li>Nodes <span id="numNodes">0/0</span></li>-->
         <!--<li>Edges <span id="numEdges">0/0</span></li>-->
         <!--<li>Sets <span id="numSets">0/0</span></li>-->
-      <!--</ul>-->
-      <!--<div style="display:inline-block"># Paths</div>-->
-      <!--<div style="display:inline-block">200</div>-->
-      <!--<br>-->
+        <!--</ul>-->
+        <!--<div style="display:inline-block"># Paths</div>-->
+        <!--<div style="display:inline-block">200</div>-->
+        <!--<br>-->
 
-      <!--<div style="display:inline-block"># Nodes</div>-->
-      <!--<div style="display:inline-block">200</div>-->
-      <!--<br>-->
+        <!--<div style="display:inline-block"># Nodes</div>-->
+        <!--<div style="display:inline-block">200</div>-->
+        <!--<br>-->
 
-      <!--<div style="display:inline-block"># Edges</div>-->
-      <!--<div style="display:inline-block">200</div>-->
-      <!--<br>-->
+        <!--<div style="display:inline-block"># Edges</div>-->
+        <!--<div style="display:inline-block">200</div>-->
+        <!--<br>-->
 
-      <!--<div style="display:inline-block"># Sets</div>-->
-      <!--<div style="display:inline-block">200</div>-->
-      <!--<br>-->
-    </div>
-
-
-    <!--<div id="setInfoView" style="display:inline-block">-->
-    <!--<div style="display:block">-->
-    <!--<label>Verycomplicatedpathwayname</label>-->
-    <!--</div>-->
-    <!--<div style="display:inline-block; overflow: auto; width:100%; height: 50px">-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
-    <!--</div>-->
-
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-  </section>
-
-
-  <section id="settings">
-    <h3>Settings</h3>
-
-    <div>
-      <h4>General</h4>
-
-      <div class="checkbox" title="Show filtered paths.">
-        <label><input type="checkbox" id="remove_filtered_paths">Show filtered paths</label>
-      </div>
-      <div class="checkbox" title="Show sets even if they do not connect nodes in any path.">
-        <label><input type="checkbox" id="hideNonRelSets"/>Show all sets</label>
+        <!--<div style="display:inline-block"># Sets</div>-->
+        <!--<div style="display:inline-block">200</div>-->
+        <!--<br>-->
       </div>
 
-      <label>Coloring</label>
 
-      <div class="btn-group btn-group-xs" data-toggle="buttons" style="display:inline-block;float: right">
-        <label id="enable_colors" class="btn btn-default" title="Show all paths">
-          <input type="radio" name="coloring">Enabled
-        </label>
-        <label id="disable_colors" class="btn btn-default" title="Show all paths">
-          <input type="radio" name="coloring">Disabled
-        </label>
-        <label id="auto_colors" class="btn btn-default active" title="Show paths of active page">
-          <input type="radio" name="coloring" checked="">Auto
-        </label>
-      </div>
-
-      <label for="nodeWidth">Node width</label>
-
-      <input type="number" id="nodeWidth" style="width: 5em;" maxlength="3" placeholder="k"
-             value="60" min="20">
-      <input type="button" id="applyNodeWidth" value="Apply"/>
-
-      <br>
-      <input style="margin-top: 5px" type="button" id="savePaths" value="Save Paths"/>
-    </div>
-
-    <hr width="98%">
-
-    <div>
-      <h4>List view</h4>
-
-      <label for="page_size">Paths per page </label>
-
-      <input type="number" id="page_size" style="width: 5em;" maxlength="3" placeholder="k"
-             value="20" min="1">
-      <input type="button" id="apply_page_size" value="Apply"/>
-
-      <!--<div class="checkbox" title="Force equal nodes to be aligned accross paths.">-->
-      <!--<label><input type="checkbox" id="alignPathNodes"/>Align nodes</label>-->
+      <!--<div id="setInfoView" style="display:inline-block">-->
+      <!--<div style="display:block">-->
+      <!--<label>Verycomplicatedpathwayname</label>-->
       <!--</div>-->
-      <div class="checkbox" title="Show straight rank columns.">
-        <label><input type="checkbox" id="alignColumns" checked/>Align columns</label>
+      <!--<div style="display:inline-block; overflow: auto; width:100%; height: 50px">-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--</div>-->
+
+      <!--</div>-->
+      <!--</div>-->
+      <!--</div>-->
+    </section>
+
+
+    <section id="settings">
+      <h3>Options</h3>
+
+      <div>
+        <h4>General</h4>
+
+        <div class="checkbox" title="Show filtered paths.">
+          <label><input type="checkbox" id="remove_filtered_paths">Show filtered paths</label>
+        </div>
+        <div class="checkbox" title="Show sets even if they do not connect nodes in any path.">
+          <label><input type="checkbox" id="hideNonRelSets"/>Show all sets</label>
+        </div>
+
+        <label>Coloring</label>
+
+        <div class="btn-group btn-group-xs" data-toggle="buttons" style="display:inline-block;float: right">
+          <label id="enable_colors" class="btn btn-default" title="Show all paths">
+            <input type="radio" name="coloring">Enabled
+          </label>
+          <label id="disable_colors" class="btn btn-default" title="Show all paths">
+            <input type="radio" name="coloring">Disabled
+          </label>
+          <label id="auto_colors" class="btn btn-default active" title="Show paths of active page">
+            <input type="radio" name="coloring" checked="">Auto
+          </label>
+        </div>
+
+        <label for="nodeWidth">Node width</label>
+
+        <input type="number" id="nodeWidth" style="width: 5em;" maxlength="3" placeholder="k"
+               value="60" min="20">
+        <input type="button" id="applyNodeWidth" value="Apply"/>
+
+        <br>
+        <input style="margin-top: 5px" type="button" id="savePaths" value="Save Paths"/>
       </div>
 
-      Attribute orientation
+      <hr width="98%">
 
-      <div style="display: block; margin-left: 10px">
-        <div class="radio">
-          <label for="horizontalOrientation" style="font-weight: bold"><input type="radio"
-                                                                              name="attributeOrientationRadio"
-                                                                              id="horizontalOrientation"
-                                                                              checked/>Horizontal</label>
-        </div>
-        <div class="radio">
-          <label for="verticalOrientation" style="font-weight: bold"><input type="radio"
-                                                                            name="attributeOrientationRadio"
-                                                                            id="verticalOrientation"/>Vertical</label>
-        </div>
+      <div>
+        <h4>List view</h4>
 
+        <label for="page_size">Paths per page </label>
 
-        <!--<select id="select_dump" style="display:block"></select>-->
-        <!--<div class="checkbox">-->
-        <!--<label><input type="checkbox" id="tiltAttributes"/>Tilt attributes</label>-->
+        <input type="number" id="page_size" style="width: 5em;" maxlength="3" placeholder="k"
+               value="20" min="1">
+        <input type="button" id="apply_page_size" value="Apply"/>
+
+        <!--<div class="checkbox" title="Force equal nodes to be aligned accross paths.">-->
+        <!--<label><input type="checkbox" id="alignPathNodes"/>Align nodes</label>-->
         <!--</div>-->
+        <div class="checkbox" title="Show straight rank columns.">
+          <label><input type="checkbox" id="alignColumns" checked/>Align columns</label>
+        </div>
+
+        Attribute orientation
+
+        <div style="display: block; margin-left: 10px">
+          <div class="radio">
+            <label for="horizontalOrientation" style="font-weight: bold"><input type="radio"
+                                                                                name="attributeOrientationRadio"
+                                                                                id="horizontalOrientation"
+                                                                                checked/>Horizontal</label>
+          </div>
+          <div class="radio">
+            <label for="verticalOrientation" style="font-weight: bold"><input type="radio"
+                                                                              name="attributeOrientationRadio"
+                                                                              id="verticalOrientation"/>Vertical</label>
+          </div>
+
+
+          <!--<select id="select_dump" style="display:block"></select>-->
+          <!--<div class="checkbox">-->
+          <!--<label><input type="checkbox" id="tiltAttributes"/>Tilt attributes</label>-->
+          <!--</div>-->
+        </div>
+
+        <div class="checkbox" title="Show sets below paths.">
+          <label><input type="checkbox" id="showSetsInList" checked/>Show sets</label>
+        </div>
+
+        <div class="checkbox" title="Show attributes below paths.">
+          <label><input type="checkbox" id="showAttributesInList" checked/>Show attributes</label>
+        </div>
+
+        <div class="checkbox" title="Show datasets below paths.">
+          <label><input type="checkbox" id="showDatasetsInList" checked/>Show datasets</label>
+        </div>
       </div>
 
-      <div class="checkbox" title="Show sets below paths.">
-        <label><input type="checkbox" id="showSetsInList" checked/>Show sets</label>
-      </div>
+      <hr width="98%">
 
-      <div class="checkbox" title="Show attributes below paths.">
-        <label><input type="checkbox" id="showAttributesInList" checked/>Show attributes</label>
-      </div>
+      <div>
+        <h4>Topology view</h4>
+        <!--<h1 style="display:inline">Caleydo Pathfinder</h1>-->
+        Layout
 
-      <div class="checkbox" title="Show datasets below paths.">
-        <label><input type="checkbox" id="showDatasetsInList" checked/>Show datasets</label>
-      </div>
-    </div>
-
-    <hr width="98%">
-
-    <div>
-      <h4>Topology view</h4>
-      <!--<h1 style="display:inline">Caleydo Pathfinder</h1>-->
-      Layout
-
-      <div style="display: block; margin-left: 10px">
-        <div class="radio">
-          <label for="layeredLayout" style="font-weight: bold"><input type="radio"
+        <div style="display: block; margin-left: 10px">
+          <div class="radio">
+            <label for="layeredLayout" style="font-weight: bold"><input type="radio"
+                                                                        name="topologyLayoutRadio"
+                                                                        id="layeredLayout"
+                                                                        checked/>Layered</label>
+          </div>
+          <div class="radio">
+            <label for="forceLayout" style="font-weight: bold"><input type="radio"
                                                                       name="topologyLayoutRadio"
-                                                                      id="layeredLayout"
-                                                                      checked/>Layered</label>
+                                                                      id="forceLayout"/>Force-based</label>
+          </div>
         </div>
-        <div class="radio">
-          <label for="forceLayout" style="font-weight: bold"><input type="radio"
-                                                                    name="topologyLayoutRadio"
-                                                                    id="forceLayout"/>Force-based</label>
-        </div>
+
+        <!--<input type="checkbox" id="switchGraphLayout"/>-->
+        <!--<label>Switch Graph Layout</label>-->
       </div>
-
-      <!--<input type="checkbox" id="switchGraphLayout"/>-->
-      <!--<label>Switch Graph Layout</label>-->
-    </div>
-  </section>
+    </section>
 
 
+  </div>
 </div>
 
 

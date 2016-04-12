@@ -3,10 +3,10 @@
  */
 require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './listeners', './list/path/pathdata', './list/listview', './pathgraph/pathgraph', './setinfo', './datastore',
     './pathstats/pathstatsview', '../pathfinder_graph/search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
-    '../pathfinder_ccle/ccle', './extradata', './list/progressbar', 'font-awesome', 'bootstrap'],
+    '../pathfinder_ccle/ccle', './extradata', './list/progressbar', '../wrapper_bootstrap_fontawesome/header', 'font-awesome', 'bootstrap'],
 
   function ($, d3, C, ajax, listeners, pathData, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil,
-            queryView, pathQuery, config, pathSorting, statisticsUtil, ccle, extradata, progressBar) {
+            queryView, pathQuery, config, pathSorting, statisticsUtil, ccle, extradata, progressBar, header) {
 
     'use strict';
 
@@ -39,6 +39,37 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
 
 
     $(document).ready(function () {
+
+        var appHeader = header.create(document.querySelector('#all'), {
+          app: 'Pathfinder'
+        });
+
+        var ul = document.createElement('ul');
+        var $ul = d3.select(ul).attr('class', 'nav navbar-nav navbar-right').html('<li><a href="#" id="toggleoptions"><span class="glyphicon glyphicon-cog" title="Options"></span></a></li> <li><a data-header="help" href="//caleydo.org" target="_blank"><span class="glyphicon glyphicon-question-sign" title="Help"></span></a></li>');
+
+        appHeader.insertCustomRightMenu(ul);
+
+      appHeader.rightMenu.remove();
+
+       $("#toggleoptions").click(function () {
+            showSettings = !showSettings;
+         $(this).blur();
+
+
+            //$(this).toggleClass("btn-active");
+            //$(this).toggleClass("btn-default");
+
+
+            if (showSettings) {
+              $("#settings").css({display: "inline-block"});
+              $("#mainContent").css({"margin-right": 255});
+              $(this).css({color:"white"});
+            } else {
+              $("#settings").css({display: "none"});
+              $("#mainContent").css({"margin-right": 0});
+               $(this).css({color: "#9d9d9d"});
+            }
+          });
 
         //$('#listView').resizable({
         //    handles: 'w,e', minWidth: 200
@@ -186,12 +217,12 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
           },
 
           //For single node paths
-          found: function(event, data) {
+          found: function (event, data) {
             newPath(data.path);
           },
 
-          found_done: function(event, data) {
-           pathsDone();
+          found_done: function (event, data) {
+            pathsDone();
           },
 
           neighbor_neighbor: function (event, data) {
@@ -250,20 +281,7 @@ require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/ajax', './list
         ServerSearch.resolveConfig().then(function (data) {
           config.setConfig(data);
 
-          $("#toggleSettingsButton").click(function () {
-            showSettings = !showSettings;
-            $(this).toggleClass("btn-active");
-            $(this).toggleClass("btn-default");
 
-
-            if (showSettings) {
-              $("#settings").css({display: "inline-block"});
-              $("#mainContent").css({"margin-right": 255});
-            } else {
-              $("#settings").css({display: "none"});
-              $("#mainContent").css({"margin-right": 0});
-            }
-          });
 
           dataStore.init();
           pathSorting.init();
