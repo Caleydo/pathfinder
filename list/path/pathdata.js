@@ -7,7 +7,7 @@ define(['jquery', 'd3', '../../listeners', '../../sorting', '../../setinfo', '..
   function ($, d3, listeners, sorting, setInfo, selectionUtil, pathSorting, pathUtil, pathQuery, dataStore, config, ListOverlay, queryView, queryUtil, hierarchyElements, s, dr, vs, uiUtil, columns) {
 
     var currentSetTypeId = 0;
-    var pageSize = 20;
+    var pageSize = 15;
 
     function SetRep(setId, type) {
       this.id = setId;
