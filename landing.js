@@ -19,7 +19,7 @@ require(['jquery', 'bootstrap'], function ($) {
         if ((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
         return M.join(' ');
       })();
-      
+
       $('body').load('landingcontent.html', function () {
         if (navigator.sayswho.toLowerCase().indexOf("chrome") == -1) {
 
