@@ -36,8 +36,7 @@
         "webcola": "~3.1.0",
         "jquery-ui": "~1.11.4",
         "graphlib": "~1.0.1",
-        "dagre": "~0.7.1",
-        "dagre-d3": "~0.4.3"
+        "dagre": "~0.7.1"
       }
     },
 
@@ -45,8 +44,7 @@
       "paths": {
         "lodash": "${baseUrl}/lodash/dist/lodash",
         "graphlib": "${baseUrl}/graphlib/dist/graphlib.core",
-        "dagre": "${baseUrl}/dagre/dist/dagre.core",
-        "dagre-d3" : "${baseUrl}/dagre-d3/dist/dagre-d3.core"
+        "dagre": "${baseUrl}/dagre/dist/dagre.core"
       },
       "shim": {
         "webcola": {
@@ -60,10 +58,6 @@
         "dagre": {
           "deps": ["lodash", "graphlib"],
           "exports": "dagre"
-        },
-        "dagre-d3": {
-          "deps": ["d3","lodash", "graphlib", "dagre"],
-          "exports": "dagre-d3"
         }
       }
     }

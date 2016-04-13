@@ -1,6 +1,6 @@
-define(['jquery', 'd3', 'webcola', 'dagre-d3', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery',
+define(['jquery', 'd3', 'webcola', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery',
   '../config', '../pathutil', './neighboredge', '../query/queryutil', '../../pathfinder_graph/search', '../uiutil', '../list/path/settings'],
-  function ($, d3, webcola, dagreD3, listeners, selectionUtil, pathSorting, pathQuery, config, pathUtil, neighborEdgeManager, queryUtil, ServerSearch, uiUtil, pathSettings) {
+  function ($, d3, webcola, listeners, selectionUtil, pathSorting, pathQuery, config, pathUtil, neighborEdgeManager, queryUtil, ServerSearch, uiUtil, pathSettings) {
     'use strict';
 
     var sideSpacing = 10;
