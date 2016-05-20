@@ -1,8 +1,10 @@
 {
   "name" : "pathfinder",
+  "description": "Pathfinder is a Caleydo Web plugin for the visual exploration of paths in large graphs.",
   "version": "0.0.1",
   "license" : "SEE LICENSE IN LICENSE",
   "repository": "Caleydo/pathfinder",
+  "homepage": "http://www.caleydo.org/tools/pathfinder/",
   "dependencies": {
   },
   "peerDependencies": {
@@ -12,6 +14,7 @@
     "caleydo_bootstrap_fontawesome": "*"
   },
   "caleydo": {
+    "type": "app",
     "plugins": {
       "web": [
         {
