@@ -1,6 +1,6 @@
 Pathfinder
 ==========
-Pathfinder is a Caleydo Web plugin for the visual exploration of paths in large graphs.
+Pathfinder is a Caleydo Web application for the visual exploration of paths in large graphs.
 
 ## Installation
 Make sure to have Caleydo web Installed (see [https://github.com/Caleydo/caleydo_web_container](https://github.com/Caleydo/caleydo_web_container)). Run the following commands in the caleydo_web_container directory within the virtual machine.
