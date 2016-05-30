@@ -1,7 +1,7 @@
 {
   "name" : "pathfinder",
   "title": "Pathfinder",
-  "description": "Interactive path visualization in large multivariate graphs..",
+  "description": "Visual exploration of paths in large graphs.",
   "version": "0.0.1",
   "license" : "SEE LICENSE IN LICENSE",
   "repository": "Caleydo/pathfinder",
