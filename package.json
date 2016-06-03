@@ -1,6 +1,6 @@
 {
   "name" : "pathfinder",
-  "description": "Pathfinder is a Caleydo Web application for the visual exploration of paths in large graphs.",
+  "description": "Pathfinder is a tool for the visual exploration of paths in large graphs.",
   "version": "0.0.1",
   "license" : "SEE LICENSE IN LICENSE",
   "repository": "Caleydo/pathfinder",
