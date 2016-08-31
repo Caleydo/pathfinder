@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/data', '../caleydo_core/plugin', '../caleydo_window/main', '../caleydo_d3/d3util'], function ($, d3, C, data, plugins, window, utils) {
+require(['jquery', 'd3', '../caleydo_core/main', '../caleydo_core/data', '../caleydo_core/plugin', '../caleydo_d3/d3util'], function ($, d3, C, data, plugins, utils) {
 
   'use strict';
 
