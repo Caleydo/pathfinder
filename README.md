@@ -1,31 +1,38 @@
-## Caleydo Pathfinder ![Caleydo Web Application](https://img.shields.io/badge/Caleydo%20Web-Application-4daf4a.svg)
+Caleydo Pathfinder ![Caleydo Web Application](https://img.shields.io/badge/Caleydo%20Web-Application-1BA64E.svg)
+==================
 
 Pathfinder is a tool for the visual exploration of paths in large graphs.
 
-### Installation
+Installation
+------------------
+
 Make sure to have Caleydo web Installed (see [https://github.com/Caleydo/caleydo_web_container](https://github.com/Caleydo/caleydo_web_container)). Run the following commands in the caleydo_web_container directory within the virtual machine.
 
-~~~bash
+```bash
  ./manage.sh clone Caleydo/pathfinder
  ./manage.sh clone_deps pathfinder
  ./manage.sh resolve
-~~~
+```
 
 To install our test graph databases, change to the folder of the pathfinder_graph plugin and run the deployment script:
 
-~~~bash
+```bash
  cd plugins/pathfinder_graph/_deploy
  ./setup_pathfinder_graph.sh setup
-~~~
+```
 
 To run the database services, run:
-~~~bash
+
+```bash
  sudo ~/neo4j_dblp start
  sudo ~/neo4j_pathways start
-~~~
+```
 
-### Running Pathfinder
+Running Pathfinder
+------------------
+
 Make sure that the web server and the graph databases are running. Then you can access Pathfinder via [http://localhost:9000/pathfinder/](http://localhost:9000/pathfinder/). You may want to use Google Chrome for best compatibility.
+
 
 *****
 
