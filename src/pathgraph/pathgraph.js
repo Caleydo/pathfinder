@@ -1,4 +1,4 @@
-define(['jquery', 'd3', 'webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../view', './forcelayout', './layeredlayout', '../list/path/pathdata'],
+define(['jquery', 'd3', 'imports-loader?d3=d3!webcola', 'dagre', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery', '../config', '../view', './forcelayout', './layeredlayout', '../list/path/pathdata'],
   function ($, d3, webcola, dagre, listeners, selectionUtil, pathSorting, pathQuery, config, View, ForceLayout, LayeredLayout, pathData) {
     'use strict';
 
