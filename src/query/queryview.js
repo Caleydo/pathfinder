@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../listeners', '../listoverlay', 'pathfinder_graph/src', './pathquery', '../uiutil', '../config', 'html-loader!./view.html', 'jquery-ui/ui/widgets/autocomplete', 'style-loader!css-loader!jquery-ui/themes/base/autocomplete.css'],
+define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../listeners', '../listoverlay', 'pathfinder_graph/src', './pathquery', '../uiutil', '../config', 'html-loader!./view.html', 'jquery-ui/ui/widgets/autocomplete', 'style-loader!css-loader!jquery-ui/themes/base/all.css'],
   function ($, d3, View, q, pathSorting, listeners, ListOverlay, ServerSearch, pathQuery, uiUtil, config, queryViewTemplate) {
 
     var listOverlay = new ListOverlay();
