@@ -70,7 +70,8 @@
     "phovea_ui": "github:phovea/phovea_ui#develop",
     "phovea_d3": "github:phovea/phovea_d3#develop",
     "@types/d3": "3.5.36",
-    "d3": "3.5.17"
+    "d3": "3.5.17",
+    "dagre": "~0.7.1"
   },
   "name": "pathfinder",
   "description": "Pathfinder is a tool for the visual exploration of paths in large graphs.",
