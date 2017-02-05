@@ -8,9 +8,6 @@
 module.exports = function(registry) {
   //registry.push('extension-type', 'extension-id', function() { return System.import('./src/extension_impl'); }, {});
   // generator-phovea:begin
-  registry.push('app', 'pathfinder', function() { return System.import('./src/'); }, {
-  'name': 'Pathfinder'
- });
   // generator-phovea:end
 };
 
