@@ -164,7 +164,8 @@ function generateWebpack(options) {
       proxy: {
         '/api/*': {
           target: 'http://localhost:9000',
-          secure: false
+          secure: false,
+          ws: true
         },
         '/login': {
           target: 'http://localhost:9000',
