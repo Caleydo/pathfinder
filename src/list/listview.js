@@ -2,8 +2,8 @@
  * Created by Christian on 23.02.2015.
  */
 define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../listeners', './aggregation/aggregatesorting', './aggregation/noaggregationlist',
-    './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview', '../config', '../settings/visibilitysettings', './path/settings', '../datastore'],
-  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView, config, visibilitySettings, pathSettings, dataStore) {
+    './aggregation/setcombinations', './aggregation/nodetypecombinations', '../ranking/rankconfigview', '../config', '../settings/visibilitysettings', './path/settings', 'html-loader!./view.html'],
+  function ($, d3, pathList, view, pathSorting, listeners, aggregateSorting, NoAggregationList, SetComboList, NodeTypeComboList, RankConfigView, config, visibilitySettings, pathSettings, htmlView) {
 
     //var listView = new view("#pathlist");
 
@@ -19,10 +19,9 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
     ListView.prototype.init = function () {
       var that = this;
       return new Promise(function (resolve, reject) {
-        $('#listViewWidgets').load('list.html', function () {
-          that.initImpl();
-          resolve(true);
-        });
+        $('#listViewWidgets').html(htmlView);        
+        that.initImpl();
+        resolve(true);
         // or
         // reject ("Error!");
       });
