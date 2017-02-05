@@ -5,6 +5,7 @@
 import 'file-loader?name=index.html!extract-loader!html-loader!./index.html';
 import 'file-loader?name=landingcontent.html!extract-loader!html-loader!./landingcontent.html';
 import 'phovea_ui/src/_bootstrap';
+import 'phovea_ui/src/_font-awesome';
 import './style.scss';
 
 import * as $ from 'jquery';
