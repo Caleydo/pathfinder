@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 24.02.2015.
  */
-define(['d3', './listeners', './config', './colors'], function (d3, listeners, config, colors) {
+define(['d3', './listeners', './config', './colors', 'jquery'], function (d3, listeners, config, colors, $) {
 
   //var colorScheme = Object.create(colorbrewer.Set1[9]);
   ////remove orange color to avoid conflict with highlighting
