@@ -6,7 +6,8 @@
     "githubAccount": "phovea",
     "modules": [
       "phovea_core",
-      "phovea_ui"
+      "phovea_ui",
+      "phovea_d3"
     ],
     "extensions": [
       {

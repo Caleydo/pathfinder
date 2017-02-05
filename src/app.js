@@ -2,11 +2,11 @@
  * Created by Christian on 11.12.2014.
  */
 require(['jquery', 'd3', 'phovea_core/src', 'phovea_core/src/ajax', './listeners', './list/path/pathdata', './list/listview', './pathgraph/pathgraph', './setinfo', './datastore',
-    './pathstats/pathstatsview', '../pathfinder_graph/search', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
-    '../pathfinder_ccle/ccle', './extradata', './list/progressbar', '../caleydo_bootstrap_fontawesome/header', 'font-awesome', 'bootstrap'],
+    './pathstats/pathstatsview', 'pathfinder_graph/src', './pathutil', './query/queryview', './query/pathquery', './config', './list/pathsorting', './statisticsutil',
+    './extradata', './list/progressbar', 'phovea_ui/src/header'],
 
   function ($, d3, C, ajax, listeners, pathData, listView, overviewGraph, setInfo, dataStore, pathStatsView, ServerSearch, pathUtil,
-            queryView, pathQuery, config, pathSorting, statisticsUtil, ccle, extradata, progressBar, header) {
+            queryView, pathQuery, config, pathSorting, statisticsUtil, extradata, progressBar, header) {
 
     'use strict';
 

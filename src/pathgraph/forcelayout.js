@@ -1,5 +1,5 @@
 define(['jquery', 'd3', 'webcola', '../listeners', '../selectionutil', '../list/pathsorting', '../query/pathquery',
-  '../config', '../pathutil', './neighboredge', '../query/queryutil', '../../pathfinder_graph/search', '../uiutil', '../list/path/settings'],
+  '../config', '../pathutil', './neighboredge', '../query/queryutil', 'pathfinder_graph/src', '../uiutil', '../list/path/settings'],
   function ($, d3, webcola, listeners, selectionUtil, pathSorting, pathQuery, config, pathUtil, neighborEdgeManager, queryUtil, ServerSearch, uiUtil, pathSettings) {
     'use strict';
 

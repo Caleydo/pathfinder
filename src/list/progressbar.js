@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 02.11.2015.
  */
-define(["jquery", "d3", "../datastore", "../view", "../listeners", "../query/pathquery", '../../pathfinder_graph/search'], function ($, d3, dataStore, view, listeners, query, ServerSearch) {
+define(["jquery", "d3", "../datastore", "../view", "../listeners", "../query/pathquery", 'pathfinder_graph/src'], function ($, d3, dataStore, view, listeners, query, ServerSearch) {
 
   var ITEM_WIDTH = 50;
   var ITEM_HEIGHT = 20;

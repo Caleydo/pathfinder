@@ -68,6 +68,7 @@
   "dependencies": {
     "phovea_core": "github:phovea/phovea_core#develop",
     "phovea_ui": "github:phovea/phovea_ui#develop",
+    "phovea_d3": "github:phovea/phovea_d3#develop",
     "@types/d3": "3.5.36",
     "d3": "3.5.17"
   },

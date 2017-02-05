@@ -1,7 +1,7 @@
 /**
  * Created by Christian on 11.12.2014.
  */
-require(['jquery', 'd3', 'phovea_core/src', 'phovea_core/src/data', 'phovea_core/src/plugin', '../caleydo_d3/d3util'], function ($, d3, C, data, plugins, utils) {
+require(['jquery', 'd3'], function ($, d3) {
 
   'use strict';
 
