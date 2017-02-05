@@ -1,0 +1,42 @@
+{
+  "generator-phovea": {
+    "type": "app",
+    "name": "pathfinder",
+    "author": "The Caleydo Team",
+    "githubAccount": "phovea",
+    "modules": [
+      "phovea_core"
+    ],
+    "extensions": [
+      {
+        "type": "app",
+        "id": "pathfinder",
+        "module": "",
+        "extras": {
+          "name": "Pathfinder"
+        }
+      }
+    ],
+    "sextensions": [],
+    "libraries": [
+      "d3"
+    ],
+    "unknown": {
+      "requirements": [],
+      "dockerPackages": []
+    },
+    "app": "",
+    "clientOnly": false,
+    "entries": {
+      "app": "./src/index.ts"
+    },
+    "libraryAliases": {
+      "d3": "d3/d3"
+    },
+    "libraryExternals": [
+      "d3"
+    ],
+    "ignores": [],
+    "today": "Sun, 05 Feb 2017 09:29:20 GMT"
+  }
+}

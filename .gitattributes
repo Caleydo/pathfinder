@@ -20,6 +20,7 @@
 *.less text
 *.styl text
 *.js text
+*.ts text
 *.coffee text
 *.json text
 *.htm text
@@ -66,6 +67,7 @@
 # build config
 *.npmignore text
 *.bowerrc text
+Dockerfile text eof=LF
 
 # Heroku
 Procfile text
@@ -122,4 +124,4 @@ AUTHORS text
 # Note: .db, .p, and .pkl files are associated
 # with the python modules ``pickle``, ``dbm.*``,
 # ``shelve``, ``marshal``, ``anydbm``, & ``bsddb``
-# (among others). 
+# (among others).

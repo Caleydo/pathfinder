@@ -14,4 +14,4 @@
 * Static or animated images showing the UI behavior
 
 ### Expected behavior
-*
+* 
