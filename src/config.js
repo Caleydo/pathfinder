@@ -1,4 +1,4 @@
-define(['d3', 'jquery', "../caleydo_core/main", "./colors", "./list/path/settings", "./listeners"], function (d3, $, C, colors, pathSettings, listeners) {
+define(['d3', 'jquery', "phovea_core/src", "./colors", "./list/path/settings", "./listeners"], function (d3, $, C, colors, pathSettings, listeners) {
 
   var DEFAULT_NODE_WIDTH = 60;
   var DEFAULT_NODE_HEIGHT = 20;

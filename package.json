@@ -66,14 +66,15 @@
     "webpack-dev-server": "2.1.0-beta.12"
   },
   "dependencies": {
-    "phovea_core": "github:phovea/phovea_core#v0.0.5",
+    "phovea_core": "github:phovea/phovea_core#develop",
+    "phovea_ui": "github:phovea/phovea_ui#develop",
     "@types/d3": "3.5.36",
     "d3": "3.5.17"
   },
   "name": "pathfinder",
   "description": "Pathfinder is a tool for the visual exploration of paths in large graphs.",
   "homepage": "http://www.caleydo.org/tools/pathfinder/",
-  "version": "0.0.1",
+  "version": "1.0.0-SNAPSHOT",
   "author": {
     "name": "The Caleydo Team",
     "email": "contact@caleydo.org",

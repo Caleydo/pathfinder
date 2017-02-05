@@ -5,7 +5,8 @@
     "author": "The Caleydo Team",
     "githubAccount": "phovea",
     "modules": [
-      "phovea_core"
+      "phovea_core",
+      "phovea_ui"
     ],
     "extensions": [
       {
@@ -21,14 +22,11 @@
     "libraries": [
       "d3"
     ],
-    "unknown": {
-      "requirements": [],
-      "dockerPackages": []
-    },
     "app": "",
     "clientOnly": false,
     "entries": {
-      "app": "./src/index.ts"
+      "app": "./src/index.js",
+      "landing": "./src/landing.js"
     },
     "libraryAliases": {
       "d3": "d3/d3"
