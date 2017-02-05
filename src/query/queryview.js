@@ -1,4 +1,4 @@
-define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../listeners', '../listoverlay', 'pathfinder_graph/src', './pathquery', '../uiutil', '../config', 'jquery-ui'],
+define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../listeners', '../listoverlay', 'pathfinder_graph/src', './pathquery', '../uiutil', '../config', 'jquery-ui/ui/widgets/autocomplete', 'style-loader!css-loader!jquery-ui/themes/base/autocomplete.css'],
   function ($, d3, View, q, pathSorting, listeners, ListOverlay, ServerSearch, pathQuery, uiUtil, config) {
 
     var listOverlay = new ListOverlay();
@@ -1804,7 +1804,7 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     QueryView.prototype.init = function () {
       //load content first
-      $('#query_interface').load('query/view.html', this.initImpl.bind(this));
+      $('#query_interface').load('view.html', this.initImpl.bind(this));
     };
     QueryView.prototype.initImpl = function () {
       View.prototype.init.call(this);

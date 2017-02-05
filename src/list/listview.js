@@ -19,7 +19,7 @@ define(['jquery', 'd3', './path/pathlist', '../view', './pathsorting', '../liste
     ListView.prototype.init = function () {
       var that = this;
       return new Promise(function (resolve, reject) {
-        $('#listViewWidgets').load('list/view.html', function () {
+        $('#listViewWidgets').load('list.html', function () {
           that.initImpl();
           resolve(true);
         });

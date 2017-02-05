@@ -2,6 +2,7 @@
  * Created by Christian on 11.12.2014.
  */
 
+import 'file-loader?name=index.html!extract-loader!html-loader!./index.html';
 import 'file-loader?name=landingcontent.html!extract-loader!html-loader!./landingcontent.html';
 import 'phovea_ui/src/_bootstrap';
 import './style.scss';
