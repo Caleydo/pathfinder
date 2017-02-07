@@ -69,6 +69,8 @@
     "phovea_core": "github:phovea/phovea_core#develop",
     "phovea_ui": "github:phovea/phovea_ui#develop",
     "phovea_d3": "github:phovea/phovea_d3#develop",
+    "pathfinder_graph": "github:Caleydo/pathfinder_graph#master",
+    "pathfinder_ccle": "github:Caleydo/pathfinder_ccle#master",
     "@types/d3": "3.5.36",
     "d3": "3.5.17",
     "dagre": "~0.7.1",

@@ -7,7 +7,9 @@
     "modules": [
       "phovea_core",
       "phovea_ui",
-      "phovea_d3"
+      "phovea_d3",
+      "pathfinder_graph",
+      "pathfinder_ccle"
     ],
     "extensions": [
       {
