@@ -12,7 +12,8 @@
       "es2015"
     ],
     "baseUrl": "../",
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*.ts",
