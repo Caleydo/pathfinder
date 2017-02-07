@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Pathfinder</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link href="//fonts.googleapis.com/css?family=Yantramanav:500,400,300" rel="stylesheet" type="text/css">
+    <link href="./style.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <!--<script type="text/javascript" src="./d3/d3.js"></script>-->
+</head>
+<body>
+<!--search interface-->
+
+<div id="all">
+  <div id="allContent">
+
+
+    <div id="contentBody">
+
+      <header>
+
+        <!--<div id="query_interface" style="width:calc(100% - 50px)">-->
+        <div id="query_interface" style="width:100%">
+
+        </div>
+
+
+        <!--<div class="progress progress-info progress-striped"-->
+        <!--style="margin-bottom: 5px; margin-top: 5px; height: 0.5em;">-->
+        <!--<div class="progress-bar" style="width: 0%"></div>-->
+        <!--</div>-->
+
+
+      </header>
+
+      <div id="container">
+
+        <!--<div id="mainContent">-->
+
+
+        <section id="listView">
+
+
+          <div id="listViewWidgets">
+
+
+          </div>
+          <!--<div class="outer">-->
+          <!--<div class="inner">-->
+          <div id="pathlist">
+          </div>
+          <!--</div>-->
+          <!--</div>-->
+          <div class="text-center">
+            <ul id="pathPagination" class="pagination pagination-sm" style="margin-bottom:0px">
+              <li class="prevPage">
+                <a aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <li class="nextPage">
+                <a aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+        </section>
+
+
+        <!--<div id="rightCol">-->
+
+
+        <!--<div id="overviewRow">-->
+
+        <section id="pathGraphView">
+          <div>
+            <div style="display:inline-block"><label>Path Topology</label></div>
+            <div class="btn-group btn-group-xs" data-toggle="buttons" style="display:inline-block;float: right">
+              <label id="showActivePagePaths" class="btn btn-default active" title="Show paths of active page">
+                <input type="radio" name="pathAlign" checked="">Active Page
+              </label>
+              <label id="showAllPaths" class="btn btn-default" title="Show all paths">
+                <input type="radio" name="pathAlign">All
+              </label>
+            </div>
+          </div>
+          <!--<div class="outer">-->
+          <!--<div class="inner">-->
+          <div id="pathgraph">
+          </div>
+          <!--</div>-->
+          <!--</div>-->
+        </section>
+
+
+        <!--</div>-->
+
+        <!--</div>-->
+
+        <!--</div>-->
+
+
+      </div>
+
+
+    </div>
+
+    <section id="pathStatsView">
+      <div style="padding: 3px">
+        <div style="display:inline-block"><label>Path Statistics</label></div>
+        <div class="btn-group btn-group-xs" role="group" style="display:inline-block; float: right">
+        </div>
+        <!--<button id="toggleSettingsButton" class="btn btn-default" style="display:inline-block; float:right"><i-->
+          <!--class="fa fa-bars"></i>-->
+        <!--</button>-->
+      </div>
+
+      <!--<div class="outer">-->
+      <!--<div class="inner">-->
+      <div id="pathstats">
+        <!--<ul class="statsList">-->
+        <!--<li>Paths <span id="numPaths">0/0</span></li>-->
+        <!--<li>Nodes <span id="numNodes">0/0</span></li>-->
+        <!--<li>Edges <span id="numEdges">0/0</span></li>-->
+        <!--<li>Sets <span id="numSets">0/0</span></li>-->
+        <!--</ul>-->
+        <!--<div style="display:inline-block"># Paths</div>-->
+        <!--<div style="display:inline-block">200</div>-->
+        <!--<br>-->
+
+        <!--<div style="display:inline-block"># Nodes</div>-->
+        <!--<div style="display:inline-block">200</div>-->
+        <!--<br>-->
+
+        <!--<div style="display:inline-block"># Edges</div>-->
+        <!--<div style="display:inline-block">200</div>-->
+        <!--<br>-->
+
+        <!--<div style="display:inline-block"># Sets</div>-->
+        <!--<div style="display:inline-block">200</div>-->
+        <!--<br>-->
+      </div>
+
+
+      <!--<div id="setInfoView" style="display:inline-block">-->
+      <!--<div style="display:block">-->
+      <!--<label>Verycomplicatedpathwayname</label>-->
+      <!--</div>-->
+      <!--<div style="display:inline-block; overflow: auto; width:100%; height: 50px">-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--<div class="bg-primary" style="display:inline-block"><label>EGFR</label></div>-->
+      <!--</div>-->
+
+      <!--</div>-->
+      <!--</div>-->
+      <!--</div>-->
+    </section>
+
+
+    <section id="settings">
+      <h3>Options</h3>
+
+      <div>
+        <h4>General</h4>
+
+        <div class="checkbox" title="Show filtered paths.">
+          <label><input type="checkbox" id="remove_filtered_paths">Show filtered paths</label>
+        </div>
+        <div class="checkbox" title="Show sets even if they do not connect nodes in any path.">
+          <label><input type="checkbox" id="hideNonRelSets"/>Show all sets</label>
+        </div>
+
+        <label>Coloring</label>
+
+        <div class="btn-group btn-group-xs" data-toggle="buttons" style="display:inline-block;float: right">
+          <label id="enable_colors" class="btn btn-default" title="Show all paths">
+            <input type="radio" name="coloring">Enabled
+          </label>
+          <label id="disable_colors" class="btn btn-default" title="Show all paths">
+            <input type="radio" name="coloring">Disabled
+          </label>
+          <label id="auto_colors" class="btn btn-default active" title="Show paths of active page">
+            <input type="radio" name="coloring" checked="">Auto
+          </label>
+        </div>
+
+        <label for="nodeWidth">Node width</label>
+
+        <input type="number" id="nodeWidth" style="width: 5em;" maxlength="3" placeholder="k"
+               value="60" min="20">
+        <input type="button" id="applyNodeWidth" value="Apply"/>
+
+        <br>
+        <input style="margin-top: 5px" type="button" id="savePaths" value="Save Paths"/>
+      </div>
+
+      <hr width="98%">
+
+      <div>
+        <h4>List view</h4>
+
+        <label for="page_size">Paths per page </label>
+
+        <input type="number" id="page_size" style="width: 5em;" maxlength="3" placeholder="k"
+               value="15" min="1">
+        <input type="button" id="apply_page_size" value="Apply"/>
+
+        <!--<div class="checkbox" title="Force equal nodes to be aligned accross paths.">-->
+        <!--<label><input type="checkbox" id="alignPathNodes"/>Align nodes</label>-->
+        <!--</div>-->
+        <div class="checkbox" title="Show straight rank columns.">
+          <label><input type="checkbox" id="alignColumns" checked/>Align columns</label>
+        </div>
+
+        Attribute orientation
+
+        <div style="display: block; margin-left: 10px">
+          <div class="radio">
+            <label for="horizontalOrientation" style="font-weight: bold"><input type="radio"
+                                                                                name="attributeOrientationRadio"
+                                                                                id="horizontalOrientation"
+                                                                                checked/>Horizontal</label>
+          </div>
+          <div class="radio">
+            <label for="verticalOrientation" style="font-weight: bold"><input type="radio"
+                                                                              name="attributeOrientationRadio"
+                                                                              id="verticalOrientation"/>Vertical</label>
+          </div>
+
+
+          <!--<select id="select_dump" style="display:block"></select>-->
+          <!--<div class="checkbox">-->
+          <!--<label><input type="checkbox" id="tiltAttributes"/>Tilt attributes</label>-->
+          <!--</div>-->
+        </div>
+
+        <div class="checkbox" title="Show sets below paths.">
+          <label><input type="checkbox" id="showSetsInList" checked/>Show sets</label>
+        </div>
+
+        <div class="checkbox" title="Show attributes below paths.">
+          <label><input type="checkbox" id="showAttributesInList" checked/>Show attributes</label>
+        </div>
+
+        <div class="checkbox" title="Show datasets below paths.">
+          <label><input type="checkbox" id="showDatasetsInList" checked/>Show datasets</label>
+        </div>
+      </div>
+
+      <hr width="98%">
+
+      <div>
+        <h4>Topology view</h4>
+        <!--<h1 style="display:inline">Caleydo Pathfinder</h1>-->
+        Layout
+
+        <div style="display: block; margin-left: 10px">
+          <div class="radio">
+            <label for="layeredLayout" style="font-weight: bold"><input type="radio"
+                                                                        name="topologyLayoutRadio"
+                                                                        id="layeredLayout"
+                                                                        checked/>Layered</label>
+          </div>
+          <div class="radio">
+            <label for="forceLayout" style="font-weight: bold"><input type="radio"
+                                                                      name="topologyLayoutRadio"
+                                                                      id="forceLayout"/>Force-based</label>
+          </div>
+        </div>
+
+        <!--<input type="checkbox" id="switchGraphLayout"/>-->
+        <!--<label>Switch Graph Layout</label>-->
+      </div>
+    </section>
+
+
+  </div>
+</div>
+
+
+<!--//=====================================================-->
+
+
+<div class="modal" id="rankConfigModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:800px">
+    <form class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+          aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Rank paths by</h4>
+      </div>
+      <div class="modal-body" id="pathLength">
+        <!--<form role="form">-->
+        <div class="radio">
+          <label for="pathLengthRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
+                                                                        id="pathLengthRadio"
+                                                                        checked/>Length</label>
+        </div>
+        <div class="radio" id="setConnectionStrength">
+          <label for="setConnectionStrengthRadio" style="font-weight: bold"><input type="radio"
+                                                                                   name="rankMethodRadio"
+                                                                                   id="setConnectionStrengthRadio"/>Set
+            connection
+            strength</label>
+
+          <div id="setConnectionStrengthWidgets">
+            <div style="display:inline-block">
+              <label for="setTypeSelect" style="padding: 0">Set type</label><br>
+              <select id="setTypeSelect" size="5"></select>
+            </div>
+            <div style="display:inline-block">
+              <label for="setStatSelect" style="padding: 0">Method</label><br>
+              <select id="setStatSelect" size="5">
+                <option value="mean">Average</option>
+                <option value="min">Minimum</option>
+                <option value="max">Maximum</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+        <div class="radio" id="nodeProperty">
+          <label for="nodePropertyRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
+                                                                          id="nodePropertyRadio"/>Node
+            property</label>
+
+          <div id="nodePropertyWidgets">
+            <div style="display:inline-block">
+              <label for="propertySelect" style="padding: 0">Property</label><br>
+              <select id="propertySelect" size="5"></select>
+            </div>
+            <div style="display:inline-block">
+              <label for="propertyStatSelect" style="padding: 0">Method</label><br>
+              <select id="propertyStatSelect" size="5">
+                <option value="mean">Average</option>
+                <option value="min">Minimum</option>
+                <option value="max">Maximum</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+        <div class="radio" id="dataBasedScore">
+          <label for="dataBasedScoreRadio" style="font-weight: bold"><input type="radio"
+                                                                            name="rankMethodRadio"
+                                                                            id="dataBasedScoreRadio"/>Data-based
+            score</label><br>
+
+          <div id="dataBasedScoreWidgets">
+            <div style="display:inline-block">
+              <label for="datasetSelect" style="padding: 0">Dataset</label><br>
+              <select id="datasetSelect" size="5"></select>
+            </div>
+            <div id="tableDatasetWidgets" style="display:inline-block">
+              <div style="display:inline-block">
+                <label for="attributeSelect" style="padding: 0">Property</label><br>
+                <select id="attributeSelect" size="5"></select>
+              </div>
+              <div style="display:inline-block">
+                <label for="attributeStatSelect" style="padding: 0">Method</label><br>
+                <select id="attributeStatSelect" size="5">
+                  <option value="mean">Average</option>
+                  <option value="min">Minimum</option>
+                  <option value="max">Maximum</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="matrixDatasetWidgets" style="display:inline-block">
+              <div style="display:inline-block">
+                <label for="groupSelect" style="padding: 0">Group</label><br>
+                <select id="groupSelect" size="5"></select>
+              </div>
+              <div style="display:inline-block">
+                <label for="statisticSelect" style="padding: 0">Statistic</label><br>
+                <select id="statisticSelect" size="5">
+                  <option value="median">Median</option>
+                  <option value="mean">Arithmetic mean</option>
+                  <option value="std">Standard-deviation</option>
+                  <option value="min">Minimum</option>
+                  <option value="max">Maximum</option>
+                </select>
+              </div>
+              <div style="display:inline-block">
+                <label for="scopeSelect" style="padding: 0">Scope</label><br>
+                <select id="scopeSelect" size="5">
+                  <option value="path">Whole Path</option>
+                  <option value="minNode">Node with min score</option>
+                  <option value="maxNode">Node with max score</option>
+                </select>
+              </div>
+            </div>
+            <!--<div style="display:inline-block">-->
+            <!--<label for="methodSelect" style="padding: 0">Method</label><br>-->
+            <!--<select id="methodSelect" size="5">-->
+            <!--<option label="Simple Statistic">stat</option>-->
+            <!--<option label="Min statistic difference in groups">minDiff</option>-->
+            <!--<option label="Max statistic difference in groups">maxDiff</option>-->
+            <!--</select>-->
+            <!--</div>-->
+          </div>
+        </div>
+        <div class="radio" id="referencePathScore">
+          <label for="referencePathScoreRadio" style="font-weight: bold"><input type="radio"
+                                                                                name="rankMethodRadio"
+                                                                                id="referencePathScoreRadio"/>Similarity
+            to reference path</label><br>
+
+          <div id="referencePathScoreWidgets">
+            <label for="referencePathScoreSelect" style="padding: 0">Available scores</label><br>
+            <select id="referencePathScoreSelect" size="5">
+              <option value="commonNodes">Number of shared nodes with respect to path length</option>
+              <option value="commonSets">Number of shared sets in non-shared nodes</option>
+            </select><br>
+          </div>
+
+        </div>
+        <div class="radio" id="customScore">
+          <label for="customScoreRadio" style="font-weight: bold"><input type="radio" name="rankMethodRadio"
+                                                                         id="customScoreRadio"/>Custom
+            score</label><br>
+
+          <div id="customScoreWidgets">
+            <label for="customScoreSelect" style="padding: 0">Available scores</label><br>
+            <select id="customScoreSelect" size="5" style="width:150px"></select><br>
+            <input type="button" id="addRanking" style="width:150px" value="Add Custom Score"/>
+          </div>
+
+        </div>
+
+        <div class="checkbox" id="diffToReferencePathWidgets">
+          <label for="diffToReferencePath"><input type="checkbox"
+                                                  id="diffToReferencePath"/>Use score
+            difference to reference path</label>
+        </div>
+
+        <!--</form>-->
+        <!--<form role="form">-->
+        <!--<div class="radio">-->
+        <!--<label for="startOffsetInput"><input type="radio" name="rankMethodRadio" id="startOffsetButton"/>Start + </label>-->
+        <!--<input type="number" id="startOffsetInput" style="width: 5em; position:absolute; left:70px;" maxlength="3"-->
+        <!--value="1" min="1" required="required">-->
+        <!--</div>-->
+        <!--<div class="radio">-->
+        <!--<label for="endOffsetInput"><input type="radio" name="rankMethodRadio" id="endOffsetButton"/>End - </label>-->
+        <!--<input type="number" id="endOffsetInput" style="width: 5em; position:absolute; left:70px;" maxlength="3"-->
+        <!--value="1" min="1" required="required">-->
+        <!--</div>-->
+        <!--<div class="radio">-->
+        <!--<label><input type="radio" name="rankMethodRadio" id="noPositionButton" checked/>None</label>-->
+        <!--</div>-->
+        <!--</form>-->
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="rankConfigConfirm" data-dismiss="modal">Ok</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<div class="modal" id="rankScriptModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+          aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Define Path Score</h4>
+      </div>
+      <div class="modal-body">
+        <label for="customScriptTitle">Title</label><br>
+        <input type="text" id="customScriptTitle" value="Custom Score"><br><br>
+
+        <label for="scriptText">Custom path score function</label><textarea id="scriptText" cols="68"
+                                                                            rows="15"
+                                                                            spellcheck="false"></textarea>
+
+        <!--<form role="form">-->
+        <!--<div class="radio">-->
+        <!--<label for="startOffsetInput"><input type="radio" name="optradio" id="startOffsetButton"/>Start + </label>-->
+        <!--<input type="number" id="startOffsetInput" style="width: 5em; position:absolute; left:70px;" maxlength="3"-->
+        <!--value="1" min="1" required="required">-->
+        <!--</div>-->
+        <!--<div class="radio">-->
+        <!--<label for="endOffsetInput"><input type="radio" name="optradio" id="endOffsetButton"/>End - </label>-->
+        <!--<input type="number" id="endOffsetInput" style="width: 5em; position:absolute; left:70px;" maxlength="3"-->
+        <!--value="1" min="1" required="required">-->
+        <!--</div>-->
+        <!--<div class="radio">-->
+        <!--<label><input type="radio" name="optradio" id="noPositionButton" checked/>None</label>-->
+        <!--</div>-->
+        <!--</form>-->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="rankScriptConfirm" data-dismiss="modal">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--<svg id="overlaySVG"></svg>-->
+
+<script src="./common.js"></script>
+<script src="./app.js"></script>
+
+</body>
+</html>

@@ -1,68 +1,97 @@
 {
-  "name" : "pathfinder",
-  "description": "Pathfinder is a tool for the visual exploration of paths in large graphs.",
-  "version": "0.0.1",
-  "license" : "SEE LICENSE IN LICENSE",
-  "repository": "Caleydo/pathfinder",
-  "homepage": "http://www.caleydo.org/tools/pathfinder/",
+  "private": true,
+  "scripts": {
+    "predist": "npm run build && npm run docs",
+    "predocker": "npm run build",
+    "docker": "docker build -t pathfinder -f deploy/Dockerfile .",
+    "compile": "tsc",
+    "lint": "tslint -c tslint.json src/**.ts tests/**.ts",
+    "docs": "typedoc --options typedoc.json src/**.ts",
+    "prebuild": "node -e \"process.exit(process.env.PHOVEA_SKIP_TESTS === undefined?1:0)\" || npm run test",
+    "pretest": "npm run compile",
+    "test": "test ! -d tests || karma start",
+    "posttest": "npm run lint",
+    "test:watch": "karma start --autoWatch=true --singleRun=false",
+    "build:dev": "webpack",
+    "build": "webpack --env prod",
+    "start": "webpack-dev-server --inline",
+    "start:hot": "webpack-dev-server --inline --hot",
+    "watch": "webpack --watch",
+    "release:major": "npm version major && npm publish && git push --follow-tags",
+    "release:minor": "npm version minor && npm publish && git push --follow-tags",
+    "release:patch": "npm version patch && npm publish && git push --follow-tags",
+    "dist": "mkdirp dist && cd build && tar cvzf ../dist/pathfinder.tar.gz *"
+  },
+  "files": [
+    "src",
+    "index.js",
+    "phovea.js",
+    "phovea_registry.js",
+    "build"
+  ],
+  "engines": {
+    "npm": ">= 3",
+    "node": ">= 6"
+  },
+  "devDependencies": {
+    "@types/jasmine": "2.5.40",
+    "awesome-typescript-loader": "3.0.0-beta.18",
+    "css-loader": "0.26.1",
+    "extract-loader": "0.1.0",
+    "extract-text-webpack-plugin": "2.0.0-beta.5",
+    "file-loader": "0.9.0",
+    "html-loader": "0.4.4",
+    "imports-loader": "0.7.0",
+    "jasmine": "2.5.3",
+    "json-loader": "0.5.4",
+    "karma": "1.4.0",
+    "karma-chrome-launcher": "2.0.0",
+    "karma-firefox-launcher": "1.0.0",
+    "karma-jasmine": "1.1.0",
+    "karma-junit-reporter": "2.0.0",
+    "karma-sourcemap-loader": "0.3.7",
+    "karma-webpack": "2.0.1",
+    "mkdirp": "0.5.1",
+    "node-sass": "4.3.0",
+    "null-loader": "0.1.1",
+    "raw-loader": "0.5.1",
+    "sass-loader": "4.1.1",
+    "style-loader": "0.13.1",
+    "tslib": "1.5.0",
+    "tslint": "4.3.1",
+    "typedoc": "0.5.5",
+    "typescript": "2.1.5",
+    "url-loader": "0.5.7",
+    "webpack": "2.1.0-beta.28",
+    "webpack-dev-server": "2.1.0-beta.12"
+  },
   "dependencies": {
+    "phovea_core": "github:phovea/phovea_core#develop",
+    "phovea_ui": "github:phovea/phovea_ui#develop",
+    "phovea_d3": "github:phovea/phovea_d3#develop",
+    "pathfinder_graph": "github:Caleydo/pathfinder_graph#migrate",
+    "pathfinder_ccle": "github:Caleydo/pathfinder_ccle#migrate",
+    "@types/d3": "3.5.36",
+    "d3": "3.5.17",
+    "dagre": "~0.7.1",
+    "webcola": "~3.1.0",
+    "jquery-ui": "~1.12.1"
   },
-  "peerDependencies": {
-    "caleydo_core": "*",
-    "pathfinder_ccle": "*",
-    "pathfinder_graph": "*",
-    "caleydo_bootstrap_fontawesome": "*"
+  "name": "pathfinder",
+  "description": "Pathfinder is a tool for the visual exploration of paths in large graphs.",
+  "homepage": "http://www.caleydo.org/tools/pathfinder/",
+  "version": "1.0.0-SNAPSHOT",
+  "author": {
+    "name": "The Caleydo Team",
+    "email": "contact@caleydo.org",
+    "url": "https://caleydo.org"
   },
-  "caleydo": {
-    "type": "app",
-    "plugins": {
-      "web": [
-        {
-          "type": "app",
-          "name": "Pathfinder"
-        }
-      ]
-    },
-    "products":[{
-      "name": "Pathfinder",
-      "type": "python",
-      "bundle": true,
-      "plugins": [
-        "pathfinder",
-        "pathfinder_ccle",
-        "pathfinder_graph"
-      ]
-    }],
-    "dependencies": {
-      "web": {
-        "d3": "~3.5.5",
-        "webcola": "~3.1.0",
-        "jquery-ui": "~1.11.4",
-        "graphlib": "~1.0.1",
-        "dagre": "~0.7.1"
-      }
-    },
-
-    "requirejs-config": {
-      "paths": {
-        "lodash": "${baseUrl}/lodash/dist/lodash",
-        "graphlib": "${baseUrl}/graphlib/dist/graphlib.core",
-        "dagre": "${baseUrl}/dagre/dist/dagre.core"
-      },
-      "shim": {
-        "webcola": {
-          "deps": ["d3"],
-          "exports": "cola"
-        },
-        "graphlib": {
-          "deps": ["lodash"],
-          "exports": "graphlib"
-        },
-        "dagre": {
-          "deps": ["lodash", "graphlib"],
-          "exports": "dagre"
-        }
-      }
-    }
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/phovea/pathfinder/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phovea/pathfinder.git"
   }
 }

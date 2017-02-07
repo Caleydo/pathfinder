@@ -1,2 +1,9 @@
-/*.css
-/*.map
+/.tscache
+/.idea
+/build/
+/dist/
+node_modules/
+/tests/**/*.js
+*.map
+*.css
+*.log
