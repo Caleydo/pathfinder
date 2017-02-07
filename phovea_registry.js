@@ -11,5 +11,9 @@ import {register} from 'phovea_core/src/plugin';
  */
 //other modules
 import 'phovea_core/phovea_registry.js';
+import 'phovea_ui/phovea_registry.js';
+import 'phovea_d3/phovea_registry.js';
+import 'pathfinder_graph/phovea_registry.js';
+import 'pathfinder_ccle/phovea_registry.js';
 //self
 register('pathfinder',require('./phovea.js'));
