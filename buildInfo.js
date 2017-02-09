@@ -59,10 +59,11 @@ function resolveWorkspace() {
     console.log('resolve', m);
     const pkg = require(`../${m}/package.json`);
     const head = gitHead('../' + m);
+    const repo = pkg.repository.url;
     return {
       name: pkg.name,
       version: pkg.version,
-      resolved: head ? `${pkg.repository.url}#${head}` : pkg.version,
+      resolved: head ? `${repo.endsWith('.git') ? repo.slice(0, repo.length-4) : repo}/commit/${head}` : pkg.version,
       dependencies: deps(pkg.dependencies)
     };
   };
