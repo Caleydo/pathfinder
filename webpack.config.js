@@ -14,7 +14,7 @@ const buildInfo = require('./buildInfo.js');
 
 const now = new Date();
 const prefix = (n) => n < 10 ? ('0' + n) : n.toString();
-const buildId = `${now.getUTCFullYear()}${prefix(now.getUTCMonth())}${prefix(now.getUTCDate())}-${prefix(now.getUTCHours())}${prefix(now.getUTCMinutes())}${prefix(now.getUTCSeconds())}`;
+const buildId = `${now.getUTCFullYear()}${prefix(now.getUTCMonth() + 1)}${prefix(now.getUTCDate())}-${prefix(now.getUTCHours())}${prefix(now.getUTCMinutes())}${prefix(now.getUTCSeconds())}`;
 pkg.version = pkg.version.replace('SNAPSHOT', buildId);
 
 const year = (new Date()).getFullYear();
@@ -88,9 +88,11 @@ function testPhoveaModules(modules) {
   };
 }
 
+
 // use workspace registry file if available
 const isWorkspaceContext = fs.existsSync(resolve(__dirname, '..', 'phovea_registry.js'));
 const registryFile = isWorkspaceContext ? '../phovea_registry.js' : './phovea_registry.js';
+const actMetaData = `file-loader?name=phoveaMetaData.json!${buildInfo.metaDataTmpFile(pkg)}`;
 const actBuildInfoFile = `file-loader?name=buildInfo.json!${buildInfo.tmpFile()}`;
 
 /**
@@ -99,13 +101,14 @@ const actBuildInfoFile = `file-loader?name=buildInfo.json!${buildInfo.tmpFile()}
  * @returns {*}
  */
 function injectRegistry(entry) {
+  const extraFiles = [registryFile, actBuildInfoFile, actMetaData];
   //build also the registry
   if (typeof entry === 'string') {
-    return [registryFile, actBuildInfoFile].concat(entry);
+    return extraFiles.concat(entry);
   } else {
     const transformed = {};
     Object.keys(entry).forEach((eentry) => {
-      transformed[eentry] = [registryFile, actBuildInfoFile].concat(entry[eentry]);
+      transformed[eentry] = extraFiles.concat(entry[eentry]);
     });
     return transformed;
   }
@@ -161,6 +164,9 @@ function generateWebpack(options) {
       loaders: webpackloaders.slice()
     },
     devServer: {
+      watchOptions: {
+        ignored: '/node_modules/'
+      },
       proxy: {
         '/api/*': {
           target: 'http://localhost:9000',

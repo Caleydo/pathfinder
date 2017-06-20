@@ -39,7 +39,7 @@ function resolveModules() {
   const reg = fs.readFileSync('../phovea_registry.js').toString();
   const regex = /import '(.*)\/phovea_registry.js'/g;
   const modules = [];
-  var r;
+  let r;
   while ((r = regex.exec(reg)) !== null) {
     modules.push(r[1]);
   }
@@ -138,13 +138,40 @@ function tmpdir() {
   }
 }
 
+function resolveScreenshot() {
+  const f = resolve(__dirname, 'media/screenshot.png');
+  if (!fs.existsSync(f)) {
+    return null;
+  }
+  const buffer = new Buffer(fs.readFileSync(f)).toString('base64');
+  return `data:image/png;base64,${buffer}`;
+}
+
+function metaData(pkg) {
+  pkg = pkg || require(`./package.json`);
+  return {
+    name: pkg.name,
+    version: pkg.version,
+    repository: pkg.repository.url,
+    description: pkg.description,
+    screenshot: resolveScreenshot()
+  };
+}
+
+module.exports.metaData = metaData;
+module.exports.metaDataTmpFile = function(pkg) {
+  const s = metaData(pkg);
+  const file = `${tmpdir()}/metaData${Math.random().toString(36).slice(-8)}.txt`;
+  fs.writeFileSync(file, JSON.stringify(s, null, ' '));
+  return file;
+};
 module.exports.generate = generate;
 module.exports.tmpFile = function() {
   const s = generate();
   const file = `${tmpdir()}/buildInfo${Math.random().toString(36).slice(-8)}.txt`;
   fs.writeFileSync(file, JSON.stringify(s, null, ' '));
   return file;
-}
+};
 
 
 if (require.main === module) {

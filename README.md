@@ -3,6 +3,8 @@ pathfinder [![Phovea][phovea-image]][phovea-url] [![NPM version][npm-image]][npm
 
 Pathfinder is a tool for the visual exploration of paths in large graphs.
 
+![screenshot](media/screenshot.png?raw=true "Screenshot")
+
 Installation
 ------------
 
