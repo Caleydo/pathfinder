@@ -279,8 +279,11 @@ define(['d3', 'jquery', "phovea_core/src", "./colors", "./list/path/settings", "
 
     getConfig: function () {
       return config;
-    }
-    ,
+    },
+
+    getSearchConfig: function() {
+      return config.search || { label: '_Network_Node', name: 'name', id: 'id'};
+    },
 
     isSetEdge: function (edge) {
 

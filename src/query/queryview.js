@@ -767,7 +767,10 @@ define(['jquery', 'd3', '../view', './querymodel', '../list/pathsorting', '../li
 
     function nodeAutoCompleteSource(request, response) {
       var term = request.term;
-      ServerSearch.search(term, 'name', '_Network_Node').then(function (nameResults) {
+
+      var searchConfig = config.getSearchConfig();
+
+        ServerSearch.search(term, searchConfig.name, searchConfig.label).then(function (nameResults) {
         nameResults.forEach(function (element) {
           element.category = "Name";
 

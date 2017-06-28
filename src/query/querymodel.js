@@ -1,4 +1,4 @@
-define(['d3', '../pathutil'], function (d3, pathUtil) {
+define(['d3', '../pathutil', '../config'], function (d3, pathUtil, config) {
 
   //Indices are always node indices within the path, for edges, it is the index of the lower node
   function MatchRegion(minIndex, maxIndex) {
@@ -74,10 +74,12 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
 
   NodeIdConstraint.prototype = Object.create(Constraint.prototype);
   NodeIdConstraint.prototype.match = function (node) {
-    return node.id === this.nodeId;
+    var id = config.getSearchConfig().id;
+    return node[id] === this.nodeId;
   };
   NodeIdConstraint.prototype.serialize = function () {
-    return {context: 'node', prop: 'id', '$eq': this.nodeId}
+    var id = config.getSearchConfig().id;
+    return {context: 'node', prop: id, '$eq': this.nodeId}
   };
 
   function NodeNameConstraint(nodeName) {
@@ -87,10 +89,12 @@ define(['d3', '../pathutil'], function (d3, pathUtil) {
 
   NodeNameConstraint.prototype = Object.create(Constraint.prototype);
   NodeNameConstraint.prototype.match = function (node) {
-    return node.properties["name"] === this.nodeName;
+    var name = config.getSearchConfig().name;
+    return node.properties[name] === this.nodeName;
   };
   NodeNameConstraint.prototype.serialize = function () {
-    return {context: 'node', 'prop': 'name', '$eq': this.nodeName}
+    var name = config.getSearchConfig().name;
+    return {context: 'node', 'prop': name, '$eq': this.nodeName}
   };
 
   function NodeTypeConstraint(nodeType) {
